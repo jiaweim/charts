@@ -23,11 +23,8 @@ import eu.hansolo.fx.charts.data.BubbleGridChartItem;
 import eu.hansolo.fx.charts.data.ChartItem;
 import eu.hansolo.fx.charts.event.ItemEventListener;
 import eu.hansolo.fx.charts.font.Fonts;
-import eu.hansolo.fx.charts.tools.FontMetrix;
 import eu.hansolo.fx.charts.tools.Helper;
 import eu.hansolo.fx.charts.tools.InfoPopup;
-import eu.hansolo.fx.charts.tools.Order;
-import eu.hansolo.fx.charts.tools.Topic;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
@@ -59,7 +56,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -99,8 +95,6 @@ public class BubbleGridChart extends Region {
     private              BooleanProperty                         showGrid;
     private              Color                                   _textColor;
     private              ObjectProperty<Color>                   textColor;
-    private              boolean                                 _autoBubbleTextColor;
-    private              BooleanProperty                         autoBubbleTextColor;
     private              boolean                                 useXCategoryFill;
     private              boolean                                 _showValues;
     private              BooleanProperty                         showValues;
@@ -113,42 +107,38 @@ public class BubbleGridChart extends Region {
     private              Color                                   _maxColor;
     private              ObjectProperty<Color>                   maxColor;
     private              LinearGradient                          gradient;
-    private              Topic                                   sortTopicX;
-    private              Topic                                   sortTopicY;
-    private              Order                                   sortOrderX;
-    private              Order                                   sortOrderY;
+
+
+    private record Bubble(double x, double y, double r, BubbleGridChartItem item) {}
+
+
     private List<Bubble> bubbles;
 
 
     // ******************** Constructors **************************************
     public BubbleGridChart() {
-        items                  = FXCollections.observableArrayList();
-        xCategoryItems         = new ArrayList<>();
-        yCategoryItems         = new ArrayList<>();
-        sumsOfXCategoryItems   = new HashMap<>();
-        sumsOfYCategoryItems   = new HashMap<>();
-        sumOfValues            = 0;
-        minValue               = 0;
-        maxValue               = 0;
-        useXCategoryFill       = true;
-        _textColor             = Color.BLACK;
-        _autoBubbleTextColor   = false;
-        _chartBackground       = Color.TRANSPARENT;
-        _gridColor             = Color.rgb(0, 0, 0, 0.1);
-        _showGrid              = true;
-        _showValues            = true;
-        _showPercentage        = false;
-        _useGradientFill       = false;
-        _minColor              = Color.web("#2C67D5");
-        _maxColor              = Color.web("#F23C5A");
-        gradient               = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, new Stop(0, _minColor), new Stop(1, _maxColor));
-        bubbles                = new ArrayList<>();
-        sortTopicX             = Topic.INDEX;
-        sortTopicY             = Topic.INDEX;
-        sortOrderX             = Order.ASCENDING;
-        sortOrderY             = Order.ASCENDING;
-        itemListener           = e -> sort();
-        itemListListener       = c -> {
+        items                = FXCollections.observableArrayList();
+        xCategoryItems       = new ArrayList<>();
+        yCategoryItems       = new ArrayList<>();
+        sumsOfXCategoryItems = new HashMap<>();
+        sumsOfYCategoryItems = new HashMap<>();
+        sumOfValues          = 0;
+        minValue             = 0;
+        maxValue             = 0;
+        useXCategoryFill     = true;
+        _textColor           = Color.BLACK;
+        _chartBackground     = Color.TRANSPARENT;
+        _gridColor           = Color.rgb(0, 0, 0, 0.1);
+        _showGrid            = true;
+        _showValues          = true;
+        _showPercentage      = false;
+        _useGradientFill     = false;
+        _minColor            = Color.web("#2C67D5");
+        _maxColor            = Color.web("#F23C5A");
+        gradient             = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, new Stop(0, _minColor), new Stop(1, _maxColor));
+        bubbles              = new ArrayList<>();
+        itemListener         = e -> redraw();
+        itemListListener     = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
                     c.getAddedSubList().forEach(addedItem -> addedItem.setOnItemEvent(itemListener));
@@ -173,7 +163,7 @@ public class BubbleGridChart extends Region {
             maxValue    = items.parallelStream().max(Comparator.comparingDouble(BubbleGridChartItem::getValue)).map(bgci -> bgci.getValue()).orElse(0d);
             sumOfValues = items.parallelStream().mapToDouble(bgci -> bgci.getValue()).sum();
 
-            sort();
+            redraw();
         };
 
         initGraphics();
@@ -210,7 +200,7 @@ public class BubbleGridChart extends Region {
                 if (Helper.isInCircle(e.getX(), e.getY(), bubble.x, bubble.y, bubble.r)) {
                     popup.setX(e.getScreenX());
                     popup.setY(e.getScreenY() - popup.getHeight());
-                    popup.update(bubble.item, sumOfValues);
+                    popup.update(bubble.item);
                     popup.animatedShow(getScene().getWindow());
                 }
             }));
@@ -297,26 +287,6 @@ public class BubbleGridChart extends Region {
             _textColor = null;
         }
         return textColor;
-    }
-
-    public boolean isAutoBubbleTextColor() { return null == autoBubbleTextColor ? _autoBubbleTextColor : autoBubbleTextColor.get(); }
-    public void setAutoBubbleTextColor(final boolean AUTO) {
-        if (null == autoBubbleTextColor) {
-            _autoBubbleTextColor = AUTO;
-            redraw();
-        } else {
-            autoBubbleTextColor.set(AUTO);
-        }
-    }
-    public BooleanProperty autoBubbleTextColorProperty() {
-        if (null == autoBubbleTextColor) {
-            autoBubbleTextColor = new BooleanPropertyBase(_autoBubbleTextColor) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return BubbleGridChart.this; }
-                @Override public String getName() { return "autoBubbleTextColor"; }
-            };
-        }
-        return autoBubbleTextColor;
     }
 
     public boolean getShowGrid() { return null == showGrid ? _showGrid : showGrid.get(); }
@@ -471,117 +441,60 @@ public class BubbleGridChart extends Region {
         redraw();
     }
 
-    public Topic getSortTopicX() { return sortTopicX; }
-    public void setSortTopicX(final Topic TOPIC) { sortCategoryX(TOPIC, getSortOrderX()); }
-
-    public Topic getSortTopicY() { return sortTopicY; }
-    public void setSortTopicY(final Topic TOPIC) { sortCategoryY(TOPIC, getSortOrderY()); }
-
-    public Order getSortOrderX() { return sortOrderX; }
-    public void setSortOrderX(final Order ORDER) { sortCategoryX(getSortTopicX(), ORDER); }
-
-    public Order getSortOrderY() { return sortOrderY; }
-    public void setSortOrderY(final Order ORDER) { sortCategoryY(getSortTopicY(), ORDER); }
-
-    public void sortCategoryX(final Topic TOPIC, final Order ORDER) {
-        sortTopicX = TOPIC;
-        sortOrderX = ORDER;
-        switch(TOPIC) {
-            case INDEX:
-                switch (ORDER) {
-                    case ASCENDING : Collections.sort(xCategoryItems, Comparator.comparing(ChartItem::getIndex)); break;
-                    case DESCENDING: Collections.sort(xCategoryItems, Comparator.comparing(ChartItem::getIndex).reversed()); break;
-                }
-                break;
-            case VALUE:
-                switch (ORDER) {
-                    case ASCENDING:
-                        final Map<ChartItem, Double> sortedByValueAscending = sumsOfXCategoryItems.entrySet()
-                                                                                                  .stream()
-                                                                                                  .sorted(Map.Entry.comparingByValue())
-                                                                                                  .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) ->e1, LinkedHashMap::new));
-                        xCategoryItems.clear();
-                        xCategoryItems.addAll(sortedByValueAscending.keySet());
-                        break;
-                    case DESCENDING:
-                        final Map<ChartItem, Double> sortedByValueDescending = sumsOfXCategoryItems.entrySet()
-                                                                                                   .stream()
-                                                                                                   .sorted(Map.Entry.<ChartItem,Double>comparingByValue().reversed())
-                                                                                                   .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) ->e1, LinkedHashMap::new));
-                        xCategoryItems.clear();
-                        xCategoryItems.addAll(sortedByValueDescending.keySet());
-                        break;
-                }
-                break;
-            case NAME:
-                switch (ORDER) {
-                    case ASCENDING:
-                        List<ChartItem> sortedAscending = xCategoryItems.stream().sorted(Comparator.comparing(ChartItem::getName)).collect(Collectors.toList());
-                        xCategoryItems.clear();
-                        xCategoryItems.addAll(sortedAscending);
-                        break;
-                    case DESCENDING:
-                        List<ChartItem> sortedDescending = xCategoryItems.stream().sorted(Comparator.comparing(ChartItem::getName).reversed()).collect(Collectors.toList());
-                        System.out.println(sortedDescending);
-                        xCategoryItems.clear();
-                        xCategoryItems.addAll(sortedDescending);
-                        break;
-                }
-                break;
-        }
+    public void sortXCategoryItemsByIndexAscending() {
+        Collections.sort(xCategoryItems, Comparator.comparing(ChartItem::getIndex));
         redraw();
     }
-    public void sortCategoryY(final Topic TOPIC, final Order ORDER) {
-        sortTopicY = TOPIC;
-        sortOrderY = ORDER;
-        switch(TOPIC) {
-            case INDEX:
-                switch (ORDER) {
-                    case ASCENDING : Collections.sort(yCategoryItems, Comparator.comparing(ChartItem::getIndex).reversed()); break;
-                    case DESCENDING: Collections.sort(yCategoryItems, Comparator.comparing(ChartItem::getIndex)); break;
-                }
-                break;
-            case VALUE:
-                switch (ORDER) {
-                    case ASCENDING:
-                        final Map<ChartItem, Double> sortedByValueAscending = sumsOfYCategoryItems.entrySet()
-                                                                                                  .stream()
-                                                                                                  .sorted(Map.Entry.<ChartItem,Double>comparingByValue().reversed())
-                                                                                                  .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-                        yCategoryItems.clear();
-                        yCategoryItems.addAll(sortedByValueAscending.keySet());
-                        break;
-                    case DESCENDING:
-                        final Map<ChartItem, Double> sortedByValueDescending = sumsOfYCategoryItems.entrySet()
-                                                                                                   .stream()
-                                                                                                   .sorted(Map.Entry.comparingByValue())
-                                                                                                   .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-                        yCategoryItems.clear();
-                        yCategoryItems.addAll(sortedByValueDescending.keySet());
-                        break;
-                }
-                break;
-            case NAME:
-                switch (ORDER) {
-                    case ASCENDING:
-                        List<ChartItem> sortedAscending = yCategoryItems.stream().sorted(Comparator.comparing(ChartItem::getName)).collect(Collectors.toList());
-                        yCategoryItems.clear();
-                        yCategoryItems.addAll(sortedAscending);
-                        break;
-                    case DESCENDING:
-                        List<ChartItem> sortedDescending = yCategoryItems.stream().sorted(Comparator.comparing(ChartItem::getName).reversed()).collect(Collectors.toList());
-                        yCategoryItems.clear();
-                        yCategoryItems.addAll(sortedDescending);
-                        break;
-                }
-                break;
-        }
+    public void sortXCategoryItemsByIndexDescending() {
+        Collections.sort(xCategoryItems, Comparator.comparing(ChartItem::getIndex).reversed());
         redraw();
     }
 
-    private void sort() {
-        sortCategoryX(getSortTopicX(), getSortOrderX());
-        sortCategoryY(getSortTopicY(), getSortOrderY());
+    public void sortXCategoryItemsByValueAscending() {
+        final Map<ChartItem, Double> sortedByValue = sumsOfXCategoryItems.entrySet()
+                                                                         .stream()
+                                                                         .sorted(Map.Entry.comparingByValue())
+                                                                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) ->e1, LinkedHashMap::new));
+        xCategoryItems.clear();
+        xCategoryItems.addAll(sortedByValue.keySet());
+        redraw();
+    }
+    public void sortXCategoryItemsByValueDescending() {
+        final Map<ChartItem, Double> sortedByValue = sumsOfXCategoryItems.entrySet()
+                                                                         .stream()
+                                                                         .sorted(Map.Entry.<ChartItem,Double>comparingByValue().reversed())
+                                                                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) ->e1, LinkedHashMap::new));
+        xCategoryItems.clear();
+        xCategoryItems.addAll(sortedByValue.keySet());
+        redraw();
+    }
+
+    public void sortYCategoryItemsByIndexAscending() {
+        Collections.sort(yCategoryItems, Comparator.comparing(ChartItem::getIndex));
+        redraw();
+    }
+    public void sortYCategoryItemsByIndexDescending() {
+        Collections.sort(yCategoryItems, Comparator.comparing(ChartItem::getIndex).reversed());
+        redraw();
+    }
+
+    public void sortYCategoryItemsByValueAscending() {
+        final Map<ChartItem, Double> sortedByValue = sumsOfYCategoryItems.entrySet()
+                                                                         .stream()
+                                                                         .sorted(Map.Entry.comparingByValue())
+                                                                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) ->e1, LinkedHashMap::new));
+        yCategoryItems.clear();
+        yCategoryItems.addAll(sortedByValue.keySet());
+        redraw();
+    }
+    public void sortYCategoryItemsByValueDescending() {
+        final Map<ChartItem, Double> sortedByValue = sumsOfYCategoryItems.entrySet()
+                                                                         .stream()
+                                                                         .sorted(Map.Entry.<ChartItem,Double>comparingByValue().reversed())
+                                                                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) ->e1, LinkedHashMap::new));
+        yCategoryItems.clear();
+        yCategoryItems.addAll(sortedByValue.keySet());
+        redraw();
     }
 
     private static <T> Predicate<T> distinctByName(Function<? super T, ?> nameExtractor) {
@@ -611,9 +524,8 @@ public class BubbleGridChart extends Region {
         double dataFontSize      = height * 0.021;
         double valueFontSize     = height * 0.019;
         double maxBubbleDiameter = (stepX < stepY ? stepX : stepY) * 0.95;
-        double maxBubbleRadius   = maxBubbleDiameter * 0.5;
-        double maxBubbleArea     = Math.PI * maxBubbleRadius * maxBubbleRadius;
-        double factor            = maxBubbleArea / maxValue;
+        double linearFactor      = maxBubbleDiameter / maxValue;
+        double sqrtFactor        = maxBubbleDiameter / Math.sqrt(maxBubbleDiameter);
         Font   chartFont         = Fonts.latoLight(fontsize);
         Font   dataFont          = Fonts.latoRegular(dataFontSize);
         Font   valueFont         = Fonts.latoLight(valueFontSize);
@@ -693,32 +605,22 @@ public class BubbleGridChart extends Region {
                                                           .findFirst();
                 if (item.isPresent()) {
                     final BubbleGridChartItem bgci           = item.get();
-                    final double              bubbleArea     = bgci.getValue() * factor;
-                    final double              radius         = Math.sqrt(bubbleArea / Math.PI);
-                    final double              diameter       = radius * 2.0;
+                    final double              bubbleDiameter = Math.sqrt(bgci.getValue() * linearFactor) * sqrtFactor;
+                    final double              bubbleRadius   = bubbleDiameter * 0.5;
                     Color                     fill           = useXCategoryFill ? xItem.getFill() : yItem.getFill();
                     if (getUseGradientFill()) {
                         fill = Helper.getColorAt(gradient, bgci.getValue() / (maxValue - minValue));
                     }
 
-                    bubbles.add(new Bubble(cellCenterX, cellCenterY, radius, bgci));
+                    bubbles.add(new Bubble(cellCenterX, cellCenterY, bubbleRadius, bgci));
                     ctx.setFill(fill);
-                    ctx.fillOval(cellCenterX - radius, cellCenterY - radius, diameter, diameter);
+                    ctx.fillOval(cellCenterX - bubbleRadius, cellCenterY - bubbleRadius, bubbleDiameter, bubbleDiameter);
 
-                    if (diameter > dataFontSize * 1.5 && dataFontSize > 7 && getShowValues()) {
+                    if (bubbleDiameter > fontsize && dataFontSize > 7 && getShowValues()) {
                         ctx.setFont(dataFont);
                         ctx.setTextAlign(TextAlignment.CENTER);
-                        if (isAutoBubbleTextColor()) {
-                            ctx.setFill(Helper.isDark(fill) ? Color.WHITE : Color.BLACK);
-                        } else {
-                            ctx.setFill(getTextColor());
-                        }
-                        String     bubbleText = String.format(Locale.US, "%.0f", bgci.getValue());
-                        FontMetrix metrix     = new FontMetrix(dataFont);
-                        metrix.computeStringWidth(bubbleText);
-                        if (metrix.computeStringWidth(bubbleText) < (radius * 2)) {
-                            ctx.fillText(bubbleText, cellCenterX, cellCenterY, maxBubbleDiameter);
-                        }
+                        ctx.setFill(Helper.isDark(fill) ? Color.WHITE : Color.BLACK);
+                        ctx.fillText(String.format(Locale.US, "%.0f", bgci.getValue()), cellCenterX, cellCenterY, maxBubbleDiameter);
                     }
                 }
             }
@@ -751,47 +653,5 @@ public class BubbleGridChart extends Region {
      */
     public void redraw() {
         drawChart();
-    }
-
-
-    // ******************** Internal Classes **********************************
-    private static final class Bubble {
-        private final double x;
-        private final double              y;
-        private final double              r;
-        private final BubbleGridChartItem item;
-
-
-        private Bubble(double x, double y, double r, BubbleGridChartItem item) {
-            this.x = x;
-            this.y = y;
-            this.r = r;
-            this.item = item;
-        }
-
-
-        public double x() { return x; }
-
-        public double y() { return y; }
-
-        public double r() { return r; }
-
-        public BubbleGridChartItem item() { return item; }
-
-        @Override public boolean equals(Object obj) {
-            if (obj == this) return true;
-            if (obj == null || obj.getClass() != this.getClass()) return false;
-            var that = (Bubble) obj;
-            return Double.doubleToLongBits(this.x) == Double.doubleToLongBits(that.x) && Double.doubleToLongBits(this.y) == Double.doubleToLongBits(that.y) &&
-                   Double.doubleToLongBits(this.r) == Double.doubleToLongBits(that.r) && Objects.equals(this.item, that.item);
-        }
-
-        @Override public int hashCode() {
-            return Objects.hash(x, y, r, item);
-        }
-
-        @Override public String toString() {
-            return "Bubble[" + "x=" + x + ", " + "y=" + y + ", " + "r=" + r + ", " + "item=" + item + ']';
-        }
     }
 }

@@ -89,6 +89,9 @@ public class ChartTest extends Application {
     private YPane<ValueChartItem>   donutChart;
 
     private XYZSeries<XYZChartItem> xyzSeries;
+    private XYZPane<XYZChartItem>   bubbleChart;
+
+    private Thread                   modificationThread;
 
     private long                     lastTimerCall;
     private AnimationTimer           timer;
@@ -98,20 +101,20 @@ public class ChartTest extends Application {
         List<XYChartItem>  xyItems1 = new ArrayList<>(20);
         List<XYChartItem>  xyItems2 = new ArrayList<>(20);
         List<XYChartItem>  xyItems3 = new ArrayList<>(20);
-        List<XYChartItem>  xyItems4 = new ArrayList<>(40);
+        List<XYChartItem>    xyItems4 = new ArrayList<>(40);
         List<ValueChartItem> yItem    = new ArrayList<>(20);
-        List<XYZChartItem> xyzItem = new ArrayList<>(20);
+        List<XYZChartItem>   xyzItem  = new ArrayList<>(20);
         for (int i = 0 ; i < NO_OF_X_VALUES ; i++) {
-            xyItems1.add(new XYChartItem(i, RND.nextDouble() * 15, "P" + i, COLORS[RND.nextInt(3)], "P" + i));
-            xyItems2.add(new XYChartItem(i, RND.nextDouble() * 15, "P" + i, COLORS[RND.nextInt(3)], "P" + i));
-            xyItems3.add(new XYChartItem(i, RND.nextDouble() * 15, "P" + i, COLORS[RND.nextInt(3)], "P" + i));
+            xyItems1.add(new XYChartItem(i, RND.nextDouble() * 15, "P" + i, COLORS[RND.nextInt(3)]));
+            xyItems2.add(new XYChartItem(i, RND.nextDouble() * 15, "P" + i, COLORS[RND.nextInt(3)]));
+            xyItems3.add(new XYChartItem(i, RND.nextDouble() * 15, "P" + i, COLORS[RND.nextInt(3)]));
         }
         for (int i = 0 ; i < 20 ; i++) {
             yItem.add(new ValueChartItem(RND.nextDouble() * 10, "P" + i, COLORS[RND.nextInt(3)]));
             xyzItem.add(new XYZChartItem(RND.nextDouble() * 10, RND.nextDouble() * 10, RND.nextDouble() * 25, "P" + i, COLORS[RND.nextInt(3)]));
         }
         for (int i = -20 ; i < 20 ; i++) {
-            xyItems4.add(new XYChartItem(i, RND.nextDouble() * 40 - 20, "P" + i, COLORS[RND.nextInt(3)], "P" + i));
+            xyItems4.add(new XYChartItem(i, RND.nextDouble() * 40 - 20, "P" + i, COLORS[RND.nextInt(3)]));
         }
 
         xySeries1 = XYSeriesBuilder.create()
@@ -158,6 +161,7 @@ public class ChartTest extends Application {
         donutChart = new YPane(ySeries);
 
         xyzSeries   = new XYZSeries(xyzItem, ChartType.BUBBLE);
+        bubbleChart = new XYZPane(xyzSeries);
 
         // LineChart
         Converter tempConverter     = new Converter(TEMPERATURE, CELSIUS); // Type Temperature with BaseUnit Celsius
@@ -213,6 +217,19 @@ public class ChartTest extends Application {
 
         scatterChartXAxisCenter.setAxisColor(Color.CRIMSON);
         scatterChartYAxisCenter.setAxisColor(Color.CRIMSON);
+
+        modificationThread = new Thread(() -> {
+            while(true) {
+                ObservableList<XYChartItem> xyItems = xySeries3.getItems();
+                xyItems.forEach(item -> item.setY(RND.nextDouble() * 15));
+                xySeries3.refresh();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         lastTimerCall = System.nanoTime();
         timer = new AnimationTimer() {
