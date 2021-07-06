@@ -1,5 +1,6 @@
-# Charts 
-<br>
+[ ![Download](https://api.bintray.com/packages/hansolo/charts/charts/images/download.svg?version=11.3) ](https://bintray.com/hansolo/charts/charts/11.3/link)
+
+# Charts
 
 A library for scientific charts in JavaFX. 
 
@@ -124,16 +125,4 @@ The charts library can be found over at [maven central](https://search.maven.org
 
 
 ## BubbleGridChart
-![BubbleGridChart](https://i.ibb.co/vJtKSXR/Bubble-Grid-Chart.png)
-
-
-## SectorChart
-![SectorChart](https://i.ibb.co/syvjchc/Sector-Chart-2021-07-11-07-56-59.png)
-
-
-## Voronoi/Delauny chart
-![VoronoiChart](https://i.ibb.co/HrCbzYN/voronoi.png)
-
-
-## Multi Time Series chart
-![MultiTimeSeries](https://i.ibb.co/KLvcLfb/Multi-Time-Series-Charts.png)
+![BubbleGridChart](https://i.ibb.co/9nNqTXP/Bubble-Grid-Chart.png)
