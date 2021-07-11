@@ -22,7 +22,6 @@ import eu.hansolo.fx.charts.data.ChartItem;
 import eu.hansolo.fx.charts.data.ChartItemBuilder;
 import eu.hansolo.fx.charts.series.ChartItemSeries;
 import eu.hansolo.fx.charts.series.ChartItemSeriesBuilder;
-import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -30,15 +29,10 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.List;
-import java.util.Random;
 
 
 public class SectorChartTest extends Application {
-    private static final Random RND = new Random();
-    private SectorChart    chart;
-    private long           lastTimerCall;
-    private AnimationTimer timer;
-
+    private SectorChart chart;
 
     @Override public void init() {
         ChartItem porsche911      = ChartItemBuilder.create().name("911").value(120).fill(Color.rgb(50, 184, 241)).build();
@@ -54,7 +48,7 @@ public class SectorChartTest extends Application {
         ChartItem lamboSian       = ChartItemBuilder.create().name("Sian").value(10).fill(Color.rgb(250, 154, 0)).build();
         ChartItemSeries<ChartItem> lamborghini = ChartItemSeriesBuilder.create().name("Lamborghini").fill(Color.rgb(253, 223, 177)).items(lamboAventador, lamboHuracan, lamboUrus, lamboSian).build();
 
-        ChartItem ferrari812       = ChartItemBuilder.create().name("812").description("Ferrari 812").value(13).fill(Color.rgb(220, 59, 21)).build();
+        ChartItem ferrari812       = ChartItemBuilder.create().name("812").value(13).fill(Color.rgb(220, 59, 21)).build();
         ChartItem ferrari296       = ChartItemBuilder.create().name("296").value(21).fill(Color.rgb(220, 59, 21)).build();
         ChartItem ferrariSf90      = ChartItemBuilder.create().name("SF 90").value(32).fill(Color.rgb(220, 59, 21)).build();
         ChartItem ferrariF8        = ChartItemBuilder.create().name("F8").value(11).fill(Color.rgb(220, 59, 21)).build();
@@ -68,25 +62,12 @@ public class SectorChartTest extends Application {
                                   .prefSize(600, 600)
                                   .itemTextVisible(true)
                                   .seriesTextVisible(true)
-                                  .seriesSumTextVisible(false)
                                   .gridColor(Color.WHITE)
                                   .threshold(20)
                                   .thresholdColor(Color.LIME)
                                   .thresholdVisible(true)
                                   .allSeries(allSeries)
                                   .build();
-
-        lastTimerCall = System.nanoTime();
-        timer         = new AnimationTimer() {
-            @Override public void handle(final long now) {
-                if (now > lastTimerCall + 2_000_000_000l) {
-                    porsche911.setValue(RND.nextDouble() * 120);
-                    lamboHuracan.setValue(RND.nextDouble() * 40);
-                    ferrariF8.setValue(RND.nextDouble() * 40);
-                    lastTimerCall = now;
-                }
-            }
-        };
 
         registerListener();
     }
@@ -102,8 +83,6 @@ public class SectorChartTest extends Application {
         stage.setTitle("SectorChart");
         stage.setScene(scene);
         stage.show();
-
-        timer.start();
     }
 
     @Override public void stop() {

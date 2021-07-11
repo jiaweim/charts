@@ -31,11 +31,6 @@ import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.effect.Blend;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.ColorInput;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -50,9 +45,6 @@ import javafx.scene.text.TextAlignment;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -307,9 +299,7 @@ public class Helper {
             CatmullRom<Point> crs = new CatmullRom<>(p0, p1, p2, p3);
 
             for (int j = 0 ; j <= SUB_DIVISIONS ; j++) {
-                Point subPoint = crs.q(j * increments);
-                subPoint.setEmpty(p1.isEmpty() || p2.isEmpty());
-                subdividedPoints[(i * SUB_DIVISIONS) + j] = subPoint;
+                subdividedPoints[(i * SUB_DIVISIONS) + j] = crs.q(j * increments);
             }
         }
 
@@ -479,8 +469,7 @@ public class Helper {
     }
 
     public static final List<Color> createColorVariations(final Color COLOR, final int NO_OF_COLORS) {
-        if (NO_OF_COLORS > 25) { throw new IllegalArgumentException("Not more than 25 number of colors are allowed"); }
-        int    noOfColors  = clamp(1, 25, NO_OF_COLORS);
+        int    noOfColors  = clamp(1, 5, NO_OF_COLORS);
         double step        = 0.8 / noOfColors;
         double hue         = COLOR.getHue();
         double brg         = COLOR.getBrightness();
@@ -784,84 +773,6 @@ public class Helper {
         return p;
     }
 
-    public static Color hsbToRGB(final double hue, final double saturation, final double brightness) {
-        int r = 0, g = 0, b = 0;
-        if (saturation == 0) {
-            r = g = b = (int) (brightness * 255.0f + 0.5f);
-        } else {
-            double h = (hue - Math.floor(hue)) * 6.0;
-            double f = h - Math.floor(h);
-            double p = brightness * (1.0 - saturation);
-            double q = brightness * (1.0 - saturation * f);
-            double t = brightness * (1.0 - (saturation * (1.0 - f)));
-            switch ((int) h) {
-                case 0:
-                    r = (int) (brightness * 255.0 + 0.5);
-                    g = (int) (t * 255.0 + 0.5);
-                    b = (int) (p * 255.0 + 0.5);
-                    break;
-                case 1:
-                    r = (int) (q * 255.0 + 0.5);
-                    g = (int) (brightness * 255.0 + 0.5);
-                    b = (int) (p * 255.0 + 0.5);
-                    break;
-                case 2:
-                    r = (int) (p * 255.0 + 0.5);
-                    g = (int) (brightness * 255.0 + 0.5);
-                    b = (int) (t * 255.0 + 0.5);
-                    break;
-                case 3:
-                    r = (int) (p * 255.0 + 0.5);
-                    g = (int) (q * 255.0 + 0.5);
-                    b = (int) (brightness * 255.0 + 0.5);
-                    break;
-                case 4:
-                    r = (int) (t * 255.0 + 0.5);
-                    g = (int) (p * 255.0 + 0.5);
-                    b = (int) (brightness * 255.0 + 0.5);
-                    break;
-                case 5:
-                    r = (int) (brightness * 255.0 + 0.5);
-                    g = (int) (p * 255.0 + 0.5);
-                    b = (int) (q * 255.0 + 0.5);
-                    break;
-            }
-        }
-        return Color.rgb(r, g, b);
-    }
-
-    public static double[] ColorToHSB(final Color color) {
-        int      r         = (int) (color.getRed() * 255.0);
-        int      g         = (int) (color.getGreen() * 255.0);
-        int      b         = (int) (color.getBlue() * 255.0);
-        double[] hsbValues = new double[3];
-        double   hue;
-        double   saturation;
-        double   brightness;
-
-        int cmax = (r > g) ? r : g;
-        if (b > cmax) { cmax = b; }
-        int cmin = (r < g) ? r : g;
-        if (b < cmin) { cmin = b; }
-
-        brightness = ((double) cmax) / 255.0;
-        if (cmax != 0) { saturation = ((float) (cmax - cmin)) / ((double) cmax); } else { saturation = 0; }
-        if (saturation == 0) {
-            hue = 0;
-        } else {
-            double redc   = ((double) (cmax - r)) / ((double) (cmax - cmin));
-            double greenc = ((double) (cmax - g)) / ((double) (cmax - cmin));
-            double bluec  = ((double) (cmax - b)) / ((double) (cmax - cmin));
-            if (r == cmax) { hue = bluec - greenc; } else if (g == cmax) { hue = 2.0 + redc - bluec; } else { hue = 4.0 + greenc - redc; }
-            hue = hue / 6.0;
-            if (hue < 0) { hue = hue + 1.0; }
-        }
-        hsbValues[0] = hue;
-        hsbValues[1] = saturation;
-        hsbValues[2] = brightness;
-        return hsbValues;
-    }
-
     public static final String colorToRGB(final Color COLOR) {
         String hex      = COLOR.toString().replace("0x", "");
         String hexRed   = hex.substring(0, 2).toUpperCase();
@@ -1154,94 +1065,54 @@ public class Helper {
     }
 
     public static final Axis createLeftAxis(final double MIN, final double MAX, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, "", true, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.LEFT);
-    }
-    public static final Axis createLeftAxis(final double MIN, final double MAX, final String TITLE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, TITLE, true, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.LEFT);
+        return createAxis(MIN, MAX, true, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.LEFT);
     }
     public static final Axis createLeftAxis(final double MIN, final double MAX, final boolean AUTO_SCALE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, "", AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.LEFT);
-    }
-    public static final Axis createLeftAxis(final double MIN, final double MAX, final String TITLE, final boolean AUTO_SCALE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, TITLE, AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.LEFT);
+        return createAxis(MIN, MAX, AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.LEFT);
     }
 
     public static final Axis createCenterYAxis(final double MIN, final double MAX, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, "", true, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.CENTER);
-    }
-    public static final Axis createCenterYAxis(final double MIN, final double MAX, final String TITLE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, TITLE, true, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.CENTER);
+        return createAxis(MIN, MAX, true, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.CENTER);
     }
     public static final Axis createCenterYAxis(final double MIN, final double MAX, final boolean AUTO_SCALE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, "", AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.CENTER);
-    }
-    public static final Axis createCenterYAxis(final double MIN, final double MAX, final String TITLE, final boolean AUTO_SCALE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, TITLE, AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.CENTER);
+        return createAxis(MIN, MAX, AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.CENTER);
     }
 
     public static final Axis createRightAxis(final double MIN, final double MAX, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, "", true, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.RIGHT);
-    }
-    public static final Axis createRightAxis(final double MIN, final double MAX, final String TITLE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, TITLE,true, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.RIGHT);
+        return createAxis(MIN, MAX, true, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.RIGHT);
     }
     public static final Axis createRightAxis(final double MIN, final double MAX, final boolean AUTO_SCALE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, "", AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.RIGHT);
-    }
-    public static final Axis createRightAxis(final double MIN, final double MAX, final String TITLE, final boolean AUTO_SCALE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, TITLE, AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.RIGHT);
+        return createAxis(MIN, MAX, AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.VERTICAL, Position.RIGHT);
     }
 
     public static final Axis createTopAxis(final double MIN, final double MAX, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, "", true, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.TOP);
-    }
-    public static final Axis createTopAxis(final double MIN, final double MAX, final String TITLE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, TITLE,true, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.TOP);
+        return createAxis(MIN, MAX, true, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.TOP);
     }
     public static final Axis createTopAxis(final double MIN, final double MAX, final boolean AUTO_SCALE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, "", AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.TOP);
-    }
-    public static final Axis createTopAxis(final double MIN, final double MAX, final String TITLE, final boolean AUTO_SCALE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, TITLE, AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.TOP);
+        return createAxis(MIN, MAX, AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.TOP);
     }
 
     public static final Axis createCenterXAxis(final double MIN, final double MAX, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, "", true, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.CENTER);
-    }
-    public static final Axis createCenterXAxis(final double MIN, final double MAX, final String TITLE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, TITLE,true, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.CENTER);
+        return createAxis(MIN, MAX, true, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.CENTER);
     }
     public static final Axis createCenterXAxis(final double MIN, final double MAX, final boolean AUTO_SCALE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, "", AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.CENTER);
-    }
-    public static final Axis createCenterXAxis(final double MIN, final double MAX, final String TITLE, final boolean AUTO_SCALE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, TITLE, AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.CENTER);
+        return createAxis(MIN, MAX, AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.CENTER);
     }
 
     public static final Axis createBottomAxis(final double MIN, final double MAX, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, "", true, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.BOTTOM);
-    }
-    public static final Axis createBottomAxis(final double MIN, final double MAX, final String TITLE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, TITLE, true, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.BOTTOM);
+        return createAxis(MIN, MAX, true, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.BOTTOM);
     }
     public static final Axis createBottomAxis(final double MIN, final double MAX, final boolean AUTO_SCALE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, "", AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.BOTTOM);
-    }
-    public static final Axis createBottomAxis(final double MIN, final double MAX, final String TITLE, final boolean AUTO_SCALE, final double AXIS_WIDTH) {
-        return createAxis(MIN, MAX, TITLE, AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.BOTTOM);
+        return createAxis(MIN, MAX, AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, Orientation.HORIZONTAL, Position.BOTTOM);
     }
 
     public static final Axis createAxis(final double MIN, final double MAX, final boolean AUTO_SCALE, final double AXIS_WIDTH, final Orientation ORIENTATION, final Position POSITION) {
-        return createAxis(MIN, MAX, "", AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, ORIENTATION, POSITION);
+        return createAxis(MIN, MAX, AUTO_SCALE, AXIS_WIDTH, AXIS_WIDTH, ORIENTATION, POSITION);
     }
     public static final Axis createAxis(final double MIN, final double MAX, final boolean AUTO_SCALE, final double AXIS_WIDTH, final double ANCHOR, final Orientation ORIENTATION, final Position POSITION) {
-        return createAxis(MIN, MAX, "", AUTO_SCALE, AXIS_WIDTH, ANCHOR, ORIENTATION, POSITION);
-    }
-    public static final Axis createAxis(final double MIN, final double MAX, final String TITLE, final boolean AUTO_SCALE, final double AXIS_WIDTH, final double ANCHOR, final Orientation ORIENTATION, final Position POSITION) {
         Axis axis = AxisBuilder.create(ORIENTATION, POSITION)
                                .minValue(MIN)
                                .maxValue(MAX)
-                               .title(TITLE)
                                .autoScale(AUTO_SCALE)
                                .build();
 
@@ -1276,37 +1147,5 @@ public class Helper {
                 break;
         }
         return axis;
-    }
-
-
-    public static final ColorInput createColorMask(final Image sourceImage, final Color color) { return new ColorInput(0, 0, sourceImage.getWidth(), sourceImage.getHeight(), color); }
-    public static final Blend createColorBlend(final Image sourceImage, final Color color) {
-        final ColorInput mask  = createColorMask(sourceImage, color);
-        final Blend      blend = new Blend(BlendMode.MULTIPLY);
-        blend.setTopInput(mask);
-        return blend;
-    }
-    public static final WritableImage getRedChannel(final Image sourceImage) { return getColorChannel(sourceImage, Color.RED);  }
-    public static final WritableImage getGreenChannel(final Image sourceImage) { return getColorChannel(sourceImage, Color.LIME); }
-    public static final WritableImage getBlueChannel(final Image sourceImage) { return getColorChannel(sourceImage, Color.BLUE); }
-    private static final WritableImage getColorChannel(final Image sourceImage, final Color color) {
-        final Node  imageView = new ImageView(sourceImage);
-        final Blend blend     = createColorBlend(sourceImage, color);
-        imageView.setEffect(blend);
-
-        final SnapshotParameters params = new SnapshotParameters();
-        final WritableImage      result = imageView.snapshot(params, null);
-        return result;
-    }
-
-
-    public static final String readTextFile(final String filename) {
-        if (null == filename || !new File(filename).exists()) { throw new IllegalArgumentException("File: " + filename + " not found or null"); }
-        try {
-            Path   fileName = Path.of(filename);
-            return Files.readString(fileName);
-        } catch (IOException e) {
-            return "";
-        }
     }
 }
