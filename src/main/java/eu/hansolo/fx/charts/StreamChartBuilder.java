@@ -17,7 +17,6 @@
 package eu.hansolo.fx.charts;
 
 import eu.hansolo.fx.charts.StreamChart.Category;
-import eu.hansolo.fx.charts.StreamChart.Type;
 import eu.hansolo.fx.charts.data.ChartItem;
 import eu.hansolo.fx.charts.tools.SortDirection;
 import javafx.beans.property.BooleanProperty;
@@ -33,6 +32,7 @@ import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -56,11 +56,6 @@ public class StreamChartBuilder<B extends StreamChartBuilder<B>> {
         return (B)this;
     }
 
-    public final B type(final Type TYPE) {
-        properties.put("type", new SimpleObjectProperty<>(TYPE));
-        return (B)this;
-    }
-
     public final B items(final ChartItem... ITEMS) {
         properties.put("itemsArray", new SimpleObjectProperty<>(ITEMS));
         return (B)this;
@@ -73,11 +68,6 @@ public class StreamChartBuilder<B extends StreamChartBuilder<B>> {
 
     public final B textColor(final Color COLOR) {
         properties.put("textColor", new SimpleObjectProperty(COLOR));
-        return (B)this;
-    }
-
-    public final B autoTextColor(final boolean AUTO) {
-        properties.put("autoTextColor", new SimpleBooleanProperty(AUTO));
         return (B)this;
     }
 
@@ -126,23 +116,8 @@ public class StreamChartBuilder<B extends StreamChartBuilder<B>> {
         return (B)this;
     }
 
-    public final B selectionColor(final Color COLOR) {
-        properties.put("selectionColor", new SimpleObjectProperty<>(COLOR));
-        return (B)this;
-    }
-
     public final B sortDirection(final SortDirection DIRECTION) {
         properties.put("sortDirection", new SimpleObjectProperty<>(DIRECTION));
-        return (B)this;
-    }
-
-    public final B sortByName(final boolean BY_NAME) {
-        properties.put("sortByName", new SimpleBooleanProperty(BY_NAME));
-        return (B)this;
-    }
-
-    public final B categorySumVisible(final boolean VISIBLE) {
-        properties.put("categorySumVisible", new SimpleBooleanProperty(VISIBLE));
         return (B)this;
     }
 
@@ -265,14 +240,8 @@ public class StreamChartBuilder<B extends StreamChartBuilder<B>> {
                 CONTROL.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
             } else if ("category".equals(key)) {
                 CONTROL.setCategory(((ObjectProperty<Category>) properties.get(key)).get());
-            } else if ("type".equals(key)) {
-                CONTROL.setType(((ObjectProperty<Type>) properties.get(key)).get());
             } else if ("textColor".equals(key)) {
                 CONTROL.setTextColor(((ObjectProperty<Color>) properties.get(key)).get());
-            } else if("autoTextColor".equals(key)) {
-                CONTROL.setAutoTextColor(((BooleanProperty) properties.get(key)).get());
-            } else if ("selectionColor".equals(key)) {
-                CONTROL.setSelectionColor(((ObjectProperty<Color>) properties.get(key)).get());
             } else if ("decimals".equals(key)) {
                 CONTROL.setDecimals(((IntegerProperty) properties.get(key)).get());
             } else if ("itemWidth".equals(key)) {
@@ -293,10 +262,6 @@ public class StreamChartBuilder<B extends StreamChartBuilder<B>> {
                 CONTROL.setCategoryTextColor(((ObjectProperty<Color>) properties.get(key)).get());
             } else if ("sortDirection".equals(key)) {
                 CONTROL.setSortDirection(((ObjectProperty<SortDirection>) properties.get(key)).get());
-            } else if ("sortByName".equals(key)) {
-                CONTROL.setSortByName(((BooleanProperty) properties.get(key)).get());
-            } else if ("categorySumVisible".equals(key)) {
-                CONTROL.setCategorySumVisible(((BooleanProperty) properties.get(key)).get());
             }
         }
         return CONTROL;

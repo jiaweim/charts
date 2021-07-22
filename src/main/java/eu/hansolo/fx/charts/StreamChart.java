@@ -17,8 +17,6 @@
 package eu.hansolo.fx.charts;
 
 import eu.hansolo.fx.charts.data.ChartItem;
-import eu.hansolo.fx.charts.event.EventType;
-import eu.hansolo.fx.charts.event.ItemEvent;
 import eu.hansolo.fx.charts.event.ItemEventListener;
 import eu.hansolo.fx.charts.font.Fonts;
 import eu.hansolo.fx.charts.tools.CtxBounds;
@@ -26,7 +24,6 @@ import eu.hansolo.fx.charts.tools.FontMetrix;
 import eu.hansolo.fx.charts.tools.Helper;
 import eu.hansolo.fx.charts.tools.Point;
 import eu.hansolo.fx.charts.tools.SortDirection;
-import eu.hansolo.fx.charts.tools.TooltipPopup;
 import eu.hansolo.fx.geometry.Path;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.BooleanProperty;
@@ -40,11 +37,11 @@ import javafx.beans.property.ObjectPropertyBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -59,9 +56,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -96,22 +91,16 @@ public class StreamChart extends Region {
 
         public DateTimeFormatter formatter() { return formatter; }
     }
-    public enum Type {
-        STACKED, CENTERED
-    }
-    private static final double                            PREFERRED_WIDTH         = 600;
-    private static final double                            PREFERRED_HEIGHT        = 400;
-    private static final double                            MINIMUM_WIDTH           = 50;
-    private static final double                            MINIMUM_HEIGHT          = 50;
-    private static final double                            MAXIMUM_WIDTH           = 2048;
-    private static final double                            MAXIMUM_HEIGHT          = 2048;
-    private static final Color                             DEFAULT_ITEM_COLOR      = Color.rgb(164, 164, 164);
-    private static final Color                             DEFAULT_SELECTION_COLOR = Color.rgb(128, 0, 0, 0.25);
-    private static final Color                             UNSELECTED_COLOR        = Color.rgb(128, 128, 128, 0.2);
-    private static final int                               DEFAULT_ITEM_WIDTH      = 80;
-    private static final int                               DEFAULT_NODE_GAP        = 20;
-    private static final double                            DEFAULT_OPACITY         = 0.55;
-    private static final int                               MAX_ITEM_WIDTH          = 100;
+    private static final double                            PREFERRED_WIDTH    = 600;
+    private static final double                            PREFERRED_HEIGHT   = 400;
+    private static final double                            MINIMUM_WIDTH      = 50;
+    private static final double                            MINIMUM_HEIGHT     = 50;
+    private static final double                            MAXIMUM_WIDTH      = 2048;
+    private static final double                            MAXIMUM_HEIGHT     = 2048;
+    private static final Color                             DEFAULT_ITEM_COLOR = Color.rgb(164, 164, 164);
+    private static final int                               DEFAULT_ITEM_WIDTH = 80;
+    private static final int                               DEFAULT_NODE_GAP   = 20;
+    private static final double                            DEFAULT_OPACITY    = 0.55;
     private              double                            size;
     private              double                            width;
     private              double                            height;
@@ -120,23 +109,16 @@ public class StreamChart extends Region {
     private              GraphicsContext                   ctx;
     private              Category                          _category;
     private              ObjectProperty<Category>          category;
-    private              Type                              _type;
-    private              ObjectProperty<Type>              type;
     private              ObservableList<ChartItem>         items;
     private              Map<LocalDate, List<ChartItem>>   chartItems;
     private              Map<Integer, List<ChartItemData>> itemsPerCategory;
-    private              Map<Integer, Double>              sumsPerCategory;
     private              ItemEventListener                 itemListener;
     private              ListChangeListener<ChartItem>     itemListListener;
     private              double                            scaleY;
     private              Color                             _textColor;
     private              ObjectProperty<Color>             textColor;
-    private              boolean                           _autoTextColor;
-    private              BooleanProperty                   autoTextColor;
     private              Color                             _categoryTextColor;
     private              ObjectProperty<Color>             categoryTextColor;
-    private              Color                             _selectionColor;
-    private              ObjectProperty<Color>             selectionColor;
     private              int                               _itemWidth;
     private              IntegerProperty                   itemWidth;
     private              boolean                           _autoItemWidth;
@@ -155,39 +137,29 @@ public class StreamChart extends Region {
     private              BooleanProperty                   itemTextVisible;
     private              SortDirection                     _sortDirection;
     private              ObjectProperty<SortDirection>     sortDirection;
-    private              boolean                           _sortByName;
-    private              BooleanProperty                   sortByName;
-    private              boolean                           _categorySumVisible;
-    private              BooleanProperty                   categorySumVisible;
     private              String                            formatString;
     private              Font                              itemFont;
     private              Font                              categoryFont;
     private              FontMetrix                        itemFontMetrix;
-    private              List<Path>                        selectedPaths;
-    private              Map<Path, ChartItem>              bezierPaths;
-    private              TooltipPopup                      popup;
+    private              FontMetrix                        categoryFontMetrix;
+    private              Map<Path, String>                 rectPaths;
+    private              Map<Path, String>                 bezierPaths;
+    private              Tooltip                           tooltip;
 
 
     // ******************** Constructors **************************************
     public StreamChart() {
-        this(Category.DAY, Type.STACKED, new ArrayList<>());
+        this(Category.DAY, new ArrayList<>());
     }
     public StreamChart(final Category CATEGORY, final ChartItem... ITEMS) {
-        this(CATEGORY, Type.STACKED, Arrays.asList(ITEMS));
-    }
-    public StreamChart(final Type TYPE, final ChartItem... ITEMS) {
-        this(Category.DAY, TYPE, Arrays.asList(ITEMS));
+        this(CATEGORY, Arrays.asList(ITEMS));
     }
     public StreamChart(final Category CATEGORY, final List<ChartItem> ITEMS) {
-        this(CATEGORY, Type.STACKED, ITEMS);
-    }
-    public StreamChart(final Category CATEGORY, final Type TYPE, final List<ChartItem> ITEMS) {
-        items               = FXCollections.observableArrayList();
-        chartItems          = new LinkedHashMap<>();
-        itemsPerCategory    = new LinkedHashMap<>();
-        sumsPerCategory     = new LinkedHashMap<>();
-        itemListener        = e -> redraw();
-        itemListListener    = c -> {
+        items              = FXCollections.observableArrayList();
+        chartItems         = new LinkedHashMap<>();
+        itemsPerCategory   = new LinkedHashMap<>();
+        itemListener       = e -> redraw();
+        itemListListener   = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
                     c.getAddedSubList().forEach(addedItem -> addedItem.setOnItemEvent(itemListener));
@@ -197,30 +169,25 @@ public class StreamChart extends Region {
             }
             groupBy(getCategory());
         };
-        _category           = CATEGORY;
-        _type               = TYPE;
-        _textColor          = Color.BLACK;
-        _autoTextColor      = false;
-        _categoryTextColor  = Color.BLACK;
-        _selectionColor     = DEFAULT_SELECTION_COLOR;
-        _itemWidth          = DEFAULT_ITEM_WIDTH;
-        _autoItemWidth      = true;
-        _itemGap            = DEFAULT_NODE_GAP;
-        _autoItemGap        = true;
-        _decimals           = 0;
-        _locale             = Locale.getDefault();
-        _itemTextThreshold  = 1;
-        _itemTextVisible    = true;
-        _sortDirection      = SortDirection.ASCENDING;
-        _sortByName         = false;
-        _categorySumVisible = false;
-        itemFont            = Fonts.latoRegular(10);
-        categoryFont        = Fonts.latoRegular(10);
-        itemFontMetrix      = new FontMetrix(itemFont);
-        formatString        = "%." + _decimals + "f";
-        selectedPaths       = new LinkedList<>();
-        bezierPaths         = new LinkedHashMap<>();
-        popup               = new TooltipPopup(2000);
+        _category          = CATEGORY;
+        _textColor         = Color.BLACK;
+        _categoryTextColor = Color.BLACK;
+        _itemWidth         = DEFAULT_ITEM_WIDTH;
+        _autoItemWidth     = true;
+        _itemGap           = DEFAULT_NODE_GAP;
+        _autoItemGap       = true;
+        _decimals          = 0;
+        _locale            = Locale.getDefault();
+        _itemTextThreshold = 1;
+        _itemTextVisible   = true;
+        _sortDirection     = SortDirection.ASCENDING;
+        itemFont           = Fonts.latoRegular(10);
+        categoryFont       = Fonts.latoRegular(10);
+        itemFontMetrix     = new FontMetrix(itemFont);
+        categoryFontMetrix = new FontMetrix(categoryFont);
+        formatString       = "%." + _decimals + "f";
+        rectPaths          = new LinkedHashMap<>();
+        bezierPaths        = new LinkedHashMap<>();
 
         items.setAll(null == ITEMS ? new ArrayList<>() : ITEMS);
 
@@ -243,52 +210,41 @@ public class StreamChart extends Region {
         canvas = new Canvas(PREFERRED_WIDTH, PREFERRED_HEIGHT);
         ctx    = canvas.getGraphicsContext2D();
 
+        tooltip = new Tooltip();
+        tooltip.setAutoHide(true);
+
         getChildren().setAll(canvas);
     }
 
     private void registerListeners() {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
-        popup.setOnHiding(e -> popup.setText(""));
         items.addListener(itemListListener);
-        canvas.setOnMouseMoved(e -> {
-            bezierPaths.forEach((path, chartItem) -> {
+        canvas.setOnMouseClicked(e -> {
+            rectPaths.forEach((path, tooltipText) -> {
                 double eventX = e.getX();
                 double eventY = e.getY();
                 if (path.contains(eventX, eventY)) {
-                    String  tooltipText = chartItem.getName() + ": " + chartItem.getValue();
-                    if (!tooltipText.isEmpty()) {
-                        popup.setX(e.getScreenX() - popup.getWidth() * 0.5);
-                        popup.setY(e.getScreenY() - 30);
-                        popup.setText(tooltipText);
-                        popup.animatedShow(getScene().getWindow());
-                }
+                    double tooltipX = eventX + canvas.getScene().getX() + canvas.getScene().getWindow().getX();
+                    double tooltipY = eventY + canvas.getScene().getY() + canvas.getScene().getWindow().getY() - 25;
+                    tooltip.setText(tooltipText);
+                    tooltip.setX(tooltipX);
+                    tooltip.setY(tooltipY);
+                    tooltip.show(getScene().getWindow());
                 }
             });
-            });
-        canvas.setOnMousePressed(e -> {
-            if (Type.CENTERED == getType()) { return; }
-            selectedPaths.clear();
-            bezierPaths.forEach((path, chartItem) -> {
+            bezierPaths.forEach((path, tooltipText) -> {
                 double eventX = e.getX();
                 double eventY = e.getY();
                 if (path.contains(eventX, eventY)) {
-                    chartItem.fireItemEvent(new ItemEvent(chartItem, EventType.SELECTED));
-                    selectedPaths.addAll(bezierPaths.entrySet()
-                                                    .parallelStream()
-                                                    .filter(entry -> entry.getValue().getName().equals(chartItem.getName()))
-                                                    .collect(Collectors.toList())
-                                                    .stream()
-                                                    .map(entry -> entry.getKey())
-                                                    .collect(Collectors.toList()));
-                    redraw();
+                    double tooltipX = eventX + canvas.getScene().getX() + canvas.getScene().getWindow().getX();
+                    double tooltipY = eventY + canvas.getScene().getY() + canvas.getScene().getWindow().getY() - 25;
+                    tooltip.setText(tooltipText);
+                    tooltip.setX(tooltipX);
+                    tooltip.setY(tooltipY);
+                    tooltip.show(getScene().getWindow());
                 }
             });
-        });
-        canvas.setOnMouseReleased(e -> {
-            if (Type.CENTERED == getType()) { return; }
-            selectedPaths.clear();
-            redraw();
         });
     }
 
@@ -330,27 +286,6 @@ public class StreamChart extends Region {
         return category;
     }
 
-    public Type getType() { return null == type ? _type : type.get(); }
-    public void setType(final Type TYPE) {
-        if (null == type) {
-            _type = TYPE;
-            prepareData();
-        } else {
-            type.set(TYPE);
-        }
-    }
-    public ObjectProperty<Type> typeProperty() {
-        if (null == type) {
-            type = new ObjectPropertyBase<>(_type) {
-                @Override protected void invalidated() { prepareData(); }
-                @Override public Object getBean() { return StreamChart.this; }
-                @Override public String getName() { return "type"; }
-            };
-            _type = null;
-        }
-        return type;
-    }
-
     public List<ChartItem> getItems() { return items; }
     public void setItems(final ChartItem... ITEMS) { setItems(Arrays.asList(ITEMS)); }
     public void setItems(final List<ChartItem> ITEMS) { items.setAll(ITEMS); }
@@ -378,27 +313,6 @@ public class StreamChart extends Region {
         return textColor;
     }
 
-    public Color getSelectionColor() { return null == selectionColor ? _selectionColor : selectionColor.get(); }
-    public void setSelectionColor(final Color COLOR) {
-        if (null == selectionColor) {
-            _selectionColor = COLOR;
-            redraw();
-        } else {
-            selectionColor.set(COLOR);
-        }
-    }
-    public ObjectProperty<Color> selectionColorProperty() {
-        if (null == selectionColor) {
-            selectionColor = new ObjectPropertyBase<>(_selectionColor) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return StreamChart.this; }
-                @Override public String getName() { return "selectionColor"; }
-            };
-            _selectionColor = null;
-        }
-        return selectionColor;
-    }
-
     public Color getCategoryTextColor() { return null == categoryTextColor ? _categoryTextColor : categoryTextColor.get(); }
     public void setCategoryTextColor(final Color COLOR) {
         if (null == categoryTextColor) {
@@ -420,30 +334,10 @@ public class StreamChart extends Region {
         return categoryTextColor;
     }
 
-    public boolean isAutoTextColor() { return null == autoTextColor ? _autoTextColor : autoTextColor.get(); }
-    public void setAutoTextColor(final boolean AUTO) {
-        if (null == autoTextColor) {
-            _autoTextColor = AUTO;
-            redraw();
-        } else {
-            autoTextColor.set(AUTO);
-        }
-    }
-    public BooleanProperty autoTextColorProperty() {
-        if (null == autoTextColor) {
-            autoTextColor = new BooleanPropertyBase(_autoTextColor) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return StreamChart.this; }
-                @Override public String getName() { return "autoTextColor"; }
-            };
-        }
-        return autoTextColor;
-    }
-
     public int getItemWidth() { return null == itemWidth ? _itemWidth : itemWidth.get(); }
     public void setItemWidth(final int WIDTH) {
         if (null == itemWidth) {
-            _itemWidth = Helper.clamp(2, MAX_ITEM_WIDTH, WIDTH);
+            _itemWidth = Helper.clamp(2, 50, WIDTH);
             prepareData();
         } else {
             itemWidth.set(WIDTH);
@@ -453,7 +347,7 @@ public class StreamChart extends Region {
         if (null == itemWidth) {
             itemWidth = new IntegerPropertyBase(_itemWidth) {
                 @Override protected void invalidated() {
-                    set(Helper.clamp(2, MAX_ITEM_WIDTH, get()));
+                    set(Helper.clamp(2, 50, get()));
                     prepareData();
                 }
                 @Override public Object getBean() { return StreamChart.this; }
@@ -638,46 +532,6 @@ public class StreamChart extends Region {
         return sortDirection;
     }
 
-    public boolean isSortByName() { return null == sortByName ? _sortByName : sortByName.get(); }
-    public void setSortByName(final boolean BY_NAME) {
-        if (null == sortByName) {
-            _sortByName = BY_NAME;
-            groupBy(getCategory());
-        } else {
-            sortByName.set(BY_NAME);
-        }
-    }
-    public BooleanProperty sortByNameProperty() {
-        if (null == sortByName) {
-            sortByName = new BooleanPropertyBase(_sortByName) {
-                @Override protected void invalidated() { groupBy(getCategory()); }
-                @Override public Object getBean() { return StreamChart.this; }
-                @Override public String getName() { return "sortByName"; }
-            };
-        }
-        return sortByName;
-    }
-
-    public boolean isCategorySumVisible() { return null == categorySumVisible ? _categorySumVisible : categorySumVisible.get(); }
-    public void setCategorySumVisible(final boolean VISIBLE) {
-        if (null == categorySumVisible) {
-            _categorySumVisible = VISIBLE;
-            redraw();
-        } else {
-            categorySumVisible.set(VISIBLE);
-        }
-    }
-    public BooleanProperty categorySumVisibleProperty() {
-        if (null == categorySumVisible) {
-            categorySumVisible = new BooleanPropertyBase(_categorySumVisible) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return StreamChart.this; }
-                @Override public String getName() { return "categorySumVisible"; }
-            };
-        }
-        return categorySumVisible;
-    }
-
     public void groupBy(final Category CATEGORY) {
         chartItems.clear();
         // Group items by category
@@ -706,8 +560,8 @@ public class StreamChart extends Region {
             }
             List<ChartItem> compacted = new ArrayList<>(compactedItems.values());
             switch (getSortDirection()) {
-                case ASCENDING : sortItemsAscending(compacted); break;
-                case DESCENDING: sortItemsDescending(compacted); break;
+                case ASCENDING -> sortItemsAscending(compacted);
+                case DESCENDING -> sortItemsDescending(compacted);
             }
 
             chartItems.put(entry.getKey(), compacted);
@@ -717,26 +571,16 @@ public class StreamChart extends Region {
     }
 
     private void sortItemsAscending(final List<ChartItem> ITEMS) {
-        if (isSortByName()) {
-            Collections.sort(ITEMS, Comparator.comparing(ChartItem::getName));
-        } else {
-            Collections.sort(ITEMS);
-        }
+        Collections.sort(ITEMS);
     }
     private void sortItemsDescending(final List<ChartItem> ITEMS) {
-        if (isSortByName()) {
-            Collections.sort(ITEMS, Comparator.comparing(ChartItem::getName).reversed());
-        } else {
-            Collections.sort(ITEMS, Collections.reverseOrder());
-        }
+        Collections.sort(ITEMS, Collections.reverseOrder());
     }
 
     public double getSumOfItems() { return items.stream().mapToDouble(ChartItem::getValue).sum(); }
 
     private void prepareData() {
         if (chartItems.isEmpty()) { return; }
-
-        Type type = getType();
 
         // Split all items to categories
         itemsPerCategory.clear();
@@ -759,7 +603,6 @@ public class StreamChart extends Region {
         double maxSum   = chartItems.entrySet().stream().mapToDouble(entry -> entry.getValue().stream().mapToDouble(ChartItem::getValue).sum()).max().getAsDouble();
         int    maxItems = chartItems.entrySet().stream().mapToInt(entry -> entry.getValue().size()).reduce(0, Integer::max);
 
-        sumsPerCategory.clear();
 
         // Define drawing parameters
         double itemWidth     = isAutoItemWidth() ? size * 0.1 : getItemWidth();
@@ -772,19 +615,14 @@ public class StreamChart extends Region {
             spacerY = 0;
             spacerX = horizontalGap * category;
 
-            double sum = 0;
             for (ChartItemData itemData : itemsPerCategory.get(category)) {
                 ChartItem     item        = itemData.getChartItem();
                 double        itemHeight  = item.getValue() * scaleY;
                 double        textOffsetX = 2;
                 itemData.setBounds(spacerX , (reducedHeight - itemHeight) - spacerY, itemWidth, itemHeight);
                 itemData.setTextPoint(spacerX + textOffsetX, (reducedHeight - itemHeight) - spacerY + ctx.getFont().getSize());
-                if (Type.STACKED == type) {
-                    spacerY += itemHeight + verticalGap;
-                }
-                sum += item.getValue();
+                spacerY += itemHeight + verticalGap;
             }
-            sumsPerCategory.put(category, sum);
         }
 
         createPaths();
@@ -797,7 +635,7 @@ public class StreamChart extends Region {
     }
 
 
-    // ******************** Layout ********************************************
+    // ******************** Resizing ******************************************
     private void resize() {
         width         = getWidth() - getInsets().getLeft() - getInsets().getRight();
         height        = getHeight() - getInsets().getTop() - getInsets().getBottom();
@@ -813,17 +651,17 @@ public class StreamChart extends Region {
             itemFont           = Fonts.latoRegular(Helper.clamp(8, 20, size * 0.025));
             categoryFont       = Fonts.latoRegular(Helper.clamp(8, 20, size * 0.025));
             itemFontMetrix     = new FontMetrix(itemFont);
+            categoryFontMetrix = new FontMetrix(categoryFont);
 
             groupBy(getCategory());
         }
     }
 
     private void createPaths() {
+        rectPaths.clear();
         bezierPaths.clear();
-        int    noOfCategories = chartItems.size();
-        Type   type           = getType();
-        double halfItemWidth  = getItemWidth() * 0.5;
-        double offsetY        = Type.STACKED == type ? 0 : height * 0.5;
+
+        int noOfCategories = chartItems.size();
 
         // Draw bezier curves between items
         for (int category = 0 ; category < noOfCategories ; category++) {
@@ -848,9 +686,23 @@ public class StreamChart extends Region {
 
                     ChartItemData targetItemData   = targetItemDataOptional.get();
                     CtxBounds     targetItemBounds = targetItemData.getBounds();
+                    ChartItem     targetItem       = targetItemData.getChartItem();
 
                     // Calculate the offset in x direction for the bezier curve control points
                     double ctrlPointOffsetX = (targetItemBounds.getMinX() - bounds.getMaxX()) * 0.5;
+
+                    // Calculate the value of the current item in y direction
+                    double value = item.getValue();
+
+                    // Create RectPath
+                    Path rectPath = new Path();
+                    rectPath.moveTo(bounds.getMinX(), bounds.getMinY());
+                    rectPath.lineTo(bounds.getMaxX(), bounds.getMinY());
+                    rectPath.lineTo(bounds.getMaxX(), bounds.getMaxY());
+                    rectPath.lineTo(bounds.getMinX(), bounds.getMaxY());
+                    rectPath.lineTo(bounds.getMinX(), bounds.getMinY());
+                    rectPath.closePath();
+                    rectPaths.put(rectPath, item.getName() + ": " + item.getValue());
 
                     // Create Path
                     Path path = new Path();
@@ -860,62 +712,38 @@ public class StreamChart extends Region {
                     path.setStroke(item.getFill());
 
                     // Draw the bezier curve
-                    if (Type.STACKED == type) {
-                        path.moveTo(bounds.getCenterX(), bounds.getMinY());
-                        path.lineTo(bounds.getCenterX() + halfItemWidth, bounds.getMinY());
-                        path.bezierCurveTo(bounds.getCenterX() + halfItemWidth + ctrlPointOffsetX, bounds.getMinY(),
-                                           targetItemBounds.getCenterX() - halfItemWidth - ctrlPointOffsetX, targetItemBounds.getMinY(),
-                                           targetItemBounds.getCenterX() - halfItemWidth, targetItemBounds.getMinY());
-                        path.lineTo(targetItemBounds.getCenterX(), targetItemBounds.getMinY());
-                        path.lineTo(targetItemBounds.getCenterX(), targetItemBounds.getMaxY());
-                        path.lineTo(targetItemBounds.getCenterX() - halfItemWidth, targetItemBounds.getMaxY());
-                        path.bezierCurveTo(targetItemBounds.getCenterX() - halfItemWidth - ctrlPointOffsetX, targetItemBounds.getMaxY(),
-                                           bounds.getCenterX() + halfItemWidth + ctrlPointOffsetX, bounds.getMaxY(),
-                                           bounds.getCenterX() + halfItemWidth, bounds.getMaxY());
-                        path.lineTo(bounds.getCenterX(), bounds.getMaxY());
-                        path.lineTo(bounds.getCenterX(), bounds.getMinY());
-                        path.closePath();
-                    } else {
-                        double halfItemHeight       = bounds.getHeight() * 0.5;
-                        double halfTargetItemHeight = targetItemBounds.getHeight() * 0.5;
+                    path.moveTo(bounds.getMaxX(), bounds.getMinY());
+                    path.bezierCurveTo(bounds.getMaxX() + ctrlPointOffsetX, bounds.getMinY(),
+                                       targetItemBounds.getMinX() - ctrlPointOffsetX, targetItemBounds.getMinY(),
+                                       targetItemBounds.getMinX(), targetItemBounds.getMinY());
+                    path.lineTo(targetItemBounds.getMinX(), targetItemBounds.getMaxY());
+                    path.bezierCurveTo(targetItemBounds.getMinX() - ctrlPointOffsetX, targetItemBounds.getMaxY(),
+                                       bounds.getMaxX() + ctrlPointOffsetX, bounds.getMaxY(),
+                                       bounds.getMaxX(), bounds.getMaxY());
+                    path.lineTo(bounds.getMaxX(), bounds.getMinY());
+                    path.closePath();
 
-                        path.moveTo(bounds.getCenterX(), offsetY - halfItemHeight);
-                        path.lineTo(bounds.getCenterX() + halfItemWidth, offsetY - halfItemHeight);
-                        path.bezierCurveTo(bounds.getCenterX() + halfItemWidth + ctrlPointOffsetX, offsetY - halfItemHeight,
-                                           targetItemBounds.getCenterX() - halfItemWidth - ctrlPointOffsetX, offsetY - halfTargetItemHeight,
-                                           targetItemBounds.getCenterX() - halfItemWidth, offsetY - halfTargetItemHeight);
-                        path.lineTo(targetItemBounds.getCenterX(), offsetY - halfTargetItemHeight);
-                        path.lineTo(targetItemBounds.getCenterX(), offsetY + halfTargetItemHeight);
-                        path.lineTo(targetItemBounds.getCenterX() - halfItemWidth, offsetY + halfTargetItemHeight);
-                        path.bezierCurveTo(targetItemBounds.getCenterX() - halfItemWidth - ctrlPointOffsetX, offsetY + halfTargetItemHeight,
-                                           bounds.getCenterX() + halfItemWidth + ctrlPointOffsetX, offsetY + halfItemHeight,
-                                           bounds.getCenterX() + halfItemWidth, offsetY + halfItemHeight);
-                        path.lineTo(bounds.getCenterX(), offsetY + halfItemHeight);
-                        path.lineTo(bounds.getCenterX(), offsetY - halfItemHeight);
-                        path.closePath();
-                    }
-                    bezierPaths.put(path, item);
+                    String tooltipText = new StringBuilder().append(item.getName())
+                                                            .append(": ")
+                                                            .append(String.format(getLocale(), formatString, value))
+                                                            .append(" -> ")
+                                                            .append(" ")
+                                                            .append(String.format(getLocale(), formatString, targetItem.getValue()))
+                                                            .toString();
+                    bezierPaths.put(path, tooltipText);
                 }
             }
         }
     }
 
     private void redraw() {
+        ctx.clearRect(0, 0, width, height);
+        ctx.setTextAlign(TextAlignment.CENTER);
+
+        bezierPaths.forEach((path, plotItem) -> path.draw(ctx, true, true));
         Color             textColor      = getTextColor();
-        boolean           autoTextColor  = isAutoTextColor();
         int               noOfCategories = chartItems.size();
         DateTimeFormatter formatter      = getCategory().formatter();
-        Color             selectionColor = getSelectionColor();
-
-        ctx.clearRect(0, 0, width, height);
-
-        // Draw bezier paths
-        if (selectedPaths.isEmpty()) {
-        bezierPaths.forEach((path, plotItem) -> path.draw(ctx, true, true));
-        } else {
-            bezierPaths.forEach((path, plotItem) -> path.draw(ctx, true, UNSELECTED_COLOR, false, Color.TRANSPARENT));
-            selectedPaths.forEach(path -> path.draw(ctx, true, selectionColor, true, selectionColor));
-        }
 
         for (int category = 0 ; category < noOfCategories ; category++) {
             List<ChartItemData> itemDataInCategory = itemsPerCategory.get(category);
@@ -924,34 +752,28 @@ public class StreamChart extends Region {
             for (ChartItemData itemData : itemDataInCategory) {
                 ChartItem item      = itemData.getChartItem();
                 CtxBounds bounds    = itemData.getBounds();
+                Color     itemColor = item.getFill();
 
-                // Draw item text
+                // Draw item boxes with their labels
+                ctx.setFill(itemColor);
+                ctx.fillRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+                ctx.setLineWidth(0);
+                ctx.setStroke(itemColor);
+                ctx.strokeRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+
                 if (isItemTextVisible() && item.getValue() > getItemTextThreshold()) {
-                    ctx.setFill(autoTextColor ? Helper.isDark(item.getFill()) ? Color.WHITE: Color.BLACK : textColor);
+                    ctx.setFill(textColor);
                     itemFontMetrix.computeStringWidth(item.getName());
-                    if (itemFontMetrix.computeStringWidth(item.getName()) < MAX_ITEM_WIDTH &&
-                        itemFontMetrix.getLineHeight() < bounds.getHeight()) {
-                        if (category == 0) {
-                            ctx.setTextAlign(TextAlignment.LEFT);
+                    if (itemFontMetrix.computeStringWidth(item.getName()) < bounds.getWidth() && itemFontMetrix.getLineHeight() < bounds.getHeight()) {
                         ctx.fillText(item.getName(), bounds.getCenterX(), bounds.getCenterY());
-                        } else if (category == noOfCategories - 1) {
-                            ctx.setTextAlign(TextAlignment.RIGHT);
-                            ctx.fillText(item.getName(), bounds.getCenterX(), bounds.getCenterY());
-                        } else {
-                            ctx.setTextAlign(TextAlignment.CENTER);
-                            ctx.fillText(item.getName(), bounds.getCenterX(), bounds.getCenterY());
-                        }
                     }
                 }
             }
-
             // Draw category text
             ChartItemData firstItem = itemDataInCategory.get(0);
             ctx.setFill(getCategoryTextColor());
-            if (isCategorySumVisible()) {
-                ctx.fillText("\u03a3 " + String.format(getLocale(), formatString, sumsPerCategory.get(category)), firstItem.getBounds().getCenterX(), 15, MAX_ITEM_WIDTH);
-            }
-            ctx.fillText(formatter.format(firstItem.getLocalDate()), firstItem.getBounds().getCenterX(), reducedHeight + size * 0.02, MAX_ITEM_WIDTH);
+            String categoryText = formatter.format(firstItem.getLocalDate());
+            ctx.fillText(categoryText, firstItem.getBounds().getCenterX(), reducedHeight + size * 0.02, firstItem.bounds.getWidth());
         }
     }
 
