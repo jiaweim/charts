@@ -463,8 +463,8 @@ public class VoronoiChart extends Region {
         if (!getMulticolor()) { colorTable.clear(); }
 
         switch(getType()) {
-            case VORONOI: drawVoronoi(); break;
-            case DELAUNY: drawDelaunay(); break;
+            case VORONOI -> drawVoronoi();
+            case DELAUNY -> drawDelaunay();
         }
     }
 
