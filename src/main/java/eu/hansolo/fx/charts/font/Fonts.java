@@ -45,9 +45,9 @@ public class Fonts {
 
     static {
         try {
-            latoLightName         = Font.loadFont(Fonts.class.getResourceAsStream("/eu/hansolo/fx/charts/font/Lato-Lig.otf"), 10).getName();
-            latoRegularName       = Font.loadFont(Fonts.class.getResourceAsStream("/eu/hansolo/fx/charts/font/Lato-Reg.otf"), 10).getName();
-            latoBoldName          = Font.loadFont(Fonts.class.getResourceAsStream("/eu/hansolo/fx/charts/font/Lato-Bol.otf"), 10).getName();
+            latoLightName              = Font.loadFont(Fonts.class.getResourceAsStream("/eu/hansolo/fx/charts/font/Lato-Lig.otf"), 10).getName();
+            latoRegularName            = Font.loadFont(Fonts.class.getResourceAsStream("/eu/hansolo/fx/charts/font/Lato-Reg.otf"), 10).getName();
+            latoBoldName               = Font.loadFont(Fonts.class.getResourceAsStream("/eu/hansolo/fx/charts/font/Lato-Bol.otf"), 10).getName();
             openSansBoldName      = Font.loadFont(Fonts.class.getResourceAsStream("/eu/hansolo/fx/charts/font/OpenSans-Bold.ttf"), 10).getName();
             openSansExtraBoldName = Font.loadFont(Fonts.class.getResourceAsStream("/eu/hansolo/fx/charts/font/OpenSans-ExtraBold.ttf"), 10).getName();
             openSansLightName     = Font.loadFont(Fonts.class.getResourceAsStream("/eu/hansolo/fx/charts/font/OpenSans-Light.ttf"), 10).getName();
@@ -55,9 +55,9 @@ public class Fonts {
             openSansSemiboldName  = Font.loadFont(Fonts.class.getResourceAsStream("/eu/hansolo/fx/charts/font/OpenSans-Semibold.ttf"), 10).getName();
         } catch (Exception exception) { }
 
-        LATO_LIGHT_NAME           = latoLightName;
-        LATO_REGULAR_NAME         = latoRegularName;
-        LATO_BOLD_NAME            = latoBoldName;
+        LATO_LIGHT_NAME               = latoLightName;
+        LATO_REGULAR_NAME             = latoRegularName;
+        LATO_BOLD_NAME                = latoBoldName;
         OPEN_SANS_BOLD_NAME       = openSansBoldName;
         OPEN_SANS_EXTRA_BOLD_NAME = openSansExtraBoldName;
         OPEN_SANS_LIGHT_NAME      = openSansLightName;

@@ -133,10 +133,10 @@ public class ParetoPanel extends Region {
 
     // ******************** Constructors **************************************
     public ParetoPanel(final ParetoModel MODEL){
-        decimals     = 1;
-        numberFormat = new StringBuilder("%.").append(decimals).append("f").toString();
+        decimals      = 1;
+        numberFormat  = new StringBuilder("%.").append(decimals).append("f").toString();
         _labelingFont = Fonts.opensansRegular(10);
-        paretoModel  = MODEL;
+        paretoModel   = MODEL;
         init();
     }
 
