@@ -17,8 +17,8 @@
 package eu.hansolo.fx.charts.tools;
 
 public class Point implements Comparable<Point> {
-    private double x;
-    private double y;
+    private double  x;
+    private double  y;
     private boolean empty;
 
 

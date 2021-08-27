@@ -19,6 +19,9 @@ package eu.hansolo.fx.charts.data;
 import eu.hansolo.fx.charts.Symbol;
 import eu.hansolo.fx.charts.event.ItemEvent;
 import eu.hansolo.fx.charts.event.ItemEventListener;
+import eu.hansolo.fx.charts.series.XYSeries;
+import eu.hansolo.fx.charts.tools.Circle;
+import eu.hansolo.fx.charts.tools.Helper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
 import javafx.beans.property.DoubleProperty;
@@ -54,6 +57,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
     private BooleanProperty                         isEmpty;
     private String                                  _tooltipText;
     private StringProperty                          tooltipText;
+    private Circle                                  tooltipCircle;
 
 
     // ******************** Constructors **********************************
@@ -112,15 +116,16 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
         this(X, Y, NAME, FILL, STROKE, SYMBOL, "", IS_EMPTY);
     }
     public XYChartItem(final double X, final double Y, final String NAME, final Color FILL, final Color STROKE, final Symbol SYMBOL, final String TOOLTIP, final boolean IS_EMPTY) {
-        _x           = X;
-        _y           = Y;
-        _name        = NAME;
-        _fill        = FILL;
-        _stroke      = STROKE;
-        _symbol      = SYMBOL;
-        _isEmpty     = IS_EMPTY;
-        _tooltipText = TOOLTIP;
-        listeners    = new CopyOnWriteArrayList<>();
+        _x            = X;
+        _y            = Y;
+        _name         = NAME;
+        _fill         = FILL;
+        _stroke       = STROKE;
+        _symbol       = SYMBOL;
+        _isEmpty      = IS_EMPTY;
+        _tooltipText  = TOOLTIP;
+        tooltipCircle = new Circle(X, Y, 0.25);
+        listeners     = new CopyOnWriteArrayList<>();
     }
 
 
@@ -129,6 +134,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
     @Override public void setX(final double X) {
         if (null == x) {
             _x = X;
+            tooltipCircle.setCenterX(X);
             fireItemEvent(ITEM_EVENT);
         } else {
             x.set(X);
@@ -138,6 +144,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
         if (null == x) {
             x = new DoublePropertyBase(_x) {
                 @Override protected void invalidated() {
+                    tooltipCircle.setCenterX(get());
                     fireItemEvent(ITEM_EVENT);
                 }
                 @Override public Object getBean() { return XYChartItem.this; }
@@ -151,6 +158,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
     @Override public void setY(final double Y) {
         if (null == y) {
             _y = Y;
+            tooltipCircle.setCenterY(Y);
             fireItemEvent(ITEM_EVENT);
         } else {
             y.set(Y);
@@ -160,6 +168,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
         if (null == y) {
             y = new DoublePropertyBase(_y) {
                 @Override protected void invalidated() {
+                    tooltipCircle.setCenterY(get());
                     fireItemEvent(ITEM_EVENT);
                 }
                 @Override public Object getBean() { return XYChartItem.this; }
@@ -293,6 +302,8 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
         }
         return isEmpty;
     }
+
+    @Override public boolean symbolContainsXY(final double X, final double Y) { return tooltipCircle.contains(X, Y); }
 
     
     // ******************** Event handling ************************************

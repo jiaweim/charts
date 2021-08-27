@@ -17,6 +17,7 @@
 package eu.hansolo.fx.charts.data;
 
 
+import eu.hansolo.fx.charts.tools.Circle;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.StringProperty;
 
@@ -37,4 +38,6 @@ public interface XYItem extends Item {
     String getTooltipText();
     void setTooltipText(String text);
     StringProperty tooltipTextProperty();
+
+    boolean symbolContainsXY(double x, double y);
 }

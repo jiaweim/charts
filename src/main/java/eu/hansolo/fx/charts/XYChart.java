@@ -22,17 +22,13 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.StringPropertyBase;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
-import javafx.scene.paint.Color;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -43,62 +39,53 @@ import java.util.List;
  */
 @DefaultProperty("children")
 public class XYChart<T extends XYItem> extends Region {
-    private static final double                    PREFERRED_WIDTH  = 400;
-    private static final double                    PREFERRED_HEIGHT = 250;
-    private static final double                    MINIMUM_WIDTH    = 50;
-    private static final double                    MINIMUM_HEIGHT   = 50;
-    private static final double                    MAXIMUM_WIDTH    = 4096;
-    private static final double                    MAXIMUM_HEIGHT   = 4096;
-    private              double                    width;
-    private              double                    height;
-    private              ObservableList<XYPane<T>> xyPanes;
-    private              List<Axis>                axis;
-    private              Axis                      yAxisL;
-    private              Axis                      yAxisC;
-    private              Axis                      yAxisR;
-    private              Axis                      xAxisT;
-    private              Axis                      xAxisC;
-    private              Axis                      xAxisB;
-    private              double                    topAxisHeight;
-    private              double                    rightAxisWidth;
-    private              double                    bottomAxisHeight;
-    private              double                    leftAxisWidth;
-    private              Grid                      grid;
-    private              boolean                   hasLeftYAxis;
-    private              boolean                   hasCenterYAxis;
-    private              boolean                   hasRightYAxis;
-    private              boolean                   hasTopXAxis;
-    private              boolean                   hasCenterXAxis;
-    private              boolean                   hasBottomXAxis;
-    private              String                    _title;
-    private              StringProperty            title;
-    private              String                    _subTitle;
-    private              StringProperty            subTitle;
-    private              AnchorPane                pane;
-    private              BooleanBinding            showing;
+    private static final double         PREFERRED_WIDTH  = 400;
+    private static final double         PREFERRED_HEIGHT = 250;
+    private static final double         MINIMUM_WIDTH    = 50;
+    private static final double         MINIMUM_HEIGHT   = 50;
+    private static final double         MAXIMUM_WIDTH    = 4096;
+    private static final double         MAXIMUM_HEIGHT   = 4096;
+    private              double         width;
+    private              double         height;
+    private              XYPane<T>      xyPane;
+    private              List<Axis>     axis;
+    private              Axis           yAxisL;
+    private              Axis           yAxisC;
+    private              Axis           yAxisR;
+    private              Axis           xAxisT;
+    private              Axis           xAxisC;
+    private              Axis           xAxisB;
+    private              double         topAxisHeight;
+    private              double         rightAxisWidth;
+    private              double         bottomAxisHeight;
+    private              double         leftAxisWidth;
+    private              Grid           grid;
+    private              boolean        hasLeftYAxis;
+    private              boolean        hasCenterYAxis;
+    private              boolean        hasRightYAxis;
+    private              boolean        hasTopXAxis;
+    private              boolean        hasCenterXAxis;
+    private              boolean        hasBottomXAxis;
+    private              String         _title;
+    private              StringProperty title;
+    private              String         _subTitle;
+    private              StringProperty subTitle;
+    private              AnchorPane     pane;
+    private              BooleanBinding showing;
 
 
     // ******************** Constructors **************************************
     public XYChart(final XYPane<T> XY_PANE, final Axis... AXIS) {
-        this(List.of(XY_PANE), null, AXIS);
+        this(XY_PANE, null, AXIS);
     }
     public XYChart(final XYPane<T> XY_PANE, final Grid GRID, final Axis... AXIS) {
-        this(List.of(XY_PANE), GRID, AXIS);
-    }
-    public XYChart(final List<XYPane<T>> XY_PANES, final Axis... AXIS) {
-        this(XY_PANES, null, AXIS);
-    }
-    public XYChart(final List<XYPane<T>> XY_PANES, final Grid GRID, final Axis... AXIS) {
-        if (null == XY_PANES) { throw new IllegalArgumentException("XYPanes cannot be null"); }
-        long noOfPolarCharts = XY_PANES.stream().filter(xyPane -> xyPane.containsPolarChart()).count();
-        if (noOfPolarCharts > 0) { throw new IllegalArgumentException("XYPane contains Polar chart type"); }
-        xyPanes = FXCollections.observableList(new LinkedList<>(XY_PANES));
+        if (null == XY_PANE) { throw new IllegalArgumentException("XYPane has not to be null"); }
+        if (XY_PANE.containsPolarChart()) { throw new IllegalArgumentException("XYPane contains Polar chart type"); }
+        xyPane = XY_PANE;
         axis   = Arrays.asList(AXIS);
         grid   = GRID;
         width  = PREFERRED_WIDTH;
         height = PREFERRED_HEIGHT;
-
-        checkReferenceZero();
         initGraphics();
         registerListeners();
     }
@@ -117,15 +104,11 @@ public class XYChart<T extends XYItem> extends Region {
 
         checkForAxis();
 
-        if (xyPanes.size() > 1) { xyPanes.forEach(xyPane -> xyPane.setChartBackground(Color.TRANSPARENT)); }
-
         adjustChartRange();
 
         adjustAxisAnchors();
 
-        pane = new AnchorPane();
-        xyPanes.forEach(xyPane -> pane.getChildren().add(xyPane));
-
+        pane = new AnchorPane(xyPane);
         pane.getChildren().addAll(axis);
         setGrid(grid);
 
@@ -135,11 +118,6 @@ public class XYChart<T extends XYItem> extends Region {
     private void registerListeners() {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
-        xyPanes.addListener((ListChangeListener<XYPane<T>>) c -> {
-            if (xyPanes.size() > 1) { xyPanes.forEach(xyPane -> xyPane.setChartBackground(Color.TRANSPARENT)); }
-            checkReferenceZero();
-            refresh();
-        });
         if (null != getScene()) {
             setupBinding();
         } else {
@@ -169,14 +147,14 @@ public class XYChart<T extends XYItem> extends Region {
     @Override public ObservableList<Node> getChildren() { return super.getChildren(); }
 
     public void dispose() {
-        xyPanes.forEach(xyPane -> xyPane.dispose());
+        xyPane.dispose();
     }
 
     public String getTitle() { return null == title ? _title : title.get(); }
     public void setTitle(final String TITLE) {
         if (null == title) {
             _title = TITLE;
-            xyPanes.forEach(xyPane -> xyPane.redraw());
+            xyPane.redraw();
         } else {
             title.set(TITLE);
         }
@@ -184,7 +162,7 @@ public class XYChart<T extends XYItem> extends Region {
     public StringProperty titleProperty() {
         if (null == title) {
             title = new StringPropertyBase(_title) {
-                @Override protected void invalidated() { xyPanes.forEach(xyPane -> xyPane.redraw()); }
+                @Override protected void invalidated() { xyPane.redraw(); }
                 @Override public Object getBean() { return XYChart.this; }
                 @Override public String getName() { return "title"; }
             };
@@ -197,7 +175,7 @@ public class XYChart<T extends XYItem> extends Region {
     public void setSubTitle(final String SUB_TITLE) {
         if (null == subTitle) {
             _subTitle = SUB_TITLE;
-            xyPanes.forEach(xyPane -> xyPane.redraw());
+            xyPane.redraw();
         } else {
             subTitle.set(SUB_TITLE);
         }
@@ -205,7 +183,7 @@ public class XYChart<T extends XYItem> extends Region {
     public StringProperty subTitleProperty() {
         if (null == subTitle) {
             subTitle = new StringPropertyBase(_subTitle) {
-                @Override protected void invalidated() { xyPanes.forEach(xyPane -> xyPane.redraw()); }
+                @Override protected void invalidated() { xyPane.redraw(); }
                 @Override public Object getBean() { return XYChart.this; }
                 @Override public String getName() { return "subTitle"; }
             };
@@ -214,16 +192,8 @@ public class XYChart<T extends XYItem> extends Region {
         return subTitle;
     }
 
-    public boolean isReferenceZero() {
-        if (xyPanes.size() > 0) {
-            return xyPanes.get(0).isReferenceZero();
-        } else {
-            return true;
-        }
-    }
-    public void setReferenceZero(final boolean IS_ZERO) {
-        xyPanes.forEach(xyPane -> xyPane.setReferenceZero(IS_ZERO));
-    }
+    public boolean isReferenceZero() { return xyPane.isReferenceZero(); }
+    public void setReferenceZero(final boolean IS_ZERO) { xyPane.setReferenceZero(IS_ZERO); }
 
     public void setGrid(final Grid GRID) {
         if (null == GRID) return;
@@ -233,20 +203,9 @@ public class XYChart<T extends XYItem> extends Region {
         adjustGridAnchors();
     }
 
-    public XYPane<T> getXYPane() {
-        return xyPanes.size() > 0 ? xyPanes.get(0) : null;
-    }
+    public XYPane<T> getXYPane() { return xyPane; }
 
-    public List<XYPane<T>> getXYPanes() { return xyPanes; }
-
-    public void addXYPane(final XYPane<T> xyPane) {
-        xyPanes.add(xyPane);
-    }
-    public void removeXYPane(final XYPane<T> xyPane) {
-        xyPanes.remove(xyPane);
-    }
-
-    public void refresh() { xyPanes.forEach(xyPane -> xyPane.redraw()); }
+    public void refresh() { xyPane.redraw(); }
 
     private void checkForAxis() {
         axis.forEach(axis -> {
@@ -303,49 +262,44 @@ public class XYChart<T extends XYItem> extends Region {
     }
 
     private void adjustChartRange() {
-        xyPanes.forEach(xyPane -> {
-            // TFE, 2020331: bind properties to keep track of changes to axes
-            if (hasBottomXAxis) {
-                xyPane.lowerBoundXProperty().bind(xAxisB.minValueProperty());
-                xyPane.upperBoundXProperty().bind(xAxisB.maxValueProperty());
-            } else if (hasTopXAxis) {
-                xyPane.lowerBoundXProperty().bind(xAxisT.minValueProperty());
-                xyPane.upperBoundXProperty().bind(xAxisT.maxValueProperty());
-            } else if (hasCenterXAxis) {
-                xyPane.lowerBoundXProperty().bind(xAxisC.minValueProperty());
-                xyPane.upperBoundXProperty().bind(xAxisC.maxValueProperty());
-            }
+        if (hasBottomXAxis) {
+            xyPane.setLowerBoundX(xAxisB.getMinValue());
+            xyPane.setUpperBoundX(xAxisB.getMaxValue());
+        } else if (hasTopXAxis) {
+            xyPane.setLowerBoundX(xAxisT.getMinValue());
+            xyPane.setUpperBoundX(xAxisT.getMaxValue());
+        } else if (hasCenterXAxis) {
+            xyPane.setLowerBoundX(xAxisC.getMinValue());
+            xyPane.setUpperBoundX(xAxisC.getMaxValue());
+        }
 
-            if (hasLeftYAxis) {
-                xyPane.lowerBoundYProperty().bind(yAxisL.minValueProperty());
-                xyPane.upperBoundYProperty().bind(yAxisL.maxValueProperty());
-            } else if (hasRightYAxis) {
-                xyPane.lowerBoundYProperty().bind(yAxisR.minValueProperty());
-                xyPane.upperBoundYProperty().bind(yAxisR.maxValueProperty());
-            } else if (hasCenterYAxis) {
-                xyPane.lowerBoundYProperty().bind(yAxisC.minValueProperty());
-                xyPane.upperBoundYProperty().bind(yAxisC.maxValueProperty());
-            }
-        });
+        if (hasLeftYAxis) {
+            xyPane.setLowerBoundY(yAxisL.getMinValue());
+            xyPane.setUpperBoundY(yAxisL.getMaxValue());
+        } else if (hasRightYAxis) {
+            xyPane.setLowerBoundY(yAxisR.getMinValue());
+            xyPane.setUpperBoundY(yAxisR.getMaxValue());
+        } else if (hasCenterYAxis) {
+            xyPane.setLowerBoundY(yAxisC.getMinValue());
+            xyPane.setUpperBoundY(yAxisC.getMaxValue());
+        }
     }
 
     private void adjustAxisAnchors() {
-        xyPanes.forEach(xyPane -> {
-            axis.forEach(axis -> {
-                if (Orientation.HORIZONTAL == axis.getOrientation()) {
-                    AnchorPane.setLeftAnchor(axis, hasLeftYAxis ? leftAxisWidth : 0d);
-                    AnchorPane.setRightAnchor(axis, hasRightYAxis ? rightAxisWidth : 0d);
+        axis.forEach(axis -> {
+            if (Orientation.HORIZONTAL == axis.getOrientation()) {
+                AnchorPane.setLeftAnchor(axis, hasLeftYAxis ? leftAxisWidth : 0d);
+                AnchorPane.setRightAnchor(axis, hasRightYAxis ? rightAxisWidth : 0d);
 
-                    AnchorPane.setLeftAnchor(xyPane, hasLeftYAxis ? leftAxisWidth : 0d);
-                    AnchorPane.setRightAnchor(xyPane, hasRightYAxis ? rightAxisWidth : 0d);
-                } else {
-                    AnchorPane.setTopAnchor(axis, hasTopXAxis ? topAxisHeight : 0d);
-                    AnchorPane.setBottomAnchor(axis, hasBottomXAxis ? bottomAxisHeight : 0d);
+                AnchorPane.setLeftAnchor(xyPane, hasLeftYAxis ? leftAxisWidth : 0d);
+                AnchorPane.setRightAnchor(xyPane, hasRightYAxis ? rightAxisWidth : 0d);
+            } else {
+                AnchorPane.setTopAnchor(axis, hasTopXAxis ? topAxisHeight : 0d);
+                AnchorPane.setBottomAnchor(axis, hasBottomXAxis ? bottomAxisHeight : 0d);
 
-                    AnchorPane.setTopAnchor(xyPane, hasTopXAxis ? topAxisHeight : 0d);
-                    AnchorPane.setBottomAnchor(xyPane, hasBottomXAxis ? bottomAxisHeight : 0d);
-                }
-            });
+                AnchorPane.setTopAnchor(xyPane, hasTopXAxis ? topAxisHeight : 0d);
+                AnchorPane.setBottomAnchor(xyPane, hasBottomXAxis ? bottomAxisHeight : 0d);
+            }
         });
     }
 
@@ -401,14 +355,6 @@ public class XYChart<T extends XYItem> extends Region {
     private void setupBinding() {
         showing = Bindings.selectBoolean(sceneProperty(), "window", "showing");
         showing.addListener((o, ov, nv) -> { if (nv) { adjustCenterAxisAnchors(); } });
-    }
-
-    private void checkReferenceZero() {
-        boolean isReferenceZero = true;
-        if (xyPanes.size() > 0) {
-            isReferenceZero = xyPanes.get(0).isReferenceZero();
-        }
-        setReferenceZero(isReferenceZero);
     }
 
 
