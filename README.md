@@ -166,19 +166,19 @@ related to imports, required modules etc.
 
 
 ## BarChart
-![BarChart](https://i.ibb.co/5BT96X6/BarChart.png)
+![BarChart](https://i.ibb.co/CM5Dd5r/BarChart.png)
 
 
 ## CandleChart
-![CandleChart](https://i.ibb.co/dMfpd36/Candle-Chart.png)
+![CandleChart](https://i.ibb.co/6PrHKBq/Candle-Chart.png)
 
 
 ## BoxPlots
-![BoxPlots](https://i.ibb.co/MSQ54yd/BoxPlots.png)
+![BoxPlots](https://i.ibb.co/zmP00pn/BoxPlots.png)
 
 
 ## CubeCharts
-![CubeChart](https://i.ibb.co/7zQF494/Cube-Chart.png)
+![CubeChart](https://i.ibb.co/McTCC6J/Cube-Charts.png)
 
 
 ## RadialBarChart
@@ -190,5 +190,4 @@ related to imports, required modules etc.
 
 
 ## Wafermap
-![WaferMap](https://i.ibb.co/gmtxPY0/wafermap.png)
-
+![WaferMap](https://i.ibb.co/LS7LVD0/wafermap.png)
