@@ -1973,11 +1973,21 @@ public class Axis extends Region {
         double mediumTickMarkLength = VERTICAL == orientation ? mediumTickMarkLengthFactor * width : mediumTickMarkLengthFactor * height;
         double minorTickMarkLength  = VERTICAL == orientation ? minorTickMarkLengthFactor  * width : minorTickMarkLengthFactor  * height;
 
-        // Main Loop for tick marks and labels
-        for (long i = minValueInSeconds; i <= maxValueInSeconds; i++) {
-            double fixedPosition = (counter - minValueInSeconds) * stepSize;
+        ZoneOffset zoneOffset = Helper.getZoneOffset();
+        long       duration   = getEnd().toEpochSecond(zoneOffset) - getStart().toEpochSecond(zoneOffset);
+        long       step;
+        if (duration > 31536000) {
+            step = 3600;
+        } else if (duration > 2592000) {
+            step = 60;
+        } else {
+            step = 1;
+        }
 
-            // TODO: improve speed
+        // Main Loop for tick marks and labels
+        for (long i = minValueInSeconds; i <= maxValueInSeconds; i += step) {
+            double fixedPosition = (counter - minValueInSeconds) * stepSize * step;
+            
             if (VERTICAL == orientation) {
                 if (Position.LEFT == position) {
                     innerPointX  = anchorXPlusOffset - majorTickMarkLength;
@@ -2056,7 +2066,6 @@ public class Axis extends Region {
                 }
             }
 
-            // TODO: improve speed
             if (i % majorTickSpace == 0) {
                 // Draw major tick mark
                 isMinValue = i == minValueInSeconds;
