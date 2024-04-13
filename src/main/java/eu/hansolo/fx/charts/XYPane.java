@@ -21,7 +21,6 @@ import eu.hansolo.fx.charts.data.XYItem;
 import eu.hansolo.fx.charts.event.ChartEvt;
 import eu.hansolo.fx.charts.event.CursorEvent;
 import eu.hansolo.fx.charts.event.CursorEventListener;
-import eu.hansolo.fx.charts.event.SeriesEvent;
 import eu.hansolo.fx.charts.event.SeriesEventListener;
 import eu.hansolo.toolbox.Statistics;
 import eu.hansolo.toolbox.evt.EvtObserver;
@@ -41,7 +40,6 @@ import javafx.beans.property.ObjectPropertyBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
@@ -142,6 +140,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     private              BooleanProperty                           crossHairVisible;
     private              Color                                     _crossHairColor;
     private              ObjectProperty<Color>                     crossHairColor;
+    private              ObservableList<XYPaneOverlay>             overlays;
     private              TooltipPopup                              popup;
     private              SeriesEventListener                       seriesListener;
     private              EventHandler<MouseEvent>                  mouseHandler;
@@ -190,6 +189,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         _averageStrokeWidth  = 1;
         _crossHairVisible    = false;
         _crossHairColor      = Color.GRAY;
+        overlays             = FXCollections.observableArrayList();
         cursorX              = -1;
         cursorY              = -1;
         popup                = new TooltipPopup(2000);
@@ -260,6 +260,9 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             if (null != series) {
                 series.setOnSeriesEvent(seriesEvent -> redraw());
             }
+        });
+        overlays.addListener((ListChangeListener<? super XYPaneOverlay>) c -> {
+            redraw();
         });
         canvas.addEventHandler(MouseEvent.MOUSE_MOVED, mouseHandler);
     }
@@ -698,6 +701,9 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         return crossHairColor;
     }
 
+    public ObservableList<XYPaneOverlay> getOverlays() { return this.overlays; }
+    public void setOverlays(final List<XYPaneOverlay> overlays) { this.overlays.setAll(overlays); }
+
     public boolean containsPolarChart() {
         for(XYSeries<T> series : listOfSeries) {
             if (null == series) { continue; }
@@ -739,13 +745,13 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             }
         }
 
-        List<XYSeries<T>> listOfmultiTimeSeries = listOfSeries.stream()
+        List<XYSeries<T>> listOfMultiTimeSeries = listOfSeries.stream()
                                                               .filter(series -> ChartType.MULTI_TIME_SERIES == series.getChartType())
                                                               .collect(Collectors.toList());
         List<XYSeries<T>> listOfSmoothedMultiTimeSeries = listOfSeries.stream()
                                                                       .filter(series -> ChartType.SMOOTHED_MULTI_TIME_SERIES == series.getChartType())
                                                                       .collect(Collectors.toList());
-        if (listOfmultiTimeSeries.isEmpty() && listOfSmoothedMultiTimeSeries.isEmpty()) {
+        if (listOfMultiTimeSeries.isEmpty() && listOfSmoothedMultiTimeSeries.isEmpty()) {
             for (XYSeries<T> series : listOfSeries) {
                 final ChartType TYPE        = series.getChartType();
                 final boolean   SHOW_POINTS = series.getSymbolsVisible();
@@ -763,10 +769,18 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 }
             }
         } else {
-            if (listOfmultiTimeSeries.size() == listOfSeries.size()) {
-                drawMultiTimeSeries(listOfmultiTimeSeries);
+            if (listOfMultiTimeSeries.size() == listOfSeries.size()) {
+                drawMultiTimeSeries(listOfMultiTimeSeries);
             } else if (listOfSmoothedMultiTimeSeries.size() == listOfSeries.size()){
                 drawSmoothedMultiTimeSeries(listOfSmoothedMultiTimeSeries);
+            }
+        }
+
+        if (!getOverlays().isEmpty()) {
+            for (XYPaneOverlay overlay : getOverlays()) {
+                switch (overlay.getType()) {
+                    case PREDICTION -> drawPredictionOverlay(overlay);
+                }
             }
         }
     }
@@ -1521,6 +1535,71 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             ctx.setFill(COLORS.get(band));
             ctx.fill();
         }
+    }
+
+    private void drawPredictionOverlay(final XYPaneOverlay overlay) {
+        if (null == this.listOfSeries || this.listOfSeries.isEmpty()) { return; }
+        final Prediction prediction = (Prediction) overlay;
+        // Aggregating data
+        List<XYItem> predictionItems = prediction.getPredictionSeries().getItems();
+        XYSeries<T>  targetSeries    = this.listOfSeries.get(0);
+        if (null == targetSeries.getItems() || targetSeries.getItems().isEmpty()) { return; }
+
+        // Prediction
+        final double LOWER_BOUND_X = getLowerBoundX();
+        final double LOWER_BOUND_Y = getLowerBoundY();
+
+        double       oldX          = (predictionItems.get(0).getX() - LOWER_BOUND_X) * scaleX;
+        double       oldY          = height - (predictionItems.get(0).getY() - LOWER_BOUND_Y) * scaleY;
+        boolean      wasEmpty      = predictionItems.get(0).isEmptyItem();
+
+        ctx.setLineWidth(prediction.getPredictionSeries().getStrokeWidth() > -1 ? prediction.getPredictionSeries().getStrokeWidth() : size * 0.0025);
+        ctx.setStroke(prediction.getPredictionSeries().getStroke());
+        ctx.setFill(Color.TRANSPARENT);
+
+        for (XYItem item : predictionItems) {
+            double  x       = (item.getX() - LOWER_BOUND_X) * scaleX;
+            double  y       = height - (item.getY() - LOWER_BOUND_Y) * scaleY;
+            boolean isEmpty = item.isEmptyItem();
+            if (!isEmpty && !wasEmpty) { ctx.strokeLine(oldX, oldY, x, y); }
+            oldX     = x;
+            oldY     = y;
+            wasEmpty = isEmpty;
+        }
+
+        // Quantile 50
+        ctx.setLineWidth(prediction.getQuantile50Series().getStrokeWidth());
+        ctx.setStroke(prediction.getQuantile50Series().getStroke());
+        ctx.setFill(prediction.getQuantile50Series().getFill());
+
+        List<Point> quantile50Points = prediction.getQuantile50Points();
+        ctx.beginPath();
+        ctx.moveTo((quantile50Points.get(0).getX() - LOWER_BOUND_X) * scaleX, height - (quantile50Points.get(0).getY() - LOWER_BOUND_Y) * scaleY);
+        for (int i = 1 ; i < quantile50Points.size() ; i++) {
+            Point p = quantile50Points.get(i);
+            double  x = (p.x - LOWER_BOUND_X) * scaleX;
+            double  y = height - (p.y - LOWER_BOUND_Y) * scaleY;
+            ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+
+        // Quantile 90
+        ctx.setLineWidth(prediction.getQuantile90Series().getStrokeWidth());
+        ctx.setStroke(prediction.getQuantile90Series().getStroke());
+        ctx.setFill(prediction.getQuantile90Series().getFill());
+
+        List<Point> quantile90Points = prediction.getQuantile90Points();
+        ctx.beginPath();
+        ctx.moveTo((quantile90Points.get(0).getX() - LOWER_BOUND_X) * scaleX, height - (quantile90Points.get(0).getY() - LOWER_BOUND_Y) * scaleY);
+        for (int i = 1 ; i < quantile90Points.size() ; i++) {
+            Point p = quantile90Points.get(i);
+            double  x = (p.x - LOWER_BOUND_X) * scaleX;
+            double  y = height - (p.y - LOWER_BOUND_Y) * scaleY;
+            ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
     }
 
     private void drawMultiTimeSeries(final List<XYSeries<T>> LIST_OF_SERIES) {

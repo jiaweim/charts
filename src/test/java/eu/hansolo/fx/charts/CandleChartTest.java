@@ -76,9 +76,9 @@ public class CandleChartTest extends Application {
     private              XYSeries<TYChartItem>      ma5Series;
     private              XYSeries<TYChartItem>      ma10Series;
     private              XYSeries<TYChartItem>      ma20Series;
-    private              XYSeries<TYChartItem> ma60Series;
-    private              XYChart<TYChartItem>  ma5Chart;
-    private              XYChart<TYChartItem>  ma10Chart;
+    private              XYSeries<TYChartItem>      ma60Series;
+    private              XYChart<TYChartItem>       ma5Chart;
+    private              XYChart<TYChartItem>       ma10Chart;
     private              XYChart<TYChartItem>       ma20Chart;
     private              XYChart<TYChartItem>       ma60Chart;
 

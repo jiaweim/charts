@@ -69,9 +69,9 @@ public class DateAxisTest extends Application {
         series.setSymbolsVisible(false);
 
         // XYChart
-        xAxis = createBottomTimeAxis(start, end, "dd.MM", true);
-        xAxis.setSameTickMarkLength(true);
-        xAxis.setMediumTimeAxisTickLabelsVisible(true);
+        //xAxis = createBottomTimeAxis(start, end, "dd.MM", true);
+        //xAxis.setSameTickMarkLength(true);
+        //xAxis.setMediumTimeAxisTickLabelsVisible(true);
 
         xAxis = AxisBuilder.create(Orientation.HORIZONTAL, Position.BOTTOM)
                            .type(AxisType.TIME)

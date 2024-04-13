@@ -1977,6 +1977,7 @@ public class Axis extends Region {
         for (long i = minValueInSeconds; i <= maxValueInSeconds; i++) {
             double fixedPosition = (counter - minValueInSeconds) * stepSize;
 
+            // TODO: improve speed
             if (VERTICAL == orientation) {
                 if (Position.LEFT == position) {
                     innerPointX  = anchorXPlusOffset - majorTickMarkLength;
@@ -2055,6 +2056,7 @@ public class Axis extends Region {
                 }
             }
 
+            // TODO: improve speed
             if (i % majorTickSpace == 0) {
                 // Draw major tick mark
                 isMinValue = i == minValueInSeconds;
@@ -2269,7 +2271,6 @@ public class Axis extends Region {
 
             axisCanvas.setWidth(width);
             axisCanvas.setHeight(height);
-
 
             redraw();
         }
