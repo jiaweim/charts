@@ -137,6 +137,8 @@ public class BarChart<T extends ChartItem> extends Region {
     private              BooleanProperty                           useGivenColors;
     private              double                                    _barCornerRadius;
     private              DoubleProperty                            barCornerRadius;
+    private              boolean                                   _boldValueFont;
+    private              BooleanProperty                           boldValueFont;
     private              List<Color>                               colors;
     private              Map<Rectangle, ChartItem>                 rectangleItemMap;
     private              ListChangeListener<ChartItem>             chartItemListener;
@@ -174,6 +176,7 @@ public class BarChart<T extends ChartItem> extends Region {
         _useMinNumberOfBars     = false;
         _useGivenColors         = false;
         _barCornerRadius        = 2;
+        _boldValueFont          = false;
         colors                  = new ArrayList<>(List.of(Color.rgb(253, 231, 37), Color.rgb(170, 220, 49), Color.rgb(94, 200, 99), Color.rgb(40, 173, 129), Color.rgb(33, 144, 140), Color.rgb(44, 114, 142), Color.rgb(59, 82, 139), Color.rgb(71, 45, 123), Color.rgb(68, 4, 84)));
         observers               = new ConcurrentHashMap<>();
         popup                   = new InfoPopup();
@@ -764,6 +767,26 @@ public class BarChart<T extends ChartItem> extends Region {
         return barCornerRadius;
     }
 
+    public boolean getBoldValueFont() { return null == boldValueFont ? _boldValueFont : boldValueFont.get(); }
+    public void setBoldValueFont(final boolean boldValueFont) {
+        if (null == this.boldValueFont) {
+            _boldValueFont = boldValueFont;
+            redraw();
+        } else {
+            this.boldValueFont.set(boldValueFont);
+        }
+    }
+    public BooleanProperty boldValueFontProperty() {
+        if (null == boldValueFont) {
+            boldValueFont = new BooleanPropertyBase(_boldValueFont) {
+                @Override protected void invalidated() { redraw(); }
+                @Override public Object getBean() { return BarChart.this; }
+                @Override public String getName() { return "boldValueFont"; }
+            };
+        }
+        return boldValueFont;
+    }
+
     public List<Color> getColors() { return colors; }
     public void setColors(final List<Color> colors) {
         if (colors.isEmpty()) { throw new IllegalArgumentException("colors cannot be empty"); }
@@ -893,7 +916,7 @@ public class BarChart<T extends ChartItem> extends Region {
         boolean         shadowsVisible       = getShadowsVisible();
         double          valueFontSize        = barHeight * 0.5;
         double          nameFontSize         = barHeight * 0.5;
-        Font            valueFont            = Fonts.latoRegular(valueFontSize);
+        Font            valueFont            = getBoldValueFont() ? Fonts.latoBold(valueFontSize) : Fonts.latoRegular(valueFontSize);
         Font            nameFont             = Fonts.latoRegular(nameFontSize);
         DropShadow      shadow               = new DropShadow(BlurType.TWO_PASS_BOX, Color.rgb(0, 0, 0, 0.15), barHeight * 0.1, 0.0, 1, barHeight * 0.1);
         double          barX                 = inset + namesWidth;
@@ -966,7 +989,7 @@ public class BarChart<T extends ChartItem> extends Region {
                     ctx.setTextAlign(TextAlignment.RIGHT);
                 } else {
                     if (NumberFormat.PERCENTAGE == numberFormat || NumberFormat.PERCENTAGE_1_DECIMAL == numberFormat) {
-                        valueText      = String.format(Locale.US, formatString, itemValue / maxValue * 100);
+                        valueText      = 0 == maxValue ? "" : String.format(Locale.US, formatString, itemValue / maxValue * 100);
                         valueTextWidth = Helper.getTextDimension(valueText, valueFont).getWidth();
                         valueX         = barX + 5;
                         ctx.setTextAlign(TextAlignment.LEFT);
@@ -1034,7 +1057,7 @@ public class BarChart<T extends ChartItem> extends Region {
         boolean         shadowsVisible       = getShadowsVisible();
         double          valueFontSize        = barWidth * 0.25;
         double          nameFontSize         = barWidth * 0.25;
-        Font            valueFont            = Fonts.latoRegular(valueFontSize);
+        Font            valueFont            = getBoldValueFont() ? Fonts.latoBold(valueFontSize) : Fonts.latoRegular(valueFontSize);
         Font            nameFont             = Fonts.latoRegular(nameFontSize);
         DropShadow      shadow               = new DropShadow(BlurType.TWO_PASS_BOX, Color.rgb(0, 0, 0, 0.15), barWidth * 0.1, 0.0, barWidth * 0.1, 1);
         double          barY                 = chartHeight - inset - namesHeight;
@@ -1107,7 +1130,7 @@ public class BarChart<T extends ChartItem> extends Region {
                     valueY          = barY - barHeight + barWidth * 0.5;
                 } else {
                     if (NumberFormat.PERCENTAGE == numberFormat || NumberFormat.PERCENTAGE_1_DECIMAL == numberFormat) {
-                        valueText       = String.format(Locale.US, formatString, itemValue / maxValue * 100);
+                        valueText       = 0 == maxValue ? "" : String.format(Locale.US, formatString, itemValue / maxValue * 100);
                         valueTextHeight = Helper.getTextDimension(valueText, valueFont).getHeight();
                         valueY          = barY - 5 - valueFontSize;
                     } else {

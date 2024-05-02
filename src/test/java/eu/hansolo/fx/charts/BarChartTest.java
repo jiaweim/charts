@@ -91,6 +91,7 @@ public class BarChartTest extends Application {
                                .useGivenColors(true)
                                .colors(List.of(Color.RED, Color.BLUE, Color.GREEN))
                                .barCornerRadius(15)
+                               .boldValueFont(true)
                                .build();
 
         AnchorPane.setTopAnchor(chart, 10d);
