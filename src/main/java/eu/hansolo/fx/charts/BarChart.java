@@ -35,6 +35,8 @@ import eu.hansolo.toolboxfx.font.Fonts;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.IntegerPropertyBase;
 import javafx.beans.property.LongProperty;
@@ -133,6 +135,8 @@ public class BarChart<T extends ChartItem> extends Region {
     private              BooleanProperty                           useMinNumberOfBars;
     private              boolean                                   _useGivenColors;
     private              BooleanProperty                           useGivenColors;
+    private              double                                    _barCornerRadius;
+    private              DoubleProperty                            barCornerRadius;
     private              List<Color>                               colors;
     private              Map<Rectangle, ChartItem>                 rectangleItemMap;
     private              ListChangeListener<ChartItem>             chartItemListener;
@@ -169,6 +173,7 @@ public class BarChart<T extends ChartItem> extends Region {
         _minNumberOfBars        = 5;
         _useMinNumberOfBars     = false;
         _useGivenColors         = false;
+        _barCornerRadius        = 2;
         colors                  = new ArrayList<>(List.of(Color.rgb(253, 231, 37), Color.rgb(170, 220, 49), Color.rgb(94, 200, 99), Color.rgb(40, 173, 129), Color.rgb(33, 144, 140), Color.rgb(44, 114, 142), Color.rgb(59, 82, 139), Color.rgb(71, 45, 123), Color.rgb(68, 4, 84)));
         observers               = new ConcurrentHashMap<>();
         popup                   = new InfoPopup();
@@ -739,6 +744,26 @@ public class BarChart<T extends ChartItem> extends Region {
         return useGivenColors;
     }
 
+    public double getBarCornerRadius() { return null == barCornerRadius ? _barCornerRadius : barCornerRadius.get(); }
+    public void setBarCornerRadius(final double barCornerRadius) {
+        if (null == this.barCornerRadius) {
+            _barCornerRadius = Helper.clamp(0, 20, barCornerRadius);
+            redraw();
+        } else {
+            this.barCornerRadius.set(Helper.clamp(0, 20, barCornerRadius));
+        }
+    }
+    public DoubleProperty barCornerRadiusProperty() {
+        if (null == barCornerRadius) {
+            barCornerRadius = new DoublePropertyBase(_barCornerRadius) {
+                @Override protected void invalidated() { redraw(); }
+                @Override public Object getBean() { return BarChart.this; }
+                @Override public String getName() { return "barCornerRadius"; }
+            };
+        }
+        return barCornerRadius;
+    }
+
     public List<Color> getColors() { return colors; }
     public void setColors(final List<Color> colors) {
         if (colors.isEmpty()) { throw new IllegalArgumentException("colors cannot be empty"); }
@@ -850,7 +875,7 @@ public class BarChart<T extends ChartItem> extends Region {
         double          maxBarWidth          = chartWidth - namesWidth;
         double          minNumberOfBars      = noOfItems > getMinNumberOfBars() ? noOfItems : getMinNumberOfBars();
         double          barHeight            = getUseMinNumberOfBars() ? chartHeight / (minNumberOfBars + (minNumberOfBars * 0.4)) : chartHeight / (noOfItems + (noOfItems * 0.4));
-        double          cornerRadius         = barHeight * 0.75;
+        double          cornerRadius         = getBarCornerRadius();
         double          barSpacer            = getUseMinNumberOfBars() ? (chartHeight - (minNumberOfBars * barHeight)) / (minNumberOfBars - 1) : (chartHeight - (noOfItems * barHeight)) / (noOfItems - 1);
         double          maxValue             = series.getMaxValue();
         NumberFormat    numberFormat         = getNumberFormat();
@@ -991,7 +1016,7 @@ public class BarChart<T extends ChartItem> extends Region {
         double          maxBarHeight         = chartHeight - namesHeight;
         double          minNumberOfBars      = noOfItems > getMinNumberOfBars() ? noOfItems : getMinNumberOfBars();
         double          barWidth             = getUseMinNumberOfBars() ? chartWidth / (minNumberOfBars + (minNumberOfBars * 0.4)) : chartWidth / (noOfItems + (noOfItems * 0.4));
-        double          cornerRadius         = barWidth * 0.75;
+        double          cornerRadius         = getBarCornerRadius();
         double          barSpacer            = getUseMinNumberOfBars() ? (chartWidth - (minNumberOfBars * barWidth)) / (minNumberOfBars - 1) : (chartWidth - (noOfItems * barWidth)) / (noOfItems - 1);
         double          maxValue             = series.getMaxValue();
         NumberFormat    numberFormat         = getNumberFormat();

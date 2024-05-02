@@ -19,6 +19,7 @@
 package eu.hansolo.fx.charts;
 
 import eu.hansolo.fx.charts.data.ChartItem;
+import eu.hansolo.fx.charts.tools.Helper;
 import eu.hansolo.fx.charts.tools.NumberFormat;
 import eu.hansolo.fx.charts.tools.Order;
 import javafx.beans.property.BooleanProperty;
@@ -175,6 +176,11 @@ public class BarChartBuilder <B extends BarChartBuilder<B>> {
         return (B)this;
     }
 
+    public final B barCornerRadius(final double barCornerRadius) {
+        properties.put("barCornerRadius", new SimpleDoubleProperty(Helper.clamp(0, 20, barCornerRadius)));
+        return (B)this;
+    }
+
     // General properties
     public final B prefSize(final double width, final double height) {
         properties.put("prefSize", new SimpleObjectProperty<>(new Dimension2D(width, height)));
@@ -308,6 +314,7 @@ public class BarChartBuilder <B extends BarChartBuilder<B>> {
                 case "useMinNumberOfBars"   -> barChart.setUseMinNumberOfBars(((BooleanProperty) properties.get(key)).get());
                 case "useGivenColors"       -> barChart.setUseGivenColors(((BooleanProperty) properties.get(key)).get());
                 case "colors"               -> barChart.setColors(((ObjectProperty<List<Color>>) properties.get(key)).get());
+                case "barCornerRadius"      -> barChart.setBarCornerRadius(((DoubleProperty) properties.get(key)).get());
             }
         }
         return barChart;

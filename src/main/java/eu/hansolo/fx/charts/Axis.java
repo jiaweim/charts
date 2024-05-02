@@ -1987,7 +1987,7 @@ public class Axis extends Region {
         // Main Loop for tick marks and labels
         for (long i = minValueInSeconds; i <= maxValueInSeconds; i += step) {
             double fixedPosition = (counter - minValueInSeconds) * stepSize * step;
-            
+
             if (VERTICAL == orientation) {
                 if (Position.LEFT == position) {
                     innerPointX  = anchorXPlusOffset - majorTickMarkLength;
