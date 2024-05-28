@@ -69,7 +69,6 @@ public class WaffleChartTest extends Application {
                                             .build();
 
         restLabel = new Label(String.format("%.0f%%", 0.0));
-        restLabel.setPadding(new Insets(15, 10, 15, 10));
         restLabel.setTextFill(Color.BLACK);
         restLabel.setFont(Font.font(14));
         StackPane restPane = new StackPane(restLabel);
@@ -81,7 +80,6 @@ public class WaffleChartTest extends Application {
         restPane.setPrefSize(64, 64);
 
         percentageLabel = new Label(String.format("%.0f%%", 0.0));
-        percentageLabel.setPadding(new Insets(15, 10, 15, 10));
         percentageLabel.setTextFill(Color.WHITE);
         percentageLabel.setFont(Font.font(14));
         StackPane percentagePane = new StackPane(percentageLabel);

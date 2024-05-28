@@ -59,11 +59,9 @@ public class WaffleChart extends Region {
     private              Paint                 _emptyCellFill;
     private              ObjectProperty<Paint> emptyCellFill;
     private              double                inset;
-    private              double                chartWidth;
-    private              double                chartHeight;
+    private              double                chartSize;
     private              double                gap;
-    private              double                cellWidth;
-    private              double                cellHeight;
+    private              double                cellSize;
     private              double                cellRadius;
 
 
@@ -78,12 +76,10 @@ public class WaffleChart extends Region {
         this._emptyCellFill  = Color.web("#cdcdcd");
         this._cellFill       = Color.web("#3ca9e2");
         this.inset           = 5;
-        this.chartWidth      = this.size - 2 * inset;
-        this.chartHeight     = this.size - 2 * inset;
+        this.chartSize       = this.size - 2 * inset;
         this.gap             = 1;
-        this.cellWidth       = (chartWidth - (9 * gap)) / 10;
-        this.cellHeight      = (chartHeight - (9 * gap)) / 10;
-        this.cellRadius      = cellWidth * 0.25;
+        this.cellSize        = (chartSize - (9 * gap)) / 10;
+        this.cellRadius      = cellSize * 0.25;
         initGraphics();
         registerListeners();
     }
@@ -102,7 +98,7 @@ public class WaffleChart extends Region {
 
         getStyleClass().add("comparison-ring-chart");
 
-        canvas = new Canvas(size * 0.9, 0.9);
+        canvas = new Canvas(PREFERRED_WIDTH, PREFERRED_HEIGHT);
         ctx    = canvas.getGraphicsContext2D();
 
         pane = new Pane(canvas);
@@ -248,15 +244,18 @@ public class WaffleChart extends Region {
         final long   boxToChange   = Math.round(100 * value);
         ctx.setFill(getBackgroundFill());
         ctx.fillRect(0, 0, width, height);
-        double x = inset;
-        double y = inset + (chartHeight - cellHeight);
+        double x        = inset;
+        double y        = inset + (chartSize - cellSize);
+        double xCounter = 0;
         for (int i = 0; i < 100; i++) {
             ctx.setFill(value > 0 && i <= boxToChange ? cellFill : emptyCellFill);
-            ctx.fillRoundRect(x, y, cellWidth, cellHeight, cellRadius, cellRadius);
-            x += (gap + cellWidth);
-            if (x > chartWidth - inset) {
-                x = inset;
-                y -= (gap + cellHeight);
+            ctx.fillRoundRect(x, y, cellSize, cellSize, cellRadius, cellRadius);
+            x += (gap + cellSize);
+            xCounter++;
+            if (xCounter == 10) {
+                xCounter =  0;
+                x        =  inset;
+                y        -= (gap + cellSize);
             }
         }
     }
@@ -266,16 +265,15 @@ public class WaffleChart extends Region {
     private void resize() {
         width  = getWidth() - getInsets().getLeft() - getInsets().getRight();
         height = getHeight() - getInsets().getTop() - getInsets().getBottom();
-        size   = width < height ? width : height;
+        size   = Math.min(width, height);
 
         if (width > 0 && height > 0) {
-            this.chartWidth  = this.size - 2 * inset;
-            this.chartHeight = this.size - 2 * inset;
-            this.gap         = 1;
-            this.cellWidth   = (chartWidth - (9 * gap)) / 10;
-            this.cellHeight  = (chartHeight - (9 * gap)) / 10;
-            this.cellRadius  = cellWidth * 0.25;
+            this.chartSize  = this.size - 2 * inset;
+            this.gap        = 1;
+            this.cellSize   = (chartSize - (9 * gap)) / 10;
+            this.cellRadius = cellSize * 0.25;
 
+            pane.setMinSize(size, size);
             pane.setMaxSize(size, size);
             pane.setPrefSize(size, size);
             pane.relocate((getWidth() - size) * 0.5, (getHeight() - size) * 0.5);
