@@ -18,8 +18,6 @@
 
 package eu.hansolo.fx.charts;
 
-import eu.hansolo.fx.charts.data.ChartItem;
-import eu.hansolo.fx.charts.series.Series;
 import eu.hansolo.fx.charts.tools.Helper;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.DoubleProperty;
@@ -242,15 +240,6 @@ public class WaffleChart extends Region {
 
 
     // ******************** Drawing *******************************************
-    private void prepareSeries(final Series<ChartItem> SERIES) {
-        boolean animated          = SERIES.isAnimated();
-        long    animationDuration = SERIES.getAnimationDuration();
-        SERIES.getItems().forEach(item -> {
-            if (animated) { item.setAnimated(animated); }
-            item.setAnimationDuration(animationDuration);
-        });
-    }
-
     private void drawChart() {
         ctx.clearRect(0, 0, width, height);
         final Paint  emptyCellFill = getEmptyCellFill();
