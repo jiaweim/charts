@@ -49,7 +49,6 @@ public class WaffleChart extends Region {
     private              double                height;
     private              Canvas                canvas;
     private              GraphicsContext       ctx;
-    private              Pane                  pane;
     private              double                _value;
     private              DoubleProperty        value;
     private              Paint                 _backgroundFill;
@@ -101,9 +100,7 @@ public class WaffleChart extends Region {
         canvas = new Canvas(PREFERRED_WIDTH, PREFERRED_HEIGHT);
         ctx    = canvas.getGraphicsContext2D();
 
-        pane = new Pane(canvas);
-
-        getChildren().setAll(pane);
+        getChildren().setAll(canvas);
     }
 
     private void registerListeners() {
@@ -273,13 +270,9 @@ public class WaffleChart extends Region {
             this.cellSize   = (chartSize - (9 * gap)) / 10;
             this.cellRadius = cellSize * 0.25;
 
-            pane.setMinSize(size, size);
-            pane.setMaxSize(size, size);
-            pane.setPrefSize(size, size);
-            pane.relocate((getWidth() - size) * 0.5, (getHeight() - size) * 0.5);
-
-            canvas.setWidth(size);
-            canvas.setHeight(size);
+            this.canvas.setWidth(size);
+            this.canvas.setHeight(size);
+            this.canvas.relocate((getWidth() - size) * 0.5, (getHeight() - size) * 0.5);
 
             redraw();
         }
