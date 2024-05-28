@@ -18,8 +18,6 @@
 
 package eu.hansolo.fx.charts;
 
-import eu.hansolo.fx.charts.Category;
-import eu.hansolo.fx.charts.ComparisonBarChart;
 import eu.hansolo.fx.charts.ComparisonBarChartBuilder;
 import eu.hansolo.fx.charts.data.ChartItem;
 import eu.hansolo.fx.charts.data.ChartItemBuilder;
@@ -49,7 +47,6 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.Stop;
-import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 

@@ -37,7 +37,7 @@ import javafx.scene.paint.Paint;
 import java.util.HashMap;
 
 
-public class ComparisonBarChartBuilder <B extends ComparisonBarChartBuilder<B>> {
+public class ComparisonBarChartBuilder<B extends ComparisonBarChartBuilder<B>> {
     private HashMap<String, Property>  properties = new HashMap<>();
     private ChartItemSeries<ChartItem> series1;
     private ChartItemSeries<ChartItem> series2;
