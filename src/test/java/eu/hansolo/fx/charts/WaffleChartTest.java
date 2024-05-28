@@ -28,6 +28,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -42,9 +46,11 @@ import java.util.Random;
 
 public class WaffleChartTest extends Application {
     private static final Random         RND = new Random();
+    private              HBox           hBox;
     private              VBox           vBox;
     private              DoubleProperty value;
     private              Label          percentageLabel;
+    private              Label          restLabel;
     private              WaffleChart    chart;
     private              long           lastTimerCall;
     private              AnimationTimer timer;
@@ -54,23 +60,40 @@ public class WaffleChartTest extends Application {
         value = new SimpleDoubleProperty(0);
         value.addListener((o, ov, nv) -> {
             chart.setValue(nv.doubleValue());
+            restLabel.setText(String.format("%.0f%%", 100.0 - (nv.doubleValue() * 100.0)));
             percentageLabel.setText(String.format("%.0f%%", nv.doubleValue() * 100.0));
         });
 
-        percentageLabel = new Label(String.format("%.0f%%", 0.0));
-        //percentageLabel.setBackground(new Background(new BackgroundFill(Color.PURPLE, new CornerRadii(50), new Insets(0))));
-        percentageLabel.setPadding(new Insets(15, 10, 15, 10));
-        percentageLabel.setTextFill(Color.WHITE);
-        percentageLabel.setFont(Font.font(14));
         chart           = WaffleChartBuilder.create()
                                             .cellFill(Color.PURPLE)
                                             .build();
-        StackPane p = new StackPane(percentageLabel);
-        p.setBackground(new Background(new BackgroundFill(Color.PURPLE, new CornerRadii(64), new Insets(0))));
-        p.setMinSize(64, 64);
-        p.setMaxSize(64, 64);
-        p.setPrefSize(64, 64);
-        vBox = new VBox(10, p, chart);
+
+        restLabel = new Label(String.format("%.0f%%", 0.0));
+        restLabel.setPadding(new Insets(15, 10, 15, 10));
+        restLabel.setTextFill(Color.BLACK);
+        restLabel.setFont(Font.font(14));
+        StackPane restPane = new StackPane(restLabel);
+        restPane.setBackground(new Background(new BackgroundFill(chart.getEmptyCellFill(), new CornerRadii(64), new Insets(0))));
+        //restPane.setBorder(new Border(new BorderStroke(Color.PURPLE,BorderStrokeStyle.SOLID, new CornerRadii(64), new BorderWidths(2))));
+
+        restPane.setMinSize(64, 64);
+        restPane.setMaxSize(64, 64);
+        restPane.setPrefSize(64, 64);
+
+        percentageLabel = new Label(String.format("%.0f%%", 0.0));
+        percentageLabel.setPadding(new Insets(15, 10, 15, 10));
+        percentageLabel.setTextFill(Color.WHITE);
+        percentageLabel.setFont(Font.font(14));
+        StackPane percentagePane = new StackPane(percentageLabel);
+        percentagePane.setBackground(new Background(new BackgroundFill(Color.PURPLE, new CornerRadii(64), new Insets(0))));
+        percentagePane.setMinSize(64, 64);
+        percentagePane.setMaxSize(64, 64);
+        percentagePane.setPrefSize(64, 64);
+
+        hBox = new HBox(80, percentagePane, restPane);
+        hBox.setAlignment(Pos.CENTER);
+
+        vBox = new VBox(10, hBox, chart);
         vBox.setAlignment(Pos.CENTER);
 
         lastTimerCall   = System.nanoTime();
