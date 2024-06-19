@@ -9,9 +9,9 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'com.google.osdetector'           version '1.7.3'
-    id 'org.javamodularity.moduleplugin' version '1.8.12'
+    id 'org.javamodularity.moduleplugin' version '1.8.15'
     id 'org.beryx.jlink'                 version '3.0.1'
-    id 'net.nemerosa.versioning'         version '3.0.0'
+    id 'net.nemerosa.versioning'         version '3.1.0'
 }
 
 apply plugin: 'maven-publish'
