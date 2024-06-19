@@ -191,3 +191,7 @@ related to imports, required modules etc.
 
 ## Wafermap
 ![WaferMap](https://i.ibb.co/LS7LVD0/wafermap.png)
+
+
+## WaffleChart
+![WaffleChart](https://i.ibb.co/ZckBSNm/Waffle-Chart.png")

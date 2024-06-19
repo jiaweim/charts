@@ -64,9 +64,10 @@ public class WaffleChartTest extends Application {
             percentageLabel.setText(String.format("%.0f%%", nv.doubleValue() * 100.0));
         });
 
-        chart           = WaffleChartBuilder.create()
-                                            .cellFill(Color.PURPLE)
-                                            .build();
+        chart = WaffleChartBuilder.create()
+                                  .cellFill(Color.PURPLE)
+                                  .backgroundFill(Color.TRANSPARENT)
+                                  .build();
 
         restLabel = new Label(String.format("%.0f%%", 0.0));
         restLabel.setTextFill(Color.BLACK);
@@ -107,7 +108,7 @@ public class WaffleChartTest extends Application {
 
     @Override public void start(Stage stage) {
         StackPane pane = new StackPane(vBox);
-        pane.setBackground(new Background(new BackgroundFill(Color.rgb(244, 250, 255), CornerRadii.EMPTY, Insets.EMPTY)));
+        pane.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
 
         pane.setPadding(new Insets(10));
 

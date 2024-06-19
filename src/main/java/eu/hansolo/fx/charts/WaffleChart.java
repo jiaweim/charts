@@ -38,12 +38,15 @@ import java.awt.image.BufferedImage;
 
 @DefaultProperty("children")
 public class WaffleChart extends Region {
-    private static final double                PREFERRED_WIDTH  = 250;
-    private static final double                PREFERRED_HEIGHT = 250;
-    private static final double                MINIMUM_WIDTH    = 50;
-    private static final double                MINIMUM_HEIGHT   = 50;
-    private static final double                MAXIMUM_WIDTH    = 4096;
-    private static final double                MAXIMUM_HEIGHT   = 4096;
+    public  static final Color                 DEFAULT_BACKGROUND_FILL = Color.web("#f0f0f0");
+    public  static final Color                 DEFAULT_EMPTY_CELL_FILL = Color.web("#cdcdcd");
+    public  static final Color                 DEFAULT_CELL_FILL       = Color.web("#3ca9e2");
+    private static final double                PREFERRED_WIDTH         = 250;
+    private static final double                PREFERRED_HEIGHT        = 250;
+    private static final double                MINIMUM_WIDTH           = 50;
+    private static final double                MINIMUM_HEIGHT          = 50;
+    private static final double                MAXIMUM_WIDTH           = 4096;
+    private static final double                MAXIMUM_HEIGHT          = 4096;
     private              double                size;
     private              double                width;
     private              double                height;
@@ -71,9 +74,9 @@ public class WaffleChart extends Region {
     public WaffleChart(final double value) {
         if (value < 0 || value > 1) { throw new IllegalArgumentException("Value must be between 0...1"); }
         this._value          = value;
-        this._backgroundFill = Color.web("#f0f0f0");
-        this._emptyCellFill  = Color.web("#cdcdcd");
-        this._cellFill       = Color.web("#3ca9e2");
+        this._backgroundFill = DEFAULT_BACKGROUND_FILL;
+        this._emptyCellFill  = DEFAULT_EMPTY_CELL_FILL;
+        this._cellFill       = DEFAULT_CELL_FILL;
         this.inset           = 5;
         this.chartSize       = this.size - 2 * inset;
         this.gap             = 1;
