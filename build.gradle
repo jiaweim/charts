@@ -12,6 +12,7 @@ plugins {
     id 'org.javamodularity.moduleplugin' version '1.8.15'
     id 'org.beryx.jlink'                 version '3.0.1'
     id 'net.nemerosa.versioning'         version '3.1.0'
+    id 'com.vanniktech.maven.publish'    version '0.28.0'
 }
 
 apply plugin: 'maven-publish'
@@ -222,4 +223,45 @@ publishing {
             }
         }
     }
+}
+
+mavenPublishing {
+    coordinates(
+            groupId    = "eu.hansolo.fx",
+            artifactId = "charts",
+            version    = "${version}"
+    )
+
+    pom {
+        name        = "charts"
+        description = "A JavaFX library for scientific charts"
+        url         = "https://github.com/HanSolo/charts/wiki"
+
+        licenses {
+            license {
+                name = "The Apache License, Version 2.0"
+                url  = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            }
+        }
+
+        developers {
+            developer {
+                id    = "HanSolo"
+                name  = "Gerrit Grunwald"
+                email = "han.solo@mac.com"
+            }
+        }
+
+        scm {
+            connection          = "scm:git:https://HanSolo/charts"
+            developerConnection = "scm:git:https://HanSolo/charts"
+            url                 = "https://github.com/HanSolo/charts"
+        }
+    }
+
+    // Configure publishing to Maven Central
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+
+    // Enable GPG signing for all publications
+    signAllPublications()
 }
