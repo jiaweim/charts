@@ -81,6 +81,8 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
     private              DoubleProperty           lowerBoundY;
     private              double                   _upperBoundY;
     private              DoubleProperty           upperBoundY;
+    private              boolean                  _zeroRadarOffset;
+    private              BooleanProperty          zeroRadarOffset;
     private              ObservableList<Category> categories;
 
 
@@ -90,6 +92,9 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
     }
     public YPane(final List<Category> CATEGORIES, final YSeries<T>... SERIES) {
         this(Color.TRANSPARENT, CATEGORIES, SERIES);
+    }
+    public YPane(final List<Category> CATEGORIES, final List<YSeries<T>> SERIES) {
+        this(Color.TRANSPARENT, CATEGORIES, SERIES.toArray(new YSeries[SERIES.size()]));
     }
     public YPane(final Paint BACKGROUND, final YSeries<T>... SERIES) {
         this(BACKGROUND, new ArrayList<>(), SERIES);
@@ -106,6 +111,7 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
         _categoryColor     = Color.BLACK;
         _lowerBoundY       = 0;
         _upperBoundY       = 100;
+        _zeroRadarOffset   = false;
         categories         = FXCollections.observableArrayList(CATEGORIES);
         valid              = isChartTypeValid();
         initGraphics();
@@ -137,18 +143,7 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
         heightProperty().addListener(o -> resize());
 
         listOfSeries.forEach(series -> series.setOnSeriesEvent(seriesEvent -> redraw()));
-        categories.addListener(new ListChangeListener<Category>() {
-            @Override public void onChanged(final Change<? extends Category> c) {
-                while (c.next()) {
-                    if (c.wasAdded()) {
-
-                    } else if (c.wasRemoved()) {
-
-                    }
-                }
-                redraw();
-            }
-        });
+        categories.addListener((ListChangeListener<Category>) c -> redraw());
     }
 
 
@@ -308,6 +303,26 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
     public ObservableList<Category> getCategories() { return categories; }
     public void setCategories(final List<Category> categories) { this.categories.setAll(categories); }
 
+    public boolean getZeroRadarOffset() { return null == zeroRadarOffset ? _zeroRadarOffset : zeroRadarOffset.get(); }
+    public void setZeroRadarOffset(final boolean zeroRadarOffset) {
+        if (null == this.zeroRadarOffset) {
+            this._zeroRadarOffset = zeroRadarOffset;
+            redraw();
+        } else {
+            this.zeroRadarOffset.set(zeroRadarOffset);
+        }
+    }
+    public BooleanProperty zeroRadarOffsetProperty() {
+        if (null == zeroRadarOffset) {
+            zeroRadarOffset = new BooleanPropertyBase(_zeroRadarOffset) {
+                @Override protected void invalidated() { redraw(); }
+                @Override public Object getBean() { return YPane.this; }
+                @Override public String getName() { return "zeroRadarOffset"; }
+            };
+        }
+        return zeroRadarOffset;
+    }
+
     public double getRangeY() { return getUpperBoundY() - getLowerBoundY(); }
 
     public double getDataMinY() { return listOfSeries.stream().mapToDouble(YSeries::getMinY).min().getAsDouble(); }
@@ -400,15 +415,16 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
     }
 
     private void drawRadar(final YSeries<T> SERIES) {
-        final double CENTER_X      = 0.5 * size;
-        final double CENTER_Y      = CENTER_X;
-        final double CIRCLE_SIZE   = 0.9 * size;
-        final double LOWER_BOUND_Y = getLowerBoundY();
-        final double DATA_RANGE    = getRangeY();
-        final double RANGE         = 0.35714 * CIRCLE_SIZE;
-        final double OFFSET        = 0.14286 * CIRCLE_SIZE;
-        final int    NO_OF_SECTORS = SERIES.getItems().size();
-        final double angleStep     = 360.0 / NO_OF_SECTORS;
+        final double CENTER_X           = 0.5 * size;
+        final double CENTER_Y           = CENTER_X;
+        final double CIRCLE_SIZE        = 0.9 * size;
+        final double LOWER_BOUND_Y      = getLowerBoundY();
+        final double DATA_RANGE         = getRangeY();
+        final boolean ZERO_RADAR_OFFSET = getZeroRadarOffset();
+        final double RANGE              = ZERO_RADAR_OFFSET ? 0.5 * CIRCLE_SIZE : 0.35714 * CIRCLE_SIZE;
+        final double OFFSET             = ZERO_RADAR_OFFSET ? 0 : 0.14286 * CIRCLE_SIZE;
+        final int    NO_OF_SECTORS      = SERIES.getItems().size();
+        final double angleStep          = 360.0 / NO_OF_SECTORS;
 
         // draw the chart data
         ctx.save();
@@ -430,7 +446,7 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
                     ctx.lineTo(CENTER_X, CENTER_Y - OFFSET - r1 * RANGE);
                     Helper.rotateCtx(ctx, CENTER_X, CENTER_Y, angleStep);
                 });
-                //ADDED resuse first point if wrapping required
+                //ADDED reuse first point if wrapping required
                 double r2 = SERIES.isWithWrapping() ? ((SERIES.getItems().get(0).getValue() - LOWER_BOUND_Y) / DATA_RANGE) : ((SERIES.getItems().get(NO_OF_SECTORS - 1).getValue() - LOWER_BOUND_Y) / DATA_RANGE);
                 ctx.lineTo(CENTER_X, CENTER_Y - OFFSET - r2 * RANGE);
                 ctx.closePath();
@@ -494,14 +510,15 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
     }
 
     private void drawRadarOverlay(final int NO_OF_SECTORS, final ChartType TYPE) {
-        final double CENTER_X    = 0.5 * size;
-        final double CENTER_Y    = CENTER_X;
-        final double CIRCLE_SIZE = 0.90 * size;
-        final double DATA_RANGE  = getRangeY();
-        final double MIN_VALUE   = listOfSeries.stream().mapToDouble(YSeries::getMinY).min().getAsDouble();
-        final double RANGE       = 0.35714 * CIRCLE_SIZE;
-        final double OFFSET      = 0.14286 * CIRCLE_SIZE;
-        final double angleStep   = 360.0 / NO_OF_SECTORS;
+        final double CENTER_X           = 0.5 * size;
+        final double CENTER_Y           = CENTER_X;
+        final double CIRCLE_SIZE        = 0.90 * size;
+        final double DATA_RANGE         = getRangeY();
+        final double MIN_VALUE          = listOfSeries.stream().mapToDouble(YSeries::getMinY).min().getAsDouble();
+        final double RANGE              = 0.35714 * CIRCLE_SIZE;
+        final boolean ZERO_RADAR_OFFSET = getZeroRadarOffset();
+        final double OFFSET             = ZERO_RADAR_OFFSET ? 0 : 0.14286 * CIRCLE_SIZE;
+        final double angleStep          = 360.0 / NO_OF_SECTORS;
 
         // draw concentric rings
         ctx.setLineWidth(1);

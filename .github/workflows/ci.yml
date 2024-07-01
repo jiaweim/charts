@@ -35,6 +35,8 @@ jobs:
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          OSSRH_TOKEN_USERNAME: ${{ secrets.OSSRH_TOKEN_USERNAME }}
+          OSSRH_TOKEN_PASSWORD: ${{ secrets.OSSRH_TOKEN_PASSWORD }}
           GH_USER: ${{ secrets.GH_USER }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_KEY }}
@@ -49,6 +51,8 @@ jobs:
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          OSSRH_TOKEN_USERNAME: ${{ secrets.OSSRH_TOKEN_USERNAME }}
+          OSSRH_TOKEN_PASSWORD: ${{ secrets.OSSRH_TOKEN_PASSWORD }}
           GH_USER: ${{ secrets.GH_USER }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_KEY }}

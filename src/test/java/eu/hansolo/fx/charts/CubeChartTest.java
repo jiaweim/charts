@@ -40,14 +40,14 @@ import java.util.Random;
 
 
 public class CubeChartTest extends Application {
-    private static final Random    RND = new Random();
-    private              CubeChart chart1;
-    private              CubeChart chart2;
-    private CubeChart      chart3;
-    private CubeChart      chart4;
-    private long           lastTimerCall;
-    private AnimationTimer timer;
-    private Timeline       timeline;
+    private static final Random         RND = new Random();
+    private              CubeChart      chart1;
+    private              CubeChart      chart2;
+    private              CubeChart      chart3;
+    private              CubeChart      chart4;
+    private              long           lastTimerCall;
+    private              AnimationTimer timer;
+    private              Timeline       timeline;
 
 
     @Override public void init() {

@@ -53,7 +53,7 @@ public class RadarChartTest extends Application {
     private static final long                    INTERVAL   = 1_000_000_000l;
     private static final double                  ANIM_TIME  = INTERVAL / 800_000;
     private static final int                     ELEMENTS   = 30;
-    private static final ChartType               CHART_TYPE = ChartType.SMOOTH_RADAR_POLYGON;
+    private static final ChartType               CHART_TYPE = ChartType.RADAR_SECTOR; //.SMOOTH_RADAR_POLYGON;
     private              YSeries<ValueChartItem> series1;
     private              YSeries<ValueChartItem> series2;
     private              YSeries<ValueChartItem> series3;
@@ -89,8 +89,20 @@ public class RadarChartTest extends Application {
             categories.add(new Category("P" + i));
         }
 
-        chart = new YChart(new YPane(categories, series1, series2, series3));
+        List<YSeries<ValueChartItem>> ySeries = new ArrayList<>();
+        ySeries.add(series1);
+        ySeries.add(series2);
+        ySeries.add(series3);
+
+        YSeries<ValueChartItem>[] ySeriesArray2 = ySeries.toArray(new YSeries[ySeries.size()]);
+
+        YPane yPane = new YPane(categories, ySeriesArray2);
+        yPane.setZeroRadarOffset(true);
+
+        //chart = new YChart(new YPane(categories, series1, series2, series3));
+        chart = new YChart(yPane);
         chart.setPrefSize(600, 600);
+
 
         timeline      = new Timeline();
         lastTimerCall = System.nanoTime();

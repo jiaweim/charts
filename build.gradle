@@ -12,7 +12,6 @@ plugins {
     id 'org.javamodularity.moduleplugin' version '1.8.15'
     id 'org.beryx.jlink'                 version '3.0.1'
     id 'net.nemerosa.versioning'         version '3.1.0'
-    id 'com.vanniktech.maven.publish'    version '0.28.0'
 }
 
 apply plugin: 'maven-publish'
@@ -22,16 +21,18 @@ description   = 'Charts is a JavaFX library containing different kind of charts'
 
 Date buildTimeAndDate = new Date()
 ext {
-    moduleName      = 'eu.hansolo.fx.charts'
-    buildDate       = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
-    buildTime       = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
-    platform        = osdetector.os == 'osx' ? osdetector.arch == 'aarch_64' ? 'mac-aarch64' : 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os == 'linux' ? osdetector.arch == 'aarch_64' ? 'linux-aarch64' : 'linux' : osdetector.os
-    ciOssrhUsername = System.getenv('OSSRH_USERNAME')
-    ciOssrhPassword = System.getenv('OSSRH_PASSWORD')
-    ciGHUser        = System.getenv('GH_USER')
-    ciGHToken       = System.getenv('GH_TOKEN')
-    gpgkey          = System.getenv("GPG_PRIVATE_KEY")
-    gpgpassphrase   = System.getenv("PASSPHRASE")
+    moduleName         = 'eu.hansolo.fx.charts'
+    buildDate          = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
+    buildTime          = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
+    platform           = osdetector.os == 'osx' ? osdetector.arch == 'aarch_64' ? 'mac-aarch64' : 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os == 'linux' ? osdetector.arch == 'aarch_64' ? 'linux-aarch64' : 'linux' : osdetector.os
+    ossrhTokenUsername = System.getenv('OSSRH_TOKEN_USERNAME')
+    ossrhTokenPassword = System.getenv('OSSRH_TOKEN_PASSWORD')
+    ciOssrhUsername    = System.getenv('OSSRH_USERNAME')
+    ciOssrhPassword    = System.getenv('OSSRH_PASSWORD')
+    ciGHUser           = System.getenv('GH_USER')
+    ciGHToken          = System.getenv('GH_TOKEN')
+    gpgkey             = System.getenv("GPG_PRIVATE_KEY")
+    gpgpassphrase      = System.getenv("PASSPHRASE")
 }
 
 repositories {
@@ -203,8 +204,8 @@ publishing {
             url  = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
             try {
                 credentials {
-                    username = null == ciOssrhUsername ? ossrhUsername : ciOssrhUsername
-                    password = null == ciOssrhPassword ? ossrhPassword : ciOssrhPassword
+                    username = null == ossrhTokenUsername ? ossrhUsername : ossrhTokenUsername
+                    password = null == ossrhTokenPassword ? ossrhPassword : ossrhTokenPassword
                 }
             } catch (Exception e) {
 
@@ -215,7 +216,7 @@ publishing {
             url  = "https://maven.pkg.github.com/HanSolo/charts"
             try {
                 credentials {
-                    username = null == ciGHUser ? ghUser : ciGHUser
+                    username = null == ciGHUser  ? ghUser  : ciGHUser
                     password = null == ciGHToken ? ghToken : ciGHToken
                 }
             } catch (Exception e) {
@@ -223,45 +224,4 @@ publishing {
             }
         }
     }
-}
-
-mavenPublishing {
-    coordinates(
-            groupId    = "eu.hansolo.fx",
-            artifactId = "charts",
-            version    = "${version}"
-    )
-
-    pom {
-        name        = "charts"
-        description = "A JavaFX library for scientific charts"
-        url         = "https://github.com/HanSolo/charts/wiki"
-
-        licenses {
-            license {
-                name = "The Apache License, Version 2.0"
-                url  = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-            }
-        }
-
-        developers {
-            developer {
-                id    = "HanSolo"
-                name  = "Gerrit Grunwald"
-                email = "han.solo@mac.com"
-            }
-        }
-
-        scm {
-            connection          = "scm:git:https://HanSolo/charts"
-            developerConnection = "scm:git:https://HanSolo/charts"
-            url                 = "https://github.com/HanSolo/charts"
-        }
-    }
-
-    // Configure publishing to Maven Central
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-
-    // Enable GPG signing for all publications
-    signAllPublications()
 }
