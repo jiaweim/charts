@@ -750,6 +750,10 @@ public class Affine extends AffineBase {
 
     @Override public BaseTransform copy() { return new Affine(this); }
 
+    @Override public int hashCode() {
+        return super.hashCode();
+    }
+
     @Override public boolean equals(Object obj) {
         if (obj instanceof BaseTransform) {
             BaseTransform a = (BaseTransform) obj;

@@ -66,6 +66,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -88,10 +89,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -292,14 +291,10 @@ public class Helper {
     }
 
     public static final Point[] subdividePointsRadial(final Point[] POINTS, final int SUB_DIVISIONS){
-        assert POINTS != null;
-        assert POINTS.length >= 3;
-        int    noOfPoints = POINTS.length;
-
-        Point[] subdividedPoints = new Point[((noOfPoints - 1) * SUB_DIVISIONS) + 1];
-
-        double increments = 1.0 / (double) SUB_DIVISIONS;
-
+        if (null == POINTS || POINTS.length < 3) { throw new IllegalArgumentException("points cannot be null and must at least contain 3 items"); }
+        final int     noOfPoints       = POINTS.length;
+        final Point[] subdividedPoints = new Point[((noOfPoints - 1) * SUB_DIVISIONS) + 1];
+        final double  increments       = 1.0 / (double) SUB_DIVISIONS;
         for (int i = 0 ; i < noOfPoints - 1 ; i++) {
             Point p0 = i == 0 ? POINTS[noOfPoints - 2] : POINTS[i - 1];
             Point p1 = POINTS[i];
@@ -312,19 +307,14 @@ public class Helper {
                 subdividedPoints[(i * SUB_DIVISIONS) + j] = crs.q(j * increments);
             }
         }
-
         return subdividedPoints;
     }
 
     public static final Point[] subdividePoints(final Point[] POINTS, final int SUB_DIVISIONS) {
-        assert POINTS != null;
-        assert POINTS.length >= 3;
-        int    noOfPoints = POINTS.length;
-
-        Point[] subdividedPoints = new Point[((noOfPoints - 1) * SUB_DIVISIONS) + 1];
-
-        double increments = 1.0 / (double) SUB_DIVISIONS;
-
+        if (null == POINTS || POINTS.length < 3) { throw new IllegalArgumentException("points cannot be null and must at least contain 3 items"); }
+        final int     noOfPoints       = POINTS.length;
+        final Point[] subdividedPoints = new Point[((noOfPoints - 1) * SUB_DIVISIONS) + 1];
+        final double  increments       = 1.0 / (double) SUB_DIVISIONS;
         for (int i = 0 ; i < noOfPoints - 1 ; i++) {
             Point p0 = i == 0 ? POINTS[i] : POINTS[i - 1];
             Point p1 = POINTS[i];
@@ -339,7 +329,6 @@ public class Helper {
                 subdividedPoints[(i * SUB_DIVISIONS) + j] = subPoint;
             }
         }
-
         return subdividedPoints;
     }
 
@@ -348,14 +337,10 @@ public class Helper {
         return Arrays.asList(subdividePoints(points, SUB_DIVISIONS));
     }
     public static final DataPoint[] subdividePoints(final DataPoint[] POINTS, final int SUB_DIVISIONS) {
-        assert POINTS != null;
-        assert POINTS.length >= 3;
-        int    noOfPoints = POINTS.length;
-
-        DataPoint[] subdividedPoints = new DataPoint[((noOfPoints - 1) * SUB_DIVISIONS) + 1];
-
-        double increments = 1.0 / (double) SUB_DIVISIONS;
-
+        if (null == POINTS || POINTS.length < 3) { throw new IllegalArgumentException("points cannot be null and must at least contain 3 items"); }
+        final int         noOfPoints       = POINTS.length;
+        final DataPoint[] subdividedPoints = new DataPoint[((noOfPoints - 1) * SUB_DIVISIONS) + 1];
+        final double      increments       = 1.0 / (double) SUB_DIVISIONS;
         for (int i = 0 ; i < noOfPoints - 1 ; i++) {
             DataPoint p0 = i == 0 ? POINTS[i] : POINTS[i - 1];
             DataPoint p1 = POINTS[i];
@@ -368,17 +353,14 @@ public class Helper {
                 subdividedPoints[(i * SUB_DIVISIONS) + j] = crs.q(j * increments);
             }
         }
-
         return subdividedPoints;
     }
 
     public static final Point[] subdividePointsLinear(final Point[] POINTS, final int SUB_DIVISIONS) {
-        assert  POINTS != null;
-        assert  POINTS.length >= 3;
-
-        int     noOfPoints       = POINTS.length;
-        Point[] subdividedPoints = new Point[((noOfPoints - 1) * SUB_DIVISIONS) + 1];
-        double  stepSize         = (POINTS[1].getX() - POINTS[0].getX()) / SUB_DIVISIONS;
+        if (null == POINTS || POINTS.length < 3) { throw new IllegalArgumentException("points cannot be null and must at least contain 3 items"); }
+        final int     noOfPoints       = POINTS.length;
+        final Point[] subdividedPoints = new Point[((noOfPoints - 1) * SUB_DIVISIONS) + 1];
+        final double  stepSize         = (POINTS[1].getX() - POINTS[0].getX()) / SUB_DIVISIONS;
         for (int i = 0 ; i < noOfPoints - 1 ; i++) {
             for (int j = 0 ; j <= SUB_DIVISIONS ; j++) {
                 subdividedPoints[(i * SUB_DIVISIONS) + j] = calcIntermediatePoint(POINTS[i], POINTS[i+1], stepSize * j);
@@ -857,7 +839,7 @@ public class Helper {
         return Color.rgb(r, g, b);
     }
 
-    public static double[] ColorToHSB(final Color color) {
+    public static double[] colorToHSB(final Color color) {
         int      r         = (int) (color.getRed() * 255.0);
         int      g         = (int) (color.getGreen() * 255.0);
         int      b         = (int) (color.getBlue() * 255.0);
@@ -1357,7 +1339,7 @@ public class Helper {
         if (existingFile.exists()) { existingFile.delete(); }
 
         try {
-            Files.write(Paths.get(Constants.HOME_FOLDER + filename), text.getBytes());
+            Files.write(Paths.get(Constants.HOME_FOLDER + filename), text.getBytes(Charset.defaultCharset()));
         } catch (IOException e) {
             System.out.println("Error writing text file: " + filename);
         }
@@ -1429,7 +1411,7 @@ public class Helper {
      * comes with a padding of 5px on each side and a transparent background.
      * @param node The JavaFX node that should be rendered to an image
      * @param width The width of the final image in pixels (if &lt; 0 then 400 and if &gt; 4096 then 4096)
-     * @param height The height of the final image in pixels (if &lt; 0 then 400 and if &lgt; 4096 then 4096)
+     * @param height The height of the final image in pixels (if &lt; 0 then 400 and if &gt; 4096 then 4096)
      * @param filename The path and name of the file e.g. /Users/hansolo/Desktop/sankeyplot.png
      * @return true if the image was successfully saved
      */

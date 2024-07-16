@@ -45,6 +45,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -632,6 +633,11 @@ public class ChartItem implements Item, Comparable<ChartItem> {
     }
 
     @Override public int compareTo(final ChartItem ITEM) { return Double.compare(getValue(), ITEM.getValue()); }
+
+    @Override public int hashCode() {
+        return Objects.hash(_index, index, _name, name, _unit, unit, _description, description, _category, category, _value, value, oldValue, _fill, fill, _stroke, stroke, _textFill, textFill, _timestamp, timestamp, _symbol, symbol,
+                            _animated, animated, _x, x, _y, y, _isEmpty, isEmpty, _selected, selected, _metadata, metadata, animationDuration, currentValue);
+    }
 
     @Override public boolean equals(Object o) {
         if (o == this) { return true; }

@@ -436,7 +436,7 @@ public class ParetoPanel extends Region {
         double heightPerUnit = (height / Math.ceil(total)) ;
 
         entryList.sort((c1,c2)  -> {
-            if(c1.getValue() == c2.getValue()) return 0;
+            if(Double.compare(c1.getValue(), c2.getValue()) == 0) return 0;
             return c1.getValue() > c2.getValue() ? -1 : 1;
         });
 
@@ -663,11 +663,11 @@ public class ParetoPanel extends Region {
 
     public Color getFontColor(){ return (null != labelingColor) ? labelingColor.getValue() : _labelingColor; }
     public void setFontColor(final Color COLOR){
-        if(null != labelingColor){
-            _labelingColor = COLOR;
+        if (null == this.labelingColor) {
+            this._labelingColor = COLOR;
             drawParetoChart();
         } else {
-            labelingColor.setValue(COLOR);
+            this.labelingColor.set(COLOR);
         }
     }
     public ObjectProperty<Color> fontColorProperty(){

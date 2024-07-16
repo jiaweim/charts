@@ -136,7 +136,7 @@ public class ParetoBar {
 
     private void sortAscending() {
         bars.sort((c1,c2)  -> {
-            if(c1.getValue() == c2.getValue()) { return 0; }
+            if(Double.compare(c1.getValue(), c2.getValue()) == 0) { return 0; }
             return c1.getValue() > c2.getValue() ? -1 : 1;
         });
     }

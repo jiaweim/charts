@@ -62,7 +62,6 @@ public class GraphPanel extends Region {
     private              GraphicsContext          ctx;
     private              Pane                     pane;
     private              EventHandler<MouseEvent> mouseHandler;
-    private              EventHandler<KeyEvent>   keyHandler;
     private              long                     lastTimerCall;
     private              AnimationTimer           timer;
     private              double                   temp;
@@ -103,13 +102,8 @@ public class GraphPanel extends Region {
     private              boolean                  _physicsActive;
     private              SimpleBooleanProperty    forceInverted;
     private              boolean                  _forceInverted;
-    private              double                   maxRadius = 20;
+    private              double                   maxRadius    = 20;
     private              double                   scaleOfNodes = 450;
-
-    private              ArrayList<String>        nummericEdgeAttributes;
-    private              ArrayList<String>        nummericNodeAttributes;
-    private              ArrayList<String>        stringNodeAttributes;
-
     private              GraphCalculator          graphCalculator;
 
 

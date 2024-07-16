@@ -57,10 +57,8 @@ public class ParetoInfoPopup extends Popup {
     public  static Color                 DEFAULT_TEXT_COLOR       = Color.WHITE;
     private        HBox                  hBox;
     private        Text                  itemText;
-    private        Text                  valueText;
     private        Line                  line;
     private        Text                  itemNameText;
-    private        Text                  itemValueText;
     private        FadeTransition        fadeIn;
     private        FadeTransition        fadeOut;
     private        PauseTransition       delay;
@@ -186,10 +184,8 @@ public class ParetoInfoPopup extends Popup {
 
     private void updateTextColor(final Color COLOR) {
         itemText.setFill(COLOR);
-        valueText.setFill(COLOR);
         line.setStroke(COLOR);
         itemNameText.setFill(COLOR);
-        itemValueText.setFill(COLOR);
     }
 
     // ******************** Methods *******************************************

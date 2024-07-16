@@ -17,6 +17,9 @@
 package eu.hansolo.fx.geometry;
 
 
+import java.util.Objects;
+
+
 public class Rectangle {
     public int x;
     public int y;
@@ -315,6 +318,10 @@ public class Rectangle {
     }
 
     public boolean isEmpty() { return (width <= 0) || (height <= 0); }
+
+    @Override public int hashCode() {
+        return Objects.hash(x, y, width, height);
+    }
 
     @Override public boolean equals(Object obj) {
         if (obj instanceof Rectangle) {

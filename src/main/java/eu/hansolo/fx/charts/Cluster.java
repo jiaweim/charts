@@ -173,12 +173,6 @@ public class Cluster implements Comparable<Cluster> {
     }
 
     @Override public int compareTo(final Cluster other) {
-        if (getMaxValue() < other.getMaxValue()) {
-            return 1;
-        } else if (getMaxValue() > other.getMaxValue()) {
-            return -1;
-        } else {
-            return 0;
-        }
+        return Double.compare(getMaxValue(), other.getMaxValue());
     }
 }

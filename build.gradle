@@ -21,16 +21,16 @@ description   = 'Charts is a JavaFX library containing different kind of charts'
 
 Date buildTimeAndDate = new Date()
 ext {
-    moduleName         = 'eu.hansolo.fx.charts'
-    buildDate          = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
-    buildTime          = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
-    platform           = osdetector.os == 'osx' ? osdetector.arch == 'aarch_64' ? 'mac-aarch64' : 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os == 'linux' ? osdetector.arch == 'aarch_64' ? 'linux-aarch64' : 'linux' : osdetector.os
-    ciOssrhUsername    = System.getenv('OSSRH_USERNAME')
-    ciOssrhPassword    = System.getenv('OSSRH_PASSWORD')
-    ciGHUser           = System.getenv('GH_USER')
-    ciGHToken          = System.getenv('GH_TOKEN')
-    gpgkey             = System.getenv("GPG_PRIVATE_KEY")
-    gpgpassphrase      = System.getenv("PASSPHRASE")
+    moduleName      = 'eu.hansolo.fx.charts'
+    buildDate       = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
+    buildTime       = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
+    platform        = osdetector.os == 'osx' ? osdetector.arch == 'aarch_64' ? 'mac-aarch64' : 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os == 'linux' ? osdetector.arch == 'aarch_64' ? 'linux-aarch64' : 'linux' : osdetector.os
+    ciOssrhUsername = System.getenv('OSSRH_USERNAME')
+    ciOssrhPassword = System.getenv('OSSRH_PASSWORD')
+    ciGHUser        = System.getenv('GH_USER')
+    ciGHToken       = System.getenv('GH_TOKEN')
+    gpgkey          = System.getenv("GPG_PRIVATE_KEY")
+    gpgpassphrase   = System.getenv("PASSPHRASE")
 }
 
 repositories {
@@ -38,8 +38,7 @@ repositories {
 }
 
 dependencies {
-    //implementation fileTree(dir: 'libs', include: '*.jar')
-    api "eu.hansolo.fx:countries:21.0.15"
+    api "eu.hansolo.fx:countries:21.0.17"
     implementation "org.openjfx:javafx-base:${javafxVersion}:${platform}"
     implementation "org.openjfx:javafx-graphics:${javafxVersion}:${platform}"
     implementation "org.openjfx:javafx-controls:${javafxVersion}:${platform}"
@@ -92,11 +91,20 @@ jar {
 }
 
 
-// start the demo from gradle
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        tasks.withType(Javadoc) {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
+}
+
+
 task Demo(type: JavaExec) {
     mainClass = 'eu.hansolo.fx.charts.DemoLauncher'
     classpath = sourceSets.main.runtimeClasspath
 }
+
 
 // create one jar for the javadoc
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -119,10 +127,10 @@ artifacts {
 signing {
     if (gpgkey && gpgpassphrase) {
         useInMemoryPgpKeys(gpgkey, gpgpassphrase)
-    }
 
-    sign configurations.archives
-    sign publishing.publications
+        sign configurations.archives
+        sign publishing.publications
+    }
 }
 
 // Remove 'thirdPartyCompatibility' from JavaFX runtimeElements variant
@@ -191,7 +199,7 @@ publishing {
     repositories {
         maven {
             name = "OSSRH"
-            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            url  = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
             try {
                 credentials {
                     username = null == ciOssrhUsername ? ossrhToken         : ciOssrhUsername
@@ -206,7 +214,7 @@ publishing {
             url  = "https://maven.pkg.github.com/HanSolo/charts"
             try {
                 credentials {
-                    username = null == ciGHUser  ? ghUser  : ciGHUser
+                    username = null == ciGHUser ? ghUser : ciGHUser
                     password = null == ciGHToken ? ghToken : ciGHToken
                 }
             } catch (Exception e) {

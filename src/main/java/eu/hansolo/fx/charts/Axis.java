@@ -1348,7 +1348,7 @@ public class Axis extends Region {
         // At last add the END bound.
         dateList.add(END);
 
-        List<LocalDateTime> evenDateList = makeDatesEven(dateList, dateTime);
+        List<LocalDateTime> evenDateList = makeDatesEven(dateList);
         // If there are at least three dates, check if the gap between the START date and the second date is at least half the gap of the second and third date.
         // Do the same for the END bound.
         // If gaps between dates are to small, remove one of them.
@@ -1372,11 +1372,11 @@ public class Axis extends Region {
         }
         return evenDateList;
     }
-    private List<LocalDateTime> makeDatesEven(List<LocalDateTime> dates, LocalDateTime dateTime) {
+    private List<LocalDateTime> makeDatesEven(List<LocalDateTime> dates) {
         // If the dates contain more dates than just the lower and upper bounds, make the dates in between even.
         if (dates.size() > 2) {
             List<LocalDateTime> evenDates = new ArrayList<>();
-
+            LocalDateTime dateTime;
             // For each interval, modify the date slightly by a few millis, to make sure they are different days.
             // This is because Axis stores each value and won't update the tick labels, if the value is already known.
             // This happens if you display days and then add a date many years in the future the tick label will still be displayed as day.

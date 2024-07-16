@@ -18,39 +18,39 @@ import java.util.*;
 public class NodeEdgeModel {
 
     static final Color[]                  KELLY_COLORS = {
-            Color.web("0xFFB300"),    // Vivid Yellow
-            Color.web("0x803E75"),    // Strong Purple
-            Color.web("0xFF6800"),    // Vivid Orange
-            Color.web("0xA6BDD7"),    // Very Light Blue
-            Color.web("0xC10020"),    // Vivid Red
-            Color.web("0xCEA262"),    // Grayish Yellow
-            Color.web("0x817066"),    // Medium Gray
+        Color.web("0xFFB300"),    // Vivid Yellow
+        Color.web("0x803E75"),    // Strong Purple
+        Color.web("0xFF6800"),    // Vivid Orange
+        Color.web("0xA6BDD7"),    // Very Light Blue
+        Color.web("0xC10020"),    // Vivid Red
+        Color.web("0xCEA262"),    // Grayish Yellow
+        Color.web("0x817066"),    // Medium Gray
 
-            Color.web("0x007D34"),    // Vivid Green
-            Color.web("0xF6768E"),    // Strong Purplish Pink
-            Color.web("0x00538A"),    // Strong Blue
-            Color.web("0xFF7A5C"),    // Strong Yellowish Pink
-            Color.web("0x53377A"),    // Strong Violet
-            Color.web("0xFF8E00"),    // Vivid Orange Yellow
-            Color.web("0xB32851"),    // Strong Purplish Red
-            Color.web("0xF4C800"),    // Vivid Greenish Yellow
-            Color.web("0x7F180D"),    // Strong Reddish Brown
-            Color.web("0x93AA00"),    // Vivid Yellowish Green
-            Color.web("0x593315"),    // Deep Yellowish Brown
-            Color.web("0xF13A13"),    // Vivid Reddish Orange
-            Color.web("0x232C16"),    // Dark Olive Green
+        Color.web("0x007D34"),    // Vivid Green
+        Color.web("0xF6768E"),    // Strong Purplish Pink
+        Color.web("0x00538A"),    // Strong Blue
+        Color.web("0xFF7A5C"),    // Strong Yellowish Pink
+        Color.web("0x53377A"),    // Strong Violet
+        Color.web("0xFF8E00"),    // Vivid Orange Yellow
+        Color.web("0xB32851"),    // Strong Purplish Red
+        Color.web("0xF4C800"),    // Vivid Greenish Yellow
+        Color.web("0x7F180D"),    // Strong Reddish Brown
+        Color.web("0x93AA00"),    // Vivid Yellowish Green
+        Color.web("0x593315"),    // Deep Yellowish Brown
+        Color.web("0xF13A13"),    // Vivid Reddish Orange
+        Color.web("0x232C16"),    // Dark Olive Green
     };
 
-    private final String kellyColorKey = "Kelly Color";
-    private String currentColorThemeKey = "Kelly Color";
+    private static final String                     KELLY_COLOR_KEY      = "Kelly Color";
+    private String                                  currentColorThemeKey = "Kelly Color";
 
-    private ArrayList<GraphNode> nodes;
-    private ArrayList<GraphEdge> edges;
-    private HashMap<String, ArrayList<String>> distinctValuesPerGroupKey;
+    private ArrayList<GraphNode>                    nodes;
+    private ArrayList<GraphEdge>                    edges;
+    private HashMap<String, ArrayList<String>>      distinctValuesPerGroupKey;
 
     private HashMap<String, HashMap<String, Color>> colorSchemes;
-    private HashMap<String ,ArrayList<Color>> colorThemes;
-    private ArrayList<Color> kellyColors;
+    private HashMap<String ,ArrayList<Color>>       colorThemes;
+    private ArrayList<Color>                        kellyColors;
     
     // ----- Currently used Keys in GraphNode/GraphEdge -----
     private String currentSizeKey;
@@ -59,9 +59,6 @@ public class NodeEdgeModel {
     private String currentEdgeWithKey;
 
     // ----- Factors that scale all Nodes and Edges ----
-
-
-
     private SimpleObjectProperty<Color>     nodeBorderColor;
     private Color                           _nodeBorderColor;
     private BooleanProperty                 alwaysNormalize;
@@ -100,13 +97,12 @@ public class NodeEdgeModel {
         kellyColors = new ArrayList<>();
         Collections.addAll(kellyColors, KELLY_COLORS);
 
-        colorThemes.put(kellyColorKey, kellyColors);
+        colorThemes.put(KELLY_COLOR_KEY, kellyColors);
         setupConnectedNotes();
     }
 
     public NodeEdgeModel(){
         this(new ArrayList<>(),new ArrayList<>());
-
     }
 
     private boolean checkIfNodeKeyValuesBetweenZeroAndOne(String key){
@@ -299,7 +295,7 @@ public class NodeEdgeModel {
         int index = 0;
 
         if(null == currentColorThemeKey || null == currentColorTheme) {
-            currentColorThemeKey = kellyColorKey;
+            currentColorThemeKey = KELLY_COLOR_KEY;
             currentColorTheme = colorThemes.get(currentColorThemeKey);
         }
 

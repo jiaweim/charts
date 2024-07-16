@@ -69,7 +69,6 @@ public class PixelMatrix extends Region {
     private double                                         pixelWidthMinusDoubleSpacer;
     private double                                         pixelHeightMinusDoubleSpacer;
     private InvalidationListener                           sizeListener;
-    private Tooltip                                        tooltip;
     private EventHandler<MouseEvent>                       clickHandler;
     private CopyOnWriteArrayList<PixelMatrixEventListener> listeners;
 

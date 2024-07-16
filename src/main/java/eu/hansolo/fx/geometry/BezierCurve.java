@@ -20,6 +20,7 @@ import eu.hansolo.fx.geometry.transform.BaseTransform;
 import eu.hansolo.toolboxfx.geom.Point;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 
 public class BezierCurve extends Shape {
@@ -455,6 +456,10 @@ public class BezierCurve extends Shape {
     }
 
     @Override public BezierCurve copy() { return new BezierCurve(x1, y1, ctrlx1, ctrly1, ctrlx2, ctrly2, x2, y2); }
+
+    @Override public int hashCode() {
+        return Objects.hash(x1, y1, ctrlx1, ctrly1, ctrlx2, ctrly2, x2, y2);
+    }
 
     @Override public boolean equals(Object obj) {
         if (obj == this) { return true; }

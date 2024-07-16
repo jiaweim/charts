@@ -19,6 +19,8 @@ package eu.hansolo.fx.geometry;
 import eu.hansolo.fx.geometry.transform.BaseTransform;
 import eu.hansolo.toolboxfx.geom.Point;
 
+import java.util.Objects;
+
 
 public class Line extends Shape {
     public double x1;
@@ -173,6 +175,10 @@ public class Line extends Shape {
     public PathIterator getPathIterator(BaseTransform TRANSFORM, double FLATNESS) { return new LineIterator(this, TRANSFORM); }
 
     @Override public Line copy() { return new Line(x1, y1, x2, y2); }
+
+    @Override public int hashCode() {
+        return Objects.hash(x1, y1, x2, y2);
+    }
 
     @Override public boolean equals(Object obj) {
         if (obj == this) { return true; }

@@ -407,7 +407,7 @@ public class SectorChart extends Region {
     }
     public BooleanProperty seriesSumTextVisibleProperty() {
         if (null == seriesSumTextVisible) {
-            seriesTextVisible = new BooleanPropertyBase(_seriesSumTextVisible) {
+            seriesSumTextVisible = new BooleanPropertyBase(_seriesSumTextVisible) {
                 @Override protected void invalidated() { redraw();}
                 @Override public Object getBean() { return SectorChart.this; }
                 @Override public String getName() { return "seriesSumTextVisible"; }

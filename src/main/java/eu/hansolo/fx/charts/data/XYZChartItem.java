@@ -56,8 +56,6 @@ public class XYZChartItem implements XYZItem {
     private       ObjectProperty<Symbol>                    symbol;
     private       boolean                                   _isEmpty;
     private       BooleanProperty                           isEmpty;
-    private       String                                    _tooltipText;
-    private       StringProperty                            tooltipText;
 
 
     // ******************** Constructors **********************************

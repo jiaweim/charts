@@ -170,6 +170,10 @@ public abstract class BaseTransform {
 
     public abstract BaseTransform copy();
 
+    @Override public int hashCode() {
+        return super.hashCode();
+    }
+
     @Override public boolean equals(Object obj) {
         if (!(obj instanceof BaseTransform)) {
             return false;

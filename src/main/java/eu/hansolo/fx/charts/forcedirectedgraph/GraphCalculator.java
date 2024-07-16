@@ -9,14 +9,12 @@ import java.util.PriorityQueue;
  *          Stefan Mettler, orizion (github)
  */
 public class GraphCalculator {
-
+    private static final String DEGREE_KEY               = "DegreeCentrality";
+    private static final String CLOSENESS_KEY            = "ClosenessCentrality";
+    private static final String BETWEENNESS_KEY          = "BetweennessCentrality";
+    private static final String DEGREE_NORMALIZED_KEY    = "DegreeCentralityNormalized";
+    private static final String CLOSENESS_NORMALIZED_KEY = "ClosenessCentrualityNormalized";
     double[] betweennessResults;
-    public final String degreeKey = "DegreeCentrality";
-    public final String closenessKey = "ClosenessCentrality";
-    public final String betweennessKey = "BetweennessCentrality";
-    public final String degreeNormalizedKey = "DegreeCentralityNormalized";
-    public final String closenessNormalizedKey = "ClosenessCentrualityNormalized";
-
 
     private void recursiveBetweennesCalculatioin(ArrayList<GraphNode>[][] paths, ArrayList<GraphNode> graphNodes , double split, GraphNode from, GraphNode to){
         double nextSplit = split/paths[graphNodes.indexOf(from)][graphNodes.indexOf(to)].size();
@@ -54,18 +52,18 @@ public class GraphCalculator {
 
     public NodeEdgeModel calculateDegreeCentrality(NodeEdgeModel nodeEdgeModel){
         for(GraphNode node: nodeEdgeModel.getNodes()) {
-            node.setNumericAttribute(degreeKey, (double) node.getConnectedNodes().size());
+            node.setNumericAttribute(DEGREE_KEY, (double) node.getConnectedNodes().size());
         }
         return nodeEdgeModel;
     }
 
     public NodeEdgeModel calculateDegreeCentralityNormalized(NodeEdgeModel nodeEdgeModel){
-        if(!nodeEdgeModel.getNodes().get(0).containsNumericAttribute(degreeKey)){
+        if(!nodeEdgeModel.getNodes().get(0).containsNumericAttribute(DEGREE_KEY)){
             calculateDegreeCentrality(nodeEdgeModel);
         }
 
         for(GraphNode node: nodeEdgeModel.getNodes()) {
-            node.setNumericAttribute(degreeNormalizedKey, node.getNumericAttribute(degreeKey)/(nodeEdgeModel.getNodes().size()-1));
+            node.setNumericAttribute(DEGREE_NORMALIZED_KEY, node.getNumericAttribute(DEGREE_KEY) / (nodeEdgeModel.getNodes().size() - 1));
         }
         return nodeEdgeModel;
     }
@@ -113,19 +111,19 @@ public class GraphCalculator {
                     counterOfNextLevel = 0;
                 }
             }
-            node.setNumericAttribute(closenessKey, result);
+            node.setNumericAttribute(CLOSENESS_KEY, result);
         }
         return nodeEdgeModel;
     }
 
 
     public NodeEdgeModel calculateClosenessCentralityNormalized(NodeEdgeModel nodeEdgeModel){
-        if(!nodeEdgeModel.getNodes().get(0).containsNumericAttribute(closenessKey)){
+        if(!nodeEdgeModel.getNodes().get(0).containsNumericAttribute(CLOSENESS_KEY)){
             calculateClosenessCentrality(nodeEdgeModel);
         }
 
         for(GraphNode node: nodeEdgeModel.getNodes()) {
-            node.setNumericAttribute(closenessNormalizedKey, node.getNumericAttribute(closenessKey)/(nodeEdgeModel.getNodes().size()-1));
+            node.setNumericAttribute(CLOSENESS_NORMALIZED_KEY, node.getNumericAttribute(CLOSENESS_KEY) / (nodeEdgeModel.getNodes().size() - 1));
         }
         return nodeEdgeModel;
     }
@@ -202,7 +200,7 @@ public class GraphCalculator {
         }
 
         for(GraphNode node: graphNodes){
-            node.setNumericAttribute(betweennessKey, betweennessResults[graphNodes.indexOf(node)]);
+            node.setNumericAttribute(BETWEENNESS_KEY, betweennessResults[graphNodes.indexOf(node)]);
         }
     }
 

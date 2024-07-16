@@ -18,6 +18,8 @@ package eu.hansolo.fx.geometry;
 
 import eu.hansolo.fx.geometry.transform.BaseTransform;
 
+import java.util.Objects;
+
 
 public class Ellipse extends RectangularShape {
     public double x;
@@ -136,6 +138,10 @@ public class Ellipse extends RectangularShape {
     public PathIterator getPathIterator(BaseTransform TRANSFORM) { return new EllipseIterator(this, TRANSFORM); }
 
     @Override public Ellipse copy() { return new Ellipse(x, y, width, height); }
+
+    @Override public int hashCode() {
+        return Objects.hash(x, y, width, height);
+    }
 
     @Override public boolean equals(final Object OBJECT) {
         if (OBJECT == this) { return true; }

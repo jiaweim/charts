@@ -311,10 +311,10 @@ public final class KLA {
 
                 if (dieUpperLeft <= radius && dieUpperRight <= radius && dieLowerLeft <= radius && dieLowerRight <= radius) {
                     final String dieLabel = dieCountX + "/" + (-dieCountY.get());
-                    final Die    die      = new Die(dieCountX.get(), dieCountY.get(), this.id, dieX, (dieY + dieSizeY), dieSizeX, dieSizeY, dieLabel.toString(), offsetX, offsetY);
+                    final Die    die      = new Die(dieCountX.get(), dieCountY.get(), this.id, dieX, (dieY + dieSizeY), dieSizeX, dieSizeY, dieLabel, offsetX, offsetY);
 
                     die.setDefects(defects.stream().filter(defect -> defect.getIndexX() == dieCountX.get() && defect.getIndexY() == dieCountY.get()).collect(Collectors.toList()));
-                    dies.put(dieLabel.toString(), die);
+                    dies.put(dieLabel, die);
                 }
                 dieCountY.decrementAndGet();
             }

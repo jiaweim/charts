@@ -187,7 +187,7 @@ public class CubeChart extends Region {
         rightPoints.add(new P3d(dataAreaSize, dataAreaSize, dataAreaSize));    // upper bottom right  index 6
         rightPoints.add(new P3d(-dataAreaSize, dataAreaSize, dataAreaSize));   // upper bottom left   index 7
 
-        pMatrix = new PMatrix(new P2d(0, 0), new P2d(0, 0), new P2d(0, 0), new P3d(0, 0, 0), new P2d(width * 0.5, height * 0.5));
+        pMatrix = new PMatrix(new P2d(0, 0), new P2d(0, 0), new P2d(0, 0), new P3d(0, 0, 0), new P2d(PREFERRED_WIDTH * 0.5, PREFERRED_HEIGHT * 0.5));
         pMatrix.setProjection(Helper.ISOMETRIC);
 
         initGraphics();
@@ -548,18 +548,18 @@ public class CubeChart extends Region {
         }
 
         // Projection cube
-        pMatrix.origin.x = width * 0.5;
-        pMatrix.origin.y = height * 0.5;
+        pMatrix.getOrigin().x = width * 0.5;
+        pMatrix.getOrigin().y = height * 0.5;
         List<P3d> projectedPoints = cubePoints.stream().map(point -> pMatrix.project(point)).collect(Collectors.toList());
 
         // Projection left data area
-        pMatrix.origin.x = width * 0.46;
-        pMatrix.origin.y = height * 0.52;
+        pMatrix.getOrigin().x = width * 0.46;
+        pMatrix.getOrigin().y = height * 0.52;
         List<P3d> projectedLeftDataPoints = leftPoints.stream().map(point -> pMatrix.project(point)).collect(Collectors.toList());
 
         // Projection right data area
-        pMatrix.origin.x = width * 0.54;
-        pMatrix.origin.y = height * 0.52;
+        pMatrix.getOrigin().x = width * 0.54;
+        pMatrix.getOrigin().y = height * 0.52;
         List<P3d> projectedRightDataPoints = rightPoints.stream().map(point -> pMatrix.project(point)).collect(Collectors.toList());
 
         // Draw
@@ -676,13 +676,13 @@ public class CubeChart extends Region {
         height = size;
 
         if (width > 0 && height > 0) {
-            lineWidth        = size * 0.03;
-            cubeSize         = size * 0.225;
-            dataAreaSize     = cubeSize * 0.8;
-            valueFont        = Fonts.mazzardsoftlBoldName(size * 0.12);
-            textFont         = Fonts.mazzardsoftlSemiBoldName(size * 0.035);
-            pMatrix.origin.x = width * 0.5;
-            pMatrix.origin.y = height * 0.5;
+            lineWidth             = size * 0.03;
+            cubeSize              = size * 0.225;
+            dataAreaSize          = cubeSize * 0.8;
+            valueFont             = Fonts.mazzardsoftlBoldName(size * 0.12);
+            textFont              = Fonts.mazzardsoftlSemiBoldName(size * 0.035);
+            pMatrix.getOrigin().x = width * 0.5;
+            pMatrix.getOrigin().y = height * 0.5;
 
             canvas.setWidth(size);
             canvas.setHeight(size);

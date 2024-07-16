@@ -18,6 +18,9 @@
 
 package eu.hansolo.fx.charts.voronoi;
 
+import static eu.hansolo.toolbox.Constants.COMMA;
+
+
 public class VPoint {
     private double[] coordinates;
 
@@ -266,9 +269,11 @@ public class VPoint {
 
     @Override public String toString() {
         if (coordinates.length == 0) { return "Point()"; }
-        String result = "Point(" + coordinates[0];
-        for (int i = 1; i < coordinates.length; i++) { result = result + "," + coordinates[i]; }
-        result = result + ")";
-        return result;
+        StringBuilder builder = new StringBuilder("Point(").append(coordinates[0]);
+        for (int i = 1; i < coordinates.length; i++) {
+            builder.append(COMMA).append(coordinates[i]);
+        }
+        builder.append(")");
+        return builder.toString();
     }
 }

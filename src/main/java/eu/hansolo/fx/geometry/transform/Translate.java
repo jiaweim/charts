@@ -23,6 +23,8 @@ import eu.hansolo.fx.geometry.Rectangle;
 import eu.hansolo.fx.geometry.Shape;
 import eu.hansolo.toolboxfx.geom.Point;
 
+import java.util.Objects;
+
 
 public class Translate extends BaseTransform {
     private double mxt;
@@ -264,6 +266,10 @@ public class Translate extends BaseTransform {
     private static double _matRound(double value) { return Math.rint(value * 1E15) / 1E15; }
 
     @Override public BaseTransform copy() { return new Translate(this.mxt, this.myt); }
+
+    @Override public int hashCode() {
+        return Objects.hash(mxt, myt);
+    }
 
     @Override public boolean equals(Object obj) {
         if (obj instanceof BaseTransform) {

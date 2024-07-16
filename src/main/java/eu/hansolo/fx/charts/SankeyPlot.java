@@ -551,7 +551,7 @@ public class SankeyPlot extends Region {
 
     public PlotItem[] getSelectedItem() {
         if (null == selectedConnection) { return new PlotItem[]{}; }
-        return connectionMap.get(selectedConnection);
+        return connectionMap.get(selectedConnection.getConnectionPath());
     }
     public void setSelectedConnection(final PlotItem SOURCE_ITEM, final PlotItem TARGET_ITEM) {
         Optional<Entry<Path, PlotItem[]>> selected = connectionMap.entrySet().stream().filter(entry -> entry.getValue()[0].equals(SOURCE_ITEM) && entry.getValue()[1].equals(TARGET_ITEM)).findFirst();

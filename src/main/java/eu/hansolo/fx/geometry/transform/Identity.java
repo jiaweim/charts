@@ -139,6 +139,10 @@ public final class Identity extends BaseTransform {
 
     @Override public BaseTransform copy() { return this; }
 
+    @Override public int hashCode() {
+        return super.hashCode();
+    }
+
     @Override public boolean equals(Object obj) {
         return (obj instanceof BaseTransform &&
                 ((BaseTransform) obj).isIdentity());

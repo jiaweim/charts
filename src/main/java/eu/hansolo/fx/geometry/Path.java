@@ -25,6 +25,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.FillRule;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 
 public class Path extends Shape {
 
@@ -831,6 +834,10 @@ public class Path extends Shape {
     public final Shape createTransformedShape(final BaseTransform TRANSFORM) { return new Path(this, TRANSFORM); }
 
     @Override public Path copy() { return new Path(this); }
+
+    @Override public int hashCode() {
+        return Objects.hash(Arrays.hashCode(pointTypes), numTypes, numCoords, windingRule, Arrays.hashCode(doubleCoords), moveX, moveY, prevX, prevY, currentX, currentY, fill, stroke);
+    }
 
     @Override public boolean equals(Object obj) {
         if (obj == this) { return true; }

@@ -18,6 +18,8 @@ package eu.hansolo.fx.geometry;
 
 import eu.hansolo.toolboxfx.geom.Point;
 
+import java.util.Objects;
+
 
 public class RectBounds extends BaseBounds {
     private double minX;
@@ -308,6 +310,10 @@ public class RectBounds extends BaseBounds {
         setMinY(getMinY() + y);
         setMaxX(getMaxX() + x);
         setMaxY(getMaxY() + y);
+    }
+
+    @Override public int hashCode() {
+        return Objects.hash(minX, maxX, minY, maxY);
     }
 
     @Override public boolean equals(Object obj) {

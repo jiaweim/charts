@@ -19,6 +19,8 @@ package eu.hansolo.fx.geometry;
 import eu.hansolo.fx.geometry.transform.BaseTransform;
 import eu.hansolo.toolboxfx.geom.Point;
 
+import java.util.Objects;
+
 
 public class QuadCurve extends Shape {
     public double x1;
@@ -309,6 +311,10 @@ public class QuadCurve extends Shape {
     public PathIterator getPathIterator(BaseTransform TRANSFORM, double FLATNESS) { return new FlatteningPathIterator(getPathIterator(TRANSFORM), FLATNESS); }
 
     @Override public QuadCurve copy() { return new QuadCurve(x1, y1, ctrlx, ctrly, x2, y2); }
+
+    @Override public int hashCode() {
+        return Objects.hash(x1, y1, ctrlx, ctrly, x2, y2);
+    }
 
     @Override public boolean equals(Object obj) {
         if (obj == this) { return true; }

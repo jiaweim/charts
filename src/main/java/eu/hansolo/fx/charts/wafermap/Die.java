@@ -80,7 +80,7 @@ public class Die {
         return Optional.of(defects.get(index));
     }
     public Optional<Defect> getDefectById(final int defectId) {
-        return defects.stream().filter(defect -> defect.equals(defectId)).findFirst();
+        return defects.stream().filter(defect -> defect.getId() == defectId).findFirst();
     }
 
     public int getRectangleArrayId() { return rectangleArrayID; }

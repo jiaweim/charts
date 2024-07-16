@@ -64,6 +64,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -764,9 +765,9 @@ public class StreamChart extends Region {
         itemsPerCategory.clear();
         int cat = chartItems.size() - 1;
 
-        for (LocalDate key : chartItems.keySet()) {
+        for (Entry<LocalDate, List<ChartItem>> entry : chartItems.entrySet()) {
             List<ChartItemData> itemDataList = new ArrayList<>();
-            chartItems.get(key).forEach(item -> itemDataList.add(new ChartItemData(item)));
+            entry.getValue().forEach(item -> itemDataList.add(new ChartItemData(item)));
             itemsPerCategory.put(cat, itemDataList);
             cat--;
         }
