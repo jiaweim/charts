@@ -132,33 +132,33 @@ public class XYZSeriesBuilder<B extends XYZSeriesBuilder<B>> {
 
 
     public final XYZSeries build() {
-        final XYZSeries xyzSeries = new XYZSeries();
+        final XYZSeries control = new XYZSeries();
 
         if (properties.keySet().contains("itemsArray")) {
-            xyzSeries.setItems(((ObjectProperty<XYZItem[]>) properties.get("itemsArray")).get());
+            control.setItems(((ObjectProperty<XYZItem[]>) properties.get("itemsArray")).get());
         }
         if(properties.keySet().contains("itemsList")) {
-            xyzSeries.setItems(((ObjectProperty<List<XYZItem>>) properties.get("itemsList")).get());
+            control.setItems(((ObjectProperty<List<XYZItem>>) properties.get("itemsList")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
-                case "name"              -> xyzSeries.setName(((StringProperty) properties.get(key)).get());
-                case "fill"              -> xyzSeries.setFill(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "stroke"            -> xyzSeries.setStroke(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "textFill"          -> xyzSeries.setTextFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "symbolFill"        -> xyzSeries.setSymbolFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "symbolStroke"      -> xyzSeries.setSymbolStroke(((ObjectProperty<Color>) properties.get(key)).get());
-                case "symbol"            -> xyzSeries.setSymbol(((ObjectProperty<Symbol>) properties.get(key)).get());
-                case "chartType"         -> xyzSeries.setChartType(((ObjectProperty<ChartType>) properties.get(key)).get());
-                case "symbolsVisible"    -> xyzSeries.setSymbolsVisible(((BooleanProperty) properties.get(key)).get());
-                case "symbolSize"        -> xyzSeries.setSymbolSize(((DoubleProperty) properties.get(key)).get());
-                case "strokeWidth"       -> xyzSeries.setStrokeWidth(((DoubleProperty) properties.get(key)).get());
-                case "visible"           -> xyzSeries.setVisible(((BooleanProperty) properties.get(key)).get());
-                case "animated"          -> xyzSeries.setAnimated(((BooleanProperty) properties.get(key)).get());
-                case "animationDuration" -> xyzSeries.setAnimationDuration(((LongProperty) properties.get(key)).get());
+                case "name"              -> control.setName(((StringProperty) property).get());
+                case "fill"              -> control.setFill(((ObjectProperty<Paint>) property).get());
+                case "stroke"            -> control.setStroke(((ObjectProperty<Paint>) property).get());
+                case "textFill"          -> control.setTextFill(((ObjectProperty<Color>) property).get());
+                case "symbolFill"        -> control.setSymbolFill(((ObjectProperty<Color>) property).get());
+                case "symbolStroke"      -> control.setSymbolStroke(((ObjectProperty<Color>) property).get());
+                case "symbol"            -> control.setSymbol(((ObjectProperty<Symbol>) property).get());
+                case "chartType"         -> control.setChartType(((ObjectProperty<ChartType>) property).get());
+                case "symbolsVisible"    -> control.setSymbolsVisible(((BooleanProperty) property).get());
+                case "symbolSize"        -> control.setSymbolSize(((DoubleProperty) property).get());
+                case "strokeWidth"       -> control.setStrokeWidth(((DoubleProperty) property).get());
+                case "visible"           -> control.setVisible(((BooleanProperty) property).get());
+                case "animated"          -> control.setAnimated(((BooleanProperty) property).get());
+                case "animationDuration" -> control.setAnimationDuration(((LongProperty) property).get());
             }
-        }
-        return xyzSeries;
+        });
+        return control;
     }
 }

@@ -183,52 +183,52 @@ public class SunburstChartBuilder<B extends SunburstChartBuilder<B>> {
 
 
     public final SunburstChart build() {
-        final SunburstChart sunburstChart;
+        final SunburstChart control;
         if (properties.containsKey("tree")) {
-            sunburstChart = new SunburstChart(((ObjectProperty<TreeNode>) properties.get("tree")).get());
+            control = new SunburstChart(((ObjectProperty<TreeNode>) properties.get("tree")).get());
         } else {
-            sunburstChart = new SunburstChart();
+            control = new SunburstChart();
         }
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"              -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    sunburstChart.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"               -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    sunburstChart.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"               -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    sunburstChart.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"             -> sunburstChart.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"            -> sunburstChart.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"              -> sunburstChart.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"             -> sunburstChart.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"              -> sunburstChart.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"             -> sunburstChart.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"                -> sunburstChart.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"                -> sunburstChart.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"               -> sunburstChart.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"               -> sunburstChart.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"            -> sunburstChart.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"            -> sunburstChart.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"               -> sunburstChart.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "visibleData"           -> sunburstChart.setVisibleData(((ObjectProperty<VisibleData>) properties.get(key)).get());
-                case "textOrientation"       -> sunburstChart.setTextOrientation(((ObjectProperty<TextOrientation>) properties.get(key)).get());
-                case "backgroundColor"       -> sunburstChart.setBackgroundColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "textColor"             -> sunburstChart.setTextColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "useColorFromParent"    -> sunburstChart.setUseColorFromParent(((BooleanProperty) properties.get(key)).get());
-                case "decimals"              -> sunburstChart.setDecimals(((IntegerProperty) properties.get(key)).get());
-                case "interactive"           -> sunburstChart.setInteractive(((BooleanProperty) properties.get(key)).get());
-                case "autoTextColor"         -> sunburstChart.setAutoTextColor(((BooleanProperty) properties.get(key)).get());
-                case "brightTextColor"       -> sunburstChart.setBrightTextColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "darkTextColor"         -> sunburstChart.setDarkTextColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "useChartItemTextColor" -> sunburstChart.setUseChartItemTextColor(((BooleanProperty) properties.get(key)).get());
+                case "prefWidth"             -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"            -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"              -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"             -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"              -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"             -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"                -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"                -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"               -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"               -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"            -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"            -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"               -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "visibleData"           -> control.setVisibleData(((ObjectProperty<VisibleData>) property).get());
+                case "textOrientation"       -> control.setTextOrientation(((ObjectProperty<TextOrientation>) property).get());
+                case "backgroundColor"       -> control.setBackgroundColor(((ObjectProperty<Color>) property).get());
+                case "textColor"             -> control.setTextColor(((ObjectProperty<Color>) property).get());
+                case "useColorFromParent"    -> control.setUseColorFromParent(((BooleanProperty) property).get());
+                case "decimals"              -> control.setDecimals(((IntegerProperty) property).get());
+                case "interactive"           -> control.setInteractive(((BooleanProperty) property).get());
+                case "autoTextColor"         -> control.setAutoTextColor(((BooleanProperty) property).get());
+                case "brightTextColor"       -> control.setBrightTextColor(((ObjectProperty<Color>) property).get());
+                case "darkTextColor"         -> control.setDarkTextColor(((ObjectProperty<Color>) property).get());
+                case "useChartItemTextColor" -> control.setUseChartItemTextColor(((BooleanProperty) property).get());
             }
-        }
-        return sunburstChart;
+        });
+        return control;
     }
 }

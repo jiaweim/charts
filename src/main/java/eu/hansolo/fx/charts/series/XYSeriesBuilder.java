@@ -132,33 +132,33 @@ public class XYSeriesBuilder<B extends XYSeriesBuilder<B>> {
 
 
     public final XYSeries build() {
-        final XYSeries xySeries = new XYSeries();
+        final XYSeries control = new XYSeries();
 
         if (properties.keySet().contains("itemsArray")) {
-            xySeries.setItems(((ObjectProperty<XYItem[]>) properties.get("itemsArray")).get());
+            control.setItems(((ObjectProperty<XYItem[]>) properties.get("itemsArray")).get());
         }
         if(properties.keySet().contains("itemsList")) {
-            xySeries.setItems(((ObjectProperty<List<XYItem>>) properties.get("itemsList")).get());
+            control.setItems(((ObjectProperty<List<XYItem>>) properties.get("itemsList")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
-                case "name"              -> xySeries.setName(((StringProperty) properties.get(key)).get());
-                case "fill"              -> xySeries.setFill(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "stroke"            -> xySeries.setStroke(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "textFill"          -> xySeries.setTextFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "symbolFill"        -> xySeries.setSymbolFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "symbolStroke"      -> xySeries.setSymbolStroke(((ObjectProperty<Color>) properties.get(key)).get());
-                case "symbol"            -> xySeries.setSymbol(((ObjectProperty<Symbol>) properties.get(key)).get());
-                case "chartType"         -> xySeries.setChartType(((ObjectProperty<ChartType>) properties.get(key)).get());
-                case "symbolsVisible"    -> xySeries.setSymbolsVisible(((BooleanProperty) properties.get(key)).get());
-                case "symbolSize"        -> xySeries.setSymbolSize(((DoubleProperty) properties.get(key)).get());
-                case "strokeWidth"       -> xySeries.setStrokeWidth(((DoubleProperty) properties.get(key)).get());
-                case "visible"           -> xySeries.setVisible(((BooleanProperty) properties.get(key)).get());
-                case "animated"          -> xySeries.setAnimated(((BooleanProperty) properties.get(key)).get());
-                case "animationDuration" -> xySeries.setAnimationDuration(((LongProperty) properties.get(key)).get());
+                case "name"              -> control.setName(((StringProperty) property).get());
+                case "fill"              -> control.setFill(((ObjectProperty<Paint>) property).get());
+                case "stroke"            -> control.setStroke(((ObjectProperty<Paint>) property).get());
+                case "textFill"          -> control.setTextFill(((ObjectProperty<Color>) property).get());
+                case "symbolFill"        -> control.setSymbolFill(((ObjectProperty<Color>) property).get());
+                case "symbolStroke"      -> control.setSymbolStroke(((ObjectProperty<Color>) property).get());
+                case "symbol"            -> control.setSymbol(((ObjectProperty<Symbol>) property).get());
+                case "chartType"         -> control.setChartType(((ObjectProperty<ChartType>) property).get());
+                case "symbolsVisible"    -> control.setSymbolsVisible(((BooleanProperty) property).get());
+                case "symbolSize"        -> control.setSymbolSize(((DoubleProperty) property).get());
+                case "strokeWidth"       -> control.setStrokeWidth(((DoubleProperty) property).get());
+                case "visible"           -> control.setVisible(((BooleanProperty) property).get());
+                case "animated"          -> control.setAnimated(((BooleanProperty) property).get());
+                case "animationDuration" -> control.setAnimationDuration(((LongProperty) property).get());
             }
-        }
-        return xySeries;
+        });
+        return control;
     }
 }

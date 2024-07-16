@@ -193,55 +193,55 @@ public class ParallelCoordinatesChartBuilder<B extends ParallelCoordinatesChartB
 
 
     public final ParallelCoordinatesChart build() {
-        final ParallelCoordinatesChart parallelCoordinatesChart = new ParallelCoordinatesChart();
+        final ParallelCoordinatesChart control = new ParallelCoordinatesChart();
 
         if (properties.keySet().contains("itemArray")) {
-            parallelCoordinatesChart.setItems(((ObjectProperty<DataObject[]>) properties.get("itemArray")).get());
+            control.setItems(((ObjectProperty<DataObject[]>) properties.get("itemArray")).get());
         }
         if (properties.keySet().contains("itemList")) {
-            parallelCoordinatesChart.setItems(((ObjectProperty<List<DataObject>>) properties.get("itemList")).get());
+            control.setItems(((ObjectProperty<List<DataObject>>) properties.get("itemList")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"           -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    parallelCoordinatesChart.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"            -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    parallelCoordinatesChart.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"            -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    parallelCoordinatesChart.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"          -> parallelCoordinatesChart.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"         -> parallelCoordinatesChart.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"           -> parallelCoordinatesChart.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"          -> parallelCoordinatesChart.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"           -> parallelCoordinatesChart.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"          -> parallelCoordinatesChart.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"             -> parallelCoordinatesChart.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"             -> parallelCoordinatesChart.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"            -> parallelCoordinatesChart.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"            -> parallelCoordinatesChart.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"         -> parallelCoordinatesChart.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"         -> parallelCoordinatesChart.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"            -> parallelCoordinatesChart.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "axisColor"          -> parallelCoordinatesChart.setAxisColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "headerColor"        -> parallelCoordinatesChart.setHeaderColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "unitColor"          -> parallelCoordinatesChart.setUnitColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "tickLabelColor"     -> parallelCoordinatesChart.setTickLabelColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "locale"             -> parallelCoordinatesChart.setLocale(((ObjectProperty<Locale>) properties.get(key)).get());
-                case "decimals"           -> parallelCoordinatesChart.setDecimals(((IntegerProperty) properties.get(key)).get());
-                case "tickMarksVisible"   -> parallelCoordinatesChart.setTickMarksVisible(((BooleanProperty) properties.get(key)).get());
-                case "selectedColor"      -> parallelCoordinatesChart.setSelectedColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "unselectedColor"    -> parallelCoordinatesChart.setUnselectedColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "selectionRectColor" -> parallelCoordinatesChart.setSelectionRectColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "smoothConnections"  -> parallelCoordinatesChart.setSmoothConnections(((BooleanProperty) properties.get(key)).get());
+                case "prefWidth"          -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"         -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"           -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"          -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"           -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"          -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"             -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"             -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"            -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"            -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"         -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"         -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"            -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "axisColor"          -> control.setAxisColor(((ObjectProperty<Color>) property).get());
+                case "headerColor"        -> control.setHeaderColor(((ObjectProperty<Color>) property).get());
+                case "unitColor"          -> control.setUnitColor(((ObjectProperty<Color>) property).get());
+                case "tickLabelColor"     -> control.setTickLabelColor(((ObjectProperty<Color>) property).get());
+                case "locale"             -> control.setLocale(((ObjectProperty<Locale>) property).get());
+                case "decimals"           -> control.setDecimals(((IntegerProperty) property).get());
+                case "tickMarksVisible"   -> control.setTickMarksVisible(((BooleanProperty) property).get());
+                case "selectedColor"      -> control.setSelectedColor(((ObjectProperty<Color>) property).get());
+                case "unselectedColor"    -> control.setUnselectedColor(((ObjectProperty<Color>) property).get());
+                case "selectionRectColor" -> control.setSelectionRectColor(((ObjectProperty<Color>) property).get());
+                case "smoothConnections"  -> control.setSmoothConnections(((BooleanProperty) property).get());
             }
-        }
-        return parallelCoordinatesChart;
+        });
+        return control;
     }
 }

@@ -180,53 +180,53 @@ public class SectorChartBuilder<B extends SectorChartBuilder<B>> {
 
 
     public final SectorChart build() {
-        final SectorChart sectorChart;
+        final SectorChart control;
 
         if (properties.containsKey("allSeries")) {
-            sectorChart = new SectorChart(((ObjectProperty<List<ChartItemSeries<ChartItem>>>) properties.get("allSeries")).get());
+            control = new SectorChart(((ObjectProperty<List<ChartItemSeries<ChartItem>>>) properties.get("allSeries")).get());
         } else {
-            sectorChart = new SectorChart();
+            control = new SectorChart();
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"             -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    sectorChart.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"              -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    sectorChart.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"              -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    sectorChart.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"               -> sectorChart.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"              -> sectorChart.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"                -> sectorChart.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"               -> sectorChart.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"                -> sectorChart.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"               -> sectorChart.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"                  -> sectorChart.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"                  -> sectorChart.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"                 -> sectorChart.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"                 -> sectorChart.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"              -> sectorChart.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"              -> sectorChart.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"                 -> sectorChart.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "itemTextVisible"         -> sectorChart.setItemTextVisible(((BooleanProperty) properties.get(key)).get());
-                case "seriesTextVisible"       -> sectorChart.setSeriesTextVisible(((BooleanProperty) properties.get(key)).get());
-                case "seriesSumTextVisible"    -> sectorChart.setSeriesSumTextVisible(((BooleanProperty) properties.get(key)).get());
-                case "seriesBackgroundVisible" -> sectorChart.setSeriesBackgroundVisible(((BooleanProperty) properties.get(key)).get());
-                case "radialBarChartMode"      -> sectorChart.setRadialBarChartMode(((BooleanProperty) properties.get(key)).get());
-                case "thresholdVisible"        -> sectorChart.setThresholdVisible(((BooleanProperty) properties.get(key)).get());
-                case "threshold"               -> sectorChart.setThreshold(((DoubleProperty) properties.get(key)).get());
-                case "decimals"                -> sectorChart.setDecimals(((IntegerProperty) properties.get(key)).get());
-                case "gridColor"               -> sectorChart.setGridColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "thresholdColor"          -> sectorChart.setThresholdColor(((ObjectProperty<Color>) properties.get(key)).get());
+                case "prefWidth"               -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"              -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"                -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"               -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"                -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"               -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"                  -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"                  -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"                 -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"                 -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"              -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"              -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"                 -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "itemTextVisible"         -> control.setItemTextVisible(((BooleanProperty) property).get());
+                case "seriesTextVisible"       -> control.setSeriesTextVisible(((BooleanProperty) property).get());
+                case "seriesSumTextVisible"    -> control.setSeriesSumTextVisible(((BooleanProperty) property).get());
+                case "seriesBackgroundVisible" -> control.setSeriesBackgroundVisible(((BooleanProperty) property).get());
+                case "radialBarChartMode"      -> control.setRadialBarChartMode(((BooleanProperty) property).get());
+                case "thresholdVisible"        -> control.setThresholdVisible(((BooleanProperty) property).get());
+                case "threshold"               -> control.setThreshold(((DoubleProperty) property).get());
+                case "decimals"                -> control.setDecimals(((IntegerProperty) property).get());
+                case "gridColor"               -> control.setGridColor(((ObjectProperty<Color>) property).get());
+                case "thresholdColor"          -> control.setThresholdColor(((ObjectProperty<Color>) property).get());
             }
-        }
-        return sectorChart;
+        });
+        return control;
     }
 }

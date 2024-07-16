@@ -157,49 +157,49 @@ public class NestedBarChartBuilder<B extends NestedBarChartBuilder<B>> {
 
 
     public final NestedBarChart build() {
-        final NestedBarChart nestedBarChart = new NestedBarChart();
+        final NestedBarChart control = new NestedBarChart();
 
         if (properties.keySet().contains("seriesArray")) {
-            nestedBarChart.setSeries(((ObjectProperty<ChartItemSeries<ChartItem>[]>) properties.get("seriesArray")).get());
+            control.setSeries(((ObjectProperty<ChartItemSeries<ChartItem>[]>) properties.get("seriesArray")).get());
         }
         if(properties.keySet().contains("seriesList")) {
-            nestedBarChart.setSeries(((ObjectProperty<List<ChartItemSeries<ChartItem>>>) properties.get("seriesList")).get());
+            control.setSeries(((ObjectProperty<List<ChartItemSeries<ChartItem>>>) properties.get("seriesList")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"           -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    nestedBarChart.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"            -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    nestedBarChart.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"            -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    nestedBarChart.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"          -> nestedBarChart.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"         -> nestedBarChart.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"           -> nestedBarChart.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"          -> nestedBarChart.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"           -> nestedBarChart.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"          -> nestedBarChart.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"             -> nestedBarChart.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"             -> nestedBarChart.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"            -> nestedBarChart.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"            -> nestedBarChart.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"         -> nestedBarChart.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"         -> nestedBarChart.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"            -> nestedBarChart.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "order"              -> nestedBarChart.setOrder(((ObjectProperty<Order>) properties.get(key)).get());
-                case "chartBackground"    -> nestedBarChart.setChartBackground(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "spacer"             -> nestedBarChart.setSpacer(((DoubleProperty) properties.get(key)).get());
-                case "seriesTitleColor"   -> nestedBarChart.setSeriesTitleColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "seriesTitleVisible" -> nestedBarChart.setSeriesTitleVisible(((BooleanProperty) properties.get(key)).get());
+                case "prefWidth"          -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"         -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"           -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"          -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"           -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"          -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"             -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"             -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"            -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"            -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"         -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"         -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"            -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "order"              -> control.setOrder(((ObjectProperty<Order>) property).get());
+                case "chartBackground"    -> control.setChartBackground(((ObjectProperty<Paint>) property).get());
+                case "spacer"             -> control.setSpacer(((DoubleProperty) property).get());
+                case "seriesTitleColor"   -> control.setSeriesTitleColor(((ObjectProperty<Color>) property).get());
+                case "seriesTitleVisible" -> control.setSeriesTitleVisible(((BooleanProperty) property).get());
             }
-        }
-        return nestedBarChart;
+        });
+        return control;
     }
 }

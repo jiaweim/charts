@@ -127,31 +127,31 @@ public class ChartItemSeriesBuilder<B extends ChartItemSeriesBuilder<B>> {
 
 
     public final ChartItemSeries build() {
-        final ChartItemSeries chartItemSeries = new ChartItemSeries();
+        final ChartItemSeries control = new ChartItemSeries();
 
         if (properties.keySet().contains("itemsArray")) {
-            chartItemSeries.setItems(((ObjectProperty<ChartItem[]>) properties.get("itemsArray")).get());
+            control.setItems(((ObjectProperty<ChartItem[]>) properties.get("itemsArray")).get());
         }
         if(properties.keySet().contains("itemsList")) {
-            chartItemSeries.setItems(((ObjectProperty<List<ChartItem>>) properties.get("itemsList")).get());
+            control.setItems(((ObjectProperty<List<ChartItem>>) properties.get("itemsList")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
-                case "name"              -> chartItemSeries.setName(((StringProperty) properties.get(key)).get());
-                case "fill"              -> chartItemSeries.setFill(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "stroke"            -> chartItemSeries.setStroke(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "textFill"          -> chartItemSeries.setTextFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "symbolFill"        -> chartItemSeries.setSymbolFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "symbolStroke"      -> chartItemSeries.setSymbolStroke(((ObjectProperty<Color>) properties.get(key)).get());
-                case "symbol"            -> chartItemSeries.setSymbol(((ObjectProperty<Symbol>) properties.get(key)).get());
-                case "chartType"         -> chartItemSeries.setChartType(((ObjectProperty<ChartType>) properties.get(key)).get());
-                case "symbolSize"        -> chartItemSeries.setSymbolSize(((DoubleProperty) properties.get(key)).get());
-                case "strokeWidth"       -> chartItemSeries.setStrokeWidth(((DoubleProperty) properties.get(key)).get());
-                case "animated"          -> chartItemSeries.setAnimated(((BooleanProperty) properties.get(key)).get());
-                case "animationDuration" -> chartItemSeries.setAnimationDuration(((LongProperty) properties.get(key)).get());
+                case "name"              -> control.setName(((StringProperty) property).get());
+                case "fill"              -> control.setFill(((ObjectProperty<Paint>) property).get());
+                case "stroke"            -> control.setStroke(((ObjectProperty<Paint>) property).get());
+                case "textFill"          -> control.setTextFill(((ObjectProperty<Color>) property).get());
+                case "symbolFill"        -> control.setSymbolFill(((ObjectProperty<Color>) property).get());
+                case "symbolStroke"      -> control.setSymbolStroke(((ObjectProperty<Color>) property).get());
+                case "symbol"            -> control.setSymbol(((ObjectProperty<Symbol>) property).get());
+                case "chartType"         -> control.setChartType(((ObjectProperty<ChartType>) property).get());
+                case "symbolSize"        -> control.setSymbolSize(((DoubleProperty) property).get());
+                case "strokeWidth"       -> control.setStrokeWidth(((DoubleProperty) property).get());
+                case "animated"          -> control.setAnimated(((BooleanProperty) property).get());
+                case "animationDuration" -> control.setAnimationDuration(((LongProperty) property).get());
             }
-        }
-        return chartItemSeries;
+        });
+        return control;
     }
 }

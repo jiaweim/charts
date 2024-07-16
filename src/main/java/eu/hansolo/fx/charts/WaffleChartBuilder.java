@@ -138,40 +138,40 @@ public class WaffleChartBuilder  <B extends WaffleChartBuilder<B>> {
 
 
     public final WaffleChart build() {
-        final WaffleChart waffleChart = new WaffleChart();
+        final WaffleChart control = new WaffleChart();
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"       -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    waffleChart.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"        -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    waffleChart.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"        -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    waffleChart.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"      -> waffleChart.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"     -> waffleChart.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"       -> waffleChart.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"      -> waffleChart.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"       -> waffleChart.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"      -> waffleChart.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"         -> waffleChart.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"         -> waffleChart.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"        -> waffleChart.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"        -> waffleChart.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"     -> waffleChart.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"     -> waffleChart.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"        -> waffleChart.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "backgroundFill" -> waffleChart.setBackgroundFill(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "cellFill"       -> waffleChart.setCellFill(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "emptyCellFill"  -> waffleChart.setEmptyCellFill(((ObjectProperty<Paint>) properties.get(key)).get());
+                case "prefWidth"      -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"     -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"       -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"      -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"       -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"      -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"         -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"         -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"        -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"        -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"     -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"     -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"        -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "backgroundFill" -> control.setBackgroundFill(((ObjectProperty<Paint>) property).get());
+                case "cellFill"       -> control.setCellFill(((ObjectProperty<Paint>) property).get());
+                case "emptyCellFill"  -> control.setEmptyCellFill(((ObjectProperty<Paint>) property).get());
             }
-        }
-        return waffleChart;
+        });
+        return control;
     }
 }

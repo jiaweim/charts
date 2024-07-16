@@ -88,19 +88,19 @@ public class BubbleGridChartItemBuilder<B extends BubbleGridChartItemBuilder<B>>
 
 
     public final BubbleGridChartItem build() {
-        final BubbleGridChartItem bubbleGridChartItem = new BubbleGridChartItem();
-        for (String key : properties.keySet()) {
+        final BubbleGridChartItem control = new BubbleGridChartItem();
+        properties.forEach((key, property) -> {
             switch (key) {
-                case "name"      -> bubbleGridChartItem.setName(((StringProperty) properties.get(key)).get());
-                case "value"     -> bubbleGridChartItem.setValue(((DoubleProperty) properties.get(key)).get());
-                case "fill"      -> bubbleGridChartItem.setFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "stroke"    -> bubbleGridChartItem.setStroke(((ObjectProperty<Color>) properties.get(key)).get());
-                case "symbol"    -> bubbleGridChartItem.setSymbol(((ObjectProperty<Symbol>) properties.get(key)).get());
-                case "categoryX" -> bubbleGridChartItem.setCategoryX(((ObjectProperty<ChartItem>) properties.get(key)).get());
-                case "categoryY" -> bubbleGridChartItem.setCategoryY(((ObjectProperty<ChartItem>) properties.get(key)).get());
-                case "isEmpty"   -> bubbleGridChartItem.setIsEmpty(((BooleanProperty) properties.get(key)).get());
+                case "name"      -> control.setName(((StringProperty) property).get());
+                case "value"     -> control.setValue(((DoubleProperty) property).get());
+                case "fill"      -> control.setFill(((ObjectProperty<Color>) property).get());
+                case "stroke"    -> control.setStroke(((ObjectProperty<Color>) property).get());
+                case "symbol"    -> control.setSymbol(((ObjectProperty<Symbol>) property).get());
+                case "categoryX" -> control.setCategoryX(((ObjectProperty<ChartItem>) property).get());
+                case "categoryY" -> control.setCategoryY(((ObjectProperty<ChartItem>) property).get());
+                case "isEmpty"   -> control.setIsEmpty(((BooleanProperty) property).get());
             }
-        }
-        return bubbleGridChartItem;
+        });
+        return control;
     }
 }

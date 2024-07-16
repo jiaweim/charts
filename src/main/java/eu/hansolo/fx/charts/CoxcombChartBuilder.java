@@ -194,56 +194,56 @@ public class CoxcombChartBuilder<B extends CoxcombChartBuilder<B>> {
 
 
     public final CoxcombChart build() {
-        final CoxcombChart coxcombChart = new CoxcombChart();
+        final CoxcombChart control = new CoxcombChart();
 
         if (properties.keySet().contains("itemsArray")) {
-            coxcombChart.setItems(((ObjectProperty<ChartItem[]>) properties.get("itemsArray")).get());
+            control.setItems(((ObjectProperty<ChartItem[]>) properties.get("itemsArray")).get());
         }
         if(properties.keySet().contains("itemsList")) {
-            coxcombChart.setItems(((ObjectProperty<List<ChartItem>>) properties.get("itemsList")).get());
+            control.setItems(((ObjectProperty<List<ChartItem>>) properties.get("itemsList")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"             -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    coxcombChart.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"              -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    coxcombChart.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"              -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    coxcombChart.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"            -> coxcombChart.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"           -> coxcombChart.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"             -> coxcombChart.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"            -> coxcombChart.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"             -> coxcombChart.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"            -> coxcombChart.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"               -> coxcombChart.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"               -> coxcombChart.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"              -> coxcombChart.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"              -> coxcombChart.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"           -> coxcombChart.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"           -> coxcombChart.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"              -> coxcombChart.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "textColor"            -> coxcombChart.setTextColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "order"                -> coxcombChart.setOrder(((ObjectProperty<Order>) properties.get(key)).get());
-                case "autoTextColor"        -> coxcombChart.setAutoTextColor(((BooleanProperty) properties.get(key)).get());
-                case "useChartItemTextFill" -> coxcombChart.setUseChartItemTextFill(((BooleanProperty) properties.get(key)).get());
-                case "equalSegmentAngles"   -> coxcombChart.setEqualSegmentAngles(((BooleanProperty) properties.get(key)).get());
-                case "onMousePressed"       -> coxcombChart.onMousePressed(((ObjectProperty<EventHandler<MouseEvent>>) properties.get(key)).get());
-                case "onMouseReleased"      -> coxcombChart.onMouseReleased(((ObjectProperty<EventHandler<MouseEvent>>) properties.get(key)).get());
-                case "onMouseMoved"         -> coxcombChart.onMouseMoved(((ObjectProperty<EventHandler<MouseEvent>>) properties.get(key)).get());
-                case "showPopup"            -> coxcombChart.setShowPopup(((BooleanProperty) properties.get(key)).get());
-                case "formatString"         -> coxcombChart.setFormatString(((StringProperty) properties.get(key)).get());
-                case "showItemName"         -> coxcombChart.setShowItemName(((BooleanProperty) properties.get(key)).get());
-                case "selectedItemFill"     -> coxcombChart.setSelectedItemFill(((ObjectProperty<Color>) properties.get(key)).get());
+                case "prefWidth"            -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"           -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"             -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"            -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"             -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"            -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"               -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"               -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"              -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"              -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"           -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"           -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"              -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "textColor"            -> control.setTextColor(((ObjectProperty<Color>) property).get());
+                case "order"                -> control.setOrder(((ObjectProperty<Order>) property).get());
+                case "autoTextColor"        -> control.setAutoTextColor(((BooleanProperty) property).get());
+                case "useChartItemTextFill" -> control.setUseChartItemTextFill(((BooleanProperty) property).get());
+                case "equalSegmentAngles"   -> control.setEqualSegmentAngles(((BooleanProperty) property).get());
+                case "onMousePressed"       -> control.onMousePressed(((ObjectProperty<EventHandler<MouseEvent>>) property).get());
+                case "onMouseReleased"      -> control.onMouseReleased(((ObjectProperty<EventHandler<MouseEvent>>) property).get());
+                case "onMouseMoved"         -> control.onMouseMoved(((ObjectProperty<EventHandler<MouseEvent>>) property).get());
+                case "showPopup"            -> control.setShowPopup(((BooleanProperty) property).get());
+                case "formatString"         -> control.setFormatString(((StringProperty) property).get());
+                case "showItemName"         -> control.setShowItemName(((BooleanProperty) property).get());
+                case "selectedItemFill"     -> control.setSelectedItemFill(((ObjectProperty<Color>) property).get());
             }
-        }
-        return coxcombChart;
+        });
+        return control;
     }
 }

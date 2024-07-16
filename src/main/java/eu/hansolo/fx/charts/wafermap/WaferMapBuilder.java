@@ -216,62 +216,62 @@ public class WaferMapBuilder<B extends WaferMapBuilder<B>> {
 
 
     public final WaferMap build() {
-        final WaferMap wafermap;
+        final WaferMap control;
         if (properties.keySet().contains("filename")) {
             final String filename = ((StringProperty) properties.get("filename")).get();
-            wafermap = new WaferMap(filename);
+            control = new WaferMap(filename);
         } else {
-            wafermap = new WaferMap();
+            control = new WaferMap();
         }
 
-        if (properties.keySet().contains("kla")) { wafermap.setKla(((ObjectProperty<KLA>) properties.get("kla")).get()); }
+        if (properties.keySet().contains("kla")) { control.setKla(((ObjectProperty<KLA>) properties.get("kla")).get()); }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"             -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    wafermap.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"              -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    wafermap.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"              -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    wafermap.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"            -> wafermap.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"           -> wafermap.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"             -> wafermap.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"            -> wafermap.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"             -> wafermap.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"            -> wafermap.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"               -> wafermap.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"               -> wafermap.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"              -> wafermap.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"              -> wafermap.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"           -> wafermap.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"           -> wafermap.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"              -> wafermap.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
+                case "prefWidth"            -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"           -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"             -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"            -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"             -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"            -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"               -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"               -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"              -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"              -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"           -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"           -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"              -> control.setPadding(((ObjectProperty<Insets>) property).get());
 
-                case "waferFill"            -> wafermap.setWaferFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "waferStroke"          -> wafermap.setWaferStroke(((ObjectProperty<Color>) properties.get(key)).get());
-                case "notchFill"            -> wafermap.setNotchFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "defectFill"           -> wafermap.setDefectFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "defectStroke"         -> wafermap.setDefectStroke(((ObjectProperty<Color>) properties.get(key)).get());
-                case "selectionColor"       -> wafermap.setSelectionColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "dieTextFill"          -> wafermap.setDieTextFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "dieTextVisible"       -> wafermap.setDieTextVisible(((BooleanProperty) properties.get(key)).get());
-                case "densityColorsVisible" -> wafermap.setDensityColorsVisible(((BooleanProperty) properties.get(key)).get());
-                case "legendVisible"        -> wafermap.setLegendVisible(((BooleanProperty) properties.get(key)).get());
-                case "defectsVisible"       -> wafermap.setDefectsVisible(((BooleanProperty) properties.get(key)).get());
-                case "heatmapVisible"       -> wafermap.setHeatmapVisible(((BooleanProperty) properties.get(key)).get());
-                case "heatmapColorMapping"  -> wafermap.setHeatmapColorMapping(((ObjectProperty<ColorMapping>) properties.get(key)).get());
-                case "heatmapSpotRadius"    -> wafermap.setHeatmapSpotRadius(((DoubleProperty) properties.get(key)).get());
-                case "heatmapOpacity"       -> wafermap.setHeatmapOpacity(((DoubleProperty) properties.get(key)).get());
-                case "classConfigMap"       -> wafermap.setClassConfigMap(((ObjectProperty<Map<Integer, ClassConfig>>) properties.get(key)).get());
+                case "waferFill"            -> control.setWaferFill(((ObjectProperty<Color>) property).get());
+                case "waferStroke"          -> control.setWaferStroke(((ObjectProperty<Color>) property).get());
+                case "notchFill"            -> control.setNotchFill(((ObjectProperty<Color>) property).get());
+                case "defectFill"           -> control.setDefectFill(((ObjectProperty<Color>) property).get());
+                case "defectStroke"         -> control.setDefectStroke(((ObjectProperty<Color>) property).get());
+                case "selectionColor"       -> control.setSelectionColor(((ObjectProperty<Color>) property).get());
+                case "dieTextFill"          -> control.setDieTextFill(((ObjectProperty<Color>) property).get());
+                case "dieTextVisible"       -> control.setDieTextVisible(((BooleanProperty) property).get());
+                case "densityColorsVisible" -> control.setDensityColorsVisible(((BooleanProperty) property).get());
+                case "legendVisible"        -> control.setLegendVisible(((BooleanProperty) property).get());
+                case "defectsVisible"       -> control.setDefectsVisible(((BooleanProperty) property).get());
+                case "heatmapVisible"       -> control.setHeatmapVisible(((BooleanProperty) property).get());
+                case "heatmapColorMapping"  -> control.setHeatmapColorMapping(((ObjectProperty<ColorMapping>) property).get());
+                case "heatmapSpotRadius"    -> control.setHeatmapSpotRadius(((DoubleProperty) property).get());
+                case "heatmapOpacity"       -> control.setHeatmapOpacity(((DoubleProperty) property).get());
+                case "classConfigMap"       -> control.setClassConfigMap(((ObjectProperty<Map<Integer, ClassConfig>>) property).get());
             }
-        }
-        return wafermap;
+        });
+        return control;
     }
 }

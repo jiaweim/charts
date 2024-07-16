@@ -186,55 +186,55 @@ public class CircularPlotBuilder<B extends CircularPlotBuilder<B>> {
 
 
     public final CircularPlot build() {
-        final CircularPlot circularPlot = new CircularPlot();
+        final CircularPlot control = new CircularPlot();
 
         if (properties.keySet().contains("itemsArray")) {
-            circularPlot.setItems(((ObjectProperty<PlotItem[]>) properties.get("itemsArray")).get());
+            control.setItems(((ObjectProperty<PlotItem[]>) properties.get("itemsArray")).get());
         }
         if(properties.keySet().contains("itemsList")) {
-            circularPlot.setItems(((ObjectProperty<List<PlotItem>>) properties.get("itemsList")).get());
+            control.setItems(((ObjectProperty<List<PlotItem>>) properties.get("itemsList")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"                         -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    circularPlot.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"                          -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    circularPlot.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"                          -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    circularPlot.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"                        -> circularPlot.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"                       -> circularPlot.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"                         -> circularPlot.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"                        -> circularPlot.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"                         -> circularPlot.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"                        -> circularPlot.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"                           -> circularPlot.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"                           -> circularPlot.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"                          -> circularPlot.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"                          -> circularPlot.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"                       -> circularPlot.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"                       -> circularPlot.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"                          -> circularPlot.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "tickMarkColor"                    -> circularPlot.setTickMarkColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "textColor"                        -> circularPlot.setTextColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "decimals"                         -> circularPlot.setDecimals(((IntegerProperty) properties.get(key)).get());
-                case "segmentGap"                       -> circularPlot.setSegmentGap(((DoubleProperty) properties.get(key)).get());
-                case "showFlowDirection"                -> circularPlot.setShowFlowDirection(((BooleanProperty) properties.get(key)).get());
-                case "minorTickMarksVisible"            -> circularPlot.setMinorTickMarksVisible(((BooleanProperty) properties.get(key)).get());
-                case "mediumTickMarksVisible"           -> circularPlot.setMediumTickMarksVisible(((BooleanProperty) properties.get(key)).get());
-                case "majorTickMarksVisible"            -> circularPlot.setMajorTickMarksVisible(((BooleanProperty) properties.get(key)).get());
-                case "tickLabelsVisible"                -> circularPlot.setTickLabelsVisible(((BooleanProperty) properties.get(key)).get());
-                case "onlyFirstAndLastTickLabelVisible" -> circularPlot.setOnlyFirstAndLastTickLabelVisible(((BooleanProperty) properties.get(key)).get());
-                case "connectionOpactiy"                -> circularPlot.setConnectionOpacity(((DoubleProperty) properties.get(key)).get());
+                case "prefWidth"                        -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"                       -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"                         -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"                        -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"                         -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"                        -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"                           -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"                           -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"                          -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"                          -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"                       -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"                       -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"                          -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "tickMarkColor"                    -> control.setTickMarkColor(((ObjectProperty<Color>) property).get());
+                case "textColor"                        -> control.setTextColor(((ObjectProperty<Color>) property).get());
+                case "decimals"                         -> control.setDecimals(((IntegerProperty) property).get());
+                case "segmentGap"                       -> control.setSegmentGap(((DoubleProperty) property).get());
+                case "showFlowDirection"                -> control.setShowFlowDirection(((BooleanProperty) property).get());
+                case "minorTickMarksVisible"            -> control.setMinorTickMarksVisible(((BooleanProperty) property).get());
+                case "mediumTickMarksVisible"           -> control.setMediumTickMarksVisible(((BooleanProperty) property).get());
+                case "majorTickMarksVisible"            -> control.setMajorTickMarksVisible(((BooleanProperty) property).get());
+                case "tickLabelsVisible"                -> control.setTickLabelsVisible(((BooleanProperty) property).get());
+                case "onlyFirstAndLastTickLabelVisible" -> control.setOnlyFirstAndLastTickLabelVisible(((BooleanProperty) property).get());
+                case "connectionOpactiy"                -> control.setConnectionOpacity(((DoubleProperty) property).get());
             }
-        }
-        return circularPlot;
+        });
+        return control;
     }
 }

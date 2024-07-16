@@ -25,8 +25,6 @@ ext {
     buildDate          = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
     buildTime          = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
     platform           = osdetector.os == 'osx' ? osdetector.arch == 'aarch_64' ? 'mac-aarch64' : 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os == 'linux' ? osdetector.arch == 'aarch_64' ? 'linux-aarch64' : 'linux' : osdetector.os
-    ossrhTokenUsername = System.getenv('OSSRH_TOKEN_USERNAME')
-    ossrhTokenPassword = System.getenv('OSSRH_TOKEN_PASSWORD')
     ciOssrhUsername    = System.getenv('OSSRH_USERNAME')
     ciOssrhPassword    = System.getenv('OSSRH_PASSWORD')
     ciGHUser           = System.getenv('GH_USER')
@@ -40,7 +38,8 @@ repositories {
 }
 
 dependencies {
-    api "eu.hansolo.fx:countries:21.0.3"
+    //implementation fileTree(dir: 'libs', include: '*.jar')
+    api "eu.hansolo.fx:countries:21.0.15"
     implementation "org.openjfx:javafx-base:${javafxVersion}:${platform}"
     implementation "org.openjfx:javafx-graphics:${javafxVersion}:${platform}"
     implementation "org.openjfx:javafx-controls:${javafxVersion}:${platform}"
@@ -93,20 +92,11 @@ jar {
 }
 
 
-if (JavaVersion.current().isJava8Compatible()) {
-    allprojects {
-        tasks.withType(Javadoc) {
-            options.addStringOption('Xdoclint:none', '-quiet')
-        }
-    }
-}
-
-
+// start the demo from gradle
 task Demo(type: JavaExec) {
     mainClass = 'eu.hansolo.fx.charts.DemoLauncher'
     classpath = sourceSets.main.runtimeClasspath
 }
-
 
 // create one jar for the javadoc
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -129,10 +119,10 @@ artifacts {
 signing {
     if (gpgkey && gpgpassphrase) {
         useInMemoryPgpKeys(gpgkey, gpgpassphrase)
-
-        sign configurations.archives
-        sign publishing.publications
     }
+
+    sign configurations.archives
+    sign publishing.publications
 }
 
 // Remove 'thirdPartyCompatibility' from JavaFX runtimeElements variant
@@ -201,11 +191,11 @@ publishing {
     repositories {
         maven {
             name = "OSSRH"
-            url  = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
             try {
                 credentials {
-                    username = null == ossrhTokenUsername ? ossrhUsername : ossrhTokenUsername
-                    password = null == ossrhTokenPassword ? ossrhPassword : ossrhTokenPassword
+                    username = null == ciOssrhUsername ? ossrhToken         : ciOssrhUsername
+                    password = null == ciOssrhPassword ? ossrhTokenPassword : ciOssrhPassword
                 }
             } catch (Exception e) {
 

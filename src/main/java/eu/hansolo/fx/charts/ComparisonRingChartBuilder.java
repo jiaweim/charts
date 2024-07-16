@@ -147,55 +147,55 @@ public class ComparisonRingChartBuilder<B extends ComparisonRingChartBuilder<B>>
 
 
     public final ComparisonRingChart build() {
-        final ComparisonRingChart CONTROL = new ComparisonRingChart(series1, series2);
+        final ComparisonRingChart control = new ComparisonRingChart(series1, series2);
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             if ("prefSize".equals(key)) {
-                Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                CONTROL.setPrefSize(dim.getWidth(), dim.getHeight());
+                Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                control.setPrefSize(dim.getWidth(), dim.getHeight());
             } else if ("minSize".equals(key)) {
-                Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                CONTROL.setMinSize(dim.getWidth(), dim.getHeight());
+                Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                control.setMinSize(dim.getWidth(), dim.getHeight());
             } else if ("maxSize".equals(key)) {
-                Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                CONTROL.setMaxSize(dim.getWidth(), dim.getHeight());
+                Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                control.setMaxSize(dim.getWidth(), dim.getHeight());
             } else if ("prefWidth".equals(key)) {
-                CONTROL.setPrefWidth(((DoubleProperty) properties.get(key)).get());
+                control.setPrefWidth(((DoubleProperty) property).get());
             } else if ("prefHeight".equals(key)) {
-                CONTROL.setPrefHeight(((DoubleProperty) properties.get(key)).get());
+                control.setPrefHeight(((DoubleProperty) property).get());
             } else if ("minWidth".equals(key)) {
-                CONTROL.setMinWidth(((DoubleProperty) properties.get(key)).get());
+                control.setMinWidth(((DoubleProperty) property).get());
             } else if ("minHeight".equals(key)) {
-                CONTROL.setMinHeight(((DoubleProperty) properties.get(key)).get());
+                control.setMinHeight(((DoubleProperty) property).get());
             } else if ("maxWidth".equals(key)) {
-                CONTROL.setMaxWidth(((DoubleProperty) properties.get(key)).get());
+                control.setMaxWidth(((DoubleProperty) property).get());
             } else if ("maxHeight".equals(key)) {
-                CONTROL.setMaxHeight(((DoubleProperty) properties.get(key)).get());
+                control.setMaxHeight(((DoubleProperty) property).get());
             } else if ("scaleX".equals(key)) {
-                CONTROL.setScaleX(((DoubleProperty) properties.get(key)).get());
+                control.setScaleX(((DoubleProperty) property).get());
             } else if ("scaleY".equals(key)) {
-                CONTROL.setScaleY(((DoubleProperty) properties.get(key)).get());
+                control.setScaleY(((DoubleProperty) property).get());
             } else if ("layoutX".equals(key)) {
-                CONTROL.setLayoutX(((DoubleProperty) properties.get(key)).get());
+                control.setLayoutX(((DoubleProperty) property).get());
             } else if ("layoutY".equals(key)) {
-                CONTROL.setLayoutY(((DoubleProperty) properties.get(key)).get());
+                control.setLayoutY(((DoubleProperty) property).get());
             } else if ("translateX".equals(key)) {
-                CONTROL.setTranslateX(((DoubleProperty) properties.get(key)).get());
+                control.setTranslateX(((DoubleProperty) property).get());
             } else if ("translateY".equals(key)) {
-                CONTROL.setTranslateY(((DoubleProperty) properties.get(key)).get());
+                control.setTranslateY(((DoubleProperty) property).get());
             } else if ("padding".equals(key)) {
-                CONTROL.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
+                control.setPadding(((ObjectProperty<Insets>) property).get());
             } // Control specific properties
             else if ("barBackgroundColor".equals(key)) {
-                CONTROL.setBarBackgroundFill(((ObjectProperty<Color>) properties.get(key)).get());
+                control.setBarBackgroundFill(((ObjectProperty<Color>) property).get());
             } else if ("sorted".equals(key)) {
-                CONTROL.setSorted(((BooleanProperty) properties.get(key)).get());
+                control.setSorted(((BooleanProperty) property).get());
             } else if ("order".equals(key)) {
-                CONTROL.setOrder(((ObjectProperty<Order>) properties.get(key)).get());
+                control.setOrder(((ObjectProperty<Order>) property).get());
             } else if ("numberFormat".equals(key)) {
-                CONTROL.setNumberFormat(((ObjectProperty<NumberFormat>) properties.get(key)).get());
+                control.setNumberFormat(((ObjectProperty<NumberFormat>) property).get());
             }
-        }
-        return CONTROL;
+        });
+        return control;
     }
 }

@@ -89,18 +89,18 @@ public class XYZChartItemBuilder<B extends XYZChartItemBuilder<B>> {
 
 
     public final XYZChartItem build() {
-        final XYZChartItem item = new XYZChartItem();
-        for (String key : properties.keySet()) {
+        final XYZChartItem control = new XYZChartItem();
+        properties.forEach((key, property) -> {
             switch(key) {
-                case "x"       -> item.setX(((DoubleProperty) properties.get(key)).get());
-                case "y"       -> item.setY(((DoubleProperty) properties.get(key)).get());
-                case "z"       -> item.setZ(((DoubleProperty) properties.get(key)).get());
-                case "name"    -> item.setName(((StringProperty) properties.get(key)).get());
-                case "fill"    -> item.setFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "stroke"  -> item.setStroke(((ObjectProperty<Color>) properties.get(key)).get());
-                case "isEmpty" -> item.setIsEmpty(((BooleanProperty) properties.get(key)).get());
+                case "x"       -> control.setX(((DoubleProperty) property).get());
+                case "y"       -> control.setY(((DoubleProperty) property).get());
+                case "z"       -> control.setZ(((DoubleProperty) property).get());
+                case "name"    -> control.setName(((StringProperty) property).get());
+                case "fill"    -> control.setFill(((ObjectProperty<Color>) property).get());
+                case "stroke"  -> control.setStroke(((ObjectProperty<Color>) property).get());
+                case "isEmpty" -> control.setIsEmpty(((BooleanProperty) property).get());
             }
-        }
-        return item;
+        });
+        return control;
     }
 }

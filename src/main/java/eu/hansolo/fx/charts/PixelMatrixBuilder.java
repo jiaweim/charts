@@ -156,50 +156,50 @@ public class PixelMatrixBuilder<B extends PixelMatrixBuilder<B>> {
 
 
     public final PixelMatrix build() {
-        final PixelMatrix pixelMatrix;
+        final PixelMatrix control;
         if (properties.keySet().contains("cols") && properties.keySet().contains("rows")) {
             int cols = ((IntegerProperty) properties.get("cols")).get();
             int rows = ((IntegerProperty) properties.get("rows")).get();
-            pixelMatrix = new PixelMatrix(cols, rows);
+            control = new PixelMatrix(cols, rows);
         } else {
-            pixelMatrix = new PixelMatrix();
+            control = new PixelMatrix();
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"         -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    pixelMatrix.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"          -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    pixelMatrix.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"          -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    pixelMatrix.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"        -> pixelMatrix.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"       -> pixelMatrix.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"         -> pixelMatrix.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"        -> pixelMatrix.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"         -> pixelMatrix.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"        -> pixelMatrix.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"           -> pixelMatrix.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"           -> pixelMatrix.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"          -> pixelMatrix.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"          -> pixelMatrix.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"       -> pixelMatrix.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"       -> pixelMatrix.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"          -> pixelMatrix.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "pixelOnColor"     -> pixelMatrix.setPixelOnColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "pixelOffColor"    -> pixelMatrix.setPixelOffColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "pixelShape"       -> pixelMatrix.setPixelShape(((ObjectProperty<PixelShape>) properties.get(key)).get());
-                case "useSpacer"        -> pixelMatrix.setUseSpacer(((BooleanProperty) properties.get(key)).get());
-                case "spacerSizeFactor" -> pixelMatrix.setSpacerSizeFactor(((DoubleProperty) properties.get(key)).get());
-                case "squarePixels"     -> pixelMatrix.setSquarePixels(((BooleanProperty) properties.get(key)).get());
+                case "prefWidth"        -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"       -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"         -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"        -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"         -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"        -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"           -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"           -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"          -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"          -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"       -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"       -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"          -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "pixelOnColor"     -> control.setPixelOnColor(((ObjectProperty<Color>) property).get());
+                case "pixelOffColor"    -> control.setPixelOffColor(((ObjectProperty<Color>) property).get());
+                case "pixelShape"       -> control.setPixelShape(((ObjectProperty<PixelShape>) property).get());
+                case "useSpacer"        -> control.setUseSpacer(((BooleanProperty) property).get());
+                case "spacerSizeFactor" -> control.setSpacerSizeFactor(((DoubleProperty) property).get());
+                case "squarePixels"     -> control.setSquarePixels(((BooleanProperty) property).get());
             }
-        }
-        return pixelMatrix;
+        });
+        return control;
     }
 }

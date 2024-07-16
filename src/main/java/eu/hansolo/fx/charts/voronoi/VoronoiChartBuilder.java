@@ -171,52 +171,52 @@ public class VoronoiChartBuilder<B extends VoronoiChartBuilder<B>> {
 
 
     public final VoronoiChart build() {
-        final VoronoiChart voronoiChart;
+        final VoronoiChart control;
 
         if (properties.containsKey("points")) {
-            voronoiChart = new VoronoiChart(((ObjectProperty<List<VPoint>>) properties.get("points")).get());
+            control = new VoronoiChart(((ObjectProperty<List<VPoint>>) properties.get("points")).get());
         } else {
-            voronoiChart = new VoronoiChart();
+            control = new VoronoiChart();
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"      -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    voronoiChart.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"       -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    voronoiChart.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"       -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    voronoiChart.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"     -> voronoiChart.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"    -> voronoiChart.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"      -> voronoiChart.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"     -> voronoiChart.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"      -> voronoiChart.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"     -> voronoiChart.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"        -> voronoiChart.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"        -> voronoiChart.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"       -> voronoiChart.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"       -> voronoiChart.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"    -> voronoiChart.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"    -> voronoiChart.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"       -> voronoiChart.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "pointsVisible" -> voronoiChart.setPointsVisible(((BooleanProperty) properties.get(key)).get());
-                case "pointColor"    -> voronoiChart.setPointColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "fillRegions"   -> voronoiChart.setFillRegions(((BooleanProperty) properties.get(key)).get());
-                case "borderColor"   -> voronoiChart.setBorderColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "type"          -> voronoiChart.setType(((ObjectProperty<Type>) properties.get(key)).get());
-                case "multiColor"    -> voronoiChart.setMulticolor(((BooleanProperty) properties.get(key)).get());
-                case "voronoiColor"  -> voronoiChart.setVoronoiColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "delaunayColor" -> voronoiChart.setDelaunayColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "interactive"   -> voronoiChart.setInteractive(((BooleanProperty) properties.get(key)).get());
+                case "prefWidth"     -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"    -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"      -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"     -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"      -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"     -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"        -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"        -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"       -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"       -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"    -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"    -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"       -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "pointsVisible" -> control.setPointsVisible(((BooleanProperty) property).get());
+                case "pointColor"    -> control.setPointColor(((ObjectProperty<Color>) property).get());
+                case "fillRegions"   -> control.setFillRegions(((BooleanProperty) property).get());
+                case "borderColor"   -> control.setBorderColor(((ObjectProperty<Color>) property).get());
+                case "type"          -> control.setType(((ObjectProperty<Type>) property).get());
+                case "multiColor"    -> control.setMulticolor(((BooleanProperty) property).get());
+                case "voronoiColor"  -> control.setVoronoiColor(((ObjectProperty<Color>) property).get());
+                case "delaunayColor" -> control.setDelaunayColor(((ObjectProperty<Color>) property).get());
+                case "interactive"   -> control.setInteractive(((BooleanProperty) property).get());
             }
-        }
-        return voronoiChart;
+        });
+        return control;
     }
 }

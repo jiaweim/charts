@@ -132,33 +132,33 @@ public class YSeriesBuilder<B extends YSeriesBuilder<B>> {
 
     
     public final YSeries build() {
-        final YSeries ySeries = new YSeries();
+        final YSeries control = new YSeries();
 
         if (properties.keySet().contains("itemsArray")) {
-            ySeries.setItems(((ObjectProperty<ValueItem[]>) properties.get("itemsArray")).get());
+            control.setItems(((ObjectProperty<ValueItem[]>) properties.get("itemsArray")).get());
         }
         if(properties.keySet().contains("itemsList")) {
-            ySeries.setItems(((ObjectProperty<List<ValueItem>>) properties.get("itemsList")).get());
+            control.setItems(((ObjectProperty<List<ValueItem>>) properties.get("itemsList")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
-                case "name"              -> ySeries.setName(((StringProperty) properties.get(key)).get());
-                case "fill"              -> ySeries.setFill(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "stroke"            -> ySeries.setStroke(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "textFill"          -> ySeries.setTextFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "symbolFill"        -> ySeries.setSymbolFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "symbolStroke"      -> ySeries.setSymbolStroke(((ObjectProperty<Color>) properties.get(key)).get());
-                case "symbol"            -> ySeries.setSymbol(((ObjectProperty<Symbol>) properties.get(key)).get());
-                case "chartType"         -> ySeries.setChartType(((ObjectProperty<ChartType>) properties.get(key)).get());
-                case "symbolsVisible"    -> ySeries.setSymbolsVisible(((BooleanProperty) properties.get(key)).get());
-                case "symbolSize"        -> ySeries.setSymbolSize(((DoubleProperty) properties.get(key)).get());
-                case "strokeWidth"       -> ySeries.setStrokeWidth(((DoubleProperty) properties.get(key)).get());
-                case "visible"           -> ySeries.setVisible(((BooleanProperty) properties.get(key)).get());
-                case "animated"          -> ySeries.setAnimated(((BooleanProperty) properties.get(key)).get());
-                case "animationDuration" -> ySeries.setAnimationDuration(((LongProperty) properties.get(key)).get());
+                case "name"              -> control.setName(((StringProperty) property).get());
+                case "fill"              -> control.setFill(((ObjectProperty<Paint>) property).get());
+                case "stroke"            -> control.setStroke(((ObjectProperty<Paint>) property).get());
+                case "textFill"          -> control.setTextFill(((ObjectProperty<Color>) property).get());
+                case "symbolFill"        -> control.setSymbolFill(((ObjectProperty<Color>) property).get());
+                case "symbolStroke"      -> control.setSymbolStroke(((ObjectProperty<Color>) property).get());
+                case "symbol"            -> control.setSymbol(((ObjectProperty<Symbol>) property).get());
+                case "chartType"         -> control.setChartType(((ObjectProperty<ChartType>) property).get());
+                case "symbolsVisible"    -> control.setSymbolsVisible(((BooleanProperty) property).get());
+                case "symbolSize"        -> control.setSymbolSize(((DoubleProperty) property).get());
+                case "strokeWidth"       -> control.setStrokeWidth(((DoubleProperty) property).get());
+                case "visible"           -> control.setVisible(((BooleanProperty) property).get());
+                case "animated"          -> control.setAnimated(((BooleanProperty) property).get());
+                case "animationDuration" -> control.setAnimationDuration(((LongProperty) property).get());
             }
-        }
-        return ySeries;
+        });
+        return control;
     }
 }

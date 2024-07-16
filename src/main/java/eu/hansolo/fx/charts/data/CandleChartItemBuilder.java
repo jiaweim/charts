@@ -113,22 +113,22 @@ public class CandleChartItemBuilder<B extends CandleChartItemBuilder<B>> {
     }
 
     public final CandleChartItem build() {
-        final CandleChartItem chartItem = new CandleChartItem();
-        for (String key : properties.keySet()) {
+        final CandleChartItem control = new CandleChartItem();
+        properties.forEach((key, property) -> {
             switch (key) {
-                case "name"                      -> chartItem.setName(((StringProperty) properties.get(key)).get());
-                case "description"               -> chartItem.setDescription(((StringProperty) properties.get(key)).get());
-                case "timestamp"                 -> chartItem.setTimestamp(((ObjectProperty<Instant>) properties.get(key)).get());
-                case "timestampDateTime"         -> chartItem.setTimestamp(((ObjectProperty<ZonedDateTime>) properties.get(key)).get());
-                case "timestampEpochSecond"      -> chartItem.setTimestamp(((LongProperty) properties.get(key)).get());
-                case "high"                      -> chartItem.setHigh(((DoubleProperty) properties.get(key)).get());
-                case "low"                       -> chartItem.setLow(((DoubleProperty) properties.get(key)).get());
-                case "open"                      -> chartItem.setOpen(((DoubleProperty) properties.get(key)).get());
-                case "close"                     -> chartItem.setClose(((DoubleProperty) properties.get(key)).get());
-                case "openTimestampEpochSecond"  -> chartItem.setOpenTimestamp(((LongProperty) properties.get(key)).get());
-                case "closeTimestampEpochSecond" -> chartItem.setCloseTimestamp(((LongProperty) properties.get(key)).get());
+                case "name"                      -> control.setName(((StringProperty) property).get());
+                case "description"               -> control.setDescription(((StringProperty) property).get());
+                case "timestamp"                 -> control.setTimestamp(((ObjectProperty<Instant>) property).get());
+                case "timestampDateTime"         -> control.setTimestamp(((ObjectProperty<ZonedDateTime>) property).get());
+                case "timestampEpochSecond"      -> control.setTimestamp(((LongProperty) property).get());
+                case "high"                      -> control.setHigh(((DoubleProperty) property).get());
+                case "low"                       -> control.setLow(((DoubleProperty) property).get());
+                case "open"                      -> control.setOpen(((DoubleProperty) property).get());
+                case "close"                     -> control.setClose(((DoubleProperty) property).get());
+                case "openTimestampEpochSecond"  -> control.setOpenTimestamp(((LongProperty) property).get());
+                case "closeTimestampEpochSecond" -> control.setCloseTimestamp(((LongProperty) property).get());
             }
-        }
-        return chartItem;
+        });
+        return control;
     }
 }

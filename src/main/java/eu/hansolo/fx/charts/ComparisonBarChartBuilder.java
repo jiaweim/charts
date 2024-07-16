@@ -235,58 +235,58 @@ public class ComparisonBarChartBuilder<B extends ComparisonBarChartBuilder<B>> {
 
 
     public final ComparisonBarChart build() {
-        final ComparisonBarChart comparisonBarChart = new ComparisonBarChart(series1, series2);
+        final ComparisonBarChart control = new ComparisonBarChart(series1, series2);
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"               -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    comparisonBarChart.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"                -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    comparisonBarChart.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"                -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    comparisonBarChart.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"              -> comparisonBarChart.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"             -> comparisonBarChart.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"               -> comparisonBarChart.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"              -> comparisonBarChart.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"               -> comparisonBarChart.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"              -> comparisonBarChart.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"                 -> comparisonBarChart.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"                 -> comparisonBarChart.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"                -> comparisonBarChart.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"                -> comparisonBarChart.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"             -> comparisonBarChart.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"             -> comparisonBarChart.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"                -> comparisonBarChart.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "backgroundFill"         -> comparisonBarChart.setBackgroundFill(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "categoryBackgroundFill" -> comparisonBarChart.setCategoryBackgroundFill(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "barBackgroundFill"      -> comparisonBarChart.setBarBackgroundFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "textFill"               -> comparisonBarChart.setTextFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "categoryTextFill"       -> comparisonBarChart.setCategoryTextFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "betterColor"            -> comparisonBarChart.setBetterColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "poorer"                 -> comparisonBarChart.setPoorerColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "betterDarkerColor"      -> comparisonBarChart.setBetterDarkerColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "betterBrighterColor"    -> comparisonBarChart.setBetterBrighterColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "poorerDarkerColor"      -> comparisonBarChart.setPoorerDarkerColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "poorerBrighterColor"    -> comparisonBarChart.setPoorerBrighterColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "barBackgroundVisible"   -> comparisonBarChart.setBarBackgroundVisible(((BooleanProperty) properties.get(key)).get());
-                case "shadowsVisible"         -> comparisonBarChart.setShadowsVisible(((BooleanProperty) properties.get(key)).get());
-                case "categorySumVisible"     -> comparisonBarChart.setCategorySumVisible(((BooleanProperty) properties.get(key)).get());
-                case "numberFormat"           -> comparisonBarChart.setNumberFormat(((ObjectProperty<NumberFormat>) properties.get(key)).get());
-                case "doCompare"              -> comparisonBarChart.setDoCompare(((BooleanProperty) properties.get(key)).get());
-                case "useItemTextFill"        -> comparisonBarChart.setUseItemTextFill(((BooleanProperty) properties.get(key)).get());
-                case "useCategoryTextFill"    -> comparisonBarChart.setUseCategoryTextFill(((BooleanProperty) properties.get(key)).get());
-                case "shortenNumbers"         -> comparisonBarChart.setShortenNumbers(((BooleanProperty) properties.get(key)).get());
-                case "sorted"                 -> comparisonBarChart.setSorted(((BooleanProperty) properties.get(key)).get());
-                case "order"                  -> comparisonBarChart.setOrder(((ObjectProperty<Order>) properties.get(key)).get());
+                case "prefWidth"              -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"             -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"               -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"              -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"               -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"              -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"                 -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"                 -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"                -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"                -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"             -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"             -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"                -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "backgroundFill"         -> control.setBackgroundFill(((ObjectProperty<Paint>) property).get());
+                case "categoryBackgroundFill" -> control.setCategoryBackgroundFill(((ObjectProperty<Paint>) property).get());
+                case "barBackgroundFill"      -> control.setBarBackgroundFill(((ObjectProperty<Color>) property).get());
+                case "textFill"               -> control.setTextFill(((ObjectProperty<Color>) property).get());
+                case "categoryTextFill"       -> control.setCategoryTextFill(((ObjectProperty<Color>) property).get());
+                case "betterColor"            -> control.setBetterColor(((ObjectProperty<Color>) property).get());
+                case "poorer"                 -> control.setPoorerColor(((ObjectProperty<Color>) property).get());
+                case "betterDarkerColor"      -> control.setBetterDarkerColor(((ObjectProperty<Color>) property).get());
+                case "betterBrighterColor"    -> control.setBetterBrighterColor(((ObjectProperty<Color>) property).get());
+                case "poorerDarkerColor"      -> control.setPoorerDarkerColor(((ObjectProperty<Color>) property).get());
+                case "poorerBrighterColor"    -> control.setPoorerBrighterColor(((ObjectProperty<Color>) property).get());
+                case "barBackgroundVisible"   -> control.setBarBackgroundVisible(((BooleanProperty) property).get());
+                case "shadowsVisible"         -> control.setShadowsVisible(((BooleanProperty) property).get());
+                case "categorySumVisible"     -> control.setCategorySumVisible(((BooleanProperty) property).get());
+                case "numberFormat"           -> control.setNumberFormat(((ObjectProperty<NumberFormat>) property).get());
+                case "doCompare"              -> control.setDoCompare(((BooleanProperty) property).get());
+                case "useItemTextFill"        -> control.setUseItemTextFill(((BooleanProperty) property).get());
+                case "useCategoryTextFill"    -> control.setUseCategoryTextFill(((BooleanProperty) property).get());
+                case "shortenNumbers"         -> control.setShortenNumbers(((BooleanProperty) property).get());
+                case "sorted"                 -> control.setSorted(((BooleanProperty) property).get());
+                case "order"                  -> control.setOrder(((ObjectProperty<Order>) property).get());
             }
-        }
-        return comparisonBarChart;
+        });
+        return control;
     }
 }

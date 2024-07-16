@@ -198,55 +198,55 @@ public class CandleChartBuilder<B extends CandleChartBuilder<B>> {
 
 
     public final CandleChart build() {
-        final CandleChart candleChart = new CandleChart();
+        final CandleChart control = new CandleChart();
 
         if (properties.keySet().contains("itemsArray")) {
-            candleChart.setItems(((ObjectProperty<CandleChartItem[]>) properties.get("itemsArray")).get());
+            control.setItems(((ObjectProperty<CandleChartItem[]>) properties.get("itemsArray")).get());
         } else if(properties.keySet().contains("itemsList")) {
-            candleChart.setItems(((ObjectProperty<List<CandleChartItem>>) properties.get("itemsList")).get());
+            control.setItems(((ObjectProperty<List<CandleChartItem>>) properties.get("itemsList")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"            -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    candleChart.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"             -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    candleChart.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"             -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    candleChart.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"             -> candleChart.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"            -> candleChart.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"              -> candleChart.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"             -> candleChart.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"              -> candleChart.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"             -> candleChart.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"                -> candleChart.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"                -> candleChart.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"               -> candleChart.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"               -> candleChart.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"            -> candleChart.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"            -> candleChart.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"               -> candleChart.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "decimals"              -> candleChart.setDecimals(((IntegerProperty) properties.get(key)).get());
-                case "locale"                -> candleChart.setLocale(((ObjectProperty<Locale>) properties.get(key)).get());
-                case "backgroundColor"       -> candleChart.setBackgroundColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "bullishColor"          -> candleChart.setBullishColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "bearishColor"          -> candleChart.setBearishColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "strokeColor"           -> candleChart.setStrokeColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "endLinesVisible"       -> candleChart.setEndLinesVisible(((BooleanProperty) properties.get(key)).get());
-                case "useItemColorForStroke" -> candleChart.setUseItemColorForStroke(((BooleanProperty) properties.get(key)).get());
-                case "minNumberOfItems"      -> candleChart.setMinNumberOfItems(((IntegerProperty) properties.get(key)).get());
-                case "useMinNumberOfItems"   -> candleChart.setUseMinNumberOfItems(((BooleanProperty) properties.get(key)).get());
-                case "popupTimeout"          -> candleChart.setPopupTimeout(((LongProperty) properties.get(key)).get());
+                case "prefWidth"             -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"            -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"              -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"             -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"              -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"             -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"                -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"                -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"               -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"               -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"            -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"            -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"               -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "decimals"              -> control.setDecimals(((IntegerProperty) property).get());
+                case "locale"                -> control.setLocale(((ObjectProperty<Locale>) property).get());
+                case "backgroundColor"       -> control.setBackgroundColor(((ObjectProperty<Color>) property).get());
+                case "bullishColor"          -> control.setBullishColor(((ObjectProperty<Color>) property).get());
+                case "bearishColor"          -> control.setBearishColor(((ObjectProperty<Color>) property).get());
+                case "strokeColor"           -> control.setStrokeColor(((ObjectProperty<Color>) property).get());
+                case "endLinesVisible"       -> control.setEndLinesVisible(((BooleanProperty) property).get());
+                case "useItemColorForStroke" -> control.setUseItemColorForStroke(((BooleanProperty) property).get());
+                case "minNumberOfItems"      -> control.setMinNumberOfItems(((IntegerProperty) property).get());
+                case "useMinNumberOfItems"   -> control.setUseMinNumberOfItems(((BooleanProperty) property).get());
+                case "popupTimeout"          -> control.setPopupTimeout(((LongProperty) property).get());
             }
-        }
-        if (properties.containsKey("yAxis")) { candleChart.setYAxis(((ObjectProperty<Axis>) properties.get("yAxis")).get()); }
-        return candleChart;
+        });
+        if (properties.containsKey("yAxis")) { control.setYAxis(((ObjectProperty<Axis>) properties.get("yAxis")).get()); }
+        return control;
     }
 }

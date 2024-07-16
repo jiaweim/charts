@@ -168,48 +168,48 @@ public class DieMapBuilder <B extends DieMapBuilder<B>> {
 
 
     public final DieMap build() {
-        final DieMap dieMap = new DieMap();
+        final DieMap control = new DieMap();
         
-        if (properties.keySet().contains("die")) { dieMap.setDie(((ObjectProperty<Die>) properties.get("die")).get()); }
+        if (properties.keySet().contains("die")) { control.setDie(((ObjectProperty<Die>) properties.get("die")).get()); }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"             -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    dieMap.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"              -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    dieMap.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"              -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    dieMap.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"            -> dieMap.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"           -> dieMap.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"             -> dieMap.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"            -> dieMap.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"             -> dieMap.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"            -> dieMap.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"               -> dieMap.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"               -> dieMap.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"              -> dieMap.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"              -> dieMap.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"           -> dieMap.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"           -> dieMap.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"              -> dieMap.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
+                case "prefWidth"            -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"           -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"             -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"            -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"             -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"            -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"               -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"               -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"              -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"              -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"           -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"           -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"              -> control.setPadding(((ObjectProperty<Insets>) property).get());
 
-                case "waferFill"            -> dieMap.setDieFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "waferStroke"          -> dieMap.setDieStroke(((ObjectProperty<Color>) properties.get(key)).get());
-                case "defectFill"           -> dieMap.setDefectFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "defectStroke"         -> dieMap.setDefectStroke(((ObjectProperty<Color>) properties.get(key)).get());
-                case "dieTextFill"          -> dieMap.setDieTextFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "dieTextVisible"       -> dieMap.setDieTextVisible(((BooleanProperty) properties.get(key)).get());
-                case "densityColorsVisible" -> dieMap.setDensityColorsVisible(((BooleanProperty) properties.get(key)).get());
-                case "classConfigMap"       -> dieMap.setClassConfigMap(((ObjectProperty<Map<Integer, ClassConfig>>) properties.get(key)).get());
+                case "waferFill"            -> control.setDieFill(((ObjectProperty<Color>) property).get());
+                case "waferStroke"          -> control.setDieStroke(((ObjectProperty<Color>) property).get());
+                case "defectFill"           -> control.setDefectFill(((ObjectProperty<Color>) property).get());
+                case "defectStroke"         -> control.setDefectStroke(((ObjectProperty<Color>) property).get());
+                case "dieTextFill"          -> control.setDieTextFill(((ObjectProperty<Color>) property).get());
+                case "dieTextVisible"       -> control.setDieTextVisible(((BooleanProperty) property).get());
+                case "densityColorsVisible" -> control.setDensityColorsVisible(((BooleanProperty) property).get());
+                case "classConfigMap"       -> control.setClassConfigMap(((ObjectProperty<Map<Integer, ClassConfig>>) property).get());
             }
-        }
-        return dieMap;
+        });
+        return control;
     }
 }

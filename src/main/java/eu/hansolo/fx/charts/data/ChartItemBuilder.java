@@ -147,30 +147,30 @@ public class ChartItemBuilder<B extends ChartItemBuilder<B>> {
     }
 
     public final ChartItem build() {
-        final ChartItem chartItem = new ChartItem();
-        for (String key : properties.keySet()) {
+        final ChartItem control = new ChartItem();
+        properties.forEach((key, property) -> {
             switch (key) {
-                case "index"                -> chartItem.setIndex(((IntegerProperty) properties.get(key)).get());
-                case "name"                 -> chartItem.setName(((StringProperty) properties.get(key)).get());
-                case "value"                -> chartItem.setValue(((DoubleProperty) properties.get(key)).get());
-                case "unit"                 -> chartItem.setUnit(((StringProperty) properties.get(key)).get());
-                case "description"          -> chartItem.setDescription(((StringProperty) properties.get(key)).get());
-                case "category"             -> chartItem.setCategory(((ObjectProperty<Category>) properties.get(key)).get());
-                case "fill"                 -> chartItem.setFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "stroke"               -> chartItem.setStroke(((ObjectProperty<Color>) properties.get(key)).get());
-                case "textFill"             -> chartItem.setTextFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "timestamp"            -> chartItem.setTimestamp(((ObjectProperty<Instant>) properties.get(key)).get());
-                case "timestampDateTime"    -> chartItem.setTimestamp(((ObjectProperty<ZonedDateTime>) properties.get(key)).get());
-                case "timestampEpochSecond" -> chartItem.setTimestamp(((LongProperty) properties.get(key)).get());
-                case "symbol"               -> chartItem.setSymbol(((ObjectProperty<Symbol>) properties.get(key)).get());
-                case "animated"             -> chartItem.setAnimated(((BooleanProperty) properties.get(key)).get());
-                case "animationDuration"    -> chartItem.setAnimationDuration(((LongProperty) properties.get(key)).get());
-                case "x"                    -> chartItem.setX(((DoubleProperty) properties.get(key)).get());
-                case "y"                    -> chartItem.setY(((DoubleProperty) properties.get(key)).get());
-                case "isEmpty"              -> chartItem.setIsEmpty(((BooleanProperty) properties.get(key)).get());
-                case "metadata"             -> chartItem.setMetadata(((ObjectProperty<Metadata>) properties.get(key)).get());
+                case "index"                -> control.setIndex(((IntegerProperty) property).get());
+                case "name"                 -> control.setName(((StringProperty) property).get());
+                case "value"                -> control.setValue(((DoubleProperty) property).get());
+                case "unit"                 -> control.setUnit(((StringProperty) property).get());
+                case "description"          -> control.setDescription(((StringProperty) property).get());
+                case "category"             -> control.setCategory(((ObjectProperty<Category>) property).get());
+                case "fill"                 -> control.setFill(((ObjectProperty<Color>) property).get());
+                case "stroke"               -> control.setStroke(((ObjectProperty<Color>) property).get());
+                case "textFill"             -> control.setTextFill(((ObjectProperty<Color>) property).get());
+                case "timestamp"            -> control.setTimestamp(((ObjectProperty<Instant>) property).get());
+                case "timestampDateTime"    -> control.setTimestamp(((ObjectProperty<ZonedDateTime>) property).get());
+                case "timestampEpochSecond" -> control.setTimestamp(((LongProperty) property).get());
+                case "symbol"               -> control.setSymbol(((ObjectProperty<Symbol>) property).get());
+                case "animated"             -> control.setAnimated(((BooleanProperty) property).get());
+                case "animationDuration"    -> control.setAnimationDuration(((LongProperty) property).get());
+                case "x"                    -> control.setX(((DoubleProperty) property).get());
+                case "y"                    -> control.setY(((DoubleProperty) property).get());
+                case "isEmpty"              -> control.setIsEmpty(((BooleanProperty) property).get());
+                case "metadata"             -> control.setMetadata(((ObjectProperty<Metadata>) property).get());
             }
-        }
-        return chartItem;
+        });
+        return control;
     }
 }

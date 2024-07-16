@@ -270,59 +270,59 @@ public class BarChartBuilder <B extends BarChartBuilder<B>> {
             barChart.setItems(((ObjectProperty<List<? extends ChartItem>>) properties.get("itemsList")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"             -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
                     barChart.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"              -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
                     barChart.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"              -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
                     barChart.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"            -> barChart.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"           -> barChart.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"             -> barChart.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"            -> barChart.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"             -> barChart.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"            -> barChart.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"               -> barChart.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"               -> barChart.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"              -> barChart.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"              -> barChart.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"           -> barChart.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"           -> barChart.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"              -> barChart.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "orientation"          -> barChart.setOrientation(((ObjectProperty<Orientation>) properties.get(key)).get());
-                case "backgroundFill"       -> barChart.setBackgroundFill(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "namesBackgroundFill"  -> barChart.setNamesBackgroundFill(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "barBackgroundFill"    -> barChart.setBarBackgroundFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "seriesFill"           -> barChart.setSeriesFill(((ObjectProperty<Paint>) properties.get(key)).get());
-                case "textFill"             -> barChart.setTextFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "namesTextFill"        -> barChart.setNamesTextFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "barBackgroundVisible" -> barChart.setBarBackgroundVisible(((BooleanProperty) properties.get(key)).get());
-                case "shadowsVisible"       -> barChart.setShadowsVisible(((BooleanProperty) properties.get(key)).get());
-                case "numberFormat"         -> barChart.setNumberFormat(((ObjectProperty<NumberFormat>) properties.get(key)).get());
-                case "useItemFill"          -> barChart.setUseItemFill(((BooleanProperty) properties.get(key)).get());
-                case "useItemTextFill"      -> barChart.setUseItemTextFill(((BooleanProperty) properties.get(key)).get());
-                case "useNamesTextFill"     -> barChart.setUseNamesTextFill(((BooleanProperty) properties.get(key)).get());
-                case "shortenNumbers"       -> barChart.setShortenNumbers(((BooleanProperty) properties.get(key)).get());
-                case "sorted"               -> barChart.setSorted(((BooleanProperty) properties.get(key)).get());
-                case "order"                -> barChart.setOrder(((ObjectProperty<Order>) properties.get(key)).get());
-                case "animated"             -> barChart.setAnimated(((BooleanProperty) properties.get(key)).get());
-                case "animationDuration"    -> barChart.setAnimationDuration(((LongProperty) properties.get(key)).get());
-                case "minNumberOfBars"      -> barChart.setMinNumberOfBars(((IntegerProperty) properties.get(key)).get());
-                case "useMinNumberOfBars"   -> barChart.setUseMinNumberOfBars(((BooleanProperty) properties.get(key)).get());
-                case "useGivenColors"       -> barChart.setUseGivenColors(((BooleanProperty) properties.get(key)).get());
-                case "colors"               -> barChart.setColors(((ObjectProperty<List<Color>>) properties.get(key)).get());
-                case "barCornerRadius"      -> barChart.setBarCornerRadius(((DoubleProperty) properties.get(key)).get());
-                case "boldValueFont"        -> barChart.setBoldValueFont(((BooleanProperty) properties.get(key)).get());
+                case "prefWidth"            -> barChart.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"           -> barChart.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"             -> barChart.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"            -> barChart.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"             -> barChart.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"            -> barChart.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"               -> barChart.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"               -> barChart.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"              -> barChart.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"              -> barChart.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"           -> barChart.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"           -> barChart.setTranslateY(((DoubleProperty) property).get());
+                case "padding"              -> barChart.setPadding(((ObjectProperty<Insets>) property).get());
+                case "orientation"          -> barChart.setOrientation(((ObjectProperty<Orientation>) property).get());
+                case "backgroundFill"       -> barChart.setBackgroundFill(((ObjectProperty<Paint>) property).get());
+                case "namesBackgroundFill"  -> barChart.setNamesBackgroundFill(((ObjectProperty<Paint>) property).get());
+                case "barBackgroundFill"    -> barChart.setBarBackgroundFill(((ObjectProperty<Color>) property).get());
+                case "seriesFill"           -> barChart.setSeriesFill(((ObjectProperty<Paint>) property).get());
+                case "textFill"             -> barChart.setTextFill(((ObjectProperty<Color>) property).get());
+                case "namesTextFill"        -> barChart.setNamesTextFill(((ObjectProperty<Color>) property).get());
+                case "barBackgroundVisible" -> barChart.setBarBackgroundVisible(((BooleanProperty) property).get());
+                case "shadowsVisible"       -> barChart.setShadowsVisible(((BooleanProperty) property).get());
+                case "numberFormat"         -> barChart.setNumberFormat(((ObjectProperty<NumberFormat>) property).get());
+                case "useItemFill"          -> barChart.setUseItemFill(((BooleanProperty) property).get());
+                case "useItemTextFill"      -> barChart.setUseItemTextFill(((BooleanProperty) property).get());
+                case "useNamesTextFill"     -> barChart.setUseNamesTextFill(((BooleanProperty) property).get());
+                case "shortenNumbers"       -> barChart.setShortenNumbers(((BooleanProperty) property).get());
+                case "sorted"               -> barChart.setSorted(((BooleanProperty) property).get());
+                case "order"                -> barChart.setOrder(((ObjectProperty<Order>) property).get());
+                case "animated"             -> barChart.setAnimated(((BooleanProperty) property).get());
+                case "animationDuration"    -> barChart.setAnimationDuration(((LongProperty) property).get());
+                case "minNumberOfBars"      -> barChart.setMinNumberOfBars(((IntegerProperty) property).get());
+                case "useMinNumberOfBars"   -> barChart.setUseMinNumberOfBars(((BooleanProperty) property).get());
+                case "useGivenColors"       -> barChart.setUseGivenColors(((BooleanProperty) property).get());
+                case "colors"               -> barChart.setColors(((ObjectProperty<List<Color>>) property).get());
+                case "barCornerRadius"      -> barChart.setBarCornerRadius(((DoubleProperty) property).get());
+                case "boldValueFont"        -> barChart.setBoldValueFont(((BooleanProperty) property).get());
             }
-        }
+        });
         return barChart;
     }
 }

@@ -222,48 +222,48 @@ public class BoxPlotBuilder<B extends BoxPlotBuilder<B>> {
             boxPlot.setItems(((ObjectProperty<List<ChartItem>>) properties.get("itemsList")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"           -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
                     boxPlot.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"            -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
                     boxPlot.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"            -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
                     boxPlot.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"          -> boxPlot.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"         -> boxPlot.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"           -> boxPlot.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"          -> boxPlot.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"           -> boxPlot.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"          -> boxPlot.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"             -> boxPlot.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"             -> boxPlot.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"            -> boxPlot.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"            -> boxPlot.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"         -> boxPlot.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"         -> boxPlot.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"            -> boxPlot.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "decimals"           -> boxPlot.setDecimals(((IntegerProperty) properties.get(key)).get());
-                case "locale"             -> boxPlot.setLocale(((ObjectProperty<Locale>) properties.get(key)).get());
-                case "name"               -> boxPlot.setName(((StringProperty) properties.get(key)).get());
-                case "backgroundColor"    -> boxPlot.setBackgroundColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "whiskerStrokeColor" -> boxPlot.setWhiskerStrokeColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "iqrFillColor"       -> boxPlot.setIqrFillColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "iqrStrokeColor"     -> boxPlot.setIqrStrokeColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "medianStrokeColor"  -> boxPlot.setMedianStrokeColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "outlierFillColor"   -> boxPlot.setOutlierFillColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "outlierStrokeColor" -> boxPlot.setOutlierStrokeColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "nameVisible"        -> boxPlot.setNameVisible(((BooleanProperty) properties.get(key)).get());
-                case "textFillColor"      -> boxPlot.setTextFillColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "popupTimeout"       -> boxPlot.setPopupTimeout(((LongProperty) properties.get(key)).get());
+                case "prefWidth"          -> boxPlot.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"         -> boxPlot.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"           -> boxPlot.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"          -> boxPlot.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"           -> boxPlot.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"          -> boxPlot.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"             -> boxPlot.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"             -> boxPlot.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"            -> boxPlot.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"            -> boxPlot.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"         -> boxPlot.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"         -> boxPlot.setTranslateY(((DoubleProperty) property).get());
+                case "padding"            -> boxPlot.setPadding(((ObjectProperty<Insets>) property).get());
+                case "decimals"           -> boxPlot.setDecimals(((IntegerProperty) property).get());
+                case "locale"             -> boxPlot.setLocale(((ObjectProperty<Locale>) property).get());
+                case "name"               -> boxPlot.setName(((StringProperty) property).get());
+                case "backgroundColor"    -> boxPlot.setBackgroundColor(((ObjectProperty<Color>) property).get());
+                case "whiskerStrokeColor" -> boxPlot.setWhiskerStrokeColor(((ObjectProperty<Color>) property).get());
+                case "iqrFillColor"       -> boxPlot.setIqrFillColor(((ObjectProperty<Color>) property).get());
+                case "iqrStrokeColor"     -> boxPlot.setIqrStrokeColor(((ObjectProperty<Color>) property).get());
+                case "medianStrokeColor"  -> boxPlot.setMedianStrokeColor(((ObjectProperty<Color>) property).get());
+                case "outlierFillColor"   -> boxPlot.setOutlierFillColor(((ObjectProperty<Color>) property).get());
+                case "outlierStrokeColor" -> boxPlot.setOutlierStrokeColor(((ObjectProperty<Color>) property).get());
+                case "nameVisible"        -> boxPlot.setNameVisible(((BooleanProperty) property).get());
+                case "textFillColor"      -> boxPlot.setTextFillColor(((ObjectProperty<Color>) property).get());
+                case "popupTimeout"       -> boxPlot.setPopupTimeout(((LongProperty) property).get());
             }
-        }
+        });
         return boxPlot;
     }
 }

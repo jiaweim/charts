@@ -220,60 +220,60 @@ public class StreamChartBuilder<B extends StreamChartBuilder<B>> {
 
 
     public final StreamChart build() {
-        final StreamChart streamChart = new StreamChart();
+        final StreamChart control = new StreamChart();
 
         if (properties.keySet().contains("itemsArray")) {
-            streamChart.setItems(((ObjectProperty<ChartItem[]>) properties.get("itemsArray")).get());
+            control.setItems(((ObjectProperty<ChartItem[]>) properties.get("itemsArray")).get());
         } else if(properties.keySet().contains("itemsList")) {
-            streamChart.setItems(((ObjectProperty<List<ChartItem>>) properties.get("itemsList")).get());
+            control.setItems(((ObjectProperty<List<ChartItem>>) properties.get("itemsList")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"           -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    streamChart.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"            -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    streamChart.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"            -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    streamChart.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"          -> streamChart.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"         -> streamChart.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"           -> streamChart.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"          -> streamChart.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"           -> streamChart.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"          -> streamChart.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"             -> streamChart.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"             -> streamChart.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"            -> streamChart.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"            -> streamChart.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"         -> streamChart.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"         -> streamChart.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"            -> streamChart.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "category"           -> streamChart.setCategory(((ObjectProperty<Category>) properties.get(key)).get());
-                case "type"               -> streamChart.setType(((ObjectProperty<Type>) properties.get(key)).get());
-                case "textColor"          -> streamChart.setTextColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "autoTextColor"      -> streamChart.setAutoTextColor(((BooleanProperty) properties.get(key)).get());
-                case "selectionColor"     -> streamChart.setSelectionColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "decimals"           -> streamChart.setDecimals(((IntegerProperty) properties.get(key)).get());
-                case "itemWidth"          -> streamChart.setItemWidth(((IntegerProperty) properties.get(key)).get());
-                case "autoItemWidth"      -> streamChart.setAutoItemWidth(((BooleanProperty) properties.get(key)).get());
-                case "itemGap"            -> streamChart.setItemGap(((IntegerProperty) properties.get(key)).get());
-                case "autoItemGap"        -> streamChart.setAutoItemGap(((BooleanProperty) properties.get(key)).get());
-                case "locale"             -> streamChart.setLocale(((ObjectProperty<Locale>) properties.get(key)).get());
-                case "itemTextThreshold"  -> streamChart.setItemTextThreshold(((DoubleProperty) properties.get(key)).get());
-                case "itemTextVisible"    -> streamChart.setItemTextVisible(((BooleanProperty) properties.get(key)).get());
-                case "categoryTextColor"  -> streamChart.setCategoryTextColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "order"              -> streamChart.setOrder(((ObjectProperty<Order>) properties.get(key)).get());
-                case "sortByName"         -> streamChart.setSortByName(((BooleanProperty) properties.get(key)).get());
-                case "categorySumVisible" -> streamChart.setCategorySumVisible(((BooleanProperty) properties.get(key)).get());
+                case "prefWidth"          -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"         -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"           -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"          -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"           -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"          -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"             -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"             -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"            -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"            -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"         -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"         -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"            -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "category"           -> control.setCategory(((ObjectProperty<Category>) property).get());
+                case "type"               -> control.setType(((ObjectProperty<Type>) property).get());
+                case "textColor"          -> control.setTextColor(((ObjectProperty<Color>) property).get());
+                case "autoTextColor"      -> control.setAutoTextColor(((BooleanProperty) property).get());
+                case "selectionColor"     -> control.setSelectionColor(((ObjectProperty<Color>) property).get());
+                case "decimals"           -> control.setDecimals(((IntegerProperty) property).get());
+                case "itemWidth"          -> control.setItemWidth(((IntegerProperty) property).get());
+                case "autoItemWidth"      -> control.setAutoItemWidth(((BooleanProperty) property).get());
+                case "itemGap"            -> control.setItemGap(((IntegerProperty) property).get());
+                case "autoItemGap"        -> control.setAutoItemGap(((BooleanProperty) property).get());
+                case "locale"             -> control.setLocale(((ObjectProperty<Locale>) property).get());
+                case "itemTextThreshold"  -> control.setItemTextThreshold(((DoubleProperty) property).get());
+                case "itemTextVisible"    -> control.setItemTextVisible(((BooleanProperty) property).get());
+                case "categoryTextColor"  -> control.setCategoryTextColor(((ObjectProperty<Color>) property).get());
+                case "order"              -> control.setOrder(((ObjectProperty<Order>) property).get());
+                case "sortByName"         -> control.setSortByName(((BooleanProperty) property).get());
+                case "categorySumVisible" -> control.setCategorySumVisible(((BooleanProperty) property).get());
             }
-        }
-        return streamChart;
+        });
+        return control;
     }
 }

@@ -225,62 +225,62 @@ public class SankeyPlotBuilder<B extends SankeyPlotBuilder<B>> {
 
 
     public final SankeyPlot build() {
-        final SankeyPlot sankeyPlot = new SankeyPlot();
+        final SankeyPlot control = new SankeyPlot();
 
         if (properties.keySet().contains("itemsArray")) {
-            sankeyPlot.setItems(((ObjectProperty<PlotItem[]>) properties.get("itemsArray")).get());
+            control.setItems(((ObjectProperty<PlotItem[]>) properties.get("itemsArray")).get());
         }
         if(properties.keySet().contains("itemsList")) {
-            sankeyPlot.setItems(((ObjectProperty<List<PlotItem>>) properties.get("itemsList")).get());
+            control.setItems(((ObjectProperty<List<PlotItem>>) properties.get("itemsList")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"          -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    sankeyPlot.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"           -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    sankeyPlot.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"           -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    sankeyPlot.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"                      -> sankeyPlot.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"                     -> sankeyPlot.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"                       -> sankeyPlot.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"                      -> sankeyPlot.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"                       -> sankeyPlot.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"                      -> sankeyPlot.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"                         -> sankeyPlot.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"                         -> sankeyPlot.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"                        -> sankeyPlot.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"                        -> sankeyPlot.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"                     -> sankeyPlot.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"                     -> sankeyPlot.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"                        -> sankeyPlot.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "streamFillMode"                 -> sankeyPlot.setStreamFillMode(((ObjectProperty<StreamFillMode>) properties.get(key)).get());
-                case "streamColor"                    -> sankeyPlot.setStreamColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "textColor"                      -> sankeyPlot.setTextColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "selectionColor"                 -> sankeyPlot.setSelectionColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "decimals"                       -> sankeyPlot.setDecimals(((IntegerProperty) properties.get(key)).get());
-                case "showFlowDirection"              -> sankeyPlot.setShowFlowDirection(((BooleanProperty) properties.get(key)).get());
-                case "itemWidth"                      -> sankeyPlot.setItemWidth(((IntegerProperty) properties.get(key)).get());
-                case "autoItemWidth"                  -> sankeyPlot.setAutoItemWidth(((BooleanProperty) properties.get(key)).get());
-                case "itemGap"                        -> sankeyPlot.setItemGap(((IntegerProperty) properties.get(key)).get());
-                case "autoItemGap"                    -> sankeyPlot.setAutoItemGap(((BooleanProperty) properties.get(key)).get());
-                case "useItemColor"                   -> sankeyPlot.setUseItemColor(((BooleanProperty) properties.get(key)).get());
-                case "itemColor"                      -> sankeyPlot.setItemColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "connectionOpacity"              -> sankeyPlot.setConnectionOpacity(((DoubleProperty) properties.get(key)).get());
-                case "locale"                         -> sankeyPlot.setLocale(((ObjectProperty<Locale>) properties.get(key)).get());
-                case "useCustomFont"                  -> sankeyPlot.setUseCustomFont(((BooleanProperty) properties.get(key)).get());
-                case "customFont"                     -> sankeyPlot.setCustomFont(((ObjectProperty<Font>) properties.get(key)).get());
-                case "useItemTextColor"               -> sankeyPlot.setUseItemTextColor(((BooleanProperty) properties.get(key)).get());
-                case "autoAdjustVerticalTextPosition" -> sankeyPlot.setAutoAdjustVerticalTextPosition(((BooleanProperty) properties.get(key)).get());
+                case "prefWidth"                      -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"                     -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"                       -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"                      -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"                       -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"                      -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"                         -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"                         -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"                        -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"                        -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"                     -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"                     -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"                        -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "streamFillMode"                 -> control.setStreamFillMode(((ObjectProperty<StreamFillMode>) property).get());
+                case "streamColor"                    -> control.setStreamColor(((ObjectProperty<Color>) property).get());
+                case "textColor"                      -> control.setTextColor(((ObjectProperty<Color>) property).get());
+                case "selectionColor"                 -> control.setSelectionColor(((ObjectProperty<Color>) property).get());
+                case "decimals"                       -> control.setDecimals(((IntegerProperty) property).get());
+                case "showFlowDirection"              -> control.setShowFlowDirection(((BooleanProperty) property).get());
+                case "itemWidth"                      -> control.setItemWidth(((IntegerProperty) property).get());
+                case "autoItemWidth"                  -> control.setAutoItemWidth(((BooleanProperty) property).get());
+                case "itemGap"                        -> control.setItemGap(((IntegerProperty) property).get());
+                case "autoItemGap"                    -> control.setAutoItemGap(((BooleanProperty) property).get());
+                case "useItemColor"                   -> control.setUseItemColor(((BooleanProperty) property).get());
+                case "itemColor"                      -> control.setItemColor(((ObjectProperty<Color>) property).get());
+                case "connectionOpacity"              -> control.setConnectionOpacity(((DoubleProperty) property).get());
+                case "locale"                         -> control.setLocale(((ObjectProperty<Locale>) property).get());
+                case "useCustomFont"                  -> control.setUseCustomFont(((BooleanProperty) property).get());
+                case "customFont"                     -> control.setCustomFont(((ObjectProperty<Font>) property).get());
+                case "useItemTextColor"               -> control.setUseItemTextColor(((BooleanProperty) property).get());
+                case "autoAdjustVerticalTextPosition" -> control.setAutoAdjustVerticalTextPosition(((BooleanProperty) property).get());
             }
-        }
-        return sankeyPlot;
+        });
+        return control;
     }
 }

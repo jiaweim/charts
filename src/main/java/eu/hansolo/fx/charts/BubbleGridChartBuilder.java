@@ -216,60 +216,60 @@ public class BubbleGridChartBuilder<B extends BubbleGridChartBuilder<B>> {
 
 
     public final BubbleGridChart build() {
-        final BubbleGridChart bubbleGridChart = new BubbleGridChart();
+        final BubbleGridChart control = new BubbleGridChart();
 
         if (properties.keySet().contains("itemsArray")) {
-            bubbleGridChart.setItems(((ObjectProperty<BubbleGridChartItem[]>) properties.get("itemsArray")).get());
+            control.setItems(((ObjectProperty<BubbleGridChartItem[]>) properties.get("itemsArray")).get());
         }
         if(properties.keySet().contains("itemsList")) {
-            bubbleGridChart.setItems(((ObjectProperty<List<BubbleGridChartItem>>) properties.get("itemsList")).get());
+            control.setItems(((ObjectProperty<List<BubbleGridChartItem>>) properties.get("itemsList")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"            -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    bubbleGridChart.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"             -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    bubbleGridChart.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"             -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    bubbleGridChart.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"           -> bubbleGridChart.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"          -> bubbleGridChart.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"            -> bubbleGridChart.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"           -> bubbleGridChart.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"            -> bubbleGridChart.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"           -> bubbleGridChart.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"              -> bubbleGridChart.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"              -> bubbleGridChart.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"             -> bubbleGridChart.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"             -> bubbleGridChart.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"          -> bubbleGridChart.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"          -> bubbleGridChart.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"             -> bubbleGridChart.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "chartBackground"     -> bubbleGridChart.setChartBackground(((ObjectProperty<Color>) properties.get(key)).get());
-                case "textColor"           -> bubbleGridChart.setTextColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "autoBubbleTextColor" -> bubbleGridChart.setAutoBubbleTextColor(((BooleanProperty) properties.get(key)).get());
-                case "gridColor"           -> bubbleGridChart.setGridColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "showGrid"            -> bubbleGridChart.setShowGrid(((BooleanProperty) properties.get(key)).get());
-                case "showValues"          -> bubbleGridChart.setShowValues(((BooleanProperty) properties.get(key)).get());
-                case "showPercentage"      -> bubbleGridChart.setShowPercentage(((BooleanProperty) properties.get(key)).get());
-                case "useXCategoryFill"    -> bubbleGridChart.useXCategoryFill();
-                case "useYCategoryFill"    -> bubbleGridChart.useYCategoryFill();
-                case "sortCategoryXTopic"  -> bubbleGridChart.sortCategoryX(((ObjectProperty<Topic>) properties.get("sortCategoryXTopic")).get(), ((ObjectProperty<Order>) properties.get("sortCategoryXOrder")).get());
-                case "sortCategoryYTopic"  -> bubbleGridChart.sortCategoryY(((ObjectProperty<Topic>) properties.get("sortCategoryYTopic")).get(), ((ObjectProperty<Order>) properties.get("sortCategoryYOrder")).get());
-                case "useGradientFill"     -> bubbleGridChart.setUseGradientFill(((BooleanProperty) properties.get(key)).get());
-                case "shortenNumbers"      -> bubbleGridChart.setShortenNumbers(((BooleanProperty) properties.get(key)).get());
-                case "minColor"            -> bubbleGridChart.setMinColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "maxColor"            -> bubbleGridChart.setMaxColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "gradient"            -> bubbleGridChart.setGradient(((ObjectProperty<LinearGradient>) properties.get(key)).get());
+                case "prefWidth"           -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"          -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"            -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"           -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"            -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"           -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"              -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"              -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"             -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"             -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"          -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"          -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"             -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "chartBackground"     -> control.setChartBackground(((ObjectProperty<Color>) property).get());
+                case "textColor"           -> control.setTextColor(((ObjectProperty<Color>) property).get());
+                case "autoBubbleTextColor" -> control.setAutoBubbleTextColor(((BooleanProperty) property).get());
+                case "gridColor"           -> control.setGridColor(((ObjectProperty<Color>) property).get());
+                case "showGrid"            -> control.setShowGrid(((BooleanProperty) property).get());
+                case "showValues"          -> control.setShowValues(((BooleanProperty) property).get());
+                case "showPercentage"      -> control.setShowPercentage(((BooleanProperty) property).get());
+                case "useXCategoryFill"    -> control.useXCategoryFill();
+                case "useYCategoryFill"    -> control.useYCategoryFill();
+                case "sortCategoryXTopic"  -> control.sortCategoryX(((ObjectProperty<Topic>) properties.get("sortCategoryXTopic")).get(), ((ObjectProperty<Order>) properties.get("sortCategoryXOrder")).get());
+                case "sortCategoryYTopic"  -> control.sortCategoryY(((ObjectProperty<Topic>) properties.get("sortCategoryYTopic")).get(), ((ObjectProperty<Order>) properties.get("sortCategoryYOrder")).get());
+                case "useGradientFill"     -> control.setUseGradientFill(((BooleanProperty) property).get());
+                case "shortenNumbers"      -> control.setShortenNumbers(((BooleanProperty) property).get());
+                case "minColor"            -> control.setMinColor(((ObjectProperty<Color>) property).get());
+                case "maxColor"            -> control.setMaxColor(((ObjectProperty<Color>) property).get());
+                case "gradient"            -> control.setGradient(((ObjectProperty<LinearGradient>) property).get());
             }
-        }
-        return bubbleGridChart;
+        });
+        return control;
     }
 }

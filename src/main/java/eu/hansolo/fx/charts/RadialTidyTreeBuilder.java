@@ -173,50 +173,50 @@ public class RadialTidyTreeBuilder<B extends RadialTidyTreeBuilder<B>> {
 
 
     public final RadialTidyTree build() {
-        final RadialTidyTree radialTidyTree;
+        final RadialTidyTree control;
         if (properties.containsKey("tree")) {
-            radialTidyTree = new RadialTidyTree(((ObjectProperty<TreeNode>) properties.get("tree")).get());
+            control = new RadialTidyTree(((ObjectProperty<TreeNode>) properties.get("tree")).get());
         } else {
-            radialTidyTree = new RadialTidyTree();
+            control = new RadialTidyTree();
         }
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"              -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    radialTidyTree.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"               -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    radialTidyTree.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"               -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    radialTidyTree.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"             -> radialTidyTree.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"            -> radialTidyTree.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"              -> radialTidyTree.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"             -> radialTidyTree.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"              -> radialTidyTree.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"             -> radialTidyTree.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"                -> radialTidyTree.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"                -> radialTidyTree.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"               -> radialTidyTree.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"               -> radialTidyTree.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"            -> radialTidyTree.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"            -> radialTidyTree.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"               -> radialTidyTree.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "visibleData"           -> radialTidyTree.setVisibleData(((ObjectProperty<VisibleData>) properties.get(key)).get());
-                case "backgroundColor"       -> radialTidyTree.setBackgroundColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "textColor"             -> radialTidyTree.setTextColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "useColorFromParent"    -> radialTidyTree.setUseColorFromParent(((BooleanProperty) properties.get(key)).get());
-                case "decimals"              -> radialTidyTree.setDecimals(((IntegerProperty) properties.get(key)).get());
-                case "autoTextColor"         -> radialTidyTree.setAutoTextColor(((BooleanProperty) properties.get(key)).get());
-                case "brightTextColor"       -> radialTidyTree.setBrightTextColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "darkTextColor"         -> radialTidyTree.setDarkTextColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "useChartItemTextColor" -> radialTidyTree.setUseChartItemTextColor(((BooleanProperty) properties.get(key)).get());
+                case "prefWidth"             -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"            -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"              -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"             -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"              -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"             -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"                -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"                -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"               -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"               -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"            -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"            -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"               -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "visibleData"           -> control.setVisibleData(((ObjectProperty<VisibleData>) property).get());
+                case "backgroundColor"       -> control.setBackgroundColor(((ObjectProperty<Color>) property).get());
+                case "textColor"             -> control.setTextColor(((ObjectProperty<Color>) property).get());
+                case "useColorFromParent"    -> control.setUseColorFromParent(((BooleanProperty) property).get());
+                case "decimals"              -> control.setDecimals(((IntegerProperty) property).get());
+                case "autoTextColor"         -> control.setAutoTextColor(((BooleanProperty) property).get());
+                case "brightTextColor"       -> control.setBrightTextColor(((ObjectProperty<Color>) property).get());
+                case "darkTextColor"         -> control.setDarkTextColor(((ObjectProperty<Color>) property).get());
+                case "useChartItemTextColor" -> control.setUseChartItemTextColor(((BooleanProperty) property).get());
             }
-        }
-        return radialTidyTree;
+        });
+        return control;
     }
 }

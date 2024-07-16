@@ -112,29 +112,29 @@ public class AreaHeatMapBuilder<B extends AreaHeatMapBuilder<B>> {
 
 
     public final AreaHeatMap build() {
-        final AreaHeatMap areaHeatMap = new AreaHeatMap();
-        for (String key : properties.keySet()) {
+        final AreaHeatMap control = new AreaHeatMap();
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"                    -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    areaHeatMap.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
-                case "colorMapping"                -> areaHeatMap.setColorMapping(((ObjectProperty<Mapping>) properties.get(key)).get());
-                case "useColorMapping"             -> areaHeatMap.setUseColorMapping(((BooleanProperty) properties.get(key)).get());
-                case "quality"                     -> areaHeatMap.setQuality(((IntegerProperty) properties.get(key)).get());
-                case "heatMapOpacity"              -> areaHeatMap.setHeatMapOpacity(((DoubleProperty) properties.get(key)).get());
-                case "dataPointsVisible"           -> areaHeatMap.setDataPointsVisible(((BooleanProperty) properties.get(key)).get());
-                case "smoothedHull"                -> areaHeatMap.setSmoothedHull(((BooleanProperty) properties.get(key)).get());
-                case "discreteColors"              -> areaHeatMap.setDiscreteColors(((BooleanProperty) properties.get(key)).get());
-                case "noOfCloserInfluentialPoints" -> areaHeatMap.setNoOfCloserInfluentialPoints(((IntegerProperty) properties.get(key)).get());
+                case "colorMapping"                -> control.setColorMapping(((ObjectProperty<Mapping>) property).get());
+                case "useColorMapping"             -> control.setUseColorMapping(((BooleanProperty) property).get());
+                case "quality"                     -> control.setQuality(((IntegerProperty) property).get());
+                case "heatMapOpacity"              -> control.setHeatMapOpacity(((DoubleProperty) property).get());
+                case "dataPointsVisible"           -> control.setDataPointsVisible(((BooleanProperty) property).get());
+                case "smoothedHull"                -> control.setSmoothedHull(((BooleanProperty) property).get());
+                case "discreteColors"              -> control.setDiscreteColors(((BooleanProperty) property).get());
+                case "noOfCloserInfluentialPoints" -> control.setNoOfCloserInfluentialPoints(((IntegerProperty) property).get());
             }
-        }
+        });
         if (properties.keySet().contains("dataPointsArray")) {
-            areaHeatMap.setDataPoints(((ObjectProperty<DataPoint[]>) properties.get("dataPointsArray")).get());
+            control.setDataPoints(((ObjectProperty<DataPoint[]>) properties.get("dataPointsArray")).get());
         }
         if(properties.keySet().contains("dataPointsList")) {
-            areaHeatMap.setDataPoints(((ObjectProperty<List<DataPoint>>) properties.get("dataPointsList")).get());
+            control.setDataPoints(((ObjectProperty<List<DataPoint>>) properties.get("dataPointsList")).get());
         }
-        return areaHeatMap;
+        return control;
     }
 }

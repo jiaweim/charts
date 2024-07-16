@@ -198,79 +198,79 @@ public class GridBuilder<B extends GridBuilder<B>> {
 
 
     public final Grid build() {
-        final Grid CONTROL = new Grid(xAxis, yAxis);
+        final Grid control = new Grid(xAxis, yAxis);
 
         if (properties.keySet().contains("dashesArray")) {
-            CONTROL.setGridLineDashes(((ObjectProperty<double[]>) properties.get("dashesArray")).get());
+            control.setGridLineDashes(((ObjectProperty<double[]>) properties.get("dashesArray")).get());
         }
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             if ("prefSize".equals(key)) {
-                Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                CONTROL.setPrefSize(dim.getWidth(), dim.getHeight());
+                Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                control.setPrefSize(dim.getWidth(), dim.getHeight());
             } else if("minSize".equals(key)) {
-                Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                CONTROL.setMinSize(dim.getWidth(), dim.getHeight());
+                Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                control.setMinSize(dim.getWidth(), dim.getHeight());
             } else if("maxSize".equals(key)) {
-                Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                CONTROL.setMaxSize(dim.getWidth(), dim.getHeight());
+                Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                control.setMaxSize(dim.getWidth(), dim.getHeight());
             } else if("prefWidth".equals(key)) {
-                CONTROL.setPrefWidth(((DoubleProperty) properties.get(key)).get());
+                control.setPrefWidth(((DoubleProperty) property).get());
             } else if("prefHeight".equals(key)) {
-                CONTROL.setPrefHeight(((DoubleProperty) properties.get(key)).get());
+                control.setPrefHeight(((DoubleProperty) property).get());
             } else if("minWidth".equals(key)) {
-                CONTROL.setMinWidth(((DoubleProperty) properties.get(key)).get());
+                control.setMinWidth(((DoubleProperty) property).get());
             } else if("minHeight".equals(key)) {
-                CONTROL.setMinHeight(((DoubleProperty) properties.get(key)).get());
+                control.setMinHeight(((DoubleProperty) property).get());
             } else if("maxWidth".equals(key)) {
-                CONTROL.setMaxWidth(((DoubleProperty) properties.get(key)).get());
+                control.setMaxWidth(((DoubleProperty) property).get());
             } else if("maxHeight".equals(key)) {
-                CONTROL.setMaxHeight(((DoubleProperty) properties.get(key)).get());
+                control.setMaxHeight(((DoubleProperty) property).get());
             } else if("scaleX".equals(key)) {
-                CONTROL.setScaleX(((DoubleProperty) properties.get(key)).get());
+                control.setScaleX(((DoubleProperty) property).get());
             } else if("scaleY".equals(key)) {
-                CONTROL.setScaleY(((DoubleProperty) properties.get(key)).get());
+                control.setScaleY(((DoubleProperty) property).get());
             } else if ("layoutX".equals(key)) {
-                CONTROL.setLayoutX(((DoubleProperty) properties.get(key)).get());
+                control.setLayoutX(((DoubleProperty) property).get());
             } else if ("layoutY".equals(key)) {
-                CONTROL.setLayoutY(((DoubleProperty) properties.get(key)).get());
+                control.setLayoutY(((DoubleProperty) property).get());
             } else if ("translateX".equals(key)) {
-                CONTROL.setTranslateX(((DoubleProperty) properties.get(key)).get());
+                control.setTranslateX(((DoubleProperty) property).get());
             } else if ("translateY".equals(key)) {
-                CONTROL.setTranslateY(((DoubleProperty) properties.get(key)).get());
+                control.setTranslateY(((DoubleProperty) property).get());
             } else if ("padding".equals(key)) {
-                CONTROL.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
+                control.setPadding(((ObjectProperty<Insets>) property).get());
             } // Control specific properties
               else if ("gridLinePaint".equals(key)) {
-                CONTROL.setGridLinePaint(((ObjectProperty<Paint>) properties.get(key)).get());
+                control.setGridLinePaint(((ObjectProperty<Paint>) property).get());
             } else if ("majorHGridLinePaint".equals(key)) {
-                CONTROL.setMajorHGridLinePaint(((ObjectProperty<Paint>) properties.get(key)).get());
+                control.setMajorHGridLinePaint(((ObjectProperty<Paint>) property).get());
             } else if ("mediumHGridLinePaint".equals(key)) {
-                CONTROL.setMediumHGridLinePaint(((ObjectProperty<Paint>) properties.get(key)).get());
+                control.setMediumHGridLinePaint(((ObjectProperty<Paint>) property).get());
             } else if ("minorHGridLinePaint".equals(key)) {
-                CONTROL.setMinorHGridLinePaint(((ObjectProperty<Paint>) properties.get(key)).get());
+                control.setMinorHGridLinePaint(((ObjectProperty<Paint>) property).get());
             } else if ("majorVGridLinePaint".equals(key)) {
-                CONTROL.setMajorVGridLinePaint(((ObjectProperty<Paint>) properties.get(key)).get());
+                control.setMajorVGridLinePaint(((ObjectProperty<Paint>) property).get());
             } else if ("mediumVGridLinePaint".equals(key)) {
-                CONTROL.setMediumVGridLinePaint(((ObjectProperty<Paint>) properties.get(key)).get());
+                control.setMediumVGridLinePaint(((ObjectProperty<Paint>) property).get());
             } else if ("minorVGridLinePaint".equals(key)) {
-                CONTROL.setMinorVGridLinePaint(((ObjectProperty<Paint>) properties.get(key)).get());
+                control.setMinorVGridLinePaint(((ObjectProperty<Paint>) property).get());
             } else if ("majorHGridLinesVisible".equals(key)) {
-                CONTROL.setMajorHGridLinesVisible(((BooleanProperty) properties.get(key)).get());
+                control.setMajorHGridLinesVisible(((BooleanProperty) property).get());
             } else if ("mediumHGridLinesVisible".equals(key)) {
-                CONTROL.setMediumHGridLinesVisible(((BooleanProperty) properties.get(key)).get());
+                control.setMediumHGridLinesVisible(((BooleanProperty) property).get());
             } else if ("minorHGridLinesVisible".equals(key)) {
-                CONTROL.setMinorHGridLinesVisible(((BooleanProperty) properties.get(key)).get());
+                control.setMinorHGridLinesVisible(((BooleanProperty) property).get());
             } else if ("majorVGridLinesVisible".equals(key)) {
-                CONTROL.setMajorVGridLinesVisible(((BooleanProperty) properties.get(key)).get());
+                control.setMajorVGridLinesVisible(((BooleanProperty) property).get());
             } else if ("mediumVGridLinesVisible".equals(key)) {
-                CONTROL.setMediumVGridLinesVisible(((BooleanProperty) properties.get(key)).get());
+                control.setMediumVGridLinesVisible(((BooleanProperty) property).get());
             } else if ("minorVGridLinesVisible".equals(key)) {
-                CONTROL.setMinorVGridLinesVisible(((BooleanProperty) properties.get(key)).get());
+                control.setMinorVGridLinesVisible(((BooleanProperty) property).get());
             } else if ("gridOpacity".equals(key)) {
-                CONTROL.setGridOpacity(((DoubleProperty) properties.get(key)).get());
+                control.setGridOpacity(((DoubleProperty) property).get());
             }
-        }
-        return CONTROL;
+        });
+        return control;
     }
 }

@@ -302,64 +302,64 @@ public class WorldBuilder<B extends WorldBuilder<B>> {
         double              heatMapOpacity      = properties.containsKey("heatMapOpacity") ? ((DoubleProperty) properties.get("heatMapOpacity")).get() : 0.5;
         OpacityDistribution opacityDistribution = properties.containsKey("opacityDistribution") ? ((ObjectProperty<OpacityDistribution>) properties.get("opacityDistribution")).get() : OpacityDistribution.EXPONENTIAL;
 
-        final World world = new World(resolution, colorMapping, eventRadius, fadeColors, opacityDistribution, heatMapOpacity);
+        final World control = new World(resolution, colorMapping, eventRadius, fadeColors, opacityDistribution, heatMapOpacity);
 
-        for (String key : properties.keySet()) {
+        properties.forEach((key, property) -> {
             switch (key) {
                 case "prefSize"               -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    world.setPrefSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setPrefSize(dim.getWidth(), dim.getHeight());
                 }
                 case "minSize"                -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    world.setMinSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMinSize(dim.getWidth(), dim.getHeight());
                 }
                 case "maxSize"                -> {
-                    Dimension2D dim = ((ObjectProperty<Dimension2D>) properties.get(key)).get();
-                    world.setMaxSize(dim.getWidth(), dim.getHeight());
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    control.setMaxSize(dim.getWidth(), dim.getHeight());
                 }
-                case "prefWidth"              -> world.setPrefWidth(((DoubleProperty) properties.get(key)).get());
-                case "prefHeight"             -> world.setPrefHeight(((DoubleProperty) properties.get(key)).get());
-                case "minWidth"               -> world.setMinWidth(((DoubleProperty) properties.get(key)).get());
-                case "minHeight"              -> world.setMinHeight(((DoubleProperty) properties.get(key)).get());
-                case "maxWidth"               -> world.setMaxWidth(((DoubleProperty) properties.get(key)).get());
-                case "maxHeight"              -> world.setMaxHeight(((DoubleProperty) properties.get(key)).get());
-                case "scaleX"                 -> world.setScaleX(((DoubleProperty) properties.get(key)).get());
-                case "scaleY"                 -> world.setScaleY(((DoubleProperty) properties.get(key)).get());
-                case "layoutX"                -> world.setLayoutX(((DoubleProperty) properties.get(key)).get());
-                case "layoutY"                -> world.setLayoutY(((DoubleProperty) properties.get(key)).get());
-                case "translateX"             -> world.setTranslateX(((DoubleProperty) properties.get(key)).get());
-                case "translateY"             -> world.setTranslateY(((DoubleProperty) properties.get(key)).get());
-                case "padding"                -> world.setPadding(((ObjectProperty<Insets>) properties.get(key)).get());
-                case "backgroundColor"        -> world.setBackgroundColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "fillColor"              -> world.setFillColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "strokeColor"            -> world.setStrokeColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "hoverColor"             -> world.setHoverColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "pressedColor"           -> world.setPressedColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "selectedColor"          -> world.setSelectedColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "locationColor"          -> world.setLocationColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "hoverEnabled"           -> world.setHoverEnabled(((BooleanProperty) properties.get(key)).get());
-                case "selectionEnabled"       -> world.setSelectionEnabled(((BooleanProperty) properties.get(key)).get());
-                case "zoomEnabled"            -> world.setZoomEnabled(((BooleanProperty) properties.get(key)).get());
-                case "mouseEnterHandler"      -> world.setMouseEnterHandler(((ObjectProperty<EventHandler<MouseEvent>>) properties.get(key)).get());
-                case "mousePressHandler"      -> world.setMousePressHandler(((ObjectProperty<EventHandler<MouseEvent>>) properties.get(key)).get());
-                case "mouseReleaseHandler"    -> world.setMouseReleaseHandler(((ObjectProperty<EventHandler<MouseEvent>>) properties.get(key)).get());
-                case "mouseExitHandler"       -> world.setMouseExitHandler(((ObjectProperty<EventHandler<MouseEvent>>) properties.get(key)).get());
-                case "locations"              -> world.addLocations(((ObjectProperty<Location[]>) properties.get(key)).get());
-                case "showLocations"          -> world.showLocations(((BooleanProperty) properties.get(key)).get());
-                case "mapPoints"              -> world.setMapPoints(((ObjectProperty<List<MapPoint>>) properties.get(key)).get());
-                case "mapConnections"         -> world.setMapConnections(((ObjectProperty<List<MapConnection>>) properties.get(key)).get());
-                case "weightedMapPoints"      -> world.setWeightedMapPoints(((ObjectProperty<WeightedMapPoints>) properties.get(key)).get());
-                case "weightedMapConnections" -> world.setWeightedMapConnections(((BooleanProperty) properties.get(key)).get());
-                case "mapPointSize"           -> world.setMapPointSize(((ObjectProperty<MapPointSize>) properties.get(key)).get());
-                case "mapPointsVisible"       -> world.setMapPointsVisible(((BooleanProperty) properties.get(key)).get());
-                case "mapPointTextVisible"    -> world.setMapPointTextVisible(((BooleanProperty) properties.get(key)).get());
-                case "textColor"              -> world.setTextColor(((ObjectProperty<Color>) properties.get(key)).get());
-                case "connectionWidth"        -> world.setConnectionWidth(((DoubleProperty) properties.get(key)).get());
-                case "arrowsVisible"          -> world.setArrowsVisible(((BooleanProperty) properties.get(key)).get());
-                case "drawImagePath"          -> world.setDrawImagePath(((BooleanProperty) properties.get(key)).get());
+                case "prefWidth"              -> control.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight"             -> control.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth"               -> control.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight"              -> control.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth"               -> control.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight"              -> control.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX"                 -> control.setScaleX(((DoubleProperty) property).get());
+                case "scaleY"                 -> control.setScaleY(((DoubleProperty) property).get());
+                case "layoutX"                -> control.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY"                -> control.setLayoutY(((DoubleProperty) property).get());
+                case "translateX"             -> control.setTranslateX(((DoubleProperty) property).get());
+                case "translateY"             -> control.setTranslateY(((DoubleProperty) property).get());
+                case "padding"                -> control.setPadding(((ObjectProperty<Insets>) property).get());
+                case "backgroundColor"        -> control.setBackgroundColor(((ObjectProperty<Color>) property).get());
+                case "fillColor"              -> control.setFillColor(((ObjectProperty<Color>) property).get());
+                case "strokeColor"            -> control.setStrokeColor(((ObjectProperty<Color>) property).get());
+                case "hoverColor"             -> control.setHoverColor(((ObjectProperty<Color>) property).get());
+                case "pressedColor"           -> control.setPressedColor(((ObjectProperty<Color>) property).get());
+                case "selectedColor"          -> control.setSelectedColor(((ObjectProperty<Color>) property).get());
+                case "locationColor"          -> control.setLocationColor(((ObjectProperty<Color>) property).get());
+                case "hoverEnabled"           -> control.setHoverEnabled(((BooleanProperty) property).get());
+                case "selectionEnabled"       -> control.setSelectionEnabled(((BooleanProperty) property).get());
+                case "zoomEnabled"            -> control.setZoomEnabled(((BooleanProperty) property).get());
+                case "mouseEnterHandler"      -> control.setMouseEnterHandler(((ObjectProperty<EventHandler<MouseEvent>>) property).get());
+                case "mousePressHandler"      -> control.setMousePressHandler(((ObjectProperty<EventHandler<MouseEvent>>) property).get());
+                case "mouseReleaseHandler"    -> control.setMouseReleaseHandler(((ObjectProperty<EventHandler<MouseEvent>>) property).get());
+                case "mouseExitHandler"       -> control.setMouseExitHandler(((ObjectProperty<EventHandler<MouseEvent>>) property).get());
+                case "locations"              -> control.addLocations(((ObjectProperty<Location[]>) property).get());
+                case "showLocations"          -> control.showLocations(((BooleanProperty) property).get());
+                case "mapPoints"              -> control.setMapPoints(((ObjectProperty<List<MapPoint>>) property).get());
+                case "mapConnections"         -> control.setMapConnections(((ObjectProperty<List<MapConnection>>) property).get());
+                case "weightedMapPoints"      -> control.setWeightedMapPoints(((ObjectProperty<WeightedMapPoints>) property).get());
+                case "weightedMapConnections" -> control.setWeightedMapConnections(((BooleanProperty) property).get());
+                case "mapPointSize"           -> control.setMapPointSize(((ObjectProperty<MapPointSize>) property).get());
+                case "mapPointsVisible"       -> control.setMapPointsVisible(((BooleanProperty) property).get());
+                case "mapPointTextVisible"    -> control.setMapPointTextVisible(((BooleanProperty) property).get());
+                case "textColor"              -> control.setTextColor(((ObjectProperty<Color>) property).get());
+                case "connectionWidth"        -> control.setConnectionWidth(((DoubleProperty) property).get());
+                case "arrowsVisible"          -> control.setArrowsVisible(((BooleanProperty) property).get());
+                case "drawImagePath"          -> control.setDrawImagePath(((BooleanProperty) property).get());
             }
-        }
-        return world;
+        });
+        return control;
     }
 }

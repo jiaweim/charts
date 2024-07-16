@@ -78,7 +78,7 @@ public class WaffleChart extends Region {
         this._emptyCellFill  = DEFAULT_EMPTY_CELL_FILL;
         this._cellFill       = DEFAULT_CELL_FILL;
         this.inset           = 5;
-        this.chartSize       = this.size - 2 * inset;
+        this.chartSize       = PREFERRED_WIDTH - 2 * inset;
         this.gap             = 1;
         this.cellSize        = (chartSize - (9 * gap)) / 10;
         this.cellRadius      = cellSize * 0.25;

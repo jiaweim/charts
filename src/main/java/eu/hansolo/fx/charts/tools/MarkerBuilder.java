@@ -81,17 +81,17 @@ public class MarkerBuilder<B extends MarkerBuilder<B>> {
     }
 
     public final Marker build() {
-        final Marker marker = new Marker(axis, value);
-        for (String key : properties.keySet()) {
+        final Marker control = new Marker(axis, value);
+        properties.forEach((key, property) -> {
             switch (key) {
-                case "stroke"       -> marker.setStroke(((ObjectProperty<Color>) properties.get(key)).get());
-                case "lineWidth"    -> marker.setLineWidth(((DoubleProperty) properties.get(key)).get());
-                case "text"         -> marker.setText(((StringProperty) properties.get(key)).get());
-                case "textFill"     -> marker.setTextFill(((ObjectProperty<Color>) properties.get(key)).get());
-                case "formatString" -> marker.setFormatString(((StringProperty) properties.get(key)).get());
-                case "lineStyle"    -> marker.setLineStyle(((ObjectProperty<LineStyle>) properties.get(key)).get());
+                case "stroke"       -> control.setStroke(((ObjectProperty<Color>) property).get());
+                case "lineWidth"    -> control.setLineWidth(((DoubleProperty) property).get());
+                case "text"         -> control.setText(((StringProperty) property).get());
+                case "textFill"     -> control.setTextFill(((ObjectProperty<Color>) property).get());
+                case "formatString" -> control.setFormatString(((StringProperty) property).get());
+                case "lineStyle"    -> control.setLineStyle(((ObjectProperty<LineStyle>) property).get());
             }
-        }
-        return marker;
+        });
+        return control;
     }
 }
