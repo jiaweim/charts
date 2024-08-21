@@ -80,6 +80,7 @@ jar {
                 'Implementation-Title'  : project.name,
                 'Implementation-Version': project.version,
                 'Bundle-Name'           : project.name,
+                'Bundle-Version'        : project.version,
                 'Bundle-License'        : 'https://www.apache.org/licenses/LICENSE-2.0;description=Apache License Version 2.0;link=https://spdx.org/licenses/Apache-2.0.html',
                 'Bundle-Description'    : project.description,
                 'Bundle-SymbolicName'   : 'eu.hansolo.fx.charts',
