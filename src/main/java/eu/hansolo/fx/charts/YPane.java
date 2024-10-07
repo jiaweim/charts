@@ -88,18 +88,24 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
 
     // ******************** Constructors **************************************
     public YPane(final YSeries<T>... SERIES) {
-        this(Color.TRANSPARENT, new ArrayList<>(), SERIES);
+        this(Color.TRANSPARENT, false, new ArrayList<>(), SERIES);
     }
     public YPane(final List<Category> CATEGORIES, final YSeries<T>... SERIES) {
-        this(Color.TRANSPARENT, CATEGORIES, SERIES);
+        this(Color.TRANSPARENT, false, CATEGORIES, SERIES);
+    }
+    public YPane(final List<Category> CATEGORIES, final boolean zeroRadarOffset, final YSeries<T>... SERIES) {
+        this(Color.TRANSPARENT, zeroRadarOffset, CATEGORIES, SERIES);
     }
     public YPane(final List<Category> CATEGORIES, final List<YSeries<T>> SERIES) {
-        this(Color.TRANSPARENT, CATEGORIES, SERIES.toArray(new YSeries[SERIES.size()]));
+        this(Color.TRANSPARENT, false, CATEGORIES, SERIES.toArray(new YSeries[SERIES.size()]));
     }
     public YPane(final Paint BACKGROUND, final YSeries<T>... SERIES) {
-        this(BACKGROUND, new ArrayList<>(), SERIES);
+        this(BACKGROUND, false, new ArrayList<>(), SERIES);
     }
     public YPane(final Paint BACKGROUND, final List<Category> CATEGORIES, final YSeries<T>... SERIES) {
+        this(BACKGROUND, false, CATEGORIES, SERIES);
+    }
+    public YPane(final Paint BACKGROUND, final boolean ZERO_OFFSET_RADAR, final List<Category> CATEGORIES, final YSeries<T>... SERIES) {
         getStylesheets().add(YPane.class.getResource("chart.css").toExternalForm());
         aspectRatio        = PREFERRED_HEIGHT / PREFERRED_WIDTH;
         keepAspect         = false;
@@ -111,7 +117,7 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
         _categoryColor     = Color.BLACK;
         _lowerBoundY       = 0;
         _upperBoundY       = 100;
-        _zeroRadarOffset   = false;
+        _zeroRadarOffset   = ZERO_OFFSET_RADAR;
         categories         = FXCollections.observableArrayList(CATEGORIES);
         valid              = isChartTypeValid();
         initGraphics();
