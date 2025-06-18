@@ -18,7 +18,6 @@
 
 package eu.hansolo.fx.charts;
 
-import eu.hansolo.fx.charts.Axis;
 import eu.hansolo.fx.charts.tools.Helper;
 import eu.hansolo.toolbox.unit.Converter;
 import javafx.application.Application;
@@ -46,10 +45,9 @@ public class AxisTest extends Application {
     private Axis yAxisLeft;
     private Axis yAxisRight;
 
-
     @Override
     public void init() {
-        xAxisBottom = Helper.createBottomAxis(-20, 20, AXIS_HEIGHT);
+        xAxisBottom = Helper.createBottomAxis(-20, 20, 50);
         xAxisTop = Helper.createTopAxis(0, 100, AXIS_HEIGHT);
         yAxisLeft = Helper.createLeftAxis(-20, 20, AXIS_WIDTH);
 
