@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2017 by Gerrit Grunwald
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package eu.hansolo.fx.charts;
 
 import eu.hansolo.fx.charts.event.ChartEvt;
@@ -25,17 +9,7 @@ import eu.hansolo.toolbox.evt.EvtType;
 import eu.hansolo.toolboxfx.font.Fonts;
 import eu.hansolo.toolboxfx.geom.Bounds;
 import javafx.beans.DefaultProperty;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.BooleanPropertyBase;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.DoublePropertyBase;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.IntegerPropertyBase;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ObjectPropertyBase;
-import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.property.StringPropertyBase;
+import javafx.beans.property.*;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.geometry.VPos;
@@ -52,18 +26,9 @@ import javafx.util.StringConverter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -181,8 +146,6 @@ public class Axis extends Region {
     private Interval currentInterval;
     private EvtObserver<ChartEvt> evtEvtObserver;
 
-
-    // ******************** Constructors **************************************
     public Axis() {
         this(0, 100, VERTICAL, AxisType.LINEAR, Position.LEFT, "");
     }
@@ -355,8 +318,6 @@ public class Axis extends Region {
         addChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, evtEvtObserver);
     }
 
-
-    // ******************** Methods *******************************************
     @Override
     protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
 
@@ -2562,7 +2523,7 @@ public class Axis extends Region {
     }
 
     private void drawTickLabel(final boolean ONLY_FIRST_AND_LAST_VISIBLE, final boolean IS_ZERO, final boolean IS_MIN, final boolean IS_MAX, final boolean FULL_RANGE,
-            final Color ZERO_COLOR, final Color COLOR, final double TEXT_X, final double TEXT_Y, final double MAX_WIDTH, final String TEXT, final Orientation ORIENTATION) {
+                               final Color ZERO_COLOR, final Color COLOR, final double TEXT_X, final double TEXT_Y, final double MAX_WIDTH, final String TEXT, final Orientation ORIENTATION) {
         if (!ONLY_FIRST_AND_LAST_VISIBLE) {
             if (IS_ZERO) {
                 axisCtx.setFill(FULL_RANGE ? ZERO_COLOR : COLOR);
