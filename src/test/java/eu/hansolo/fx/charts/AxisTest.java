@@ -38,22 +38,24 @@ import static eu.hansolo.toolbox.unit.UnitDefinition.FAHRENHEIT;
  * Time: 14:12
  */
 public class AxisTest extends Application {
-    private static final double AXIS_WIDTH  = 20;
+
+    private static final double AXIS_WIDTH = 20;
     private static final double AXIS_HEIGHT = 20;
-    private              Axis   xAxisBottom;
-    private              Axis   xAxisTop;
+    private Axis xAxisBottom;
+    private Axis xAxisTop;
     private Axis yAxisLeft;
     private Axis yAxisRight;
 
 
-    @Override public void init() {
+    @Override
+    public void init() {
         xAxisBottom = Helper.createBottomAxis(-20, 20, AXIS_HEIGHT);
-        xAxisTop    = Helper.createTopAxis(0, 100, AXIS_HEIGHT);
-        yAxisLeft   = Helper.createLeftAxis(-20, 20, AXIS_WIDTH);
+        xAxisTop = Helper.createTopAxis(0, 100, AXIS_HEIGHT);
+        yAxisLeft = Helper.createLeftAxis(-20, 20, AXIS_WIDTH);
 
-        Converter tempConverter     = new Converter(TEMPERATURE, CELSIUS); // Type Temperature with BaseUnit Celsius
-        double    tempFahrenheitMin = tempConverter.convert(-20, FAHRENHEIT);
-        double    tempFahrenheitMax = tempConverter.convert(20, FAHRENHEIT);
+        Converter tempConverter = new Converter(TEMPERATURE, CELSIUS); // Type Temperature with BaseUnit Celsius
+        double tempFahrenheitMin = tempConverter.convert(-20, FAHRENHEIT);
+        double tempFahrenheitMax = tempConverter.convert(20, FAHRENHEIT);
         yAxisRight = Helper.createRightAxis(tempFahrenheitMin, tempFahrenheitMax, false, AXIS_WIDTH);
 
         AnchorPane.setTopAnchor(yAxisLeft, AXIS_HEIGHT);
@@ -61,7 +63,8 @@ public class AxisTest extends Application {
         AnchorPane.setTopAnchor(yAxisRight, AXIS_HEIGHT);
     }
 
-    @Override public void start(Stage stage) {
+    @Override
+    public void start(Stage stage) {
         AnchorPane pane = new AnchorPane(xAxisBottom, xAxisTop, yAxisLeft, yAxisRight);
         pane.setPadding(new Insets(10));
         pane.setPrefSize(400, 400);
@@ -78,7 +81,8 @@ public class AxisTest extends Application {
         //xAxisTop.setTitleFontSize(20);
     }
 
-    @Override public void stop() {
+    @Override
+    public void stop() {
         System.exit(0);
     }
 
