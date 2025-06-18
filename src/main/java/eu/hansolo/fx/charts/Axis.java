@@ -77,123 +77,132 @@ import static javafx.geometry.Orientation.VERTICAL;
  */
 @DefaultProperty("children")
 public class Axis extends Region {
-    private static final double                                    MINIMUM_WIDTH          = 0;
-    private static final double                                    MINIMUM_HEIGHT         = 0;
-    private static final double                                    MAXIMUM_WIDTH          = 4096;
-    private static final double                                    MAXIMUM_HEIGHT         = 4096;
-    private static final double                                    MIN_MAJOR_LINE_WIDTH   = 1;
-    private static final double                                    MIN_MEDIUM_LINE_WIDTH  = 0.75;
-    private static final double                                    MIN_MINOR_LINE_WIDTH   = 0.5;
-    private        final ChartEvt                                  AXIS_RANGE_CHANGED_EVT = new ChartEvt(Axis.this, ChartEvt.AXIS_RANGE_CHANGED);
-    private              Map<EvtType, List<EvtObserver<ChartEvt>>> observers              = new ConcurrentHashMap<>();
-    private              double                                    size;
-    private              double                                    width;
-    private              double                                    height;
-    private              Canvas                                    axisCanvas;
-    private              GraphicsContext                           axisCtx;
-    private              Pane                                      pane;
-    private              double                                    _minValue;
-    private              DoubleProperty                            minValue;
-    private              LocalDateTime                             _start;
-    private              ObjectProperty<LocalDateTime>             start;
-    private              double                                    _maxValue;
-    private              DoubleProperty                            maxValue;
-    private              LocalDateTime                             _end;
-    private              ObjectProperty<LocalDateTime>             end;
-    private              boolean                                   _autoScale;
-    private              BooleanProperty                           autoScale;
-    private              double                                    stepSize;
-    private              Bounds                                    axisBounds;
-    private              String                                    _title;
-    private              StringProperty                            title;
-    private              String                                    _unit;
-    private              StringProperty                            unit;
-    private              AxisType                                  _type;
-    private              ObjectProperty<AxisType>                  type;
-    private              Orientation                               _orientation;
-    private              ObjectProperty<Orientation>               orientation;
-    private              Position                                  _position;
-    private              ObjectProperty<Position>                  position;
-    private              Color                                     _axisBackgroundColor;
-    private              ObjectProperty<Color>                     axisBackgroundColor;
-    private              Color                                     _axisColor;
-    private              ObjectProperty<Color>                     axisColor;
-    private              Color                                     _tickLabelColor;
-    private              ObjectProperty<Color>                     tickLabelColor;
-    private              Color                                     _titleColor;
-    private              ObjectProperty<Color>                     titleColor;
-    private              Color                                     _minorTickMarkColor;
-    private              ObjectProperty<Color>                     minorTickMarkColor;
-    private              Color                                     _mediumTickMarkColor;
-    private              ObjectProperty<Color>                     mediumTickMarkColor;
-    private              Color                                     _majorTickMarkColor;
-    private              ObjectProperty<Color>                     majorTickMarkColor;
-    private              Color                                     _zeroColor;
-    private              ObjectProperty<Color>                     zeroColor;
-    private              double                                    _zeroPosition;
-    private              DoubleProperty                            zeroPosition;
-    private              double                                    _minorTickSpace;
-    private              double                                    _majorTickSpace;
-    private              boolean                                   _majorTickMarksVisible;
-    private              BooleanProperty                           majorTickMarksVisible;
-    private              boolean                                   _mediumTickMarksVisible;
-    private              BooleanProperty                           mediumTickMarksVisible;
-    private              boolean                                   _minorTickMarksVisible;
-    private              BooleanProperty                           minorTickMarksVisible;
-    private              boolean                                   _sameTickMarkLength;
-    private              BooleanProperty                           sameTickMarkLength;
-    private              boolean                                   _tickLabelsVisible;
-    private              BooleanProperty                           tickLabelsVisible;
-    private              boolean                                   _mediumTimeAxisTickLabelsVisible;
-    private              BooleanProperty                           mediumTimeAxisTickLabelsVisible;
-    private              boolean                                   _onlyFirstAndLastTickLabelVisible;
-    private              BooleanProperty                           onlyFirstAndLastTickLabelVisible;
-    private              Locale                                    _locale;
-    private              ObjectProperty<Locale>                    locale;
-    private              int                                       _decimals;
-    private              IntegerProperty                           decimals;
-    private              String                                    tickLabelFormatString;
-    private              StringConverter<Number>                   numberFormatter;
-    private              TickLabelOrientation                      _tickLabelOrientation;
-    private              ObjectProperty<TickLabelOrientation>      tickLabelOrientation;
-    private              TickLabelFormat                           _tickLabelFormat;
-    private              ObjectProperty<TickLabelFormat>           tickLabelFormat;
-    private              Font                                      tickLabelFont;
-    private              Font                                      titleFont;
-    private              boolean                                   _autoTitleFontSize;
-    private              BooleanProperty                           autoTitleFontSize;
-    private              boolean                                   _autoFontSize;
-    private              BooleanProperty                           autoFontSize;
-    private              double                                    _tickLabelFontSize;
-    private              DoubleProperty                            tickLabelFontSize;
-    private              double                                    _titleFontSize;
-    private              DoubleProperty                            titleFontSize;
-    private              ZoneId                                    _zoneId;
-    private              ObjectProperty<ZoneId>                    zoneId;
-    private              String                                    _dateTimeFormatPattern;
-    private              StringProperty                            dateTimeFormatPattern;
-    private              List<String>                              categories;
-    private              DateTimeFormatter                         dateTimeFormatter;
-    private              Interval                                  currentInterval;
-    private              EvtObserver<ChartEvt>                     evtEvtObserver;
+
+    private static final double MINIMUM_WIDTH = 0;
+    private static final double MINIMUM_HEIGHT = 0;
+    private static final double MAXIMUM_WIDTH = 4096;
+    private static final double MAXIMUM_HEIGHT = 4096;
+    private static final double MIN_MAJOR_LINE_WIDTH = 1;
+    private static final double MIN_MEDIUM_LINE_WIDTH = 0.75;
+    private static final double MIN_MINOR_LINE_WIDTH = 0.5;
+    private final ChartEvt AXIS_RANGE_CHANGED_EVT = new ChartEvt(Axis.this, ChartEvt.AXIS_RANGE_CHANGED);
+    private Map<EvtType, List<EvtObserver<ChartEvt>>> observers = new ConcurrentHashMap<>();
+    private double size;
+    private double width;
+    private double height;
+    private Canvas axisCanvas;
+    private GraphicsContext axisCtx;
+    /**
+     * pane is used to hold Canvas
+     */
+    private Pane pane;
+    private double _minValue;
+    private DoubleProperty minValue;
+    private LocalDateTime _start;
+    private ObjectProperty<LocalDateTime> start;
+    private double _maxValue;
+    private DoubleProperty maxValue;
+    private LocalDateTime _end;
+    private ObjectProperty<LocalDateTime> end;
+    private boolean _autoScale;
+    private BooleanProperty autoScale;
+    private double stepSize;
+    private Bounds axisBounds;
+    private String _title;
+    private StringProperty title;
+    private String _unit;
+    private StringProperty unit;
+    private AxisType _type;
+    private ObjectProperty<AxisType> type;
+    private Orientation _orientation;
+    private ObjectProperty<Orientation> orientation;
+    private Position _position;
+    private ObjectProperty<Position> position;
+    private Color _axisBackgroundColor;
+    private ObjectProperty<Color> axisBackgroundColor;
+    private Color _axisColor;
+    private ObjectProperty<Color> axisColor;
+    private Color _tickLabelColor;
+    private ObjectProperty<Color> tickLabelColor;
+    private Color _titleColor;
+    private ObjectProperty<Color> titleColor;
+    private Color _minorTickMarkColor;
+    private ObjectProperty<Color> minorTickMarkColor;
+    private Color _mediumTickMarkColor;
+    private ObjectProperty<Color> mediumTickMarkColor;
+    private Color _majorTickMarkColor;
+    private ObjectProperty<Color> majorTickMarkColor;
+    private Color _zeroColor;
+    private ObjectProperty<Color> zeroColor;
+    private double _zeroPosition;
+    private DoubleProperty zeroPosition;
+    private double _minorTickSpace;
+    private double _majorTickSpace;
+    private boolean _majorTickMarksVisible;
+    private BooleanProperty majorTickMarksVisible;
+    private boolean _mediumTickMarksVisible;
+    private BooleanProperty mediumTickMarksVisible;
+    private boolean _minorTickMarksVisible;
+    private BooleanProperty minorTickMarksVisible;
+    private boolean _sameTickMarkLength;
+    private BooleanProperty sameTickMarkLength;
+    private boolean _tickLabelsVisible;
+    private BooleanProperty tickLabelsVisible;
+    private boolean _mediumTimeAxisTickLabelsVisible;
+    private BooleanProperty mediumTimeAxisTickLabelsVisible;
+    private boolean _onlyFirstAndLastTickLabelVisible;
+    private BooleanProperty onlyFirstAndLastTickLabelVisible;
+    private Locale _locale;
+    private ObjectProperty<Locale> locale;
+    private int _decimals;
+    private IntegerProperty decimals;
+    private String tickLabelFormatString;
+    private StringConverter<Number> numberFormatter;
+    private TickLabelOrientation _tickLabelOrientation;
+    private ObjectProperty<TickLabelOrientation> tickLabelOrientation;
+    private TickLabelFormat _tickLabelFormat;
+    private ObjectProperty<TickLabelFormat> tickLabelFormat;
+    private Font tickLabelFont;
+    private Font titleFont;
+    private boolean _autoTitleFontSize;
+    private BooleanProperty autoTitleFontSize;
+    private boolean _autoFontSize;
+    private BooleanProperty autoFontSize;
+    private double _tickLabelFontSize;
+    private DoubleProperty tickLabelFontSize;
+    private double _titleFontSize;
+    private DoubleProperty titleFontSize;
+    private ZoneId _zoneId;
+    private ObjectProperty<ZoneId> zoneId;
+    private String _dateTimeFormatPattern;
+    private StringProperty dateTimeFormatPattern;
+    private List<String> categories;
+    private DateTimeFormatter dateTimeFormatter;
+    private Interval currentInterval;
+    private EvtObserver<ChartEvt> evtEvtObserver;
 
 
     // ******************** Constructors **************************************
     public Axis() {
         this(0, 100, VERTICAL, AxisType.LINEAR, Position.LEFT, "");
     }
+
     public Axis(final Orientation ORIENTATION, final Position POSITION) {
         this(0, 100, ORIENTATION, AxisType.LINEAR, POSITION, "");
     }
+
     public Axis(final Orientation ORIENTATION, final AxisType TYPE, final Position POSITION) {
         this(0, 100, ORIENTATION, TYPE, POSITION, "");
     }
+
     public Axis(final double MIN_VALUE, final double MAX_VALUE, final Orientation ORIENTATION, final Position POSITION) {
         this(MIN_VALUE, MAX_VALUE, ORIENTATION, AxisType.LINEAR, POSITION, "");
     }
+
     public Axis(final double MIN_VALUE, final double MAX_VALUE, final Orientation ORIENTATION, final AxisType TYPE, final Position POSITION) {
         this(MIN_VALUE, MAX_VALUE, ORIENTATION, TYPE, POSITION, "");
     }
+
     public Axis(final double MIN_VALUE, final double MAX_VALUE, final Orientation ORIENTATION, final AxisType TYPE, final Position POSITION, final String TITLE) {
         if (VERTICAL == ORIENTATION) {
             if (Position.LEFT != POSITION && Position.RIGHT != POSITION && Position.CENTER != POSITION) {
@@ -205,49 +214,49 @@ public class Axis extends Region {
             }
         }
 
-        _minValue                         = MIN_VALUE;
-        _maxValue                         = MAX_VALUE;
-        
-        _type                             = TYPE;
-        _autoScale                        = true;
-        _title                            = TITLE;
-        _unit                             = "";
-        _orientation                      = ORIENTATION;
-        _position                         = POSITION;
-        _axisBackgroundColor              = Color.TRANSPARENT;
-        _axisColor                        = Color.BLACK;
-        _tickLabelColor                   = Color.BLACK;
-        _titleColor                       = Color.BLACK;
-        _minorTickMarkColor               = Color.BLACK;
-        _mediumTickMarkColor              = Color.BLACK;
-        _majorTickMarkColor               = Color.BLACK;
-        _zeroColor                        = Color.BLACK;
-        _zeroPosition                     = 0;
-        _minorTickSpace                   = 1;
-        _majorTickSpace                   = 10;
-        _majorTickMarksVisible            = true;
-        _mediumTickMarksVisible           = true;
-        _minorTickMarksVisible            = true;
-        _sameTickMarkLength               = false;
-        _tickLabelsVisible                = true;
-        _mediumTimeAxisTickLabelsVisible  = false;
+        _minValue = MIN_VALUE;
+        _maxValue = MAX_VALUE;
+
+        _type = TYPE;
+        _autoScale = true;
+        _title = TITLE;
+        _unit = "";
+        _orientation = ORIENTATION;
+        _position = POSITION;
+        _axisBackgroundColor = Color.TRANSPARENT;
+        _axisColor = Color.BLACK;
+        _tickLabelColor = Color.BLACK;
+        _titleColor = Color.BLACK;
+        _minorTickMarkColor = Color.BLACK;
+        _mediumTickMarkColor = Color.BLACK;
+        _majorTickMarkColor = Color.BLACK;
+        _zeroColor = Color.BLACK;
+        _zeroPosition = 0;
+        _minorTickSpace = 1;
+        _majorTickSpace = 10;
+        _majorTickMarksVisible = true;
+        _mediumTickMarksVisible = true;
+        _minorTickMarksVisible = true;
+        _sameTickMarkLength = false;
+        _tickLabelsVisible = true;
+        _mediumTimeAxisTickLabelsVisible = false;
         _onlyFirstAndLastTickLabelVisible = false;
-        _locale                           = Locale.US;
-        _decimals                         = 0;
-        _tickLabelOrientation             = TickLabelOrientation.HORIZONTAL;
-        _tickLabelFormat                  = TickLabelFormat.NUMBER;
-        _autoTitleFontSize                = true;
-        _autoFontSize                     = true;
-        _tickLabelFontSize                = 10;
-        _titleFontSize                    = 10;
-        _zoneId                           = ZoneId.systemDefault();
-        _dateTimeFormatPattern            = "dd.MM.YY HH:mm:ss";
-        axisBounds                        = new Bounds();
-        currentInterval                   = Interval.SECOND_1;
-        evtEvtObserver                    = e -> drawAxis();
-        dateTimeFormatter                 = DateTimeFormatter.ofPattern(_dateTimeFormatPattern, _locale);
-        categories                        = new LinkedList<>();
-        tickLabelFormatString             = new StringBuilder("%.").append(Integer.toString(_decimals)).append("f").toString();
+        _locale = Locale.US;
+        _decimals = 0;
+        _tickLabelOrientation = TickLabelOrientation.HORIZONTAL;
+        _tickLabelFormat = TickLabelFormat.NUMBER;
+        _autoTitleFontSize = true;
+        _autoFontSize = true;
+        _tickLabelFontSize = 10;
+        _titleFontSize = 10;
+        _zoneId = ZoneId.systemDefault();
+        _dateTimeFormatPattern = "dd.MM.YY HH:mm:ss";
+        axisBounds = new Bounds();
+        currentInterval = Interval.SECOND_1;
+        evtEvtObserver = e -> drawAxis();
+        dateTimeFormatter = DateTimeFormatter.ofPattern(_dateTimeFormatPattern, _locale);
+        categories = new LinkedList<>();
+        tickLabelFormatString = new StringBuilder("%.").append(Integer.toString(_decimals)).append("f").toString();
 
         initGraphics();
         registerListeners();
@@ -256,6 +265,7 @@ public class Axis extends Region {
     public Axis(final LocalDateTime START, final LocalDateTime END, final Orientation ORIENTATION, final Position POSITION) {
         this(START, END, ORIENTATION, POSITION, "");
     }
+
     public Axis(final LocalDateTime START, final LocalDateTime END, final Orientation ORIENTATION, final Position POSITION, final String TITLE) {
         if (VERTICAL == ORIENTATION) {
             if (Position.LEFT != POSITION && Position.RIGHT != POSITION && Position.CENTER != POSITION) {
@@ -268,58 +278,57 @@ public class Axis extends Region {
         }
 
         getStylesheets().add(Axis.class.getResource("chart.css").toExternalForm());
-        _minValue                         = START.toEpochSecond(Helper.getZoneOffset());
-        _start                            = START;
-        _maxValue                         = END.toEpochSecond(Helper.getZoneOffset());
-        _end                              = END;
+        _minValue = START.toEpochSecond(Helper.getZoneOffset());
+        _start = START;
+        _maxValue = END.toEpochSecond(Helper.getZoneOffset());
+        _end = END;
 
-        _type                             = AxisType.TIME;
-        _autoScale                        = true;
-        _title                            = TITLE;
-        _unit                             = "";
-        _orientation                      = ORIENTATION;
-        _position                         = POSITION;
-        _axisBackgroundColor              = Color.TRANSPARENT;
-        _axisColor                        = Color.BLACK;
-        _tickLabelColor                   = Color.BLACK;
-        _minorTickMarkColor               = Color.BLACK;
-        _mediumTickMarkColor              = Color.BLACK;
-        _majorTickMarkColor               = Color.BLACK;
-        _zeroColor                        = Color.BLACK;
-        _zeroPosition                     = 0;
-        _minorTickSpace                   = 1;
-        _majorTickSpace                   = 10;
-        _majorTickMarksVisible            = true;
-        _mediumTickMarksVisible           = true;
-        _minorTickMarksVisible            = true;
-        _sameTickMarkLength               = false;
-        _tickLabelsVisible                = true;
-        _mediumTimeAxisTickLabelsVisible  = false;
+        _type = AxisType.TIME;
+        _autoScale = true;
+        _title = TITLE;
+        _unit = "";
+        _orientation = ORIENTATION;
+        _position = POSITION;
+        _axisBackgroundColor = Color.TRANSPARENT;
+        _axisColor = Color.BLACK;
+        _tickLabelColor = Color.BLACK;
+        _minorTickMarkColor = Color.BLACK;
+        _mediumTickMarkColor = Color.BLACK;
+        _majorTickMarkColor = Color.BLACK;
+        _zeroColor = Color.BLACK;
+        _zeroPosition = 0;
+        _minorTickSpace = 1;
+        _majorTickSpace = 10;
+        _majorTickMarksVisible = true;
+        _mediumTickMarksVisible = true;
+        _minorTickMarksVisible = true;
+        _sameTickMarkLength = false;
+        _tickLabelsVisible = true;
+        _mediumTimeAxisTickLabelsVisible = false;
         _onlyFirstAndLastTickLabelVisible = false;
-        _locale                           = Locale.US;
-        _decimals                         = 0;
-        _tickLabelOrientation             = TickLabelOrientation.HORIZONTAL;
-        _tickLabelFormat                  = TickLabelFormat.NUMBER;
-        _autoTitleFontSize                = true;
-        _autoFontSize                     = true;
-        _tickLabelFontSize                = 10;
-        _titleFontSize                    = 10;
-        _zoneId                           = ZoneId.systemDefault();
-        _dateTimeFormatPattern            = "dd.MM.YY HH:mm:ss";
-        axisBounds                        = new Bounds();
-        currentInterval                   = Interval.SECOND_1;
-        dateTimeFormatter                 = DateTimeFormatter.ofPattern(_dateTimeFormatPattern, _locale);
-        tickLabelFormatString             = new StringBuilder("%.").append(Integer.toString(_decimals)).append("f").toString();
+        _locale = Locale.US;
+        _decimals = 0;
+        _tickLabelOrientation = TickLabelOrientation.HORIZONTAL;
+        _tickLabelFormat = TickLabelFormat.NUMBER;
+        _autoTitleFontSize = true;
+        _autoFontSize = true;
+        _tickLabelFontSize = 10;
+        _titleFontSize = 10;
+        _zoneId = ZoneId.systemDefault();
+        _dateTimeFormatPattern = "dd.MM.YY HH:mm:ss";
+        axisBounds = new Bounds();
+        currentInterval = Interval.SECOND_1;
+        dateTimeFormatter = DateTimeFormatter.ofPattern(_dateTimeFormatPattern, _locale);
+        tickLabelFormatString = new StringBuilder("%.").append(Integer.toString(_decimals)).append("f").toString();
 
         initGraphics();
         registerListeners();
     }
 
-
     // ******************** Initialization ************************************
     private void initGraphics() {
         if (Double.compare(getPrefWidth(), 0.0) <= 0 || Double.compare(getPrefHeight(), 0.0) <= 0 || Double.compare(getWidth(), 0.0) <= 0 ||
-            Double.compare(getHeight(), 0.0) <= 0) {
+                Double.compare(getHeight(), 0.0) <= 0) {
             if (getPrefWidth() != 0 && getPrefHeight() != 0) {
                 if (VERTICAL == getOrientation()) {
                     setPrefSize(20, 250);
@@ -332,13 +341,14 @@ public class Axis extends Region {
         getStyleClass().add("axis");
 
         axisCanvas = new Canvas(width, height);
-        axisCtx    = axisCanvas.getGraphicsContext2D();
+        axisCtx = axisCanvas.getGraphicsContext2D();
         axisBounds.set(0, 0, width, height);
 
         pane = new Pane(axisCanvas);
 
         getChildren().setAll(pane);
     }
+
     private void registerListeners() {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
@@ -347,60 +357,97 @@ public class Axis extends Region {
 
 
     // ******************** Methods *******************************************
-    @Override protected double computeMinWidth(final double HEIGHT) { return MINIMUM_WIDTH; }
-    @Override protected double computeMinHeight(final double WIDTH) { return MINIMUM_HEIGHT; }
-    @Override protected double computePrefWidth(final double HEIGHT) { return super.computePrefWidth(HEIGHT); }
-    @Override protected double computePrefHeight(final double WIDTH) { return super.computePrefHeight(WIDTH); }
-    @Override protected double computeMaxWidth(final double HEIGHT) { return MAXIMUM_WIDTH; }
-    @Override protected double computeMaxHeight(final double WIDTH) { return MAXIMUM_HEIGHT; }
+    @Override
+    protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
 
-    @Override public ObservableList<Node> getChildren() { return super.getChildren(); }
+    @Override
+    protected double computeMinHeight(final double WIDTH) {return MINIMUM_HEIGHT;}
 
-    public double getMinValue() {  return null == minValue ? _minValue : minValue.get();  }
+    @Override
+    protected double computePrefWidth(final double HEIGHT) {return super.computePrefWidth(HEIGHT);}
+
+    @Override
+    protected double computePrefHeight(final double WIDTH) {return super.computePrefHeight(WIDTH);}
+
+    @Override
+    protected double computeMaxWidth(final double HEIGHT) {return MAXIMUM_WIDTH;}
+
+    @Override
+    protected double computeMaxHeight(final double WIDTH) {return MAXIMUM_HEIGHT;}
+
+    @Override
+    public ObservableList<Node> getChildren() {return super.getChildren();}
+
+    public double getMinValue() {return null == minValue ? _minValue : minValue.get();}
+
     public void setMinValue(final LocalDateTime START) {
         setMinValue(START.toEpochSecond(Helper.getZoneOffset(getZoneId())));
     }
+
     public void setMinValue(final double VALUE) {
         if (null == minValue) {
-            if (VALUE > getMaxValue()) { setMaxValue(VALUE); }
+            if (VALUE > getMaxValue()) {
+                setMaxValue(VALUE);
+            }
             _minValue = Helper.clamp(-Double.MAX_VALUE, getMaxValue(), VALUE);
             fireChartEvt(AXIS_RANGE_CHANGED_EVT);
         } else {
             minValue.set(VALUE);
         }
     }
+
     public DoubleProperty minValueProperty() {
         if (null == minValue) {
             minValue = new DoublePropertyBase(_minValue) {
-                @Override protected void invalidated() {
-                    if (getValue() > getMaxValue()) { setMaxValue(getValue()); }
+                @Override
+                protected void invalidated() {
+                    if (getValue() > getMaxValue()) {
+                        setMaxValue(getValue());
+                    }
                     fireChartEvt(AXIS_RANGE_CHANGED_EVT);
                 }
-                @Override public Object getBean() {  return Axis.this;  }
-                @Override public String getName() {  return "minValue"; }
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "minValue";}
             };
         }
         return minValue;
     }
 
-    public LocalDateTime getStart() { return null == start ? _start : start.get(); }
+    public LocalDateTime getStart() {return null == start ? _start : start.get();}
+
     public void setStart(final long EPOCH_SECONDS) {
-        if (0 > EPOCH_SECONDS) { throw new IllegalArgumentException("Epoch seconds cannot be smaller than 0"); }
+        if (0 > EPOCH_SECONDS) {
+            throw new IllegalArgumentException("Epoch seconds cannot be smaller than 0");
+        }
         setStart(Instant.ofEpochSecond(EPOCH_SECONDS));
     }
+
     public void setStart(final long EPOCH_SECONDS, final ZoneId ZONE_ID) {
-        if (0 > EPOCH_SECONDS || null == ZONE_ID) { throw new IllegalArgumentException("Epoch seconds cannot be smaller than 0 and zone id cannot be null"); }
+        if (0 > EPOCH_SECONDS || null == ZONE_ID) {
+            throw new IllegalArgumentException("Epoch seconds cannot be smaller than 0 and zone id cannot be null");
+        }
         setStart(Instant.ofEpochSecond(EPOCH_SECONDS), ZONE_ID);
     }
+
     public void setStart(final Instant INSTANT) {
         setStart(INSTANT, ZoneId.systemDefault());
     }
+
     public void setStart(final Instant INSTANT, final ZoneId ZONE_ID) {
-        if (null == INSTANT || null == ZONE_ID) { throw new IllegalArgumentException("Instant cannot be null"); }
+        if (null == INSTANT || null == ZONE_ID) {
+            throw new IllegalArgumentException("Instant cannot be null");
+        }
         setStart(LocalDateTime.ofInstant(INSTANT, ZONE_ID));
     }
+
     public void setStart(final LocalDateTime DATE_TIME) {
-        if (AxisType.TIME != getType()) { throw new IllegalArgumentException("Axis type has to be TIME"); }
+        if (AxisType.TIME != getType()) {
+            throw new IllegalArgumentException("Axis type has to be TIME");
+        }
         if (null == start) {
             setMinValue(DATE_TIME.toEpochSecond(Helper.getZoneOffset()));
             _start = DATE_TIME;
@@ -408,64 +455,93 @@ public class Axis extends Region {
             start.set(DATE_TIME);
         }
     }
+
     public ObjectProperty<LocalDateTime> startProperty() {
         if (null == start) {
             start = new ObjectPropertyBase<>(_start) {
-                @Override protected void invalidated() {
-                    if (AxisType.TIME != getType()) { throw new IllegalArgumentException("Axis type has to be TIME"); }
+                @Override
+                protected void invalidated() {
+                    if (AxisType.TIME != getType()) {
+                        throw new IllegalArgumentException("Axis type has to be TIME");
+                    }
                     setMinValue(get().toEpochSecond(Helper.getZoneOffset()));
                 }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "start"; }
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "start";}
             };
             _start = null;
         }
         return start;
     }
-    
-    public double getMaxValue() { return null == maxValue ? _maxValue : maxValue.get(); }
+
+    public double getMaxValue() {return null == maxValue ? _maxValue : maxValue.get();}
+
     public void setMaxValue(final LocalDateTime END) {
         setMaxValue(END.toEpochSecond(Helper.getZoneOffset(getZoneId())));
     }
+
     public void setMaxValue(final double VALUE) {
         if (null == maxValue) {
-            if (VALUE < getMinValue()) { setMinValue(VALUE); }
-            _maxValue  = Helper.clamp(getMinValue(), Double.MAX_VALUE, VALUE);
+            if (VALUE < getMinValue()) {
+                setMinValue(VALUE);
+            }
+            _maxValue = Helper.clamp(getMinValue(), Double.MAX_VALUE, VALUE);
             fireChartEvt(AXIS_RANGE_CHANGED_EVT);
         } else {
             maxValue.set(VALUE);
         }
     }
+
     public DoubleProperty maxValueProperty() {
         if (null == maxValue) {
             maxValue = new DoublePropertyBase(_maxValue) {
-                @Override protected void invalidated() {
+                @Override
+                protected void invalidated() {
                     if (get() < getMinValue()) setMinValue(get());
                     fireChartEvt(AXIS_RANGE_CHANGED_EVT);
                 }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "maxValue"; }
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "maxValue";}
             };
         }
         return maxValue;
     }
 
-    public LocalDateTime getEnd() { return null == end ? _end : end.get(); }
+    public LocalDateTime getEnd() {return null == end ? _end : end.get();}
+
     public void setEnd(final Instant INSTANT) {
         setEnd(INSTANT, ZoneId.systemDefault());
     }
+
     public void setEnd(final long EPOCH_SECONDS) {
-        if (0 > EPOCH_SECONDS) { throw new IllegalArgumentException("Epoch seconds cannot be smaller than 0"); }
+        if (0 > EPOCH_SECONDS) {
+            throw new IllegalArgumentException("Epoch seconds cannot be smaller than 0");
+        }
         setEnd(Instant.ofEpochSecond(EPOCH_SECONDS));
     }
+
     public void setEnd(final long EPOCH_SECONDS, final ZoneId ZONE_ID) {
-        if (0 > EPOCH_SECONDS || null == ZONE_ID) { throw new IllegalArgumentException("Epoch seconds cannot be smaller than 0 and zone id cannot be null"); }
+        if (0 > EPOCH_SECONDS || null == ZONE_ID) {
+            throw new IllegalArgumentException("Epoch seconds cannot be smaller than 0 and zone id cannot be null");
+        }
         setEnd(Instant.ofEpochSecond(EPOCH_SECONDS), ZONE_ID);
     }
+
     public void setEnd(final Instant INSTANT, final ZoneId ZONE_ID) {
-        if (null == INSTANT || null == ZONE_ID) { throw new IllegalArgumentException("Instant cannot be null"); }
+        if (null == INSTANT || null == ZONE_ID) {
+            throw new IllegalArgumentException("Instant cannot be null");
+        }
         setEnd(LocalDateTime.ofInstant(INSTANT, ZONE_ID));
     }
+
     public void setEnd(final LocalDateTime DATE_TIME) {
         if (null == end) {
             setMaxValue(DATE_TIME.toEpochSecond(Helper.getZoneOffset()));
@@ -474,19 +550,26 @@ public class Axis extends Region {
             end.set(DATE_TIME);
         }
     }
+
     public ObjectProperty<LocalDateTime> endProperty() {
         if (null == end) {
             end = new ObjectPropertyBase<>(_end) {
-                @Override protected void invalidated() { setMaxValue(get().toEpochSecond(Helper.getZoneOffset())); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "end"; }
+                @Override
+                protected void invalidated() {setMaxValue(get().toEpochSecond(Helper.getZoneOffset()));}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "end";}
             };
             _end = null;
         }
         return end;
     }
-    
-    public boolean isAutoScale() { return null == autoScale ? _autoScale : autoScale.get(); }
+
+    public boolean isAutoScale() {return null == autoScale ? _autoScale : autoScale.get();}
+
     public void setAutoScale(final boolean AUTO_SCALE) {
         if (null == autoScale) {
             _autoScale = AUTO_SCALE;
@@ -495,18 +578,25 @@ public class Axis extends Region {
             autoScale.set(AUTO_SCALE);
         }
     }
+
     public BooleanProperty autoScaleProperty() {
         if (null == autoScale) {
             autoScale = new BooleanPropertyBase(_autoScale) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "autoScale"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "autoScale";}
             };
         }
         return autoScale;
     }
 
-    public String getTitle() {  return null == title ? _title : title.get(); }
+    public String getTitle() {return null == title ? _title : title.get();}
+
     public void setTitle(final String TITLE) {
         if (null == title) {
             _title = TITLE;
@@ -515,19 +605,26 @@ public class Axis extends Region {
             title.set(TITLE);
         }
     }
+
     public StringProperty titleProperty() {
         if (null == title) {
             title = new StringPropertyBase(_title) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() {  return Axis.this;  }
-                @Override public String getName() {  return "title";  }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "title";}
             };
             _title = null;
         }
         return title;
     }
 
-    public String getUnit() { return null == unit ? _unit : unit.get(); }
+    public String getUnit() {return null == unit ? _unit : unit.get();}
+
     public void setUnit(final String UNIT) {
         if (null == unit) {
             _unit = UNIT;
@@ -536,19 +633,26 @@ public class Axis extends Region {
             unit.set(UNIT);
         }
     }
+
     public StringProperty unitProperty() {
         if (null == unit) {
             unit = new StringPropertyBase(_unit) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() {  return Axis.this;  }
-                @Override public String getName() {  return "unit";  }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "unit";}
             };
             _unit = null;
         }
         return unit;
     }
 
-    public AxisType getType() { return null == type ? _type : type.get(); }
+    public AxisType getType() {return null == type ? _type : type.get();}
+
     public void setType(final AxisType TYPE) {
         if (null == type) {
             _type = TYPE;
@@ -557,19 +661,26 @@ public class Axis extends Region {
             type.set(TYPE);
         }
     }
+
     public ObjectProperty<AxisType> typeProperty() {
         if (null == type) {
             type = new ObjectPropertyBase<AxisType>(_type) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() {  return Axis.this;  }
-                @Override public String getName() {  return "axisType";  }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "axisType";}
             };
             _type = null;
         }
         return type;
     }
 
-    public Orientation getOrientation() { return null == orientation ? _orientation : orientation.get(); }
+    public Orientation getOrientation() {return null == orientation ? _orientation : orientation.get();}
+
     public void setOrientation(final Orientation ORIENTATION) {
         if (null == orientation) {
             _orientation = ORIENTATION;
@@ -578,19 +689,26 @@ public class Axis extends Region {
             orientation.set(ORIENTATION);
         }
     }
+
     public ObjectProperty<Orientation> orientationProperty() {
         if (null == orientation) {
             orientation = new ObjectPropertyBase<Orientation>(_orientation) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() {  return "orientation";  }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "orientation";}
             };
             _orientation = null;
         }
         return orientation;
     }
 
-    public Position getPosition() { return null == position ? _position : position.get(); }
+    public Position getPosition() {return null == position ? _position : position.get();}
+
     public void setPosition(final Position POSITION) {
         if (null == position) {
             _position = POSITION;
@@ -599,12 +717,18 @@ public class Axis extends Region {
             position.set(POSITION);
         }
     }
+
     public ObjectProperty<Position> positionProperty() {
         if (null == position) {
             position = new ObjectPropertyBase<Position>(_position) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "position"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "position";}
             };
             _position = null;
         }
@@ -617,7 +741,8 @@ public class Axis extends Region {
         setTickLabelColor(COLOR);
     }
 
-    public Color getAxisBackgroundColor() { return null == axisBackgroundColor ? _axisBackgroundColor : axisBackgroundColor.get(); }
+    public Color getAxisBackgroundColor() {return null == axisBackgroundColor ? _axisBackgroundColor : axisBackgroundColor.get();}
+
     public void setAxisBackgroundColor(final Color COLOR) {
         if (null == axisBackgroundColor) {
             _axisBackgroundColor = COLOR;
@@ -626,19 +751,26 @@ public class Axis extends Region {
             axisBackgroundColor.set(COLOR);
         }
     }
+
     public ObjectProperty<Color> axisBackgroundColorProperty() {
         if (null == axisBackgroundColor) {
             axisBackgroundColor = new ObjectPropertyBase<Color>(_axisBackgroundColor) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "axisBackgroundColor"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "axisBackgroundColor";}
             };
             _axisBackgroundColor = null;
         }
         return axisBackgroundColor;
     }
 
-    public Color getAxisColor() { return null == axisColor ? _axisColor : axisColor.get(); }
+    public Color getAxisColor() {return null == axisColor ? _axisColor : axisColor.get();}
+
     public void setAxisColor(final Color COLOR) {
         if (null == axisColor) {
             _axisColor = COLOR;
@@ -647,19 +779,26 @@ public class Axis extends Region {
             axisColor.set(COLOR);
         }
     }
+
     public ObjectProperty<Color> axisColorProperty() {
         if (null == axisColor) {
             axisColor = new ObjectPropertyBase<Color>(_axisColor) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "axisColor"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "axisColor";}
             };
             _axisColor = null;
         }
         return axisColor;
     }
 
-    public Color getTickLabelColor() { return null == tickLabelColor ? _tickLabelColor : tickLabelColor.get(); }
+    public Color getTickLabelColor() {return null == tickLabelColor ? _tickLabelColor : tickLabelColor.get();}
+
     public void setTickLabelColor(final Color COLOR) {
         if (null == tickLabelColor) {
             _tickLabelColor = COLOR;
@@ -668,19 +807,26 @@ public class Axis extends Region {
             tickLabelColor.set(COLOR);
         }
     }
+
     public ObjectProperty<Color> tickLabelColorProperty() {
         if (null == tickLabelColor) {
             tickLabelColor = new ObjectPropertyBase<Color>(_tickLabelColor) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "tickLabelColor"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "tickLabelColor";}
             };
             _tickLabelColor = null;
         }
         return tickLabelColor;
     }
 
-    public Color getTitleColor() { return null == titleColor ? _titleColor : titleColor.get(); }
+    public Color getTitleColor() {return null == titleColor ? _titleColor : titleColor.get();}
+
     public void setTitleColor(final Color COLOR) {
         if (null == titleColor) {
             _titleColor = COLOR;
@@ -689,19 +835,26 @@ public class Axis extends Region {
             titleColor.set(COLOR);
         }
     }
+
     public ObjectProperty<Color> titleColorProperty() {
         if (null == titleColor) {
             titleColor = new ObjectPropertyBase<Color>(_titleColor) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "titleColor"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "titleColor";}
             };
             _titleColor = null;
         }
         return titleColor;
     }
 
-    public Color getMinorTickMarkColor() { return null == minorTickMarkColor ? _minorTickMarkColor : minorTickMarkColor.get(); }
+    public Color getMinorTickMarkColor() {return null == minorTickMarkColor ? _minorTickMarkColor : minorTickMarkColor.get();}
+
     public void setMinorTickMarkColor(final Color COLOR) {
         if (null == minorTickMarkColor) {
             _minorTickMarkColor = COLOR;
@@ -710,19 +863,26 @@ public class Axis extends Region {
             minorTickMarkColor.set(COLOR);
         }
     }
+
     public ObjectProperty<Color> minorTickMarkColorProperty() {
         if (null == minorTickMarkColor) {
             minorTickMarkColor = new ObjectPropertyBase<Color>(_minorTickMarkColor) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "minorTickMarkColor"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "minorTickMarkColor";}
             };
             _minorTickMarkColor = null;
         }
         return minorTickMarkColor;
     }
 
-    public Color getMediumTickMarkColor() { return null == mediumTickMarkColor ? _mediumTickMarkColor : mediumTickMarkColor.get(); }
+    public Color getMediumTickMarkColor() {return null == mediumTickMarkColor ? _mediumTickMarkColor : mediumTickMarkColor.get();}
+
     public void setMediumTickMarkColor(final Color COLOR) {
         if (null == mediumTickMarkColor) {
             _mediumTickMarkColor = COLOR;
@@ -731,19 +891,26 @@ public class Axis extends Region {
             mediumTickMarkColor.set(COLOR);
         }
     }
+
     public ObjectProperty<Color> mediumTickMarkColorProperty() {
         if (null == mediumTickMarkColor) {
             mediumTickMarkColor = new ObjectPropertyBase<Color>(_mediumTickMarkColor) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "mediumTickMarkColor"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "mediumTickMarkColor";}
             };
             _mediumTickMarkColor = null;
         }
         return mediumTickMarkColor;
     }
 
-    public Color getMajorTickMarkColor() { return null == majorTickMarkColor ? _majorTickMarkColor : majorTickMarkColor.get(); }
+    public Color getMajorTickMarkColor() {return null == majorTickMarkColor ? _majorTickMarkColor : majorTickMarkColor.get();}
+
     public void setMajorTickMarkColor(final Color COLOR) {
         if (null == majorTickMarkColor) {
             _majorTickMarkColor = COLOR;
@@ -752,19 +919,26 @@ public class Axis extends Region {
             majorTickMarkColor.set(COLOR);
         }
     }
+
     public ObjectProperty<Color> majorTickMarkColorProperty() {
         if (null == majorTickMarkColor) {
             majorTickMarkColor = new ObjectPropertyBase<Color>(_majorTickMarkColor) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "majorTickMarkColor"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "majorTickMarkColor";}
             };
             _majorTickMarkColor = null;
         }
         return majorTickMarkColor;
     }
 
-    public Color getZeroColor() { return null == zeroColor ? _zeroColor : zeroColor.get(); }
+    public Color getZeroColor() {return null == zeroColor ? _zeroColor : zeroColor.get();}
+
     public void setZeroColor(final Color COLOR) {
         if (null == zeroColor) {
             _zeroColor = COLOR;
@@ -773,19 +947,26 @@ public class Axis extends Region {
             zeroColor.set(COLOR);
         }
     }
+
     public ObjectProperty<Color> zeroColorProperty() {
         if (null == zeroColor) {
             zeroColor = new ObjectPropertyBase<Color>(_zeroColor) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "zeroColor"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "zeroColor";}
             };
             _zeroColor = null;
         }
         return zeroColor;
     }
 
-    public double getZeroPosition() { return null == zeroPosition ? _zeroPosition : zeroPosition.get(); }
+    public double getZeroPosition() {return null == zeroPosition ? _zeroPosition : zeroPosition.get();}
+
     private void setZeroPosition(final double POSITION) {
         if (null == zeroPosition) {
             _zeroPosition = POSITION;
@@ -793,23 +974,30 @@ public class Axis extends Region {
             zeroPosition.set(POSITION);
         }
     }
+
     public ReadOnlyDoubleProperty zeroPositionProperty() {
         if (null == zeroPosition) {
             zeroPosition = new DoublePropertyBase(_zeroPosition) {
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "zeroPosition"; }
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "zeroPosition";}
             };
         }
         return zeroPosition;
     }
 
-    protected double getMajorTickSpace() { return _majorTickSpace; }
-    protected void setMajorTickSpace(final double SPACE) { _majorTickSpace = SPACE; }
+    protected double getMajorTickSpace() {return _majorTickSpace;}
 
-    protected double getMinorTickSpace() { return _minorTickSpace; }
-    protected void setMinorTickSpace(final double SPACE) { _minorTickSpace = SPACE; }
+    protected void setMajorTickSpace(final double SPACE) {_majorTickSpace = SPACE;}
 
-    public boolean getMajorTickMarksVisible() { return null == majorTickMarksVisible ? _majorTickMarksVisible : majorTickMarksVisible.get(); }
+    protected double getMinorTickSpace() {return _minorTickSpace;}
+
+    protected void setMinorTickSpace(final double SPACE) {_minorTickSpace = SPACE;}
+
+    public boolean getMajorTickMarksVisible() {return null == majorTickMarksVisible ? _majorTickMarksVisible : majorTickMarksVisible.get();}
+
     public void setMajorTickMarksVisible(final boolean VISIBLE) {
         if (null == majorTickMarksVisible) {
             _majorTickMarksVisible = VISIBLE;
@@ -818,18 +1006,25 @@ public class Axis extends Region {
             majorTickMarksVisible.set(VISIBLE);
         }
     }
-    public BooleanProperty majorTickMarksVisibleProperty() { 
+
+    public BooleanProperty majorTickMarksVisibleProperty() {
         if (null == majorTickMarksVisible) {
             majorTickMarksVisible = new BooleanPropertyBase(_majorTickMarksVisible) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "majorTickMarksVisible"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "majorTickMarksVisible";}
             };
         }
         return majorTickMarksVisible;
     }
 
-    public boolean getMediumTickMarksVisible() { return null == mediumTickMarksVisible ? _mediumTickMarksVisible : mediumTickMarksVisible.get(); }
+    public boolean getMediumTickMarksVisible() {return null == mediumTickMarksVisible ? _mediumTickMarksVisible : mediumTickMarksVisible.get();}
+
     public void setMediumTickMarksVisible(final boolean VISIBLE) {
         if (null == mediumTickMarksVisible) {
             _mediumTickMarksVisible = VISIBLE;
@@ -838,18 +1033,25 @@ public class Axis extends Region {
             mediumTickMarksVisible.set(VISIBLE);
         }
     }
+
     public BooleanProperty mediumTickMarksVisibleProperty() {
         if (null == mediumTickMarksVisible) {
             mediumTickMarksVisible = new BooleanPropertyBase(_mediumTickMarksVisible) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "mediumTickMarksVisible"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "mediumTickMarksVisible";}
             };
         }
         return mediumTickMarksVisible;
     }
 
-    public boolean getMinorTickMarksVisible() { return null == minorTickMarksVisible ? _minorTickMarksVisible : minorTickMarksVisible.get(); }
+    public boolean getMinorTickMarksVisible() {return null == minorTickMarksVisible ? _minorTickMarksVisible : minorTickMarksVisible.get();}
+
     public void setMinorTickMarksVisible(final boolean VISIBLE) {
         if (null == minorTickMarksVisible) {
             _minorTickMarksVisible = VISIBLE;
@@ -858,18 +1060,25 @@ public class Axis extends Region {
             minorTickMarksVisible.set(VISIBLE);
         }
     }
+
     public BooleanProperty minorTickMarksVisibleProperty() {
         if (null == minorTickMarksVisible) {
             minorTickMarksVisible = new BooleanPropertyBase(_minorTickMarksVisible) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "minorTickMarksVisible"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "minorTickMarksVisible";}
             };
         }
         return minorTickMarksVisible;
     }
 
-    public boolean getSameTickMarkLength() { return null == sameTickMarkLength ? _sameTickMarkLength : sameTickMarkLength.get(); }
+    public boolean getSameTickMarkLength() {return null == sameTickMarkLength ? _sameTickMarkLength : sameTickMarkLength.get();}
+
     public void setSameTickMarkLength(final boolean SAME_LENGTH) {
         if (null == sameTickMarkLength) {
             _sameTickMarkLength = SAME_LENGTH;
@@ -878,18 +1087,25 @@ public class Axis extends Region {
             sameTickMarkLength.set(SAME_LENGTH);
         }
     }
+
     public BooleanProperty sameTickMarkLengthProperty() {
         if (null == sameTickMarkLength) {
             sameTickMarkLength = new BooleanPropertyBase(_sameTickMarkLength) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "sameTickMarkLength"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "sameTickMarkLength";}
             };
         }
         return sameTickMarkLength;
     }
 
-    public boolean getTickLabelsVisible() { return null == tickLabelsVisible ? _tickLabelsVisible : tickLabelsVisible.get(); }
+    public boolean getTickLabelsVisible() {return null == tickLabelsVisible ? _tickLabelsVisible : tickLabelsVisible.get();}
+
     public void setTickLabelsVisible(final boolean VISIBLE) {
         if (null == tickLabelsVisible) {
             _tickLabelsVisible = VISIBLE;
@@ -898,18 +1114,25 @@ public class Axis extends Region {
             tickLabelsVisible.set(VISIBLE);
         }
     }
+
     public BooleanProperty tickLabelsVisibleProperty() {
         if (null == tickLabelsVisible) {
             tickLabelsVisible = new BooleanPropertyBase(_tickLabelsVisible) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "tickLabelsVisible"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "tickLabelsVisible";}
             };
         }
         return tickLabelsVisible;
     }
 
-    public boolean getMediumTimeAxisTickLabelsVisible() { return null == mediumTimeAxisTickLabelsVisible ? _mediumTimeAxisTickLabelsVisible : mediumTimeAxisTickLabelsVisible.get(); }
+    public boolean getMediumTimeAxisTickLabelsVisible() {return null == mediumTimeAxisTickLabelsVisible ? _mediumTimeAxisTickLabelsVisible : mediumTimeAxisTickLabelsVisible.get();}
+
     public void setMediumTimeAxisTickLabelsVisible(final boolean VISIBLE) {
         if (null == mediumTimeAxisTickLabelsVisible) {
             _mediumTimeAxisTickLabelsVisible = VISIBLE;
@@ -918,18 +1141,25 @@ public class Axis extends Region {
             mediumTimeAxisTickLabelsVisible.set(VISIBLE);
         }
     }
+
     public BooleanProperty mediumTimeAxisTickLabelsVisibleProperty() {
         if (null == mediumTimeAxisTickLabelsVisible) {
             mediumTimeAxisTickLabelsVisible = new BooleanPropertyBase(_mediumTimeAxisTickLabelsVisible) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "mediumTickLabelsVisible"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "mediumTickLabelsVisible";}
             };
         }
         return mediumTimeAxisTickLabelsVisible;
     }
 
-    public boolean isOnlyFirstAndLastTickLabelVisible() { return null == onlyFirstAndLastTickLabelVisible ? _onlyFirstAndLastTickLabelVisible : onlyFirstAndLastTickLabelVisible.get(); }
+    public boolean isOnlyFirstAndLastTickLabelVisible() {return null == onlyFirstAndLastTickLabelVisible ? _onlyFirstAndLastTickLabelVisible : onlyFirstAndLastTickLabelVisible.get();}
+
     public void setOnlyFirstAndLastTickLabelVisible(final boolean VISIBLE) {
         if (null == onlyFirstAndLastTickLabelVisible) {
             _onlyFirstAndLastTickLabelVisible = VISIBLE;
@@ -938,18 +1168,25 @@ public class Axis extends Region {
             onlyFirstAndLastTickLabelVisible.set(VISIBLE);
         }
     }
+
     public BooleanProperty onlyFirstAndLastTickLabelVisibleProperty() {
         if (null == onlyFirstAndLastTickLabelVisible) {
             onlyFirstAndLastTickLabelVisible = new BooleanPropertyBase(_onlyFirstAndLastTickLabelVisible) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "onlyFirstAndLastTickLabelVisible"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "onlyFirstAndLastTickLabelVisible";}
             };
         }
         return onlyFirstAndLastTickLabelVisible;
     }
 
-    public Locale getLocale() { return null == locale ? _locale : locale.get(); }
+    public Locale getLocale() {return null == locale ? _locale : locale.get();}
+
     public void setLocale(final Locale LOCALE) {
         if (null == locale) {
             _locale = LOCALE;
@@ -959,22 +1196,29 @@ public class Axis extends Region {
             locale.set(LOCALE);
         }
     }
+
     public ObjectProperty<Locale> localeProperty() {
         if (null == locale) {
             locale = new ObjectPropertyBase<Locale>(_locale) {
-                @Override protected void invalidated() {
+                @Override
+                protected void invalidated() {
                     tickLabelFormatString = new StringBuilder("%.").append(Integer.toString(getDecimals())).append("f").toString();
                     redraw();
                 }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "locale"; }
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "locale";}
             };
             _locale = null;
         }
         return locale;
     }
 
-    public int getDecimals() { return null == decimals ? _decimals : decimals.get(); }
+    public int getDecimals() {return null == decimals ? _decimals : decimals.get();}
+
     public void setDecimals(final int DECIMALS) {
         if (null == decimals) {
             _decimals = Helper.clamp(0, 12, DECIMALS);
@@ -984,22 +1228,29 @@ public class Axis extends Region {
             decimals.set(DECIMALS);
         }
     }
+
     public IntegerProperty decimals() {
         if (null == decimals) {
             decimals = new IntegerPropertyBase(_decimals) {
-                @Override protected void invalidated() {
+                @Override
+                protected void invalidated() {
                     set(Helper.clamp(0, 12, get()));
                     tickLabelFormatString = new StringBuilder("%.").append(Integer.toString(get())).append("f").toString();
                     redraw();
                 }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "decimals"; }
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "decimals";}
             };
         }
         return decimals;
     }
 
-    public TickLabelOrientation getTickLabelOrientation() { return null == tickLabelOrientation ? _tickLabelOrientation : tickLabelOrientation.get(); }
+    public TickLabelOrientation getTickLabelOrientation() {return null == tickLabelOrientation ? _tickLabelOrientation : tickLabelOrientation.get();}
+
     public void setTickLabelOrientation(final TickLabelOrientation ORIENTATION) {
         if (null == tickLabelOrientation) {
             _tickLabelOrientation = ORIENTATION;
@@ -1008,19 +1259,26 @@ public class Axis extends Region {
             tickLabelOrientation.set(ORIENTATION);
         }
     }
+
     public ObjectProperty<TickLabelOrientation> tickLabelOrientationProperty() {
         if (null == tickLabelOrientation) {
             tickLabelOrientation = new ObjectPropertyBase<TickLabelOrientation>(_tickLabelOrientation) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() {  return Axis.this;  }
-                @Override public String getName() {  return "tickLabelOrientation";  }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "tickLabelOrientation";}
             };
             _tickLabelOrientation = null;
         }
         return tickLabelOrientation;
     }
 
-    public ZoneId getZoneId() { return null == zoneId ? _zoneId : zoneId.get(); }
+    public ZoneId getZoneId() {return null == zoneId ? _zoneId : zoneId.get();}
+
     public void setZoneId(final ZoneId ZONE_ID) {
         if (null == zoneId) {
             _zoneId = ZONE_ID;
@@ -1029,19 +1287,26 @@ public class Axis extends Region {
             zoneId.set(ZONE_ID);
         }
     }
+
     public ObjectProperty<ZoneId> zoneIdProperty() {
         if (null == zoneId) {
             zoneId = new ObjectPropertyBase<ZoneId>(_zoneId) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "zoneId"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "zoneId";}
             };
             _zoneId = null;
         }
         return zoneId;
     }
 
-    public String getDateTimeFormatPattern() { return null == dateTimeFormatPattern ? _dateTimeFormatPattern : dateTimeFormatPattern.get();}
+    public String getDateTimeFormatPattern() {return null == dateTimeFormatPattern ? _dateTimeFormatPattern : dateTimeFormatPattern.get();}
+
     public void setDateTimeFormatPattern(final String PATTERN) {
         if (null == dateTimeFormatPattern) {
             _dateTimeFormatPattern = PATTERN;
@@ -1051,28 +1316,36 @@ public class Axis extends Region {
             dateTimeFormatPattern.set(PATTERN);
         }
     }
+
     public StringProperty dateTimeFormatPatternProperty() {
         if (null == dateTimeFormatPattern) {
             dateTimeFormatPattern = new StringPropertyBase(_dateTimeFormatPattern) {
-                @Override protected void invalidated() {
+                @Override
+                protected void invalidated() {
                     dateTimeFormatter = DateTimeFormatter.ofPattern(get());
                     redraw();
                 }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "dateTimeFormat"; }
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "dateTimeFormat";}
             };
             _dateTimeFormatPattern = null;
         }
         return dateTimeFormatPattern;
     }
-    
-    public StringConverter<Number> getNumberFormatter() { return numberFormatter; }
+
+    public StringConverter<Number> getNumberFormatter() {return numberFormatter;}
+
     public void setNumberFormatter(final StringConverter<Number> FORMATTER) {
         numberFormatter = FORMATTER;
         redraw();
     }
 
-    public TickLabelFormat getTickLabelFormat() { return null == tickLabelFormat ? _tickLabelFormat : tickLabelFormat.get(); }
+    public TickLabelFormat getTickLabelFormat() {return null == tickLabelFormat ? _tickLabelFormat : tickLabelFormat.get();}
+
     public void setTickLabelFormat(final TickLabelFormat FORMAT) {
         if (null == tickLabelFormat) {
             _tickLabelFormat = FORMAT;
@@ -1081,19 +1354,26 @@ public class Axis extends Region {
             tickLabelFormat.set(FORMAT);
         }
     }
+
     public ObjectProperty<TickLabelFormat> tickLabelFormatProperty() {
         if (null == tickLabelFormat) {
             tickLabelFormat = new ObjectPropertyBase<TickLabelFormat>(_tickLabelFormat) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "tickLabelFormat"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "tickLabelFormat";}
             };
             _tickLabelFormat = null;
         }
         return tickLabelFormat;
     }
 
-    public boolean isAutoTitleFontSize() { return null == autoTitleFontSize ? _autoTitleFontSize : autoTitleFontSize.get(); }
+    public boolean isAutoTitleFontSize() {return null == autoTitleFontSize ? _autoTitleFontSize : autoTitleFontSize.get();}
+
     public void setAutoTitleFontSize(final boolean AUTO) {
         if (null == autoTitleFontSize) {
             _autoTitleFontSize = AUTO;
@@ -1102,18 +1382,25 @@ public class Axis extends Region {
             autoTitleFontSize.set(AUTO);
         }
     }
+
     public BooleanProperty autoTitleFontSizeProperty() {
         if (null == autoTitleFontSize) {
             autoTitleFontSize = new BooleanPropertyBase(_autoTitleFontSize) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "autoTitleFontSize"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "autoTitleFontSize";}
             };
         }
         return autoTitleFontSize;
     }
 
-    public boolean isAutoFontSize() { return null == autoFontSize ? _autoFontSize : autoFontSize.get(); }
+    public boolean isAutoFontSize() {return null == autoFontSize ? _autoFontSize : autoFontSize.get();}
+
     public void setAutoFontSize(final boolean AUTO) {
         if (null == autoFontSize) {
             _autoFontSize = AUTO;
@@ -1122,67 +1409,89 @@ public class Axis extends Region {
             autoFontSize.set(AUTO);
         }
     }
+
     public BooleanProperty autoFontSizeProperty() {
         if (null == autoFontSize) {
             autoFontSize = new BooleanPropertyBase(_autoFontSize) {
-                @Override protected void invalidated() { redraw(); }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "autoFontSize"; }
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "autoFontSize";}
             };
         }
         return autoFontSize;
     }
 
-    public double getTickLabelFontSize() { return null == tickLabelFontSize ? _tickLabelFontSize : tickLabelFontSize.get(); }
+    public double getTickLabelFontSize() {return null == tickLabelFontSize ? _tickLabelFontSize : tickLabelFontSize.get();}
+
     public void setTickLabelFontSize(final double SIZE) {
         if (null == tickLabelFontSize) {
             _tickLabelFontSize = SIZE;
-            tickLabelFont      = Fonts.latoLight(SIZE);
+            tickLabelFont = Fonts.latoLight(SIZE);
             redraw();
         } else {
             tickLabelFontSize.set(SIZE);
         }
     }
+
     public DoubleProperty tickLabelFontSizeProperty() {
         if (null == tickLabelFontSize) {
             tickLabelFontSize = new DoublePropertyBase(_tickLabelFontSize) {
-                @Override protected void invalidated() {
+                @Override
+                protected void invalidated() {
                     tickLabelFont = Fonts.latoLight(get());
                     redraw();
                 }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "tickLabelFontSize"; }
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "tickLabelFontSize";}
             };
         }
         return tickLabelFontSize;
     }
 
-    public double getTitleFontSize() { return null == titleFontSize ? _titleFontSize : titleFontSize.get(); }
+    public double getTitleFontSize() {return null == titleFontSize ? _titleFontSize : titleFontSize.get();}
+
     public void setTitleFontSize(final double SIZE) {
         if (null == titleFontSize) {
             _titleFontSize = SIZE;
-            titleFont      = Fonts.latoRegular(_titleFontSize);
+            titleFont = Fonts.latoRegular(_titleFontSize);
             redraw();
         } else {
             titleFontSize.set(SIZE);
         }
     }
+
     public DoubleProperty titleFontSizeProperty() {
         if (null == titleFontSize) {
             titleFontSize = new DoublePropertyBase(_titleFontSize) {
-                @Override protected void invalidated() {
+                @Override
+                protected void invalidated() {
                     titleFont = Fonts.latoRegular(get());
                     redraw();
                 }
-                @Override public Object getBean() { return Axis.this; }
-                @Override public String getName() { return "titleFontSize"; }
+
+                @Override
+                public Object getBean() {return Axis.this;}
+
+                @Override
+                public String getName() {return "titleFontSize";}
             };
         }
         return titleFontSize;
     }
 
-    public List<String> getCategories() { return categories; }
-    public void setCategories(final String... CATEGORIES) { setCategories(Arrays.asList(CATEGORIES)); }
+    public List<String> getCategories() {return categories;}
+
+    public void setCategories(final String... CATEGORIES) {setCategories(Arrays.asList(CATEGORIES));}
+
     public void setCategories(final List<String> CATEGORIES) {
         categories.clear();
         CATEGORIES.forEach(category -> categories.add(category));
@@ -1192,6 +1501,7 @@ public class Axis extends Region {
     public boolean isValueOnAxis(final Double VALUE) {
         return Double.compare(VALUE, getMinValue()) >= 0 && Double.compare(VALUE, getMaxValue()) <= 0;
     }
+
     public boolean isValueOnAxis(final LocalDateTime DATE_TIME) {
         return DATE_TIME.isAfter(getStart()) && DATE_TIME.isBefore(getEnd());
     }
@@ -1201,32 +1511,44 @@ public class Axis extends Region {
         setMaxValue(MAX_VALUE);
         resize();
     }
+
     public void setStartEnd(final LocalDateTime start, final LocalDateTime end) {
         setStart(start);
         setEnd(end);
         resize();
     }
+
     public void setStartEnd(final Instant start, final Instant end) {
         setStart(start);
         setEnd(end);
         resize();
     }
+
     public void setStartEnd(final Instant start, final Instant end, final ZoneId zoneId) {
         setStart(start, zoneId);
         setEnd(end, zoneId);
         resize();
     }
+
     public void setStartEnd(final long startEpochSeconds, final long endEpochSeconds, final ZoneId zoneId) {
-        if (startEpochSeconds < Instant.MIN.getEpochSecond()) { throw new IllegalArgumentException("Start cannot be before " + Instant.MIN.getEpochSecond()); }
-        if (endEpochSeconds > Instant.MAX.getEpochSecond()) { throw new IllegalArgumentException("End cannot be after " + Instant.MAX.getEpochSecond()); }
-        if (startEpochSeconds > endEpochSeconds) { throw new IllegalArgumentException("Start cannot be after end"); }
-        if (endEpochSeconds < startEpochSeconds) { throw new IllegalArgumentException("End cannot be before start"); }
+        if (startEpochSeconds < Instant.MIN.getEpochSecond()) {
+            throw new IllegalArgumentException("Start cannot be before " + Instant.MIN.getEpochSecond());
+        }
+        if (endEpochSeconds > Instant.MAX.getEpochSecond()) {
+            throw new IllegalArgumentException("End cannot be after " + Instant.MAX.getEpochSecond());
+        }
+        if (startEpochSeconds > endEpochSeconds) {
+            throw new IllegalArgumentException("Start cannot be after end");
+        }
+        if (endEpochSeconds < startEpochSeconds) {
+            throw new IllegalArgumentException("End cannot be before start");
+        }
         setStart(startEpochSeconds, zoneId);
         setEnd(endEpochSeconds, zoneId);
         resize();
     }
 
-    public double getRange() { return getMaxValue() - getMinValue(); }
+    public double getRange() {return getMaxValue() - getMinValue();}
 
     public void setTickMarkColor(final Color COLOR) {
         setMinorTickMarkColor(COLOR);
@@ -1243,14 +1565,14 @@ public class Axis extends Region {
     public void shift(final double VALUE) {
         setMinMax(getMinValue() + VALUE, getMaxValue() + VALUE);
     }
-    
+
     public double getValueForDisplay(final double posInAxis) {
         return posInAxis / width * Helper.calcNiceNumber((getMaxValue() - getMinValue()), false) + getMinValue();
     }
 
-    public double getStepSize() { return stepSize; }
+    public double getStepSize() {return stepSize;}
 
-    public Bounds getAxisBounds() { return axisBounds; }
+    public Bounds getAxisBounds() {return axisBounds;}
 
     public void dispose() {
         removeChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, evtEvtObserver);
@@ -1259,7 +1581,7 @@ public class Axis extends Region {
     private void calcAutoScale() {
         double maxNoOfMajorTicks = 10;
         double maxNoOfMinorTicks = 10;
-        double niceRange         = (Helper.calcNiceNumber((getMaxValue() - getMinValue()), false));
+        double niceRange = (Helper.calcNiceNumber((getMaxValue() - getMinValue()), false));
         setMajorTickSpace(Helper.calcNiceNumber(niceRange / (maxNoOfMajorTicks - 1), true));
         setMinorTickSpace(Helper.calcNiceNumber(getMajorTickSpace() / (maxNoOfMinorTicks - 1), true));
         double niceMinValue = (Math.floor(getMinValue() / getMajorTickSpace()) * getMajorTickSpace());
@@ -1292,25 +1614,27 @@ public class Axis extends Region {
     private double toNumericValue(final LocalDateTime DATE) {
         return Helper.toMillis(DATE, Helper.getZoneOffset(getZoneId()));
     }
+
     private LocalDateTime toRealValue(final double VALUE) {
         return toLocalDateTime((long) VALUE);
     }
+
     private LocalDateTime toLocalDateTime(final long SECONDS) {
         return LocalDateTime.ofInstant(Instant.ofEpochSecond(SECONDS), ZoneId.systemDefault());
     }
 
     private List<LocalDateTime> createTickValues(final double WIDTH, final LocalDateTime START, final LocalDateTime END) {
         List<LocalDateTime> dateList = new ArrayList<>();
-        LocalDateTime       dateTime = LocalDateTime.now();
+        LocalDateTime dateTime = LocalDateTime.now();
 
         if (null == START || null == END) return dateList;
 
         // The preferred gap which should be between two tick marks.
         double majorTickSpace = 100;
-        double noOfTicks      = WIDTH / majorTickSpace;
+        double noOfTicks = WIDTH / majorTickSpace;
 
         List<LocalDateTime> previousDateList = new ArrayList<>();
-        Interval            previousInterval = Interval.values()[0];
+        Interval previousInterval = Interval.values()[0];
 
         // Starting with the greatest interval, add one of each dateTime unit.
         for (Interval interval : Interval.values()) {
@@ -1322,7 +1646,7 @@ public class Axis extends Region {
             currentInterval = interval;
 
             // Loop as long we exceeded the END bound.
-            while(dateTime.isBefore(END)) {
+            while (dateTime.isBefore(END)) {
                 dateList.add(dateTime);
                 dateTime = dateTime.plus(interval.getAmount(), interval.getInterval());
             }
@@ -1331,7 +1655,7 @@ public class Axis extends Region {
             if (dateList.size() > noOfTicks) {
                 dateTime = LocalDateTime.of(START.toLocalDate(), START.toLocalTime());
                 // Recheck if the previous interval is better suited.
-                while(dateTime.isBefore(END) || dateTime.isEqual(END)) {
+                while (dateTime.isBefore(END) || dateTime.isEqual(END)) {
                     previousDateList.add(dateTime);
                     dateTime = dateTime.plus(previousInterval.getAmount(), previousInterval.getInterval());
                 }
@@ -1354,9 +1678,9 @@ public class Axis extends Region {
         // If gaps between dates are to small, remove one of them.
         // This can occur, e.g. if the START bound is 25.12.2013 and years are shown. Then the next year shown would be 2014 (01.01.2014) which would be too narrow to 25.12.2013.
         if (evenDateList.size() > 2) {
-            LocalDateTime secondDate       = evenDateList.get(1);
-            LocalDateTime thirdDate        = evenDateList.get(2);
-            LocalDateTime lastDate         = evenDateList.get(dateList.size() - 2);
+            LocalDateTime secondDate = evenDateList.get(1);
+            LocalDateTime thirdDate = evenDateList.get(2);
+            LocalDateTime lastDate = evenDateList.get(dateList.size() - 2);
             LocalDateTime previousLastDate = evenDateList.get(dateList.size() - 3);
 
             // If the second date is too near by the START bound, remove it.
@@ -1372,6 +1696,7 @@ public class Axis extends Region {
         }
         return evenDateList;
     }
+
     private List<LocalDateTime> makeDatesEven(List<LocalDateTime> dates) {
         // If the dates contain more dates than just the lower and upper bounds, make the dates in between even.
         if (dates.size() > 2) {
@@ -1444,7 +1769,7 @@ public class Axis extends Region {
         }
     }
 
-    private String formatNumber(final Locale locale, final double number) { 
+    private String formatNumber(final Locale locale, final double number) {
         if (numberFormatter == null) {
             return String.format(locale, tickLabelFormatString, number);
         } else {
@@ -1455,10 +1780,15 @@ public class Axis extends Region {
 
     // ******************** Event Handling ************************************
     public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
-        if (!observers.containsKey(type)) { observers.put(type, new CopyOnWriteArrayList<>()); }
-        if (observers.get(type).contains(observer)) { return; }
+        if (!observers.containsKey(type)) {
+            observers.put(type, new CopyOnWriteArrayList<>());
+        }
+        if (observers.get(type).contains(observer)) {
+            return;
+        }
         observers.get(type).add(observer);
     }
+
     public void removeChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
         if (observers.containsKey(type)) {
             if (observers.get(type).contains(observer)) {
@@ -1466,7 +1796,8 @@ public class Axis extends Region {
             }
         }
     }
-    public void removeAllChartEvtObservers() { observers.clear(); }
+
+    public void removeAllChartEvtObservers() {observers.clear();}
 
     public void fireChartEvt(final ChartEvt evt) {
         final EvtType type = evt.getEvtType();
@@ -1479,13 +1810,15 @@ public class Axis extends Region {
 
     // ******************** Drawing *******************************************
     private void drawAxis() {
-        if (Double.compare(stepSize, 0) <= 0) { return; }
+        if (Double.compare(stepSize, 0) <= 0) {
+            return;
+        }
 
         stepSize = VERTICAL == getOrientation() ? Math.abs(height / getRange()) : Math.abs(width / getRange());
         double maxNoOfMajorTicks = 10;
         double maxNoOfMinorTicks = 10;
         if (isAutoScale()) {
-            double niceRange         = (Helper.calcNiceNumber((getMaxValue() - getMinValue()), false));
+            double niceRange = (Helper.calcNiceNumber((getMaxValue() - getMinValue()), false));
             setMajorTickSpace(Helper.calcNiceNumber(niceRange / (maxNoOfMajorTicks - 1), true));
             setMinorTickSpace(Helper.calcNiceNumber(getMajorTickSpace() / (maxNoOfMinorTicks - 1), true));
         } else {
@@ -1504,102 +1837,116 @@ public class Axis extends Region {
         axisCtx.setFont(tickLabelFont);
         axisCtx.setTextBaseline(VPos.CENTER);
 
-        AxisType        axisType                           = getType();
-        boolean         isAutoScale                        = isAutoScale();
-        double          minValue                           = getMinValue();
-        double          maxValue                           = getMaxValue();
-        boolean         tickLabelsVisible                  = getTickLabelsVisible();
-        boolean         isOnlyFirstAndLastTickLabelVisible = isOnlyFirstAndLastTickLabelVisible();
-        double          tickLabelFontSize                  = getTickLabelFontSize();
-        TickLabelFormat tickLabelFormat                    = getTickLabelFormat();
-        Color           tickLabelColor                     = getTickLabelColor();
-        Color           zeroColor                          = getZeroColor();
-        Color           majorTickMarkColor                 = getMajorTickMarkColor();
-        boolean         majorTickMarksVisible              = getMajorTickMarksVisible();
-        Color           mediumTickMarkColor                = getMediumTickMarkColor();
-        boolean         mediumTickMarksVisible             = getMediumTickMarksVisible();
-        Color           minorTickMarkColor                 = getMinorTickMarkColor();
-        boolean         minorTickMarksVisible              = getMinorTickMarksVisible();
-        boolean         sameTickMarkLength                 = getSameTickMarkLength();
-        double          majorLineWidth                     = size * 0.007 < MIN_MAJOR_LINE_WIDTH ? MIN_MAJOR_LINE_WIDTH : size * 0.007;
-        double          mediumLineWidth                    = size * 0.006 < MIN_MEDIUM_LINE_WIDTH ? MIN_MEDIUM_LINE_WIDTH : size * 0.005;
-        double          minorLineWidth                     = size * 0.005 < MIN_MINOR_LINE_WIDTH ? MIN_MINOR_LINE_WIDTH : size * 0.003;
-        double          maxMajorTickMarkLength;
-        double          maxMediumTickMarkLength;
-        double          maxMinorTickMarkLength;
-        double          textPosition;
-        double          minPosition;
-        double          maxPosition;
+        AxisType axisType = getType();
+        boolean isAutoScale = isAutoScale();
+        double minValue = getMinValue();
+        double maxValue = getMaxValue();
+        boolean tickLabelsVisible = getTickLabelsVisible();
+        boolean isOnlyFirstAndLastTickLabelVisible = isOnlyFirstAndLastTickLabelVisible();
+        double tickLabelFontSize = getTickLabelFontSize();
+        TickLabelFormat tickLabelFormat = getTickLabelFormat();
+        Color tickLabelColor = getTickLabelColor();
+        Color zeroColor = getZeroColor();
+        Color majorTickMarkColor = getMajorTickMarkColor();
+        boolean majorTickMarksVisible = getMajorTickMarksVisible();
+        Color mediumTickMarkColor = getMediumTickMarkColor();
+        boolean mediumTickMarksVisible = getMediumTickMarksVisible();
+        Color minorTickMarkColor = getMinorTickMarkColor();
+        boolean minorTickMarksVisible = getMinorTickMarksVisible();
+        boolean sameTickMarkLength = getSameTickMarkLength();
+        double majorLineWidth = size * 0.007 < MIN_MAJOR_LINE_WIDTH ? MIN_MAJOR_LINE_WIDTH : size * 0.007;
+        double mediumLineWidth = size * 0.006 < MIN_MEDIUM_LINE_WIDTH ? MIN_MEDIUM_LINE_WIDTH : size * 0.005;
+        double minorLineWidth = size * 0.005 < MIN_MINOR_LINE_WIDTH ? MIN_MINOR_LINE_WIDTH : size * 0.003;
+        double maxMajorTickMarkLength;
+        double maxMediumTickMarkLength;
+        double maxMinorTickMarkLength;
+        double textPosition;
+        double minPosition;
+        double maxPosition;
         if (VERTICAL == getOrientation()) {
-            minPosition             = 0;
-            maxPosition             = height;
-            textPosition            = width * 0.3;
-            maxMajorTickMarkLength  = sameTickMarkLength ? width * 0.175 : width * 0.2;
+            minPosition = 0;
+            maxPosition = height;
+            textPosition = width * 0.3;
+            maxMajorTickMarkLength = sameTickMarkLength ? width * 0.175 : width * 0.2;
             maxMediumTickMarkLength = width * 0.175;
-            maxMinorTickMarkLength  = sameTickMarkLength ? width * 0.175 : width * 0.1;
+            maxMinorTickMarkLength = sameTickMarkLength ? width * 0.175 : width * 0.1;
         } else {
-            minPosition             = 0;
-            maxPosition             = width;
-            textPosition            = height * 0.5;
-            maxMajorTickMarkLength  = sameTickMarkLength ? height * 0.175 : height * 0.2;
+            minPosition = 0;
+            maxPosition = width;
+            textPosition = height * 0.5;
+            maxMajorTickMarkLength = sameTickMarkLength ? height * 0.175 : height * 0.2;
             maxMediumTickMarkLength = height * 0.175;
-            maxMinorTickMarkLength  = sameTickMarkLength ? height * 0.175 : height * 0.1;
+            maxMinorTickMarkLength = sameTickMarkLength ? height * 0.175 : height * 0.1;
         }
 
-        Locale      locale            = getLocale();
-        Orientation orientation       = getOrientation();
-        Position    position          = getPosition();
-        double      anchorX           = (Position.LEFT == position || Position.CENTER == position) ? 0 : getZeroPosition();
-        double      anchorXPlusOffset = anchorX + width;
-        double      anchorY           = (Position.BOTTOM == position || Position.CENTER == position) ? 0 : getZeroPosition();
-        double      anchorYPlusOffset = anchorY + height;
-        boolean     isMinValue;
-        boolean     isZero;
-        boolean     isMaxValue;
-        double      innerPointX;
-        double      innerPointY;
-        double      outerPointX;
-        double      outerPointY;
-        double      mediumPointX;
-        double      mediumPointY;
-        double      minorPointX;
-        double      minorPointY;
-        double      textPointX;
-        double      textPointY;
-        double      maxTextWidth;
+        Locale locale = getLocale();
+        Orientation orientation = getOrientation();
+        Position position = getPosition();
+        double anchorX = (Position.LEFT == position || Position.CENTER == position) ? 0 : getZeroPosition();
+        double anchorXPlusOffset = anchorX + width;
+        double anchorY = (Position.BOTTOM == position || Position.CENTER == position) ? 0 : getZeroPosition();
+        double anchorYPlusOffset = anchorY + height;
+        boolean isMinValue;
+        boolean isZero;
+        boolean isMaxValue;
+        double innerPointX;
+        double innerPointY;
+        double outerPointX;
+        double outerPointY;
+        double mediumPointX;
+        double mediumPointY;
+        double minorPointX;
+        double minorPointY;
+        double textPointX;
+        double textPointY;
+        double maxTextWidth;
 
-        if (Position.RIGHT == position) { anchorX = 0; }
+        if (Position.RIGHT == position) {
+            anchorX = 0;
+        }
 
         if (AxisType.LINEAR == axisType || AxisType.TEXT == axisType) {
             // ******************** Linear ************************************
-            boolean    fullRange        = (minValue < 0 && maxValue > 0);
-            double     minorTickSpace   = getMinorTickSpace();
-            double     majorTickSpace   = getMajorTickSpace();
-            double     tmpStepSize      = minorTickSpace;
+            boolean fullRange = (minValue < 0 && maxValue > 0);
+            double minorTickSpace = getMinorTickSpace();
+            double majorTickSpace = getMajorTickSpace();
+            double tmpStepSize = minorTickSpace;
             BigDecimal minorTickSpaceBD = BigDecimal.valueOf(minorTickSpace);
             BigDecimal majorTickSpaceBD = BigDecimal.valueOf(majorTickSpace);
-            BigDecimal mediumCheck2     = BigDecimal.valueOf(2 * minorTickSpace);
-            BigDecimal mediumCheck5     = BigDecimal.valueOf(5 * minorTickSpace);
-            BigDecimal counterBD        = BigDecimal.valueOf(minValue);
-            double     counter          = minValue;
-            double     range            = getRange();
-            int        noOfCategories   = categories.size();
+            BigDecimal mediumCheck2 = BigDecimal.valueOf(2 * minorTickSpace);
+            BigDecimal mediumCheck5 = BigDecimal.valueOf(5 * minorTickSpace);
+            BigDecimal counterBD = BigDecimal.valueOf(minValue);
+            double counter = minValue;
+            double range = getRange();
+            int noOfCategories = categories.size();
 
             axisCtx.setStroke(getAxisColor());
             axisCtx.setLineWidth(majorLineWidth);
 
             // Draw axis
             if (VERTICAL == orientation) {
-                switch(position) {
-                    case LEFT : axisCtx.strokeLine(anchorXPlusOffset, minPosition, anchorXPlusOffset, maxPosition); break;
-                    case RIGHT: axisCtx.strokeLine(anchorX, minPosition, anchorX, maxPosition); break;
-                    default   : axisCtx.strokeLine(anchorX, minPosition, anchorX, maxPosition); break;
+                switch (position) {
+                    case LEFT:
+                        axisCtx.strokeLine(anchorXPlusOffset, minPosition, anchorXPlusOffset, maxPosition);
+                        break;
+                    case RIGHT:
+                        axisCtx.strokeLine(anchorX, minPosition, anchorX, maxPosition);
+                        break;
+                    default:
+                        axisCtx.strokeLine(anchorX, minPosition, anchorX, maxPosition);
+                        break;
                 }
             } else {
-                switch(position) {
-                    case BOTTOM: axisCtx.strokeLine(minPosition, anchorY, maxPosition, anchorY); break;
-                    case TOP   : axisCtx.strokeLine(minPosition, anchorYPlusOffset, maxPosition, anchorYPlusOffset); break;
-                    default    : axisCtx.strokeLine(minPosition, anchorY, maxPosition, anchorY); break;
+                switch (position) {
+                    case BOTTOM:
+                        axisCtx.strokeLine(minPosition, anchorY, maxPosition, anchorY);
+                        break;
+                    case TOP:
+                        axisCtx.strokeLine(minPosition, anchorYPlusOffset, maxPosition, anchorYPlusOffset);
+                        break;
+                    default:
+                        axisCtx.strokeLine(minPosition, anchorY, maxPosition, anchorY);
+                        break;
                 }
             }
 
@@ -1607,85 +1954,85 @@ public class Axis extends Region {
             // Main Loop for tick marks and labels
             BigDecimal tmpStepBD = new BigDecimal(tmpStepSize);
             tmpStepBD = tmpStepBD.setScale(6, RoundingMode.HALF_UP); // newScale == number of decimals taken into account
-            double tmpStep          = tmpStepBD.doubleValue();
-            int    tickMarkCounter  = 0;
-            int    tickLabelCounter = 0;
+            double tmpStep = tmpStepBD.doubleValue();
+            int tickMarkCounter = 0;
+            int tickLabelCounter = 0;
             for (double i = 0; Double.compare(-range - tmpStep, i) <= 0; i -= tmpStep) {
                 double fixedPosition = (counter - minValue) * stepSize;
                 if (VERTICAL == orientation) {
                     if (Position.LEFT == position) {
-                        innerPointX  = anchorXPlusOffset - maxMajorTickMarkLength;
-                        innerPointY  = fixedPosition;
+                        innerPointX = anchorXPlusOffset - maxMajorTickMarkLength;
+                        innerPointY = fixedPosition;
                         mediumPointX = anchorXPlusOffset - maxMediumTickMarkLength;
                         mediumPointY = fixedPosition;
-                        minorPointX  = anchorXPlusOffset - maxMinorTickMarkLength;
-                        minorPointY  = fixedPosition;
-                        outerPointX  = anchorXPlusOffset;
-                        outerPointY  = fixedPosition;
-                        textPointX   = anchorXPlusOffset - textPosition;
-                        textPointY   = fixedPosition;
+                        minorPointX = anchorXPlusOffset - maxMinorTickMarkLength;
+                        minorPointY = fixedPosition;
+                        outerPointX = anchorXPlusOffset;
+                        outerPointY = fixedPosition;
+                        textPointX = anchorXPlusOffset - textPosition;
+                        textPointY = fixedPosition;
                         maxTextWidth = 0.6 * width;
                     } else if (Position.RIGHT == position) {
-                        innerPointX  = anchorX + maxMajorTickMarkLength;
-                        innerPointY  = fixedPosition;
+                        innerPointX = anchorX + maxMajorTickMarkLength;
+                        innerPointY = fixedPosition;
                         mediumPointX = anchorX + maxMediumTickMarkLength;
                         mediumPointY = fixedPosition;
-                        minorPointX  = anchorX + maxMinorTickMarkLength;
-                        minorPointY  = fixedPosition;
-                        outerPointX  = anchorX;
-                        outerPointY  = fixedPosition;
-                        textPointX   = width;
-                        textPointY   = fixedPosition;
+                        minorPointX = anchorX + maxMinorTickMarkLength;
+                        minorPointY = fixedPosition;
+                        outerPointX = anchorX;
+                        outerPointY = fixedPosition;
+                        textPointX = width;
+                        textPointY = fixedPosition;
                         maxTextWidth = textPosition;
                     } else {
-                        innerPointX  = anchorX + maxMajorTickMarkLength;
-                        innerPointY  = fixedPosition;
+                        innerPointX = anchorX + maxMajorTickMarkLength;
+                        innerPointY = fixedPosition;
                         mediumPointX = anchorX + maxMediumTickMarkLength;
                         mediumPointY = fixedPosition;
-                        minorPointX  = anchorX + maxMinorTickMarkLength;
-                        minorPointY  = fixedPosition;
-                        outerPointX  = anchorX;
-                        outerPointY  = fixedPosition;
-                        textPointX   = anchorXPlusOffset;
-                        textPointY   = fixedPosition;
+                        minorPointX = anchorX + maxMinorTickMarkLength;
+                        minorPointY = fixedPosition;
+                        outerPointX = anchorX;
+                        outerPointY = fixedPosition;
+                        textPointX = anchorXPlusOffset;
+                        textPointY = fixedPosition;
                         maxTextWidth = textPosition;
                     }
                 } else {
                     if (Position.BOTTOM == position) {
-                        innerPointX  = fixedPosition;
-                        innerPointY  = anchorY + maxMajorTickMarkLength;
+                        innerPointX = fixedPosition;
+                        innerPointY = anchorY + maxMajorTickMarkLength;
                         mediumPointX = fixedPosition;
                         mediumPointY = anchorY + maxMediumTickMarkLength;
-                        minorPointX  = fixedPosition;
-                        minorPointY  = anchorY + maxMinorTickMarkLength;
-                        outerPointX  = fixedPosition;
-                        outerPointY  = anchorY;
-                        textPointX   = fixedPosition;
-                        textPointY   = innerPointY + textPosition - tickLabelFontSize * 0.8;
+                        minorPointX = fixedPosition;
+                        minorPointY = anchorY + maxMinorTickMarkLength;
+                        outerPointX = fixedPosition;
+                        outerPointY = anchorY;
+                        textPointX = fixedPosition;
+                        textPointY = innerPointY + textPosition - tickLabelFontSize * 0.8;
                         maxTextWidth = majorTickSpace * stepSize;
                     } else if (Position.TOP == position) {
-                        innerPointX  = fixedPosition;
-                        innerPointY  = anchorYPlusOffset - maxMajorTickMarkLength;
+                        innerPointX = fixedPosition;
+                        innerPointY = anchorYPlusOffset - maxMajorTickMarkLength;
                         mediumPointX = fixedPosition;
                         mediumPointY = anchorYPlusOffset - maxMediumTickMarkLength;
-                        minorPointX  = fixedPosition;
-                        minorPointY  = anchorYPlusOffset - maxMinorTickMarkLength;
-                        outerPointX  = fixedPosition;
-                        outerPointY  = anchorYPlusOffset;
-                        textPointX   = fixedPosition;
-                        textPointY   = innerPointY - textPosition + tickLabelFontSize * 0.5;
+                        minorPointX = fixedPosition;
+                        minorPointY = anchorYPlusOffset - maxMinorTickMarkLength;
+                        outerPointX = fixedPosition;
+                        outerPointY = anchorYPlusOffset;
+                        textPointX = fixedPosition;
+                        textPointY = innerPointY - textPosition + tickLabelFontSize * 0.5;
                         maxTextWidth = majorTickSpace * stepSize;
                     } else {
-                        innerPointX  = fixedPosition;
-                        innerPointY  = anchorY + maxMajorTickMarkLength;
+                        innerPointX = fixedPosition;
+                        innerPointY = anchorY + maxMajorTickMarkLength;
                         mediumPointX = fixedPosition;
                         mediumPointY = anchorY + maxMediumTickMarkLength;
-                        minorPointX  = fixedPosition;
-                        minorPointY  = anchorY + maxMinorTickMarkLength;
-                        outerPointX  = fixedPosition;
-                        outerPointY  = anchorY;
-                        textPointX   = fixedPosition;
-                        textPointY   = innerPointY + textPosition - tickLabelFontSize * 0.8;
+                        minorPointX = fixedPosition;
+                        minorPointY = anchorY + maxMinorTickMarkLength;
+                        outerPointX = fixedPosition;
+                        outerPointY = anchorY;
+                        textPointX = fixedPosition;
+                        textPointY = innerPointY + textPosition - tickLabelFontSize * 0.8;
                         maxTextWidth = majorTickSpace * stepSize;
                     }
                 }
@@ -1700,7 +2047,9 @@ public class Axis extends Region {
                         isZero = Double.compare(0.0, counter) == 0;
                     }
 
-                    if (isZero) { setZeroPosition(fixedPosition); }
+                    if (isZero) {
+                        setZeroPosition(fixedPosition);
+                    }
 
                     if (majorTickMarksVisible) {
                         drawTickMark((fullRange && isZero) ? zeroColor : majorTickMarkColor, majorLineWidth, innerPointX, innerPointY, outerPointX, outerPointY);
@@ -1735,7 +2084,7 @@ public class Axis extends Region {
                         drawTickLabel(isOnlyFirstAndLastTickLabelVisible, isZero, isMinValue, isMaxValue, fullRange, zeroColor, tickLabelColor, textPointX, textPointY, maxTextWidth, tickLabelString, orientation);
                     }
                 } else if (mediumTickMarksVisible && Double.compare(minorTickSpaceBD.setScale(12, RoundingMode.HALF_UP).remainder(mediumCheck2).doubleValue(), 0.0) != 0.0 &&
-                           Double.compare(counterBD.setScale(12, RoundingMode.HALF_UP).remainder(mediumCheck5).doubleValue(), 0.0) == 0.0) {
+                        Double.compare(counterBD.setScale(12, RoundingMode.HALF_UP).remainder(mediumCheck5).doubleValue(), 0.0) == 0.0) {
                     // Draw medium tick mark
                     drawTickMark(mediumTickMarkColor, mediumLineWidth, mediumPointX, mediumPointY, outerPointX, outerPointY);
                 } else if (minorTickMarksVisible && Double.compare(counterBD.setScale(12, RoundingMode.HALF_UP).remainder(minorTickSpaceBD).doubleValue(), 0.0) == 0) {
@@ -1751,7 +2100,9 @@ public class Axis extends Region {
                         isZero = Double.compare(0.0, counter) == 0;
                     }
 
-                    if (isZero) { setZeroPosition(fixedPosition); }
+                    if (isZero) {
+                        setZeroPosition(fixedPosition);
+                    }
 
                     if (minorTickMarksVisible) {
                         drawTickMark((fullRange && isZero) ? zeroColor : minorTickMarkColor, minorLineWidth, innerPointX, innerPointY, outerPointX, outerPointY);
@@ -1777,7 +2128,7 @@ public class Axis extends Region {
                 counter = counterBD.doubleValue();
                 if (counter > maxValue) break;
             }
-        } else if (AxisType.LOGARITHMIC == axisType){
+        } else if (AxisType.LOGARITHMIC == axisType) {
             // ******************** Logarithmic *******************************
             tickLabelFormatString = "%6.0e";
             double logLowerBound = Math.log10(getMinValue());
@@ -1807,53 +2158,53 @@ public class Axis extends Region {
                     double stepSize = i > 0 ? (Math.log10(value.doubleValue()) % i) : Math.log10(value.doubleValue());
                     double fixedPosition;
                     if (VERTICAL == orientation) {
-                        isMinValue    = Double.compare(i, logUpperBound) == 0;
-                        isMaxValue    = i == 0;
+                        isMinValue = Double.compare(i, logUpperBound) == 0;
+                        isMaxValue = i == 0;
                         fixedPosition = maxPosition - i * section - (stepSize * section);
                         if (Position.LEFT == position) {
-                            innerPointX  = anchorXPlusOffset - maxMajorTickMarkLength;
-                            innerPointY  = fixedPosition;
-                            minorPointX  = anchorXPlusOffset - maxMinorTickMarkLength;
-                            minorPointY  = fixedPosition;
-                            outerPointX  = anchorXPlusOffset;
-                            outerPointY  = fixedPosition;
-                            textPointX   = anchorXPlusOffset - textPosition;
-                            textPointY   = fixedPosition;
+                            innerPointX = anchorXPlusOffset - maxMajorTickMarkLength;
+                            innerPointY = fixedPosition;
+                            minorPointX = anchorXPlusOffset - maxMinorTickMarkLength;
+                            minorPointY = fixedPosition;
+                            outerPointX = anchorXPlusOffset;
+                            outerPointY = fixedPosition;
+                            textPointX = anchorXPlusOffset - textPosition;
+                            textPointY = fixedPosition;
                             maxTextWidth = 0.6 * width;
                         } else {
-                            innerPointX  = anchorX + maxMajorTickMarkLength;
-                            innerPointY  = fixedPosition;
-                            minorPointX  = anchorX + maxMinorTickMarkLength;
-                            minorPointY  = fixedPosition;
-                            outerPointX  = anchorX;
-                            outerPointY  = fixedPosition;
-                            textPointX   = anchorXPlusOffset;
-                            textPointY   = fixedPosition;
+                            innerPointX = anchorX + maxMajorTickMarkLength;
+                            innerPointY = fixedPosition;
+                            minorPointX = anchorX + maxMinorTickMarkLength;
+                            minorPointY = fixedPosition;
+                            outerPointX = anchorX;
+                            outerPointY = fixedPosition;
+                            textPointX = anchorXPlusOffset;
+                            textPointY = fixedPosition;
                             maxTextWidth = width;
                         }
                     } else {
-                        isMinValue    = i == 0;
-                        isMaxValue    = Double.compare(i, logUpperBound) == 0;
+                        isMinValue = i == 0;
+                        isMaxValue = Double.compare(i, logUpperBound) == 0;
                         fixedPosition = i * section + (stepSize * section);
                         if (Position.BOTTOM == position) {
-                            innerPointX  = fixedPosition;
-                            innerPointY  = anchorY + maxMajorTickMarkLength;
-                            minorPointX  = fixedPosition;
-                            minorPointY  = anchorY + maxMinorTickMarkLength;
-                            outerPointX  = fixedPosition;
-                            outerPointY  = anchorY;
-                            textPointX   = fixedPosition;
-                            textPointY   = anchorY + textPosition - tickLabelFontSize * 0.2;
+                            innerPointX = fixedPosition;
+                            innerPointY = anchorY + maxMajorTickMarkLength;
+                            minorPointX = fixedPosition;
+                            minorPointY = anchorY + maxMinorTickMarkLength;
+                            outerPointX = fixedPosition;
+                            outerPointY = anchorY;
+                            textPointX = fixedPosition;
+                            textPointY = anchorY + textPosition - tickLabelFontSize * 0.2;
                             maxTextWidth = section;
                         } else {
-                            innerPointX  = fixedPosition;
-                            innerPointY  = anchorYPlusOffset - maxMajorTickMarkLength;
-                            minorPointX  = fixedPosition;
-                            minorPointY  = anchorYPlusOffset - maxMinorTickMarkLength;
-                            outerPointX  = fixedPosition;
-                            outerPointY  = anchorYPlusOffset;
-                            textPointX   = fixedPosition;
-                            textPointY   = anchorY - textPosition + tickLabelFontSize * 0.5;
+                            innerPointX = fixedPosition;
+                            innerPointY = anchorYPlusOffset - maxMajorTickMarkLength;
+                            minorPointX = fixedPosition;
+                            minorPointY = anchorYPlusOffset - maxMinorTickMarkLength;
+                            outerPointX = fixedPosition;
+                            outerPointY = anchorYPlusOffset;
+                            textPointX = fixedPosition;
+                            textPointY = anchorY - textPosition + tickLabelFontSize * 0.5;
                             maxTextWidth = section;
                         }
                     }
@@ -1882,6 +2233,7 @@ public class Axis extends Region {
         }
         drawAxisTitle(orientation, position);
     }
+
     private void drawTimeAxis() {
         if (Double.compare(stepSize, 0) <= 0) return;
 
@@ -1890,25 +2242,25 @@ public class Axis extends Region {
         axisCtx.setFont(tickLabelFont);
         axisCtx.setTextBaseline(VPos.CENTER);
 
-        double      minValue                           = Helper.toNumericValue(getStart());
-        double      maxValue                           = Helper.toNumericValue(getEnd());
-        boolean     tickLabelsVisible                  = getTickLabelsVisible();
-        boolean     mediumTickLabelsVisible            = getMediumTimeAxisTickLabelsVisible();
-        boolean     isOnlyFirstAndLastTickLabelVisible = isOnlyFirstAndLastTickLabelVisible();
-        double      tickLabelFontSize                  = getTickLabelFontSize();
-        Color       tickLabelColor                     = getTickLabelColor();
-        Color       majorTickMarkColor                 = getMajorTickMarkColor();
-        boolean     majorTickMarksVisible              = getMajorTickMarksVisible();
-        Color       mediumTickMarkColor                = getMediumTickMarkColor();
-        boolean     mediumTickMarksVisible             = getMediumTickMarksVisible();
-        Color       minorTickMarkColor                 = getMinorTickMarkColor();
-        boolean     minorTickMarksVisible              = getMinorTickMarksVisible();
-        boolean     sameTickMarkLength                 = getSameTickMarkLength();
-        double      majorLineWidth                     = size * 0.007 < MIN_MAJOR_LINE_WIDTH  ? MIN_MAJOR_LINE_WIDTH  : size * 0.007;
-        double      mediumLineWidth                    = size * 0.006 < MIN_MEDIUM_LINE_WIDTH ? MIN_MEDIUM_LINE_WIDTH : size * 0.005;
-        double      minorLineWidth                     = size * 0.005 < MIN_MINOR_LINE_WIDTH  ? MIN_MINOR_LINE_WIDTH  : size * 0.003;
-        double      minPosition;
-        double      maxPosition;
+        double minValue = Helper.toNumericValue(getStart());
+        double maxValue = Helper.toNumericValue(getEnd());
+        boolean tickLabelsVisible = getTickLabelsVisible();
+        boolean mediumTickLabelsVisible = getMediumTimeAxisTickLabelsVisible();
+        boolean isOnlyFirstAndLastTickLabelVisible = isOnlyFirstAndLastTickLabelVisible();
+        double tickLabelFontSize = getTickLabelFontSize();
+        Color tickLabelColor = getTickLabelColor();
+        Color majorTickMarkColor = getMajorTickMarkColor();
+        boolean majorTickMarksVisible = getMajorTickMarksVisible();
+        Color mediumTickMarkColor = getMediumTickMarkColor();
+        boolean mediumTickMarksVisible = getMediumTickMarksVisible();
+        Color minorTickMarkColor = getMinorTickMarkColor();
+        boolean minorTickMarksVisible = getMinorTickMarksVisible();
+        boolean sameTickMarkLength = getSameTickMarkLength();
+        double majorLineWidth = size * 0.007 < MIN_MAJOR_LINE_WIDTH ? MIN_MAJOR_LINE_WIDTH : size * 0.007;
+        double mediumLineWidth = size * 0.006 < MIN_MEDIUM_LINE_WIDTH ? MIN_MEDIUM_LINE_WIDTH : size * 0.005;
+        double minorLineWidth = size * 0.005 < MIN_MINOR_LINE_WIDTH ? MIN_MINOR_LINE_WIDTH : size * 0.003;
+        double minPosition;
+        double maxPosition;
         if (VERTICAL == getOrientation()) {
             minPosition = 0;
             maxPosition = height;
@@ -1917,65 +2269,77 @@ public class Axis extends Region {
             maxPosition = width;
         }
 
-        Orientation orientation       = getOrientation();
-        Position    position          = getPosition();
-        double      anchorX           = Position.LEFT == position ? 0 : getZeroPosition();
-        double      anchorXPlusOffset = anchorX + width;
-        double      anchorY           = Position.BOTTOM == position ? 0 : getZeroPosition();
-        double      anchorYPlusOffset = anchorY + height;
-        boolean     isMinValue;
-        boolean     isMaxValue;
-        double      innerPointX;
-        double      innerPointY;
-        double      outerPointX;
-        double      outerPointY;
-        double      mediumPointX;
-        double      mediumPointY;
-        double      minorPointX;
-        double      minorPointY;
-        double      textPointX;
-        double      textPointY;
-        double      maxTextWidth;
+        Orientation orientation = getOrientation();
+        Position position = getPosition();
+        double anchorX = Position.LEFT == position ? 0 : getZeroPosition();
+        double anchorXPlusOffset = anchorX + width;
+        double anchorY = Position.BOTTOM == position ? 0 : getZeroPosition();
+        double anchorYPlusOffset = anchorY + height;
+        boolean isMinValue;
+        boolean isMaxValue;
+        double innerPointX;
+        double innerPointY;
+        double outerPointX;
+        double outerPointY;
+        double mediumPointX;
+        double mediumPointY;
+        double minorPointX;
+        double minorPointY;
+        double textPointX;
+        double textPointY;
+        double maxTextWidth;
 
         // ******************** Date **************************************
         createTickValues(width, getStart(), getEnd());
-        long                minValueInSeconds = getStart().toEpochSecond(Helper.getZoneOffset());
-        long                maxValueInSeconds = getEnd().toEpochSecond(Helper.getZoneOffset());
-        long                rangeInSeconds    = Duration.between(getStart(), getEnd()).getSeconds();
-        double              stepSize          = VERTICAL == orientation ? height / rangeInSeconds : width / rangeInSeconds;
-        long                majorTickSpace    = currentInterval.getMajorTickSpace();
-        long                mediumTickSpace   = currentInterval.getMediumTickSpace();
-        long                minorTickSpace    = currentInterval.getMinorTickSpace();
-        long                counter           = minValueInSeconds;
+        long minValueInSeconds = getStart().toEpochSecond(Helper.getZoneOffset());
+        long maxValueInSeconds = getEnd().toEpochSecond(Helper.getZoneOffset());
+        long rangeInSeconds = Duration.between(getStart(), getEnd()).getSeconds();
+        double stepSize = VERTICAL == orientation ? height / rangeInSeconds : width / rangeInSeconds;
+        long majorTickSpace = currentInterval.getMajorTickSpace();
+        long mediumTickSpace = currentInterval.getMediumTickSpace();
+        long minorTickSpace = currentInterval.getMinorTickSpace();
+        long counter = minValueInSeconds;
 
         axisCtx.setLineWidth(majorLineWidth);
 
         // Draw axis
         if (VERTICAL == orientation) {
-            switch(position) {
-                case LEFT : axisCtx.strokeLine(anchorXPlusOffset, minPosition, anchorXPlusOffset, maxPosition); break;
-                case RIGHT: axisCtx.strokeLine(anchorX, minPosition, anchorX, maxPosition); break;
-                default   : axisCtx.strokeLine(anchorX, minPosition, anchorX, maxPosition); break;
+            switch (position) {
+                case LEFT:
+                    axisCtx.strokeLine(anchorXPlusOffset, minPosition, anchorXPlusOffset, maxPosition);
+                    break;
+                case RIGHT:
+                    axisCtx.strokeLine(anchorX, minPosition, anchorX, maxPosition);
+                    break;
+                default:
+                    axisCtx.strokeLine(anchorX, minPosition, anchorX, maxPosition);
+                    break;
             }
         } else {
-            switch(position) {
-                case BOTTOM: axisCtx.strokeLine(minPosition, anchorY, maxPosition, anchorY); break;
-                case TOP   : axisCtx.strokeLine(minPosition, anchorYPlusOffset, maxPosition, anchorYPlusOffset); break;
-                default    : axisCtx.strokeLine(minPosition, anchorY, maxPosition, anchorY); break;
+            switch (position) {
+                case BOTTOM:
+                    axisCtx.strokeLine(minPosition, anchorY, maxPosition, anchorY);
+                    break;
+                case TOP:
+                    axisCtx.strokeLine(minPosition, anchorYPlusOffset, maxPosition, anchorYPlusOffset);
+                    break;
+                default:
+                    axisCtx.strokeLine(minPosition, anchorY, maxPosition, anchorY);
+                    break;
             }
         }
 
-        double majorTickMarkLengthFactor  = sameTickMarkLength ? 0.4 : 0.5;
+        double majorTickMarkLengthFactor = sameTickMarkLength ? 0.4 : 0.5;
         double mediumTickMarkLengthFactor = 0.4;
-        double minorTickMarkLengthFactor  = sameTickMarkLength ? 0.4 : 0.3;
+        double minorTickMarkLengthFactor = sameTickMarkLength ? 0.4 : 0.3;
 
-        double majorTickMarkLength  = VERTICAL == orientation ? majorTickMarkLengthFactor  * width : majorTickMarkLengthFactor  * height;
+        double majorTickMarkLength = VERTICAL == orientation ? majorTickMarkLengthFactor * width : majorTickMarkLengthFactor * height;
         double mediumTickMarkLength = VERTICAL == orientation ? mediumTickMarkLengthFactor * width : mediumTickMarkLengthFactor * height;
-        double minorTickMarkLength  = VERTICAL == orientation ? minorTickMarkLengthFactor  * width : minorTickMarkLengthFactor  * height;
+        double minorTickMarkLength = VERTICAL == orientation ? minorTickMarkLengthFactor * width : minorTickMarkLengthFactor * height;
 
         ZoneOffset zoneOffset = Helper.getZoneOffset();
-        long       duration   = getEnd().toEpochSecond(zoneOffset) - getStart().toEpochSecond(zoneOffset);
-        long       step;
+        long duration = getEnd().toEpochSecond(zoneOffset) - getStart().toEpochSecond(zoneOffset);
+        long step;
         if (duration > 31536000) {
             step = 3600;
         } else if (duration > 2592000) {
@@ -1990,78 +2354,78 @@ public class Axis extends Region {
 
             if (VERTICAL == orientation) {
                 if (Position.LEFT == position) {
-                    innerPointX  = anchorXPlusOffset - majorTickMarkLength;
-                    innerPointY  = fixedPosition;
+                    innerPointX = anchorXPlusOffset - majorTickMarkLength;
+                    innerPointY = fixedPosition;
                     mediumPointX = anchorXPlusOffset - mediumTickMarkLength;
                     mediumPointY = fixedPosition;
-                    minorPointX  = anchorXPlusOffset - minorTickMarkLength;
-                    minorPointY  = fixedPosition;
-                    outerPointX  = anchorXPlusOffset;
-                    outerPointY  = fixedPosition;
-                    textPointX   = anchorXPlusOffset - 0.6 * width;
-                    textPointY   = fixedPosition;
+                    minorPointX = anchorXPlusOffset - minorTickMarkLength;
+                    minorPointY = fixedPosition;
+                    outerPointX = anchorXPlusOffset;
+                    outerPointY = fixedPosition;
+                    textPointX = anchorXPlusOffset - 0.6 * width;
+                    textPointY = fixedPosition;
                     maxTextWidth = 0.6 * width;
                 } else if (Position.RIGHT == position) {
-                    innerPointX  = anchorX + majorTickMarkLength;
-                    innerPointY  = fixedPosition;
+                    innerPointX = anchorX + majorTickMarkLength;
+                    innerPointY = fixedPosition;
                     mediumPointX = anchorX + mediumTickMarkLength;
                     mediumPointY = fixedPosition;
-                    minorPointX  = anchorX + minorTickMarkLength;
-                    minorPointY  = fixedPosition;
-                    outerPointX  = anchorX;
-                    outerPointY  = fixedPosition;
-                    textPointX   = anchorXPlusOffset;
-                    textPointY   = fixedPosition;
+                    minorPointX = anchorX + minorTickMarkLength;
+                    minorPointY = fixedPosition;
+                    outerPointX = anchorX;
+                    outerPointY = fixedPosition;
+                    textPointX = anchorXPlusOffset;
+                    textPointY = fixedPosition;
                     maxTextWidth = width;
                 } else {
-                    innerPointX  = anchorX - 0.25 * width;
-                    innerPointY  = fixedPosition;
+                    innerPointX = anchorX - 0.25 * width;
+                    innerPointY = fixedPosition;
                     mediumPointX = anchorX - 0.2 * width;
                     mediumPointY = fixedPosition;
-                    minorPointX  = anchorX - 0.15 * width;
-                    minorPointY  = fixedPosition;
-                    outerPointX  = anchorX;
-                    outerPointY  = fixedPosition;
-                    textPointX   = anchorXPlusOffset;
-                    textPointY   = fixedPosition;
+                    minorPointX = anchorX - 0.15 * width;
+                    minorPointY = fixedPosition;
+                    outerPointX = anchorX;
+                    outerPointY = fixedPosition;
+                    textPointX = anchorXPlusOffset;
+                    textPointY = fixedPosition;
                     maxTextWidth = width;
                 }
             } else {
                 if (Position.BOTTOM == position) {
-                    innerPointX  = fixedPosition;
-                    innerPointY  = anchorY + majorTickMarkLength;
+                    innerPointX = fixedPosition;
+                    innerPointY = anchorY + majorTickMarkLength;
                     mediumPointX = fixedPosition;
                     mediumPointY = anchorY + mediumTickMarkLength;
-                    minorPointX  = fixedPosition;
-                    minorPointY  = anchorY + minorTickMarkLength;
-                    outerPointX  = fixedPosition;
-                    outerPointY  = anchorY;
-                    textPointX   = fixedPosition;
-                    textPointY   = anchorY + 0.8 * height;
+                    minorPointX = fixedPosition;
+                    minorPointY = anchorY + minorTickMarkLength;
+                    outerPointX = fixedPosition;
+                    outerPointY = anchorY;
+                    textPointX = fixedPosition;
+                    textPointY = anchorY + 0.8 * height;
                     maxTextWidth = majorTickSpace * stepSize;
                 } else if (Position.TOP == position) {
-                    innerPointX  = fixedPosition;
-                    innerPointY  = anchorYPlusOffset - majorTickMarkLength;
+                    innerPointX = fixedPosition;
+                    innerPointY = anchorYPlusOffset - majorTickMarkLength;
                     mediumPointX = fixedPosition;
                     mediumPointY = anchorYPlusOffset - mediumTickMarkLength;
-                    minorPointX  = fixedPosition;
-                    minorPointY  = anchorYPlusOffset - minorTickMarkLength;
-                    outerPointX  = fixedPosition;
-                    outerPointY  = anchorYPlusOffset;
-                    textPointX   = fixedPosition;
-                    textPointY   = anchorY + 0.2 * height;
+                    minorPointX = fixedPosition;
+                    minorPointY = anchorYPlusOffset - minorTickMarkLength;
+                    outerPointX = fixedPosition;
+                    outerPointY = anchorYPlusOffset;
+                    textPointX = fixedPosition;
+                    textPointY = anchorY + 0.2 * height;
                     maxTextWidth = majorTickSpace * stepSize;
                 } else {
-                    innerPointX  = fixedPosition;
-                    innerPointY  = anchorY - 0.25 * height;
+                    innerPointX = fixedPosition;
+                    innerPointY = anchorY - 0.25 * height;
                     mediumPointX = fixedPosition;
                     mediumPointY = anchorY - 0.2 * height;
-                    minorPointX  = fixedPosition;
-                    minorPointY  = anchorY - 0.15 * height;
-                    outerPointX  = fixedPosition;
-                    outerPointY  = anchorY;
-                    textPointX   = fixedPosition;
-                    textPointY   = anchorY + 0.2 * height;
+                    minorPointX = fixedPosition;
+                    minorPointY = anchorY - 0.15 * height;
+                    outerPointX = fixedPosition;
+                    outerPointY = anchorY;
+                    textPointX = fixedPosition;
+                    textPointY = anchorY + 0.2 * height;
                     maxTextWidth = majorTickSpace * stepSize;
                 }
             }
@@ -2120,7 +2484,7 @@ public class Axis extends Region {
                         drawTickLabel(isOnlyFirstAndLastTickLabelVisible, false, isMinValue, isMaxValue, false, majorTickMarkColor, tickLabelColor, textPointX, textPointY, maxTextWidth, dateTimeFormatter.format(toLocalDateTime(i)), orientation);
                     }
                 }
-            } else if(mediumTickMarksVisible && i % mediumTickSpace == 0) {
+            } else if (mediumTickMarksVisible && i % mediumTickSpace == 0) {
                 // Draw medium tick mark
                 axisCtx.setStroke(mediumTickMarkColor);
                 axisCtx.setLineWidth(mediumLineWidth);
@@ -2137,10 +2501,10 @@ public class Axis extends Region {
                         LocalDateTime currentDateTime = toLocalDateTime(i);
                         double halfLabelWidth = calcTextWidth(tickLabelFont, dateTimeFormatter.format(currentDateTime)) * 0.5;
                         if (textPointX - halfLabelWidth < 0) {
-                                textPointX = halfLabelWidth;
-                            } else if (textPointX + halfLabelWidth > width) {
-                                textPointX = width - halfLabelWidth;
-                            }
+                            textPointX = halfLabelWidth;
+                        } else if (textPointX + halfLabelWidth > width) {
+                            textPointX = width - halfLabelWidth;
+                        }
                         drawTickLabel(isOnlyFirstAndLastTickLabelVisible, false, false, false, false, majorTickMarkColor, tickLabelColor, textPointX, textPointY, maxTextWidth, dateTimeFormatter.format(toLocalDateTime(i)), orientation);
                     }
                 }
@@ -2154,7 +2518,7 @@ public class Axis extends Region {
             counter++; // 1 Second
             if (counter > maxValue) break;
         }
-        
+
         drawAxisTitle(orientation, position);
     }
 
@@ -2167,12 +2531,12 @@ public class Axis extends Region {
         axisCtx.setTextAlign(TextAlignment.CENTER);
         axisCtx.setTextBaseline(VPos.CENTER);
         if (Orientation.HORIZONTAL == ORIENTATION) {
-            switch(POSITION) {
-                case TOP    -> axisCtx.fillText(getTitle(), width * 0.5, titleFontSize * 0.5);
+            switch (POSITION) {
+                case TOP -> axisCtx.fillText(getTitle(), width * 0.5, titleFontSize * 0.5);
                 case BOTTOM -> axisCtx.fillText(getTitle(), width * 0.5, height - titleFontSize * 0.5);
             }
         } else {
-            switch(POSITION) {
+            switch (POSITION) {
                 case LEFT:
                     axisCtx.save();
                     axisCtx.translate(titleFontSize * 0.5, height * 0.5);
@@ -2198,7 +2562,7 @@ public class Axis extends Region {
     }
 
     private void drawTickLabel(final boolean ONLY_FIRST_AND_LAST_VISIBLE, final boolean IS_ZERO, final boolean IS_MIN, final boolean IS_MAX, final boolean FULL_RANGE,
-                               final Color ZERO_COLOR, final Color COLOR, final double TEXT_X, final double TEXT_Y, final double MAX_WIDTH, final String TEXT, final Orientation ORIENTATION) {
+            final Color ZERO_COLOR, final Color COLOR, final double TEXT_X, final double TEXT_Y, final double MAX_WIDTH, final String TEXT, final Orientation ORIENTATION) {
         if (!ONLY_FIRST_AND_LAST_VISIBLE) {
             if (IS_ZERO) {
                 axisCtx.setFill(FULL_RANGE ? ZERO_COLOR : COLOR);
@@ -2250,26 +2614,30 @@ public class Axis extends Region {
 
     // ******************** Resizing ******************************************
     public void resize() {
-        width  = getWidth() - getInsets().getLeft() - getInsets().getRight();
+        width = getWidth() - getInsets().getLeft() - getInsets().getRight();
         height = getHeight() - getInsets().getTop() - getInsets().getBottom();
-        size   = width < height ? width : height;
+        size = width < height ? width : height;
 
         double aspectRatio = width / height;
 
         if (width > 0 && height > 0) {
-            if (isAutoTitleFontSize()) { setTitleFontSize(Helper.clamp(8, 24, 0.175 * size)); }
+            if (isAutoTitleFontSize()) {
+                setTitleFontSize(Helper.clamp(8, 24, 0.175 * size));
+            }
 
-            if (isAutoFontSize()) { setTickLabelFontSize(Helper.clamp(8, 24, 0.175 * size)); }
+            if (isAutoFontSize()) {
+                setTickLabelFontSize(Helper.clamp(8, 24, 0.175 * size));
+            }
 
             axisBounds.set(getInsets().getLeft(), getInsets().getTop(), width, height);
 
             if (VERTICAL == getOrientation()) {
-                width    = height * aspectRatio;
-                size     = width < height ? width : height;
+                width = height * aspectRatio;
+                size = width < height ? width : height;
                 stepSize = Math.abs(height / getRange());
             } else {
-                height   = width / aspectRatio;
-                size     = width < height ? width : height;
+                height = width / aspectRatio;
+                size = width < height ? width : height;
                 stepSize = Math.abs(width / getRange());
             }
 
