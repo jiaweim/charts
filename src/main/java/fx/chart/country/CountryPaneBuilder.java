@@ -1,10 +1,10 @@
 package fx.chart.country;
 
-import eu.hansolo.toolboxfx.geom.Poi;
-import eu.hansolo.toolboxfx.geom.Point;
 import fx.chart.country.tools.Connection;
 import fx.chart.heatmap.Mapping;
 import fx.chart.heatmap.OpacityDistribution;
+import fx.chart.toolboxfx.geom.Poi;
+import fx.chart.toolboxfx.geom.Point;
 import javafx.beans.property.*;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;

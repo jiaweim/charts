@@ -1,12 +1,12 @@
 package fx.chart.data;
 
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolbox.evt.EvtType;
-import eu.hansolo.toolboxfx.font.Fonts;
 import fx.chart.Cluster;
 import fx.chart.Position;
 import fx.chart.Symbol;
 import fx.chart.event.ChartEvt;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolbox.evt.EvtType;
+import fx.chart.toolboxfx.font.Fonts;
 import fx.chart.tools.Helper;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
@@ -15,7 +15,6 @@ import javafx.scene.text.Font;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 
 public class PlotItem implements Item, Comparable<PlotItem> {
 
@@ -616,7 +615,6 @@ public class PlotItem implements Item, Comparable<PlotItem> {
     }
 
 
-    // ******************** Event Handling ************************************
     public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());

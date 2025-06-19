@@ -1,6 +1,6 @@
 package fx.chart.country;
 
-import eu.hansolo.toolboxfx.ValueObject;
+import fx.chart.toolboxfx.ValueObject;
 import fx.chart.country.flag.Flag;
 import fx.chart.country.tools.CLocation;
 import fx.chart.country.tools.Cities;

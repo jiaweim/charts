@@ -1,13 +1,13 @@
 package fx.chart;
 
 import fx.chart.event.ChartEvt;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolbox.evt.EvtType;
+import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.toolboxfx.geom.Bounds;
 import fx.chart.tools.Helper;
 import fx.chart.tools.Helper.Interval;
 import fx.chart.tools.TickLabelFormat;
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolbox.evt.EvtType;
-import eu.hansolo.toolboxfx.font.Fonts;
-import eu.hansolo.toolboxfx.geom.Bounds;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
 import javafx.collections.ObservableList;
@@ -1749,7 +1749,6 @@ public class Axis extends Region {
     }
 
 
-    // ******************** Event Handling ************************************
     public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());

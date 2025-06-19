@@ -1,9 +1,9 @@
 package fx.chart.areaheatmap;
 
-import eu.hansolo.toolboxfx.font.Fonts;
 import fx.chart.data.DataPoint;
 import fx.chart.heatmap.ColorMapping;
 import fx.chart.heatmap.Mapping;
+import fx.chart.toolboxfx.font.Fonts;
 import fx.chart.tools.Helper;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;

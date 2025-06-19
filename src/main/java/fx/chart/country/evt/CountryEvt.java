@@ -1,9 +1,8 @@
 package fx.chart.country.evt;
 
-
-import eu.hansolo.toolbox.evt.EvtPriority;
-import eu.hansolo.toolbox.evt.EvtType;
-import eu.hansolo.toolbox.evt.type.ChangeEvt;
+import fx.chart.toolbox.evt.EvtPriority;
+import fx.chart.toolbox.evt.EvtType;
+import fx.chart.toolbox.evt.type.ChangeEvt;
 
 public class CountryEvt<T> extends ChangeEvt {
     public static final EvtType<CountryEvt> ANY = new EvtType<>(ChangeEvt.ANY, "ANY");
@@ -18,7 +17,6 @@ public class CountryEvt<T> extends ChangeEvt {
     private final T data;
 
 
-    // ******************** Constructors **************************************
     public CountryEvt(final Object src, final EvtType<? extends CountryEvt> evtType, final T data) {
         super(src, evtType);
         this.data = data;
@@ -29,7 +27,5 @@ public class CountryEvt<T> extends ChangeEvt {
         this.data = data;
     }
 
-
-    // ******************** Methods *******************************************
     public T getData() {return data;}
 }

@@ -1,10 +1,10 @@
 package fx.chart;
 
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolboxfx.font.Fonts;
-import eu.hansolo.toolboxfx.geom.Bounds;
 import fx.chart.data.XYItem;
 import fx.chart.event.ChartEvt;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.toolboxfx.geom.Bounds;
 import fx.chart.tools.Helper;
 import fx.chart.tools.Marker;
 import javafx.beans.DefaultProperty;

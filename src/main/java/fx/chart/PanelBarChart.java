@@ -1,15 +1,15 @@
 package fx.chart;
 
-import eu.hansolo.toolboxfx.font.Fonts;
 import fx.chart.data.ChartItem;
 import fx.chart.data.DayOfWeekCategory;
 import fx.chart.data.MonthCategory;
 import fx.chart.event.SeriesEventListener;
+import fx.chart.geometry.Rectangle;
 import fx.chart.series.ChartItemSeries;
 import fx.chart.series.Series;
+import fx.chart.toolboxfx.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
-import fx.chart.geometry.Rectangle;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;

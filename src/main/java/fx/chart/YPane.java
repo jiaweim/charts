@@ -1,9 +1,9 @@
 package fx.chart;
 
-import eu.hansolo.toolboxfx.font.Fonts;
-import eu.hansolo.toolboxfx.geom.Point;
 import fx.chart.data.ValueItem;
 import fx.chart.series.YSeries;
+import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;

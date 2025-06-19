@@ -1,16 +1,16 @@
 package fx.chart;
 
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolboxfx.FontMetrix;
-import eu.hansolo.toolboxfx.font.Fonts;
-import eu.hansolo.toolboxfx.geom.Bounds;
-import eu.hansolo.toolboxfx.geom.Point;
 import fx.chart.data.Connection;
 import fx.chart.data.PlotItem;
 import fx.chart.event.ChartEvt;
-import fx.chart.tools.Helper;
 import fx.chart.geometry.Path;
 import fx.chart.geometry.Rectangle;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolboxfx.FontMetrix;
+import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.toolboxfx.geom.Bounds;
+import fx.chart.toolboxfx.geom.Point;
+import fx.chart.tools.Helper;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;

@@ -18,10 +18,10 @@
 
 package fx.chart.wafermap;
 
-import eu.hansolo.toolbox.properties.DoubleProperty;
-import eu.hansolo.toolbox.properties.IntegerProperty;
-import eu.hansolo.toolbox.properties.ObjectProperty;
-import eu.hansolo.toolbox.properties.ReadOnlyProperty;
+import fx.chart.toolbox.properties.DoubleProperty;
+import fx.chart.toolbox.properties.IntegerProperty;
+import fx.chart.toolbox.properties.ObjectProperty;
+import fx.chart.toolbox.properties.ReadOnlyProperty;
 
 import java.util.HashMap;
 

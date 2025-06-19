@@ -1,7 +1,7 @@
 package fx.chart.country.tools;
 
-import eu.hansolo.toolboxfx.geom.Point;
 import fx.chart.country.Country;
+import fx.chart.toolboxfx.geom.Point;
 import javafx.scene.paint.Color;
 
 import java.util.Collection;

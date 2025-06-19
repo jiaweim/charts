@@ -1,10 +1,10 @@
 package fx.chart.data;
 
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolbox.evt.EvtType;
 import fx.chart.Category;
 import fx.chart.Symbol;
 import fx.chart.event.ChartEvt;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolbox.evt.EvtType;
 import fx.chart.tools.Helper;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
@@ -801,7 +801,6 @@ public class ChartItem implements Item, Comparable<ChartItem> {
     }
 
 
-    // ******************** Event Handling ************************************
     public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());

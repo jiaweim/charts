@@ -1,6 +1,6 @@
 package fx.chart.wafermap;
 
-import eu.hansolo.toolboxfx.geom.Point;
+import fx.chart.toolboxfx.geom.Point;
 import fx.chart.geometry.Rectangle;
 import fx.chart.heatmap.ColorMapping;
 import fx.chart.heatmap.HeatMap;

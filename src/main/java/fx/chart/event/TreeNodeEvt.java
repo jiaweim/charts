@@ -1,11 +1,11 @@
 package fx.chart.event;
 
-import eu.hansolo.toolbox.evt.EvtType;
-import eu.hansolo.toolbox.evt.type.ChangeEvt;
 import fx.chart.data.Item;
 import fx.chart.data.TreeNode;
+import fx.chart.toolbox.evt.EvtType;
+import fx.chart.toolbox.evt.type.ChangeEvt;
 
-import static eu.hansolo.toolbox.Constants.*;
+import static fx.chart.toolbox.Constants.*;
 
 
 public class TreeNodeEvt<T extends Item> extends ChangeEvt {

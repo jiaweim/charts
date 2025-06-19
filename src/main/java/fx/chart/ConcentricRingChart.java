@@ -1,13 +1,13 @@
 package fx.chart;
 
-import eu.hansolo.toolbox.evt.Evt;
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolbox.evt.EvtType;
-import eu.hansolo.toolboxfx.font.Fonts;
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvt;
 import fx.chart.event.SelectionEvt;
 import fx.chart.series.Series;
+import fx.chart.toolbox.evt.Evt;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolbox.evt.EvtType;
+import fx.chart.toolboxfx.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import fx.chart.tools.NumberFormat;

@@ -1,8 +1,8 @@
 package fx.chart;
 
-import eu.hansolo.toolboxfx.geom.Point;
 import fx.chart.data.TYChartItem;
 import fx.chart.series.XYSeries;
+import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Constants.OverlayType;
 
 import java.time.LocalDateTime;

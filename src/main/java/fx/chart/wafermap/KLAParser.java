@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static eu.hansolo.toolbox.Constants.COLON;
+import static fx.chart.toolbox.Constants.COLON;
 
 
 public enum KLAParser {

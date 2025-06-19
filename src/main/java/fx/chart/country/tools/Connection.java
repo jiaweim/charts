@@ -1,7 +1,7 @@
 package fx.chart.country.tools;
 
 import fx.chart.country.evt.CountryEvt;
-import eu.hansolo.toolbox.evt.EvtObserver;
+import fx.chart.toolbox.evt.EvtObserver;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
 import javafx.beans.property.DoubleProperty;

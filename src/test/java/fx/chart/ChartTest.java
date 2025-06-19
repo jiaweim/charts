@@ -1,6 +1,6 @@
 package fx.chart;
 
-import eu.hansolo.toolbox.unit.Converter;
+import fx.chart.toolbox.unit.Converter;
 import fx.chart.data.ValueChartItem;
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYZChartItem;
@@ -30,9 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static eu.hansolo.toolbox.unit.Category.TEMPERATURE;
-import static eu.hansolo.toolbox.unit.UnitDefinition.CELSIUS;
-import static eu.hansolo.toolbox.unit.UnitDefinition.FAHRENHEIT;
+import static fx.chart.toolbox.unit.Category.TEMPERATURE;
+import static fx.chart.toolbox.unit.UnitDefinition.CELSIUS;
+import static fx.chart.toolbox.unit.UnitDefinition.FAHRENHEIT;
 
 
 /**

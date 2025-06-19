@@ -1,10 +1,10 @@
 package fx.chart.country;
 
-import eu.hansolo.toolboxfx.geom.Poi;
-import eu.hansolo.toolboxfx.geom.PoiBuilder;
-import eu.hansolo.toolboxfx.geom.PoiSize;
-import eu.hansolo.toolboxfx.geom.Point;
 import fx.chart.country.tools.*;
+import fx.chart.toolboxfx.geom.Poi;
+import fx.chart.toolboxfx.geom.PoiBuilder;
+import fx.chart.toolboxfx.geom.PoiSize;
+import fx.chart.toolboxfx.geom.Point;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Dimension2D;

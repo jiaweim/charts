@@ -1,6 +1,6 @@
 package fx.chart.geometry.tools;
 
-import eu.hansolo.toolboxfx.geom.Point;
+import fx.chart.toolboxfx.geom.Point;
 import fx.chart.geometry.Rectangle;
 
 public interface Segment extends Cloneable {

@@ -1,8 +1,8 @@
 package fx.chart.heatmap;
 
-import eu.hansolo.toolbox.Helper;
-import eu.hansolo.toolboxfx.HelperFX;
-import eu.hansolo.toolboxfx.geom.Point;
+import fx.chart.toolbox.Helper;
+import fx.chart.toolboxfx.HelperFX;
+import fx.chart.toolboxfx.geom.Point;
 import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;

@@ -1,10 +1,10 @@
 package fx.chart.country.tools;
 
-import eu.hansolo.toolboxfx.geom.Point;
 import fx.chart.country.Country;
 import fx.chart.country.tools.Records.Airport;
 import fx.chart.country.tools.Records.Airport2;
 import fx.chart.country.tools.Records.City;
+import fx.chart.toolboxfx.geom.Point;
 import javafx.animation.Interpolator;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;

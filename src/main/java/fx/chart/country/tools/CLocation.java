@@ -1,11 +1,11 @@
 package fx.chart.country.tools;
 
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolboxfx.geom.Location;
-import eu.hansolo.toolboxfx.geom.Poi;
-import eu.hansolo.toolboxfx.geom.PoiSize;
 import fx.chart.country.Country;
 import fx.chart.country.evt.CountryEvt;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolboxfx.geom.Location;
+import fx.chart.toolboxfx.geom.Poi;
+import fx.chart.toolboxfx.geom.PoiSize;
 import javafx.scene.paint.Color;
 
 import java.time.Instant;
@@ -21,8 +21,6 @@ public class CLocation extends Location {
     private ConnectionPartType connectionPartType;
     private List<EvtObserver<CountryEvt<CLocation>>> observers;
 
-
-    // ******************** Constructors **************************************
     public CLocation() {
         this(0, 0, 0, Instant.now(), "", "", Color.BLACK, Color.TRANSPARENT);
     }

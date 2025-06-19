@@ -1,7 +1,7 @@
 package fx.chart.pareto;
 
-import eu.hansolo.toolboxfx.font.Fonts;
-import eu.hansolo.toolboxfx.geom.Point;
+import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.toolboxfx.geom.Point;
 import fx.chart.Axis;
 import fx.chart.Position;
 import fx.chart.tools.Helper;

@@ -1,9 +1,9 @@
 package fx.chart.data;
 
 
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolbox.evt.EvtType;
 import fx.chart.event.TreeNodeEvt;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolbox.evt.EvtType;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;

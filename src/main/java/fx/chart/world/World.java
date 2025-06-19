@@ -1,13 +1,13 @@
 package fx.chart.world;
 
-import eu.hansolo.toolboxfx.font.Fonts;
-import eu.hansolo.toolboxfx.geom.Location;
-import eu.hansolo.toolboxfx.geom.Point;
 import fx.chart.country.Country;
 import fx.chart.country.tools.CRegion;
 import fx.chart.data.MapConnection;
 import fx.chart.data.WeightedMapPoints;
 import fx.chart.heatmap.*;
+import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.toolboxfx.geom.Location;
+import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
 import fx.chart.tools.MapPoint;
 import fx.chart.tools.MapPointSize;
