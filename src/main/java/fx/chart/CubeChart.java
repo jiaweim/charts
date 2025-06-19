@@ -1,7 +1,7 @@
 package fx.chart;
 
-import eu.hansolo.toolboxfx.FontMetrix;
-import eu.hansolo.toolboxfx.font.Fonts;
+import fx.chart.toolboxfx.FontMetrix;
+import fx.chart.toolboxfx.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.P2d;
 import fx.chart.tools.P3d;

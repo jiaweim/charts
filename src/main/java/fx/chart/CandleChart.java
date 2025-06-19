@@ -1,12 +1,12 @@
 package fx.chart;
 
-import eu.hansolo.toolbox.evt.EvtObserver;
 import fx.chart.color.MaterialDesignColors;
 import fx.chart.data.CandleChartItem;
 import fx.chart.event.ChartEvt;
+import fx.chart.geometry.Rectangle;
+import fx.chart.toolbox.evt.EvtObserver;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TooltipPopup;
-import fx.chart.geometry.Rectangle;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;

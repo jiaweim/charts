@@ -1,8 +1,8 @@
 package fx.chart.event;
 
-import eu.hansolo.toolbox.evt.EvtPriority;
-import eu.hansolo.toolbox.evt.EvtType;
-import eu.hansolo.toolbox.evt.type.ChangeEvt;
+import fx.chart.toolbox.evt.EvtPriority;
+import fx.chart.toolbox.evt.EvtType;
+import fx.chart.toolbox.evt.type.ChangeEvt;
 import javafx.scene.input.MouseEvent;
 
 

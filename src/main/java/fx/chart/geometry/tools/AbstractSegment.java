@@ -16,7 +16,7 @@
 
 package fx.chart.geometry.tools;
 
-import eu.hansolo.toolboxfx.geom.Point;
+import fx.chart.toolboxfx.geom.Point;
 
 import java.util.Arrays;
 

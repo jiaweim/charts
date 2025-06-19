@@ -1,7 +1,7 @@
 package fx.chart;
 
-import eu.hansolo.toolboxfx.font.Fonts;
 import fx.chart.data.PlotItem;
+import fx.chart.toolboxfx.font.Fonts;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

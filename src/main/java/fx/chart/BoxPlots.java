@@ -1,12 +1,12 @@
 package fx.chart;
 
-import eu.hansolo.toolbox.Statistics;
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolboxfx.font.Fonts;
 import fx.chart.color.MaterialDesignColors;
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvt;
 import fx.chart.series.ChartItemSeries;
+import fx.chart.toolbox.Statistics;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolboxfx.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.Order;
 import fx.chart.tools.TooltipPopup;

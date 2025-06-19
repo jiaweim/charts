@@ -1,12 +1,12 @@
 package fx.chart.geometry.tools;
 
-import eu.hansolo.toolboxfx.HelperFX;
-import eu.hansolo.toolboxfx.geom.Point;
 import fx.chart.geometry.FlatteningPathIterator;
 import fx.chart.geometry.Path.WindingRule;
 import fx.chart.geometry.PathIterator;
 import fx.chart.geometry.Shape;
 import fx.chart.geometry.transform.Affine;
+import fx.chart.toolboxfx.HelperFX;
+import fx.chart.toolboxfx.geom.Point;
 
 import java.util.ArrayList;
 import java.util.List;

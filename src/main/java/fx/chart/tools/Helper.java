@@ -1,7 +1,5 @@
 package fx.chart.tools;
 
-import eu.hansolo.toolbox.Constants;
-import eu.hansolo.toolboxfx.geom.*;
 import fx.chart.Axis;
 import fx.chart.AxisBuilder;
 import fx.chart.Position;
@@ -9,6 +7,8 @@ import fx.chart.TickLabelOrientation;
 import fx.chart.data.ChartItem;
 import fx.chart.data.DataPoint;
 import fx.chart.data.XYChartItem;
+import fx.chart.toolbox.Constants;
+import fx.chart.toolboxfx.geom.*;
 import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;

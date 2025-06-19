@@ -1,11 +1,11 @@
 package fx.chart;
 
-import eu.hansolo.toolbox.evt.EvtObserver;
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvt;
+import fx.chart.geometry.Circle;
+import fx.chart.toolbox.evt.EvtObserver;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TooltipPopup;
-import fx.chart.geometry.Circle;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;

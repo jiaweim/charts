@@ -1,8 +1,8 @@
 package fx.chart.data;
 
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolbox.evt.EvtType;
 import fx.chart.event.ChartEvt;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolbox.evt.EvtType;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 
@@ -14,7 +14,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Connection {
 
-    //    private final ConnectionEvent         SELECTED_EVENT = new ConnectionEvent(Connection.this, EventType.SELECTED);
     private Map<EvtType, List<EvtObserver<ChartEvt>>> observers;
     private PlotItem _incomingItem;
     private ObjectProperty<PlotItem> incomingItem;

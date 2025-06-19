@@ -1,13 +1,12 @@
 package fx.chart;
 
-
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolbox.evt.EvtType;
-import eu.hansolo.toolboxfx.font.Fonts;
-import eu.hansolo.toolboxfx.geom.Bounds;
 import fx.chart.data.ChartItem;
 import fx.chart.data.DataObject;
 import fx.chart.event.ChartEvt;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolbox.evt.EvtType;
+import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.toolboxfx.geom.Bounds;
 import fx.chart.tools.Helper;
 import fx.chart.tools.Order;
 import javafx.beans.DefaultProperty;
@@ -101,7 +100,6 @@ public class ParallelCoordinatesChart extends Region {
     private Map<EvtType, List<EvtObserver<ChartEvt>>> observers;
 
 
-    // ******************** Constructors **************************************
     public ParallelCoordinatesChart() {
         _axisColor = Color.BLACK;
         _headerColor = Color.BLACK;
@@ -144,7 +142,6 @@ public class ParallelCoordinatesChart extends Region {
     }
 
 
-    // ******************** Initialization ************************************
     private void initGraphics() {
         if (Double.compare(getPrefWidth(), 0.0) <= 0 || Double.compare(getPrefHeight(), 0.0) <= 0 || Double.compare(getWidth(), 0.0) <= 0 ||
                 Double.compare(getHeight(), 0.0) <= 0) {

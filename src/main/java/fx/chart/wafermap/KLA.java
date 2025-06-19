@@ -23,7 +23,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static eu.hansolo.toolbox.Constants.NEW_LINE;
+import static fx.chart.toolbox.Constants.NEW_LINE;
 import static fx.chart.wafermap.KLAParser.DTF;
 
 public final class KLA {

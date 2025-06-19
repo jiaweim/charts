@@ -1,10 +1,5 @@
 package fx.chart;
 
-import eu.hansolo.toolbox.Statistics;
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolbox.evt.EvtType;
-import eu.hansolo.toolboxfx.font.Fonts;
-import eu.hansolo.toolboxfx.geom.Point;
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYItem;
 import fx.chart.event.ChartEvt;
@@ -13,6 +8,11 @@ import fx.chart.event.CursorEventListener;
 import fx.chart.event.SeriesEventListener;
 import fx.chart.series.Series;
 import fx.chart.series.XYSeries;
+import fx.chart.toolbox.Statistics;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolbox.evt.EvtType;
+import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TooltipPopup;
 import javafx.beans.property.*;

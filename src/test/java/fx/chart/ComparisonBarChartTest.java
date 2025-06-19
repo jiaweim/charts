@@ -1,6 +1,6 @@
 package fx.chart;
 
-import eu.hansolo.toolboxfx.font.Fonts;
+import fx.chart.toolboxfx.font.Fonts;
 import fx.chart.data.ChartItem;
 import fx.chart.data.ChartItemBuilder;
 import fx.chart.series.ChartItemSeries;

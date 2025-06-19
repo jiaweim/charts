@@ -1,9 +1,9 @@
 package fx.chart.geometry;
 
-import eu.hansolo.toolboxfx.geom.Point;
 import fx.chart.geometry.tools.IllegalPathStateException;
 import fx.chart.geometry.transform.Affine;
 import fx.chart.geometry.transform.BaseTransform;
+import fx.chart.toolboxfx.geom.Point;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;

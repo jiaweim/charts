@@ -18,7 +18,7 @@
 
 package fx.chart.voronoi;
 
-import static eu.hansolo.toolbox.Constants.COMMA;
+import static fx.chart.toolbox.Constants.COMMA;
 
 
 public class VPoint {

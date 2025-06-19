@@ -1,12 +1,12 @@
 package fx.chart.country;
 
-import eu.hansolo.toolboxfx.ValueObject;
-import eu.hansolo.toolboxfx.geom.Point;
 import fx.chart.country.flag.Flag;
 import fx.chart.country.tools.*;
 import fx.chart.country.tools.Records.Airport;
 import fx.chart.country.tools.Records.Airport2;
 import fx.chart.country.tools.Records.City;
+import fx.chart.toolboxfx.ValueObject;
+import fx.chart.toolboxfx.geom.Point;
 import javafx.scene.paint.Color;
 
 import java.util.*;

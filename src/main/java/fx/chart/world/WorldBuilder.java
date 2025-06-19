@@ -1,6 +1,6 @@
 package fx.chart.world;
 
-import eu.hansolo.toolboxfx.geom.Location;
+import fx.chart.toolboxfx.geom.Location;
 import fx.chart.data.MapConnection;
 import fx.chart.data.WeightedMapPoints;
 import fx.chart.heatmap.ColorMapping;

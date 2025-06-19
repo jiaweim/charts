@@ -1,6 +1,6 @@
 package fx.chart;
 
-import eu.hansolo.toolboxfx.GradientLookup;
+import fx.chart.toolboxfx.GradientLookup;
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYChartItemBuilder;
 import fx.chart.series.XYSeries;

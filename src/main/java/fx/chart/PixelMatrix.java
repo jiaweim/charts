@@ -1,8 +1,8 @@
 package fx.chart;
 
-import eu.hansolo.toolboxfx.geom.CornerRadii;
 import fx.chart.event.PixelMatrixEventListener;
 import fx.chart.event.PixelMatrixEvt;
+import fx.chart.toolboxfx.geom.CornerRadii;
 import fx.chart.tools.Helper;
 import javafx.beans.DefaultProperty;
 import javafx.beans.InvalidationListener;
@@ -360,7 +360,7 @@ public class PixelMatrix extends Region {
         ctx.clearRect(0, 0, width, height);
         switch (pixelShape) {
             case ROUNDED_RECT:
-                eu.hansolo.toolboxfx.geom.Bounds bounds = new eu.hansolo.toolboxfx.geom.Bounds(pixelWidthMinusDoubleSpacer, pixelHeightMinusDoubleSpacer);
+                fx.chart.toolboxfx.geom.Bounds bounds = new fx.chart.toolboxfx.geom.Bounds(pixelWidthMinusDoubleSpacer, pixelHeightMinusDoubleSpacer);
                 CornerRadii cornerRadii = new CornerRadii(pixelSize * 0.125);
                 for (int y = 0; y < rows; y++) {
                     for (int x = 0; x < cols; x++) {

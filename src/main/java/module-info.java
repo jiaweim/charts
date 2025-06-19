@@ -13,7 +13,7 @@ module eu.hansolo.fx.charts {
     // 3rd party
     requires ch.qos.logback.classic;
     requires org.slf4j;
-    requires eu.hansolo.toolboxfx;
+    requires java.management;
 
     opens fx.chart.country to javafx.graphics;
     opens fx.chart.heatmap to javafx.graphics;

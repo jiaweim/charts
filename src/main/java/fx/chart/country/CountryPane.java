@@ -1,17 +1,17 @@
 package fx.chart.country;
 
-import eu.hansolo.toolbox.evt.Evt;
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolbox.evt.EvtType;
-import eu.hansolo.toolboxfx.font.Fonts;
-import eu.hansolo.toolboxfx.geom.Poi;
-import eu.hansolo.toolboxfx.geom.Point;
+import fx.chart.toolbox.evt.Evt;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolbox.evt.EvtType;
 import fx.chart.country.evt.CountryEvt;
 import fx.chart.country.tools.CLocation;
 import fx.chart.country.tools.Connection;
 import fx.chart.country.tools.Constants;
 import fx.chart.country.tools.Helper;
 import fx.chart.heatmap.*;
+import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.toolboxfx.geom.Poi;
+import fx.chart.toolboxfx.geom.Point;
 import javafx.application.Platform;
 import javafx.beans.DefaultProperty;
 import javafx.beans.binding.Bindings;

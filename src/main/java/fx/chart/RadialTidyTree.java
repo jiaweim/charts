@@ -1,17 +1,17 @@
 package fx.chart;
 
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolboxfx.FontMetrix;
-import eu.hansolo.toolboxfx.font.Fonts;
 import fx.chart.data.ChartItem;
 import fx.chart.data.TreeNode;
 import fx.chart.event.ChartEvt;
 import fx.chart.event.TreeNodeEvt;
+import fx.chart.geometry.Circle;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolboxfx.FontMetrix;
+import fx.chart.toolboxfx.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import fx.chart.tools.TextOrientation;
 import fx.chart.tools.VisibleData;
-import fx.chart.geometry.Circle;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.*;
 import javafx.collections.ObservableList;

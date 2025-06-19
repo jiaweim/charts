@@ -1,7 +1,7 @@
 package fx.chart.data;
 
-import eu.hansolo.toolbox.evt.EvtObserver;
-import eu.hansolo.toolbox.evt.EvtType;
+import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.toolbox.evt.EvtType;
 import fx.chart.event.ChartEvt;
 import fx.chart.tools.Helper;
 import fx.chart.tools.MapPoint;

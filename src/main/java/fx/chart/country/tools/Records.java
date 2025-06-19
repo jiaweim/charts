@@ -1,11 +1,12 @@
 package fx.chart.country.tools;
 
-import eu.hansolo.toolboxfx.geom.Poi;
-import eu.hansolo.toolboxfx.geom.PoiSize;
 import fx.chart.country.Country;
+import fx.chart.toolboxfx.geom.Poi;
+import fx.chart.toolboxfx.geom.PoiSize;
 import javafx.scene.paint.Color;
 
 public class Records {
+
     public record City(String name, double lat, double lon, Country country, boolean isCapital, long population) {
         public Poi toPoi() {
             return new Poi(lat, lon, name, country.getIso2(), null, PoiSize.NORMAL, Color.CYAN, Color.TRANSPARENT, null, null, null);
