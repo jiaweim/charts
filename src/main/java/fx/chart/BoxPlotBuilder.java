@@ -1,0 +1,244 @@
+package fx.chart;
+
+import fx.chart.data.ChartItem;
+import fx.chart.series.ChartItemSeries;
+import javafx.beans.property.*;
+import javafx.geometry.Dimension2D;
+import javafx.geometry.Insets;
+import javafx.scene.paint.Color;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+
+public class BoxPlotBuilder<B extends BoxPlotBuilder<B>> {
+
+    private HashMap<String, Property> properties = new HashMap<>();
+
+    protected BoxPlotBuilder() {}
+
+    public static final BoxPlotBuilder create() {
+        return new BoxPlotBuilder();
+    }
+
+    public final B name(final String NAME) {
+        properties.put("name", new SimpleStringProperty(NAME));
+        return (B) this;
+    }
+
+    public final B items(final ChartItemSeries<? extends ChartItem> SERIES) {
+        properties.put("series", new SimpleObjectProperty<>(SERIES));
+        return (B) this;
+    }
+
+    public final B items(final ChartItem... ITEMS) {
+        properties.put("itemsArray", new SimpleObjectProperty<>(ITEMS));
+        return (B) this;
+    }
+
+    public final B items(final List<ChartItem> ITEMS) {
+        properties.put("itemsList", new SimpleObjectProperty<>(ITEMS));
+        return (B) this;
+    }
+
+    public final B decimals(final int DECIMALS) {
+        properties.put("decimals", new SimpleIntegerProperty(DECIMALS));
+        return (B) this;
+    }
+
+    public final B locale(final Locale LOCALE) {
+        properties.put("locale", new SimpleObjectProperty<>(LOCALE));
+        return (B) this;
+    }
+
+    public final B backgroundColor(final Color BACKGROUND_COLOR) {
+        properties.put("backgroundColor", new SimpleObjectProperty<>(BACKGROUND_COLOR));
+        return (B) this;
+    }
+
+    public final B whiskerStrokeColor(final Color WHISKER_STROKE_COLOR) {
+        properties.put("whiskerStrokeColor", new SimpleObjectProperty<>(WHISKER_STROKE_COLOR));
+        return (B) this;
+    }
+
+    public final B iqrFillColor(final Color IQR_FILL_COLOR) {
+        properties.put("iqrFillColor", new SimpleObjectProperty<>(IQR_FILL_COLOR));
+        return (B) this;
+    }
+
+    public final B iqrStrokeColor(final Color IQR_STROKE_COLOR) {
+        properties.put("iqrStrokeColor", new SimpleObjectProperty<>(IQR_STROKE_COLOR));
+        return (B) this;
+    }
+
+    public final B medianStrokeColor(final Color MEDIAN_STROKE_COLOR) {
+        properties.put("medianStrokeColor", new SimpleObjectProperty<>(MEDIAN_STROKE_COLOR));
+        return (B) this;
+    }
+
+    public final B outlierFillColor(final Color OUTLIER_FILL_COLOR) {
+        properties.put("outlierFillColor", new SimpleObjectProperty<>(OUTLIER_FILL_COLOR));
+        return (B) this;
+    }
+
+    public final B outlierStrokeColor(final Color OUTLIER_STROKE_COLOR) {
+        properties.put("outlierStrokeColor", new SimpleObjectProperty<>(OUTLIER_STROKE_COLOR));
+        return (B) this;
+    }
+
+    public final B nameVisible(final boolean NAME_VISIBLE) {
+        properties.put("nameVisible", new SimpleBooleanProperty(NAME_VISIBLE));
+        return (B) this;
+    }
+
+    public final B textFillColor(final Color TEXT_FILL_COLOR) {
+        properties.put("textFillColor", new SimpleObjectProperty<>(TEXT_FILL_COLOR));
+        return (B) this;
+    }
+
+    public final B popupTimeout(final long POPUP_TIMEOUT) {
+        properties.put("popupTimeout", new SimpleLongProperty(POPUP_TIMEOUT));
+        return (B) this;
+    }
+
+
+    public final B prefSize(final double WIDTH, final double HEIGHT) {
+        properties.put("prefSize", new SimpleObjectProperty<>(new Dimension2D(WIDTH, HEIGHT)));
+        return (B) this;
+    }
+
+    public final B minSize(final double WIDTH, final double HEIGHT) {
+        properties.put("minSize", new SimpleObjectProperty<>(new Dimension2D(WIDTH, HEIGHT)));
+        return (B) this;
+    }
+
+    public final B maxSize(final double WIDTH, final double HEIGHT) {
+        properties.put("maxSize", new SimpleObjectProperty<>(new Dimension2D(WIDTH, HEIGHT)));
+        return (B) this;
+    }
+
+    public final B prefWidth(final double PREF_WIDTH) {
+        properties.put("prefWidth", new SimpleDoubleProperty(PREF_WIDTH));
+        return (B) this;
+    }
+
+    public final B prefHeight(final double PREF_HEIGHT) {
+        properties.put("prefHeight", new SimpleDoubleProperty(PREF_HEIGHT));
+        return (B) this;
+    }
+
+    public final B minWidth(final double MIN_WIDTH) {
+        properties.put("minWidth", new SimpleDoubleProperty(MIN_WIDTH));
+        return (B) this;
+    }
+
+    public final B minHeight(final double MIN_HEIGHT) {
+        properties.put("minHeight", new SimpleDoubleProperty(MIN_HEIGHT));
+        return (B) this;
+    }
+
+    public final B maxWidth(final double MAX_WIDTH) {
+        properties.put("maxWidth", new SimpleDoubleProperty(MAX_WIDTH));
+        return (B) this;
+    }
+
+    public final B maxHeight(final double MAX_HEIGHT) {
+        properties.put("maxHeight", new SimpleDoubleProperty(MAX_HEIGHT));
+        return (B) this;
+    }
+
+    public final B scaleX(final double SCALE_X) {
+        properties.put("scaleX", new SimpleDoubleProperty(SCALE_X));
+        return (B) this;
+    }
+
+    public final B scaleY(final double SCALE_Y) {
+        properties.put("scaleY", new SimpleDoubleProperty(SCALE_Y));
+        return (B) this;
+    }
+
+    public final B layoutX(final double LAYOUT_X) {
+        properties.put("layoutX", new SimpleDoubleProperty(LAYOUT_X));
+        return (B) this;
+    }
+
+    public final B layoutY(final double LAYOUT_Y) {
+        properties.put("layoutY", new SimpleDoubleProperty(LAYOUT_Y));
+        return (B) this;
+    }
+
+    public final B translateX(final double TRANSLATE_X) {
+        properties.put("translateX", new SimpleDoubleProperty(TRANSLATE_X));
+        return (B) this;
+    }
+
+    public final B translateY(final double TRANSLATE_Y) {
+        properties.put("translateY", new SimpleDoubleProperty(TRANSLATE_Y));
+        return (B) this;
+    }
+
+    public final B padding(final Insets INSETS) {
+        properties.put("padding", new SimpleObjectProperty<>(INSETS));
+        return (B) this;
+    }
+
+
+    public final BoxPlot build() {
+        final BoxPlot boxPlot = new BoxPlot();
+
+        if (properties.keySet().contains("series")) {
+            ChartItemSeries<? extends ChartItem> series = ((ObjectProperty<ChartItemSeries<? extends ChartItem>>) properties.get("series")).get();
+            boxPlot.setItems(series.getItems());
+            boxPlot.setName(series.getName());
+        } else if (properties.keySet().contains("itemsArray")) {
+            boxPlot.setItems(((ObjectProperty<ChartItem[]>) properties.get("itemsArray")).get());
+        } else if (properties.keySet().contains("itemsList")) {
+            boxPlot.setItems(((ObjectProperty<List<ChartItem>>) properties.get("itemsList")).get());
+        }
+
+        properties.forEach((key, property) -> {
+            switch (key) {
+                case "prefSize" -> {
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    boxPlot.setPrefSize(dim.getWidth(), dim.getHeight());
+                }
+                case "minSize" -> {
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    boxPlot.setMinSize(dim.getWidth(), dim.getHeight());
+                }
+                case "maxSize" -> {
+                    Dimension2D dim = ((ObjectProperty<Dimension2D>) property).get();
+                    boxPlot.setMaxSize(dim.getWidth(), dim.getHeight());
+                }
+                case "prefWidth" -> boxPlot.setPrefWidth(((DoubleProperty) property).get());
+                case "prefHeight" -> boxPlot.setPrefHeight(((DoubleProperty) property).get());
+                case "minWidth" -> boxPlot.setMinWidth(((DoubleProperty) property).get());
+                case "minHeight" -> boxPlot.setMinHeight(((DoubleProperty) property).get());
+                case "maxWidth" -> boxPlot.setMaxWidth(((DoubleProperty) property).get());
+                case "maxHeight" -> boxPlot.setMaxHeight(((DoubleProperty) property).get());
+                case "scaleX" -> boxPlot.setScaleX(((DoubleProperty) property).get());
+                case "scaleY" -> boxPlot.setScaleY(((DoubleProperty) property).get());
+                case "layoutX" -> boxPlot.setLayoutX(((DoubleProperty) property).get());
+                case "layoutY" -> boxPlot.setLayoutY(((DoubleProperty) property).get());
+                case "translateX" -> boxPlot.setTranslateX(((DoubleProperty) property).get());
+                case "translateY" -> boxPlot.setTranslateY(((DoubleProperty) property).get());
+                case "padding" -> boxPlot.setPadding(((ObjectProperty<Insets>) property).get());
+                case "decimals" -> boxPlot.setDecimals(((IntegerProperty) property).get());
+                case "locale" -> boxPlot.setLocale(((ObjectProperty<Locale>) property).get());
+                case "name" -> boxPlot.setName(((StringProperty) property).get());
+                case "backgroundColor" -> boxPlot.setBackgroundColor(((ObjectProperty<Color>) property).get());
+                case "whiskerStrokeColor" -> boxPlot.setWhiskerStrokeColor(((ObjectProperty<Color>) property).get());
+                case "iqrFillColor" -> boxPlot.setIqrFillColor(((ObjectProperty<Color>) property).get());
+                case "iqrStrokeColor" -> boxPlot.setIqrStrokeColor(((ObjectProperty<Color>) property).get());
+                case "medianStrokeColor" -> boxPlot.setMedianStrokeColor(((ObjectProperty<Color>) property).get());
+                case "outlierFillColor" -> boxPlot.setOutlierFillColor(((ObjectProperty<Color>) property).get());
+                case "outlierStrokeColor" -> boxPlot.setOutlierStrokeColor(((ObjectProperty<Color>) property).get());
+                case "nameVisible" -> boxPlot.setNameVisible(((BooleanProperty) property).get());
+                case "textFillColor" -> boxPlot.setTextFillColor(((ObjectProperty<Color>) property).get());
+                case "popupTimeout" -> boxPlot.setPopupTimeout(((LongProperty) property).get());
+            }
+        });
+        return boxPlot;
+    }
+}
