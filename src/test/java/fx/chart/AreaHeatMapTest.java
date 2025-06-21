@@ -21,6 +21,7 @@ import java.util.Random;
  * Time: 19:55
  */
 public class AreaHeatMapTest extends Application {
+
     private static final Random RND = new Random();
     private AreaHeatMap areaHeatMap;
 

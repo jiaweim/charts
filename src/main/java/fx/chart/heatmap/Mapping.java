@@ -5,6 +5,7 @@ import javafx.scene.paint.Stop;
 
 
 public interface Mapping {
+
     Stop[] getStops();
 
     LinearGradient getGradient();

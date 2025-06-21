@@ -1,9 +1,9 @@
 package fx.chart.areaheatmap;
 
 import fx.chart.data.DataPoint;
+import fx.chart.font.Fonts;
 import fx.chart.heatmap.ColorMapping;
 import fx.chart.heatmap.Mapping;
-import fx.chart.toolboxfx.font.Fonts;
 import fx.chart.tools.Helper;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
@@ -28,6 +28,7 @@ import java.util.List;
 
 @DefaultProperty("children")
 public class AreaHeatMap extends Region {
+
     public enum Quality {
         FINE(2), BETTER(4), NORMAL(8), POOR(16), RAW(32);
 
@@ -47,6 +48,7 @@ public class AreaHeatMap extends Region {
     private static final double MINIMUM_HEIGHT = 50;
     private static final double MAXIMUM_WIDTH = 1024;
     private static final double MAXIMUM_HEIGHT = 1024;
+
     private double size;
     private double width;
     private double height;
@@ -74,8 +76,6 @@ public class AreaHeatMap extends Region {
     private double maxValue;
     private double range;
 
-
-    // ******************** Constructors **************************************
     public AreaHeatMap() {
         this(5, Quality.BETTER.getFactor());
     }
@@ -88,10 +88,10 @@ public class AreaHeatMap extends Region {
         this(5, QUALITY);
     }
 
-    public AreaHeatMap(final int NO_OF_CLOSER_INFLUENT_POINTS, final int QUALITY) {
+    public AreaHeatMap(final int NO_OF_CLOSER_INFLUENT_POINTS, final int quality) {
         points = new ArrayList<>();
         polygon = new ArrayList<>();
-        _quality = QUALITY;
+        _quality = quality;
         _noOfCloserInfluentPoints = NO_OF_CLOSER_INFLUENT_POINTS;
         _heatMapOpacity = 0.5;
         _dataPointsVisible = false;

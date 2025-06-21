@@ -26,6 +26,7 @@ import java.util.Random;
  * Time: 11:23
  */
 public class LineChartTest extends Application {
+
     private static final Random RND = new Random();
     private static final Double AXIS_WIDTH = 25d;
     private double mouseX = -1;

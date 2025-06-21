@@ -1,6 +1,6 @@
 package fx.chart;
 
-import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.font.Fonts;
 import fx.chart.data.ChartItem;
 import fx.chart.data.ChartItemBuilder;
 import fx.chart.series.ChartItemSeries;

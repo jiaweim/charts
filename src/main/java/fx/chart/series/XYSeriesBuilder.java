@@ -10,98 +10,103 @@ import javafx.scene.paint.Paint;
 import java.util.HashMap;
 import java.util.List;
 
-
-public class XYSeriesBuilder<B extends XYSeriesBuilder<B>> {
+/**
+ * Class used to build {@link XYSeries}
+ *
+ * @author Jiawei Mao
+ * @author Gerrit Grunwald
+ * @version 1.0.0
+ * @since 2025-06-21, 16:27
+ */
+public class XYSeriesBuilder {
 
     private HashMap<String, Property> properties = new HashMap<>();
 
     protected XYSeriesBuilder() {}
 
-
-    public static final XYSeriesBuilder create() {
+    public static XYSeriesBuilder create() {
         return new XYSeriesBuilder();
     }
 
-    public final B items(final XYItem... ITEMS) {
+    public final XYSeriesBuilder items(final XYItem... ITEMS) {
         properties.put("itemsArray", new SimpleObjectProperty<>(ITEMS));
-        return (B) this;
+        return this;
     }
 
-    public final B items(final List<XYItem> ITEMS) {
+    public final XYSeriesBuilder items(final List<? extends XYItem> ITEMS) {
         properties.put("itemsList", new SimpleObjectProperty<>(ITEMS));
-        return (B) this;
+        return this;
     }
 
-    public final B name(final String NAME) {
+    public final XYSeriesBuilder name(final String NAME) {
         properties.put("name", new SimpleStringProperty(NAME));
-        return (B) this;
+        return this;
     }
 
-    public final B fill(final Paint FILL) {
+    public final XYSeriesBuilder fill(final Paint FILL) {
         properties.put("fill", new SimpleObjectProperty<>(FILL));
-        return (B) this;
+        return this;
     }
 
-    public final B stroke(final Paint STROKE) {
+    public final XYSeriesBuilder stroke(final Paint STROKE) {
         properties.put("stroke", new SimpleObjectProperty<>(STROKE));
-        return (B) this;
+        return this;
     }
 
-    public final B textFill(final Color FILL) {
+    public final XYSeriesBuilder textFill(final Color FILL) {
         properties.put("textFill", new SimpleObjectProperty<>(FILL));
-        return (B) this;
+        return this;
     }
 
-    public final B symbolFill(final Color FILL) {
+    public final XYSeriesBuilder symbolFill(final Color FILL) {
         properties.put("symbolFill", new SimpleObjectProperty<>(FILL));
-        return (B) this;
+        return this;
     }
 
-    public final B symbolStroke(final Color STROKE) {
+    public final XYSeriesBuilder symbolStroke(final Color STROKE) {
         properties.put("symbolStroke", new SimpleObjectProperty<>(STROKE));
-        return (B) this;
+        return this;
     }
 
-    public final B symbol(final Symbol SYMBOL) {
+    public final XYSeriesBuilder symbol(final Symbol SYMBOL) {
         properties.put("symbol", new SimpleObjectProperty<>(SYMBOL));
-        return (B) this;
+        return this;
     }
 
-    public final B chartType(final ChartType TYPE) {
+    public final XYSeriesBuilder chartType(final ChartType TYPE) {
         properties.put("chartType", new SimpleObjectProperty<>(TYPE));
-        return (B) this;
+        return this;
     }
 
-    public final B symbolsVisible(final boolean VISIBLE) {
+    public final XYSeriesBuilder symbolsVisible(final boolean VISIBLE) {
         properties.put("symbolsVisible", new SimpleBooleanProperty(VISIBLE));
-        return (B) this;
+        return this;
     }
 
-    public final B symbolSize(final double SIZE) {
+    public final XYSeriesBuilder symbolSize(final double SIZE) {
         properties.put("symbolSize", new SimpleDoubleProperty(SIZE));
-        return (B) this;
+        return this;
     }
 
-    public final B strokeWidth(final double WIDTH) {
+    public final XYSeriesBuilder strokeWidth(final double WIDTH) {
         properties.put("strokeWidth", new SimpleDoubleProperty(WIDTH));
-        return (B) this;
+        return this;
     }
 
-    public final B visible(final boolean VISIBLE) {
+    public final XYSeriesBuilder visible(final boolean VISIBLE) {
         properties.put("visible", new SimpleBooleanProperty(VISIBLE));
-        return (B) this;
+        return this;
     }
 
-    public final B animated(final boolean AUTO) {
+    public final XYSeriesBuilder animated(final boolean AUTO) {
         properties.put("animated", new SimpleBooleanProperty(AUTO));
-        return (B) this;
+        return this;
     }
 
-    public final B animationDuration(final long DURATION) {
+    public final XYSeriesBuilder animationDuration(final long DURATION) {
         properties.put("animationDuration", new SimpleLongProperty(DURATION));
-        return (B) this;
+        return this;
     }
-
 
     public final XYSeries build() {
         final XYSeries control = new XYSeries();

@@ -5,7 +5,7 @@ import fx.chart.country.tools.CRegion;
 import fx.chart.data.MapConnection;
 import fx.chart.data.WeightedMapPoints;
 import fx.chart.heatmap.*;
-import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.font.Fonts;
 import fx.chart.toolboxfx.geom.Location;
 import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;

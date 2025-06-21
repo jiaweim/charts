@@ -4,6 +4,7 @@ import fx.chart.tools.Helper;
 import javafx.scene.paint.Color;
 
 public enum FlatColors implements Colors {
+
     A1(26, 188, 156), A2(22, 160, 133), A3(46, 204, 113), A4(39, 174, 96),
     A5(52, 152, 219), A6(41, 128, 185), A7(52, 73, 94), A8(44, 62, 80),
     A9(234, 76, 136), A10(202, 44, 104), A11(155, 89, 182), A12(142, 68, 173),

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum Flag {
+
     MAURITIUS("MU", "MUS", "001-mauritius.png"),
     CYPRUS("CY", "CYP", "002-cyprus.png"),
     AUSTRIA("AT", "AUT", "003-austria.png"),
@@ -270,21 +271,23 @@ public enum Flag {
     UNITED_STATES_OF_AMERICA("US", "USA", "263-united-states-of-america.png"),
     NOT_FOUND("--", "---", "999-not-found.png");
 
-
     private final String imageFileName;
     private final String iso2;
     private final String iso3;
 
-
-    // ******************** Constructors **************************************
+    /**
+     * Create a country flag
+     *
+     * @param iso2          country short name
+     * @param iso3          alternative country name
+     * @param imageFileName image file name
+     */
     Flag(final String iso2, final String iso3, final String imageFileName) {
         this.iso2 = iso2;
         this.iso3 = iso3;
         this.imageFileName = imageFileName;
     }
 
-
-    // ******************** Methods *******************************************
     public final String getImageFileName() {return imageFileName;}
 
     public final Image getImage() {
@@ -299,11 +302,11 @@ public enum Flag {
 
     public final String getIso3() {return iso3;}
 
-    public static final Flag iso2(final String iso2) {
+    public static Flag iso2(final String iso2) {
         return Arrays.asList(values()).stream().filter(flag -> !flag.iso2.isEmpty()).filter(flag -> flag.iso2.equals(iso2)).findFirst().orElse(NOT_FOUND);
     }
 
-    public static final Flag iso3(final String iso3) {
+    public static Flag iso3(final String iso3) {
         return Arrays.asList(values()).stream().filter(flag -> !flag.iso3.isEmpty()).filter(flag -> flag.iso3.equals(iso3)).findFirst().orElse(NOT_FOUND);
     }
 
@@ -311,5 +314,5 @@ public enum Flag {
         return Country.getAsList().parallelStream().filter(country -> country.name().equals(getIso2())).findFirst().orElse(null);
     }
 
-    public static final List<Flag> getAsList() {return Arrays.asList(values());}
+    public static List<Flag> getAsList() {return Arrays.asList(values());}
 }

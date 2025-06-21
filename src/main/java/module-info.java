@@ -14,6 +14,7 @@ module eu.hansolo.fx.charts {
     requires ch.qos.logback.classic;
     requires org.slf4j;
     requires java.management;
+    requires pdk.util;
 
     opens fx.chart.country to javafx.graphics;
     opens fx.chart.heatmap to javafx.graphics;

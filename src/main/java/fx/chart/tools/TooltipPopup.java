@@ -1,6 +1,6 @@
 package fx.chart.tools;
 
-import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.font.Fonts;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.*;

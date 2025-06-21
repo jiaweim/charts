@@ -5,7 +5,7 @@ import fx.chart.data.ChartItem;
 import fx.chart.data.Item;
 import fx.chart.event.SelectionEvt;
 import fx.chart.series.ChartItemSeries;
-import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.font.Fonts;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.*;

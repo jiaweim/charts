@@ -1,6 +1,5 @@
 package fx.chart;
 
-import fx.chart.toolbox.unit.Converter;
 import fx.chart.data.ValueChartItem;
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYZChartItem;
@@ -8,6 +7,7 @@ import fx.chart.series.XYSeries;
 import fx.chart.series.XYSeriesBuilder;
 import fx.chart.series.XYZSeries;
 import fx.chart.series.YSeries;
+import fx.chart.toolbox.unit.Converter;
 import fx.chart.tools.Helper;
 import fx.chart.tools.LineStyle;
 import fx.chart.tools.Marker;
@@ -39,6 +39,7 @@ import static fx.chart.toolbox.unit.UnitDefinition.FAHRENHEIT;
  * Created by hansolo on 16.07.17.
  */
 public class ChartTest extends Application {
+
     private static final Double AXIS_WIDTH = 25d;
     private static final Color[] COLORS = {Color.rgb(200, 0, 0, 0.75), Color.rgb(0, 0, 200, 0.75), Color.rgb(0, 200, 200, 0.75), Color.rgb(0, 200, 0, 0.75)};
     private static final Random RND = new Random();

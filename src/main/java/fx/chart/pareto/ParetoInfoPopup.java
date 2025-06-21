@@ -1,6 +1,6 @@
 package fx.chart.pareto;
 
-import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;

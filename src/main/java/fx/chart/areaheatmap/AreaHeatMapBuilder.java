@@ -9,79 +9,81 @@ import javafx.geometry.Dimension2D;
 import java.util.HashMap;
 import java.util.List;
 
-public class AreaHeatMapBuilder<B extends AreaHeatMapBuilder<B>> {
+/**
+ * builder for {@link AreaHeatMap}
+ */
+public class AreaHeatMapBuilder {
 
-    private HashMap<String, Property> properties = new HashMap<>();
+    private final HashMap<String, Property> properties = new HashMap<>();
 
     protected AreaHeatMapBuilder() {}
 
-    public final static AreaHeatMapBuilder create() {
+    public static AreaHeatMapBuilder create() {
         return new AreaHeatMapBuilder();
     }
 
-    public final B prefSize(final double WIDTH, final double HEIGHT) {
-        return prefSize(new Dimension2D(WIDTH, HEIGHT));
+    public final AreaHeatMapBuilder prefSize(final double width, final double height) {
+        return prefSize(new Dimension2D(width, height));
     }
 
-    public final B prefSize(final Dimension2D PREF_SIZE) {
-        properties.put("prefSize", new SimpleObjectProperty<>(PREF_SIZE));
-        return (B) this;
+    public final AreaHeatMapBuilder prefSize(final Dimension2D prefSize) {
+        properties.put("prefSize", new SimpleObjectProperty<>(prefSize));
+        return this;
     }
 
-    public final B dataPoints(final DataPoint... POINTS) {
+    public final AreaHeatMapBuilder dataPoints(final DataPoint... POINTS) {
         properties.put("dataPointsArray", new SimpleObjectProperty<>(POINTS));
-        return (B) this;
+        return this;
     }
 
-    public final B dataPoints(final List<DataPoint> POINTS) {
+    public final AreaHeatMapBuilder dataPoints(final List<DataPoint> POINTS) {
         properties.put("dataPointsList", new SimpleObjectProperty<>(POINTS));
-        return (B) this;
+        return this;
     }
 
-    public final B colorMapping(final Mapping COLOR_MAPPING) {
+    public final AreaHeatMapBuilder colorMapping(final Mapping COLOR_MAPPING) {
         properties.put("colorMapping", new SimpleObjectProperty<>(COLOR_MAPPING));
-        return (B) this;
+        return this;
     }
 
-    public final B useColorMapping(final boolean USE) {
+    public final AreaHeatMapBuilder useColorMapping(final boolean USE) {
         properties.put("useColorMapping", new SimpleBooleanProperty(USE));
-        return (B) this;
+        return this;
     }
 
-    public final B quality(final Quality QUALITY) {
+    public final AreaHeatMapBuilder quality(final Quality QUALITY) {
         return quality(QUALITY.getFactor());
     }
 
-    public final B quality(final int QUALITY) {
+    public final AreaHeatMapBuilder quality(final int QUALITY) {
         properties.put("quality", new SimpleIntegerProperty(QUALITY));
-        return (B) this;
+        return this;
     }
 
-    public final B dataPointsVisible(final boolean VISIBLE) {
+    public final AreaHeatMapBuilder dataPointsVisible(final boolean VISIBLE) {
         properties.put("dataPointsVisible", new SimpleBooleanProperty(VISIBLE));
-        return (B) this;
+        return this;
     }
 
-    public final B smoothedHull(final boolean SMOOTHED) {
+    public final AreaHeatMapBuilder smoothedHull(final boolean SMOOTHED) {
         properties.put("smoothedHull", new SimpleBooleanProperty(SMOOTHED));
-        return (B) this;
+        return this;
     }
 
-    public final B discreteColors(final boolean DISCRETE_COLORS) {
+    public final AreaHeatMapBuilder discreteColors(final boolean DISCRETE_COLORS) {
         properties.put("discreteColors", new SimpleBooleanProperty(DISCRETE_COLORS));
-        return (B) this;
+        return this;
     }
 
-    public final B heatMapOpacity(final double HEAT_MAP_OPACITY) {
+    public final AreaHeatMapBuilder heatMapOpacity(final double HEAT_MAP_OPACITY) {
         properties.put("heatMapOpacity", new SimpleDoubleProperty(HEAT_MAP_OPACITY));
-        return (B) this;
+        return this;
     }
 
-    public final B noOfCloserInfluentialPoints(final int NO_OF_POINTS) {
+    public final AreaHeatMapBuilder noOfCloserInfluentialPoints(final int NO_OF_POINTS) {
         properties.put("noOfCloserInfluentialPoints", new SimpleIntegerProperty(NO_OF_POINTS));
-        return (B) this;
+        return this;
     }
-
 
     public final AreaHeatMap build() {
         final AreaHeatMap control = new AreaHeatMap();

@@ -1,9 +1,9 @@
 package fx.chart;
 
 import fx.chart.event.ChartEvt;
+import fx.chart.font.Fonts;
 import fx.chart.toolbox.evt.EvtObserver;
 import fx.chart.toolbox.evt.EvtType;
-import fx.chart.toolboxfx.font.Fonts;
 import fx.chart.toolboxfx.geom.Bounds;
 import fx.chart.tools.Helper;
 import fx.chart.tools.Helper.Interval;
@@ -20,6 +20,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.StringConverter;
@@ -33,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static javafx.geometry.Orientation.VERTICAL;
-
+import static pdk.util.ArgUtils.checkNotNull;
 
 /**
  * User: hansolo
@@ -43,6 +44,11 @@ import static javafx.geometry.Orientation.VERTICAL;
 @DefaultProperty("children")
 public class Axis extends Region {
 
+    /**
+     * The default tick label font ({@code Font("SansSerif", Font.PLAIN, 10)}).
+     */
+    public static final Font DEFAULT_TICK_LABEL_FONT = Font.font("SansSerif", FontWeight.NORMAL, 10);
+
     private static final double MINIMUM_WIDTH = 0;
     private static final double MINIMUM_HEIGHT = 0;
     private static final double MAXIMUM_WIDTH = 4096;
@@ -50,6 +56,7 @@ public class Axis extends Region {
     private static final double MIN_MAJOR_LINE_WIDTH = 1;
     private static final double MIN_MEDIUM_LINE_WIDTH = 0.75;
     private static final double MIN_MINOR_LINE_WIDTH = 0.5;
+
     private final ChartEvt AXIS_RANGE_CHANGED_EVT = new ChartEvt(Axis.this, ChartEvt.AXIS_RANGE_CHANGED);
     private Map<EvtType, List<EvtObserver<ChartEvt>>> observers = new ConcurrentHashMap<>();
     private double size;
@@ -61,8 +68,10 @@ public class Axis extends Region {
      * pane is used to hold Canvas
      */
     private Pane pane;
+
     private double _minValue;
     private DoubleProperty minValue;
+
     private LocalDateTime _start;
     private ObjectProperty<LocalDateTime> start;
     private double _maxValue;
@@ -74,7 +83,7 @@ public class Axis extends Region {
     private double stepSize;
     private Bounds axisBounds;
     private String _title;
-    private StringProperty title;
+    private StringProperty titleProperty;
     private String _unit;
     private StringProperty unit;
     private AxisType _type;
@@ -125,16 +134,22 @@ public class Axis extends Region {
     private StringConverter<Number> numberFormatter;
     private TickLabelOrientation _tickLabelOrientation;
     private ObjectProperty<TickLabelOrientation> tickLabelOrientation;
+
     private TickLabelFormat _tickLabelFormat;
     private ObjectProperty<TickLabelFormat> tickLabelFormat;
-    private Font tickLabelFont;
+
+    /**
+     * The font used to display the tick labels.
+     */
+    private Font tickLabelFont = DEFAULT_TICK_LABEL_FONT;
+    private ObjectProperty<Font> tickLabelFontProperty;
+
     private Font titleFont;
     private boolean _autoTitleFontSize;
     private BooleanProperty autoTitleFontSize;
     private boolean _autoFontSize;
     private BooleanProperty autoFontSize;
-    private double _tickLabelFontSize;
-    private DoubleProperty tickLabelFontSize;
+
     private double _titleFontSize;
     private DoubleProperty titleFontSize;
     private ZoneId _zoneId;
@@ -220,7 +235,7 @@ public class Axis extends Region {
         _tickLabelFormat = TickLabelFormat.NUMBER;
         _autoTitleFontSize = true;
         _autoFontSize = true;
-        _tickLabelFontSize = 10;
+//        tickLabelFontSize = 10;
         _titleFontSize = 10;
         _zoneId = ZoneId.systemDefault();
         _dateTimeFormatPattern = "dd.MM.YY HH:mm:ss";
@@ -229,7 +244,7 @@ public class Axis extends Region {
         evtEvtObserver = e -> drawAxis();
         dateTimeFormatter = DateTimeFormatter.ofPattern(_dateTimeFormatPattern, _locale);
         categories = new LinkedList<>();
-        tickLabelFormatString = new StringBuilder("%.").append(Integer.toString(_decimals)).append("f").toString();
+        tickLabelFormatString = new StringBuilder("%.").append(_decimals).append("f").toString();
 
         initGraphics();
         registerListeners();
@@ -285,20 +300,19 @@ public class Axis extends Region {
         _tickLabelFormat = TickLabelFormat.NUMBER;
         _autoTitleFontSize = true;
         _autoFontSize = true;
-        _tickLabelFontSize = 10;
+//        tickLabelFontSize = 10;
         _titleFontSize = 10;
         _zoneId = ZoneId.systemDefault();
         _dateTimeFormatPattern = "dd.MM.YY HH:mm:ss";
         axisBounds = new Bounds();
         currentInterval = Interval.SECOND_1;
         dateTimeFormatter = DateTimeFormatter.ofPattern(_dateTimeFormatPattern, _locale);
-        tickLabelFormatString = new StringBuilder("%.").append(Integer.toString(_decimals)).append("f").toString();
+        tickLabelFormatString = new StringBuilder("%.").append(_decimals).append("f").toString();
 
         initGraphics();
         registerListeners();
     }
 
-    // ******************** Initialization ************************************
     private void initGraphics() {
         if (Double.compare(getPrefWidth(), 0.0) <= 0 || Double.compare(getPrefHeight(), 0.0) <= 0 || Double.compare(getWidth(), 0.0) <= 0 ||
                 Double.compare(getHeight(), 0.0) <= 0) {
@@ -349,7 +363,12 @@ public class Axis extends Region {
     @Override
     public ObservableList<Node> getChildren() {return super.getChildren();}
 
-    public double getMinValue() {return null == minValue ? _minValue : minValue.get();}
+    /**
+     * @return min value of this axis
+     */
+    public double getMinValue() {
+        return null == minValue ? _minValue : minValue.get();
+    }
 
     public void setMinValue(final LocalDateTime START) {
         setMinValue(START.toEpochSecond(Helper.getZoneOffset(getZoneId())));
@@ -566,20 +585,31 @@ public class Axis extends Region {
         return autoScale;
     }
 
-    public String getTitle() {return null == title ? _title : title.get();}
+    /**
+     * @return axis title
+     */
+    public String getTitle() {return null == titleProperty ? _title : titleProperty.get();}
 
-    public void setTitle(final String TITLE) {
-        if (null == title) {
-            _title = TITLE;
+    /**
+     * set the axis title
+     *
+     * @param title new title
+     */
+    public void setTitle(final String title) {
+        if (titleProperty == null) {
+            _title = title;
             redraw();
         } else {
-            title.set(TITLE);
+            titleProperty.set(title);
         }
     }
 
+    /**
+     * @return title property
+     */
     public StringProperty titleProperty() {
-        if (null == title) {
-            title = new StringPropertyBase(_title) {
+        if (titleProperty == null) {
+            titleProperty = new StringPropertyBase(_title) {
                 @Override
                 protected void invalidated() {redraw();}
 
@@ -591,7 +621,7 @@ public class Axis extends Region {
             };
             _title = null;
         }
-        return title;
+        return titleProperty;
     }
 
     public String getUnit() {return null == unit ? _unit : unit.get();}
@@ -1397,35 +1427,61 @@ public class Axis extends Region {
         return autoFontSize;
     }
 
-    public double getTickLabelFontSize() {return null == tickLabelFontSize ? _tickLabelFontSize : tickLabelFontSize.get();}
+    /**
+     * Returns the font used for the tick labels (if showing)
+     *
+     * @return The font
+     */
+    public Font getTickLabelFont() {
+        return tickLabelFontProperty == null ? tickLabelFont : tickLabelFontProperty.get();
+    }
 
-    public void setTickLabelFontSize(final double SIZE) {
-        if (null == tickLabelFontSize) {
-            _tickLabelFontSize = SIZE;
-            tickLabelFont = Fonts.latoLight(SIZE);
+    public void setTickLabelFont(final Font font) {
+        checkNotNull(font);
+        if (tickLabelFontProperty == null) {
+            tickLabelFont = font;
             redraw();
         } else {
-            tickLabelFontSize.set(SIZE);
+            tickLabelFontProperty.set(font);
         }
     }
 
-    public DoubleProperty tickLabelFontSizeProperty() {
-        if (null == tickLabelFontSize) {
-            tickLabelFontSize = new DoublePropertyBase(_tickLabelFontSize) {
+    /**
+     * @return tick label font property
+     */
+    public ObjectProperty<Font> tickLabelFontProperty() {
+        if (tickLabelFontProperty == null) {
+            tickLabelFontProperty = new ObjectPropertyBase<>(tickLabelFont) {
                 @Override
                 protected void invalidated() {
-                    tickLabelFont = Fonts.latoLight(get());
                     redraw();
                 }
 
                 @Override
-                public Object getBean() {return Axis.this;}
+                public Object getBean() {
+                    return Axis.this;
+                }
 
                 @Override
-                public String getName() {return "tickLabelFontSize";}
+                public String getName() {
+                    return "tickLabelFont";
+                }
             };
         }
-        return tickLabelFontSize;
+        return tickLabelFontProperty;
+    }
+
+    /**
+     * @return tick label font size
+     */
+    public double getTickLabelFontSize() {
+        return getTickLabelFont().getSize();
+    }
+
+    public void setTickLabelFontSize(final double SIZE) {
+        Font oldFont = getTickLabelFont();
+        Font newFont = Font.font(oldFont.getFamily(), SIZE);
+        setTickLabelFont(newFont);
     }
 
     public double getTitleFontSize() {return null == titleFontSize ? _titleFontSize : titleFontSize.get();}
@@ -1574,20 +1630,17 @@ public class Axis extends Region {
         }
     }
 
-    private double calcTextWidth(final Font FONT, final String TEXT) {
-        Text text = new Text(TEXT);
-        text.setFont(FONT);
-        double width = text.getBoundsInParent().getWidth();
-        text = null;
-        return width;
-    }
-
-    private double toNumericValue(final LocalDateTime DATE) {
-        return Helper.toMillis(DATE, Helper.getZoneOffset(getZoneId()));
-    }
-
-    private LocalDateTime toRealValue(final double VALUE) {
-        return toLocalDateTime((long) VALUE);
+    /**
+     * Calculate the width of text in a specified font
+     *
+     * @param font  {@link Font}
+     * @param aText text
+     * @return text width
+     */
+    private double calcTextWidth(final Font font, final String aText) {
+        Text text = new Text(aText);
+        text.setFont(font);
+        return text.getBoundsInParent().getWidth();
     }
 
     private LocalDateTime toLocalDateTime(final long SECONDS) {
@@ -1778,7 +1831,6 @@ public class Axis extends Region {
     }
 
 
-    // ******************** Drawing *******************************************
     private void drawAxis() {
         if (Double.compare(stepSize, 0) <= 0) {
             return;
@@ -1804,7 +1856,7 @@ public class Axis extends Region {
         axisCtx.clearRect(0, 0, width, height);
         axisCtx.setFill(getAxisBackgroundColor());
         axisCtx.fillRect(0, 0, width, height);
-        axisCtx.setFont(tickLabelFont);
+        axisCtx.setFont(getTickLabelFont());
         axisCtx.setTextBaseline(VPos.CENTER);
 
         AxisType axisType = getType();
@@ -1919,7 +1971,6 @@ public class Axis extends Region {
                         break;
                 }
             }
-
 
             // Main Loop for tick marks and labels
             BigDecimal tmpStepBD = new BigDecimal(tmpStepSize);
@@ -2532,7 +2583,7 @@ public class Axis extends Region {
     }
 
     private void drawTickLabel(final boolean ONLY_FIRST_AND_LAST_VISIBLE, final boolean IS_ZERO, final boolean IS_MIN, final boolean IS_MAX, final boolean FULL_RANGE,
-            final Color ZERO_COLOR, final Color COLOR, final double TEXT_X, final double TEXT_Y, final double MAX_WIDTH, final String TEXT, final Orientation ORIENTATION) {
+                               final Color ZERO_COLOR, final Color COLOR, final double TEXT_X, final double TEXT_Y, final double MAX_WIDTH, final String TEXT, final Orientation ORIENTATION) {
         if (!ONLY_FIRST_AND_LAST_VISIBLE) {
             if (IS_ZERO) {
                 axisCtx.setFill(FULL_RANGE ? ZERO_COLOR : COLOR);
