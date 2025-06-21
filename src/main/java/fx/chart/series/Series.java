@@ -28,6 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public abstract class Series<T extends Item> {
 
     public final SeriesEvent UPDATE_EVENT = new SeriesEvent(Series.this);
+
     protected String _name;
     protected StringProperty name;
     protected Paint _fill;
@@ -164,6 +165,9 @@ public abstract class Series<T extends Item> {
 
     public void setItems(final List<T> ITEMS) {items.setAll(ITEMS);}
 
+    /**
+     * @return name of this series
+     */
     public String getName() {return null == name ? _name : name.get();}
 
     public void setName(final String NAME) {
@@ -334,12 +338,12 @@ public abstract class Series<T extends Item> {
 
     public Symbol getSymbol() {return null == symbol ? _symbol : symbol.get();}
 
-    public void setSymbol(final Symbol SYMBOL) {
+    public void setSymbol(final Symbol aSymbol) {
         if (null == symbol) {
-            _symbol = SYMBOL;
+            _symbol = aSymbol;
             fireSeriesEvent(UPDATE_EVENT);
         } else {
-            symbol.set(SYMBOL);
+            symbol.set(aSymbol);
         }
     }
 

@@ -27,6 +27,7 @@ import static fx.chart.toolbox.Constants.*;
 
 
 public class Location {
+
     private GeoLocation geoLocation;
     private Color _fill;
     private ObjectProperty<Color> fill;
@@ -40,8 +41,6 @@ public class Location {
     private EventHandler<MouseEvent> mouseExitHandler;
     private Map<EvtType, List<EvtObserver<LocationChangeEvt>>> observers;
 
-
-    // ******************** Constructors **************************************
     public Location() {
         this(Instant.now(), 0, 0, 0, 1, "", "", Color.BLUE, Color.TRANSPARENT);
     }

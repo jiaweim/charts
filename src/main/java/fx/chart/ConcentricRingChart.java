@@ -7,7 +7,7 @@ import fx.chart.series.Series;
 import fx.chart.toolbox.evt.Evt;
 import fx.chart.toolbox.evt.EvtObserver;
 import fx.chart.toolbox.evt.EvtType;
-import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import fx.chart.tools.NumberFormat;

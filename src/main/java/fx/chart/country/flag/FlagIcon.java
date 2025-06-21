@@ -5,6 +5,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 
 public class FlagIcon extends Region {
+
     public static final double DEFAULT_FLAG_SIZE = 30;
     private static final double PREFERRED_WIDTH = 30;
     private static final double PREFERRED_HEIGHT = 30;
@@ -19,8 +20,6 @@ public class FlagIcon extends Region {
     private Flag flag;
     private double flagSize;
 
-
-    // ******************** Constructors **************************************
     public FlagIcon() {
         this(Flag.GERMANY, 30);
     }
@@ -36,8 +35,6 @@ public class FlagIcon extends Region {
         registerListeners();
     }
 
-
-    // ******************** Initialization ************************************
     private void initGraphics() {
         if (Double.compare(getPrefWidth(), 0.0) <= 0 || Double.compare(getPrefHeight(), 0.0) <= 0 || Double.compare(getWidth(), 0.0) <= 0 ||
                 Double.compare(getHeight(), 0.0) <= 0) {

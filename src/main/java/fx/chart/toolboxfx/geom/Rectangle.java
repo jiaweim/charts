@@ -5,11 +5,11 @@ import java.util.Objects;
 import static fx.chart.toolbox.Constants.*;
 
 public class Rectangle {
+
     public double x;
     public double y;
     public double width;
     public double height;
-
 
     public Rectangle() {}
 

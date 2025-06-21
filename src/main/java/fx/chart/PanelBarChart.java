@@ -7,7 +7,7 @@ import fx.chart.event.SeriesEventListener;
 import fx.chart.geometry.Rectangle;
 import fx.chart.series.ChartItemSeries;
 import fx.chart.series.Series;
-import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import javafx.beans.DefaultProperty;

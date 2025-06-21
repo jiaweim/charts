@@ -47,6 +47,14 @@ public class Helper {
         return value;
     }
 
+    /**
+     * clamp value to given range
+     *
+     * @param min   min bound
+     * @param max   max bound
+     * @param value value to clamp
+     * @return value after clamp
+     */
     public static double clamp(final double min, final double max, final double value) {
         if (value < min) return min;
         if (value > max) return max;
@@ -406,9 +414,9 @@ public class Helper {
     }
 
     public static double[] getCubicBezierXYatT(final double startPointX, final double startPointY,
-            final double controlPoint1X, final double controlPoint1Y,
-            final double controlPoint2X, final double controlPoint2Y,
-            final double endPointX, final double endPointY, final double distance) {
+                                               final double controlPoint1X, final double controlPoint1Y,
+                                               final double controlPoint2X, final double controlPoint2Y,
+                                               final double endPointX, final double endPointY, final double distance) {
         final double x = cubicN(distance, startPointX, controlPoint1X, controlPoint2X, endPointX);
         final double y = cubicN(distance, startPointY, controlPoint1Y, controlPoint2Y, endPointY);
         return new double[]{x, y};

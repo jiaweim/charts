@@ -9,7 +9,7 @@ import fx.chart.country.tools.Connection;
 import fx.chart.country.tools.Constants;
 import fx.chart.country.tools.Helper;
 import fx.chart.heatmap.*;
-import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.font.Fonts;
 import fx.chart.toolboxfx.geom.Poi;
 import fx.chart.toolboxfx.geom.Point;
 import javafx.application.Platform;

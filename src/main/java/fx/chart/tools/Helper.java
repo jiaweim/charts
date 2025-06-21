@@ -363,7 +363,7 @@ public class Helper {
     }
 
     public static final Point calcIntersectionOfTwoLines(final double X1, final double Y1, final double X2, final double Y2,
-            final double X3, final double Y3, final double X4, final double Y4) {
+                                                         final double X3, final double Y3, final double X4, final double Y4) {
 
         // Line AB represented as a1x + b1y = c1
         double a1 = Y2 - Y1;
@@ -543,8 +543,8 @@ public class Helper {
     }
 
     public static final boolean isInRectangle(final double X, final double Y,
-            final double MIN_X, final double MIN_Y,
-            final double MAX_X, final double MAX_Y) {
+                                              final double MIN_X, final double MIN_Y,
+                                              final double MAX_X, final double MAX_Y) {
         return (Double.compare(X, MIN_X) >= 0 &&
                 Double.compare(X, MAX_X) <= 0 &&
                 Double.compare(Y, MIN_Y) >= 0 &&
@@ -558,8 +558,8 @@ public class Helper {
     }
 
     public static final boolean isInEllipse(final double X, final double Y,
-            final double ELLIPSE_CENTER_X, final double ELLIPSE_CENTER_Y,
-            final double ELLIPSE_RADIUS_X, final double ELLIPSE_RADIUS_Y) {
+                                            final double ELLIPSE_CENTER_X, final double ELLIPSE_CENTER_Y,
+                                            final double ELLIPSE_RADIUS_X, final double ELLIPSE_RADIUS_Y) {
         return Double.compare(((((X - ELLIPSE_CENTER_X) * (X - ELLIPSE_CENTER_X)) / (ELLIPSE_RADIUS_X * ELLIPSE_RADIUS_X)) +
                 (((Y - ELLIPSE_CENTER_Y) * (Y - ELLIPSE_CENTER_Y)) / (ELLIPSE_RADIUS_Y * ELLIPSE_RADIUS_Y))), 1) <= 0.0;
     }
@@ -608,9 +608,9 @@ public class Helper {
     }
 
     public static final boolean isInRingSegment(final double X, final double Y,
-            final double CENTER_X, final double CENTER_Y,
-            final double OUTER_RADIUS, final double INNER_RADIUS,
-            final double START_ANGLE, final double SEGMENT_ANGLE) {
+                                                final double CENTER_X, final double CENTER_Y,
+                                                final double OUTER_RADIUS, final double INNER_RADIUS,
+                                                final double START_ANGLE, final double SEGMENT_ANGLE) {
         double angleOffset = 90.0;
         double pointRadius = Math.sqrt((X - CENTER_X) * (X - CENTER_X) + (Y - CENTER_Y) * (Y - CENTER_Y));
         double pointAngle = getAngleFromXY(X, Y, CENTER_X, CENTER_Y, angleOffset);
@@ -899,8 +899,14 @@ public class Helper {
         return hsbValues;
     }
 
-    public static final String colorToRGB(final Color COLOR) {
-        String hex = COLOR.toString().replace("0x", "");
+    /**
+     * convert javafx {@link Color} to rgb
+     *
+     * @param color {@link Color} instance
+     * @return
+     */
+    public static String colorToRGB(final Color color) {
+        String hex = color.toString().replace("0x", "");
         String hexRed = hex.substring(0, 2).toUpperCase();
         String hexGreen = hex.substring(2, 4).toUpperCase();
         String hexBlue = hex.substring(4, 6).toUpperCase();
@@ -912,9 +918,9 @@ public class Helper {
         return String.join("", "colorToRGB(", intRed, ", ", intGreen, ", ", intBlue, ")");
     }
 
-    public static final String colorToRGBA(final Color COLOR) {return colorToRGBA(COLOR, COLOR.getOpacity());}
+    public static String colorToRGBA(final Color COLOR) {return colorToRGBA(COLOR, COLOR.getOpacity());}
 
-    public static final String colorToRGBA(final Color COLOR, final double ALPHA) {
+    public static String colorToRGBA(final Color COLOR, final double ALPHA) {
         String hex = COLOR.toString().replace("0x", "");
         String hexRed = hex.substring(0, 2).toUpperCase();
         String hexGreen = hex.substring(2, 4).toUpperCase();
@@ -928,14 +934,14 @@ public class Helper {
         return String.join("", "colorToRGBA(", intRed, ", ", intGreen, ", ", intBlue, ",", alpha, ")");
     }
 
-    public static final String colorToWeb(final Color COLOR) {return COLOR.toString().replace("0x", "#").substring(0, 7);}
+    public static String colorToWeb(final Color COLOR) {return COLOR.toString().replace("0x", "#").substring(0, 7);}
 
-    public static final List<DataPoint> createSmoothedHull(final List<DataPoint> POINTS, final int SUB_DIVISIONS) {
+    public static List<DataPoint> createSmoothedHull(final List<DataPoint> POINTS, final int SUB_DIVISIONS) {
         List<DataPoint> hullPolygon = createHull(POINTS);
         return subdivideDataPoints(hullPolygon, SUB_DIVISIONS);
     }
 
-    public static final <T extends Point> List<T> createHull(final List<T> POINTS) {
+    public static <T extends Point> List<T> createHull(final List<T> POINTS) {
         List<T> convexHull = new ArrayList<>();
         if (POINTS.size() < 3) {
             return new ArrayList<T>(POINTS);
@@ -1189,9 +1195,9 @@ public class Helper {
     }
 
     public static final double[] getCubicBezierXYatT(final double START_POINT_X, final double START_POINT_Y,
-            final double CONTROL_POINT_1_X, final double CONTROL_POINT_1_Y,
-            final double CONTROL_POINT_2_X, final double CONTROL_POINT_2_Y,
-            final double END_POINT_X, final double END_POINT_Y, final double DISTANCE) {
+                                                     final double CONTROL_POINT_1_X, final double CONTROL_POINT_1_Y,
+                                                     final double CONTROL_POINT_2_X, final double CONTROL_POINT_2_Y,
+                                                     final double END_POINT_X, final double END_POINT_Y, final double DISTANCE) {
         final double x = cubicN(DISTANCE, START_POINT_X, CONTROL_POINT_1_X, CONTROL_POINT_2_X, END_POINT_X);
         final double y = cubicN(DISTANCE, START_POINT_Y, CONTROL_POINT_1_Y, CONTROL_POINT_2_Y, END_POINT_Y);
         return new double[]{x, y};

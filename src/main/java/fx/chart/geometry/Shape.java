@@ -4,6 +4,14 @@ import fx.chart.geometry.tools.IllegalPathStateException;
 import fx.chart.geometry.transform.BaseTransform;
 import fx.chart.toolboxfx.geom.Point;
 
+/**
+ * Abstract class for all shapes
+ *
+ * @author Jiawei Mao
+ * @author Gerrit Grunwald
+ * @version 1.0.0
+ * @since 2025-06-21, 16:03
+ */
 public abstract class Shape {
 
     public static final int RECT_INTERSECTS = 0x80000000;
@@ -14,6 +22,11 @@ public abstract class Shape {
 
     public abstract RectBounds getBounds();
 
+    /**
+     * Test whether the specified point is within the shape
+     * @param POINT {@link Point} to test
+     * @return
+     */
     public boolean contains(final Point POINT) {return contains(POINT.x, POINT.y);}
 
     public abstract boolean contains(final double X, final double Y);
@@ -107,8 +120,8 @@ public abstract class Shape {
     }
 
     public static int pointCrossingsForLine(final double POINT_X, final double POINT_Y,
-            final double X0, final double Y0,
-            final double X1, final double Y1) {
+                                            final double X0, final double Y0,
+                                            final double X1, final double Y1) {
         if (POINT_Y < Y0 && POINT_Y < Y1) {
             return 0;
         }
@@ -129,9 +142,9 @@ public abstract class Shape {
     }
 
     public static int pointCrossingsForQuad(final double POINT_X, final double POINT_Y,
-            final double X0, final double Y0,
-            double xc, double yc,
-            final double X1, final double Y1, final int LEVEL) {
+                                            final double X0, final double Y0,
+                                            double xc, double yc,
+                                            final double X1, final double Y1, final int LEVEL) {
         if (POINT_Y < Y0 && POINT_Y < yc && POINT_Y < Y1) {
             return 0;
         }
@@ -168,10 +181,10 @@ public abstract class Shape {
     }
 
     public static int pointCrossingsForCubic(final double POINT_X, final double POINT_Y,
-            final double X0, final double Y0,
-            double xc0, double yc0,
-            double xc1, double yc1,
-            final double X1, final double Y1, final int LEVEL) {
+                                             final double X0, final double Y0,
+                                             double xc0, double yc0,
+                                             double xc1, double yc1,
+                                             final double X1, final double Y1, final int LEVEL) {
         if (POINT_Y < Y0 && POINT_Y < yc0 && POINT_Y < yc1 && POINT_Y < Y1) {
             return 0;
         }
@@ -217,8 +230,8 @@ public abstract class Shape {
 
 
     public static int rectCrossingsForPath(final PathIterator PATH_ITERATOR,
-            final double RECT_X_MIN, final double RECT_Y_MIN,
-            final double RECT_X_MAX, final double RECT_Y_MAX) {
+                                           final double RECT_X_MIN, final double RECT_Y_MIN,
+                                           final double RECT_X_MAX, final double RECT_Y_MAX) {
         if (RECT_X_MAX <= RECT_X_MIN || RECT_Y_MAX <= RECT_Y_MIN) {
             return 0;
         }
@@ -313,10 +326,10 @@ public abstract class Shape {
 
 
     public static int rectCrossingsForLine(int crossings,
-            final double RECT_X_MIN, final double RECT_Y_MIN,
-            final double RECT_X_MAX, final double RECT_Y_MAX,
-            final double X0, final double Y0,
-            final double X1, final double Y1) {
+                                           final double RECT_X_MIN, final double RECT_Y_MIN,
+                                           final double RECT_X_MAX, final double RECT_Y_MAX,
+                                           final double X0, final double Y0,
+                                           final double X1, final double Y1) {
         if (Y0 >= RECT_Y_MAX && Y1 >= RECT_Y_MAX) {
             return crossings;
         }
@@ -386,12 +399,12 @@ public abstract class Shape {
 
 
     public static int rectCrossingsForQuad(int crossings,
-            double rxmin, double rymin,
-            double rxmax, double rymax,
-            double x0, double y0,
-            double xc, double yc,
-            double x1, double y1,
-            int level) {
+                                           double rxmin, double rymin,
+                                           double rxmax, double rymax,
+                                           double x0, double y0,
+                                           double xc, double yc,
+                                           double x1, double y1,
+                                           int level) {
         if (y0 >= rymax && yc >= rymax && y1 >= rymax) {
             return crossings;
         }
@@ -443,13 +456,13 @@ public abstract class Shape {
 
 
     public static int rectCrossingsForCubic(int crossings,
-            double rxmin, double rymin,
-            double rxmax, double rymax,
-            double x0, double y0,
-            double xc0, double yc0,
-            double xc1, double yc1,
-            double x1, double y1,
-            int level) {
+                                            double rxmin, double rymin,
+                                            double rxmax, double rymax,
+                                            double x0, double y0,
+                                            double xc0, double yc0,
+                                            double xc1, double yc1,
+                                            double x1, double y1,
+                                            int level) {
         if (y0 >= rymax && yc0 >= rymax && yc1 >= rymax && y1 >= rymax) {
             return crossings;
         }

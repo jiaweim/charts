@@ -6,7 +6,7 @@ import fx.chart.Symbol;
 import fx.chart.event.ChartEvt;
 import fx.chart.toolbox.evt.EvtObserver;
 import fx.chart.toolbox.evt.EvtType;
-import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;

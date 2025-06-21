@@ -69,8 +69,6 @@ public class ChartItem implements Item, Comparable<ChartItem> {
     private DoubleProperty currentValue;
     private Timeline timeline;
 
-
-    // ******************** Constructors **************************************
     public ChartItem() {
         this("", 0, Color.rgb(233, 30, 99), Color.TRANSPARENT, Color.BLACK, Instant.now(), false, 800, false, null);
     }

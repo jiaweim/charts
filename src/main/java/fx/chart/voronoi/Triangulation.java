@@ -1,39 +1,15 @@
-/*
- * SPDX-License-Identifier: Apache-2.0
- *
- * Copyright 2016-2021 Gerrit Grunwald.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package fx.chart.voronoi;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.AbstractSet;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 
 public class Triangulation extends AbstractSet<Triangle> {
-    private static Logger   logger = LoggerFactory.getLogger(Triangulation.class);
-    private Triangle        mostRecent;
+
+    private static Logger logger = LoggerFactory.getLogger(Triangulation.class);
+    private Triangle mostRecent;
     private Graph<Triangle> triGraph;
 
 
@@ -49,9 +25,9 @@ public class Triangulation extends AbstractSet<Triangle> {
     }
 
     public Triangle neighborOpposite(final VPoint site, final Triangle triangle) {
-        if (!triangle.contains(site)) { throw new IllegalArgumentException("Bad vertex; not in triangle"); }
+        if (!triangle.contains(site)) {throw new IllegalArgumentException("Bad vertex; not in triangle");}
         for (Triangle neighbor : triGraph.getNeighbours(triangle)) {
-            if (!neighbor.contains(site)) { return neighbor; }
+            if (!neighbor.contains(site)) {return neighbor;}
         }
         return null;
     }
@@ -61,23 +37,23 @@ public class Triangulation extends AbstractSet<Triangle> {
     }
 
     public List<Triangle> surroundingTriangles(final VPoint site, Triangle triangle) {
-        if (!triangle.contains(site)) { throw new IllegalArgumentException("Site not in triangle"); }
-        List<Triangle> list  = new ArrayList<>();
-        Triangle       start = triangle;
-        VPoint         guide = triangle.getVertexButNot(site);
+        if (!triangle.contains(site)) {throw new IllegalArgumentException("Site not in triangle");}
+        List<Triangle> list = new ArrayList<>();
+        Triangle start = triangle;
+        VPoint guide = triangle.getVertexButNot(site);
         while (true) {
             list.add(triangle);
             Triangle previous = triangle;
             triangle = this.neighborOpposite(guide, triangle);
-            guide    = previous.getVertexButNot(site, guide);
-            if (triangle == start) { break; }
+            guide = previous.getVertexButNot(site, guide);
+            if (triangle == start) {break;}
         }
         return list;
     }
 
     public Triangle locate(final VPoint point) {
         Triangle triangle = mostRecent;
-        if (!this.contains(triangle)) { triangle = null; }
+        if (!this.contains(triangle)) {triangle = null;}
 
         Set<Triangle> visited = new HashSet<>();
         while (triangle != null) {
@@ -88,13 +64,13 @@ public class Triangulation extends AbstractSet<Triangle> {
             visited.add(triangle);
             // Corner opposite point
             VPoint corner = point.isOutside(triangle.toArray(new VPoint[0]));
-            if (corner == null) { return triangle; }
+            if (corner == null) {return triangle;}
             triangle = this.neighborOpposite(corner, triangle);
         }
         // No luck; try brute force
         logger.debug("Warning: Checking all triangles for " + point);
         for (Triangle tri : this) {
-            if (point.isOutside(tri.toArray(new VPoint[0])) == null) { return tri; }
+            if (point.isOutside(tri.toArray(new VPoint[0])) == null) {return tri;}
         }
         // No such triangle
         logger.debug("Warning: No triangle holds " + point);
@@ -104,17 +80,17 @@ public class Triangulation extends AbstractSet<Triangle> {
     public void place(final VPoint point) {
         Triangle triangle = locate(point);
 
-        if (triangle == null) { throw new IllegalArgumentException("No containing triangle"); }
-        if (triangle.contains(point)) { return; }
+        if (triangle == null) {throw new IllegalArgumentException("No containing triangle");}
+        if (triangle.contains(point)) {return;}
 
         Set<Triangle> cavity = getCavity(point, triangle);
         mostRecent = update(point, cavity);
     }
 
     private Set<Triangle> getCavity(final VPoint site, Triangle triangle) {
-        Set<Triangle>   encroached  = new HashSet<>();
+        Set<Triangle> encroached = new HashSet<>();
         Queue<Triangle> toBeChecked = new LinkedList<>();
-        Set<Triangle>   marked      = new HashSet<>();
+        Set<Triangle> marked = new HashSet<>();
         toBeChecked.add(triangle);
         marked.add(triangle);
         while (!toBeChecked.isEmpty()) {
@@ -125,7 +101,7 @@ public class Triangulation extends AbstractSet<Triangle> {
             encroached.add(triangle);
 
             for (Triangle neighbor : triGraph.getNeighbours(triangle)) {
-                if (marked.contains(neighbor)) { continue; }
+                if (marked.contains(neighbor)) {continue;}
                 marked.add(neighbor);
                 toBeChecked.add(neighbor);
             }
@@ -134,8 +110,8 @@ public class Triangulation extends AbstractSet<Triangle> {
     }
 
     private Triangle update(final VPoint site, final Set<Triangle> cavity) {
-        Set<Set<VPoint>> boundary     = new HashSet<>();
-        Set<Triangle>    theTriangles = new HashSet<>();
+        Set<Set<VPoint>> boundary = new HashSet<>();
+        Set<Triangle> theTriangles = new HashSet<>();
 
         for (Triangle triangle : cavity) {
             theTriangles.addAll(neighbors(triangle));
@@ -174,15 +150,18 @@ public class Triangulation extends AbstractSet<Triangle> {
         return newTriangles.iterator().next();
     }
 
-    @Override public Iterator<Triangle> iterator() {
+    @Override
+    public Iterator<Triangle> iterator() {
         return triGraph.getNodes().iterator();
     }
 
-    @Override public int size() {
+    @Override
+    public int size() {
         return triGraph.getNodes().size();
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "Triangulation with " + size() + " triangles";
     }
 }

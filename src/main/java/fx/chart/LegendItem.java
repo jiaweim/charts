@@ -1,7 +1,7 @@
 package fx.chart;
 
 import fx.chart.toolboxfx.HelperFX;
-import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.font.Fonts;
 import fx.chart.toolboxfx.geom.Dimension;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;

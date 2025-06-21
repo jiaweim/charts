@@ -6,7 +6,7 @@ import fx.chart.event.ChartEvt;
 import fx.chart.geometry.Circle;
 import fx.chart.geometry.Path;
 import fx.chart.toolbox.evt.EvtObserver;
-import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.font.Fonts;
 import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
 import javafx.application.Platform;

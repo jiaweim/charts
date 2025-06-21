@@ -6,7 +6,7 @@ import fx.chart.toolbox.evt.EvtType;
 import fx.chart.country.evt.CountryEvt;
 import fx.chart.country.tools.*;
 import fx.chart.heatmap.*;
-import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.font.Fonts;
 import fx.chart.toolboxfx.geom.Poi;
 import fx.chart.toolboxfx.geom.Point;
 import javafx.application.Platform;

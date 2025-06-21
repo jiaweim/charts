@@ -1,6 +1,6 @@
 package fx.chart.pareto;
 
-import fx.chart.toolboxfx.font.Fonts;
+import fx.chart.font.Fonts;
 import fx.chart.toolboxfx.geom.Point;
 import fx.chart.Axis;
 import fx.chart.Position;

@@ -9,6 +9,7 @@ import static fx.chart.toolbox.Constants.*;
 
 
 public class Point implements Comparable<Point>, Cloneable {
+
     public double x;
     public double y;
     private boolean empty;

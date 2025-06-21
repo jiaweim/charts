@@ -6,12 +6,12 @@ import fx.chart.event.ChartEvt;
 import fx.chart.event.CursorEvent;
 import fx.chart.event.CursorEventListener;
 import fx.chart.event.SeriesEventListener;
+import fx.chart.font.Fonts;
 import fx.chart.series.Series;
 import fx.chart.series.XYSeries;
 import fx.chart.toolbox.Statistics;
 import fx.chart.toolbox.evt.EvtObserver;
 import fx.chart.toolbox.evt.EvtType;
-import fx.chart.toolboxfx.font.Fonts;
 import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TooltipPopup;
@@ -47,6 +47,7 @@ import static fx.chart.tools.Helper.clamp;
  * Created by hansolo on 16.07.17.
  */
 public class XYPane<T extends XYItem> extends Region implements ChartArea {
+
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
     private static final double MINIMUM_WIDTH = 0;
@@ -767,15 +768,18 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         return averageStrokeWidth;
     }
 
+    /**
+     * @return Whether to display crosshair under the cursor
+     */
     public boolean isCrossHairVisible() {return null == crossHairVisible ? _crossHairVisible : crossHairVisible.get();}
 
-    public void setCrossHairVisible(final boolean VISIBLE) {
+    public void setCrossHairVisible(final boolean visible) {
         if (null == crossHairVisible) {
-            _crossHairVisible = VISIBLE;
-            Helper.enableNode(cursorCanvas, VISIBLE);
+            _crossHairVisible = visible;
+            Helper.enableNode(cursorCanvas, visible);
             drawCursor();
         } else {
-            crossHairVisible.set(VISIBLE);
+            crossHairVisible.set(visible);
         }
     }
 
