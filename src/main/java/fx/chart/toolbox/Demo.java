@@ -4,12 +4,7 @@ import fx.chart.toolbox.Helper.SystemSummary;
 import fx.chart.toolbox.evt.Evt;
 import fx.chart.toolbox.evt.EvtObserver;
 import fx.chart.toolbox.evt.EvtType;
-import fx.chart.toolbox.evt.type.ChangeEvt;
-import fx.chart.toolbox.evt.type.GeoLocationChangeEvt;
-import fx.chart.toolbox.evt.type.ListChangeEvt;
-import fx.chart.toolbox.evt.type.MapChangeEvt;
-import fx.chart.toolbox.evt.type.MatrixItemChangeEvt;
-import fx.chart.toolbox.evt.type.PropertyChangeEvt;
+import fx.chart.toolbox.evt.type.*;
 import fx.chart.toolbox.evtbus.EvtBus;
 import fx.chart.toolbox.evtbus.Subscriber;
 import fx.chart.toolbox.evtbus.Topic;
@@ -18,55 +13,24 @@ import fx.chart.toolbox.geo.GeoLocationBuilder;
 import fx.chart.toolbox.observables.ObservableList;
 import fx.chart.toolbox.observables.ObservableMap;
 import fx.chart.toolbox.observables.ObservableMatrix;
-import fx.chart.toolbox.properties.BooleanProperty;
-import fx.chart.toolbox.properties.DoubleProperty;
-import fx.chart.toolbox.properties.IntegerProperty;
-import fx.chart.toolbox.properties.ObjectProperty;
-import fx.chart.toolbox.properties.ReadOnlyBooleanProperty;
-import fx.chart.toolbox.properties.ReadOnlyDoubleProperty;
+import fx.chart.toolbox.properties.*;
 import fx.chart.toolbox.statemachine.State;
 import fx.chart.toolbox.statemachine.StateChangeException;
 import fx.chart.toolbox.statemachine.StateMachine;
 import fx.chart.toolbox.time.DateTimes;
 import fx.chart.toolbox.time.Dates;
 import fx.chart.toolbox.time.Times;
-import fx.chart.toolbox.tuples.Pair;
-import fx.chart.toolbox.tuples.Quartet;
-import fx.chart.toolbox.tuples.Triplet;
 import fx.chart.toolbox.unit.Converter;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static fx.chart.toolbox.unit.Category.BLOOD_GLUCOSE;
-import static fx.chart.toolbox.unit.Category.LENGTH;
-import static fx.chart.toolbox.unit.Category.TEMPERATURE;
-import static fx.chart.toolbox.unit.Category.VOLUME;
-import static fx.chart.toolbox.unit.UnitDefinition.CELSIUS;
-import static fx.chart.toolbox.unit.UnitDefinition.CENTIMETER;
-import static fx.chart.toolbox.unit.UnitDefinition.CUBIC_METER;
-import static fx.chart.toolbox.unit.UnitDefinition.FAHRENHEIT;
-import static fx.chart.toolbox.unit.UnitDefinition.INCHES;
-import static fx.chart.toolbox.unit.UnitDefinition.KELVIN;
-import static fx.chart.toolbox.unit.UnitDefinition.LITER;
-import static fx.chart.toolbox.unit.UnitDefinition.METER;
-import static fx.chart.toolbox.unit.UnitDefinition.MILLIGRAM_PER_DECILITER;
-import static fx.chart.toolbox.unit.UnitDefinition.MILLIMOL_PER_LITER;
-import static fx.chart.toolbox.unit.UnitDefinition.NANOMETER;
+import static fx.chart.toolbox.unit.Category.*;
+import static fx.chart.toolbox.unit.UnitDefinition.*;
 
 
 public class Demo {
@@ -80,8 +44,6 @@ public class Demo {
 
     public Demo() {
         propertiesDemo();
-
-        tuplesDemo();
 
         converterDemo();
 
@@ -267,16 +229,6 @@ public class Demo {
         propertyC.set(10);
         System.out.println("\nProperty C: " + propertyC.get() + " is bound bidirectional: " + propertyC.isBoundBidirectional());
         System.out.println("Property D: " + propertyD.get() + " is bound bidirectional: " + propertyD.isBoundBidirectional());
-    }
-
-    private void tuplesDemo() {
-        System.out.println("\n-------------------- tuples demo --------------------");
-        Pair<Double, Integer> pair = new Pair(5.0, 3);
-        Triplet<Double, Integer, Long> triplet = new Triplet(5.0, 3, 500);
-        Quartet<Double, Integer, String, Long> quartet = new Quartet(1.0, 5, "Test", 1000);
-        System.out.println("Quartet size      : " + quartet.size());
-        System.out.println("Quartet value at 2: " + quartet.getValueAt(2));
-        System.out.println("Quartet type at 2 : " + quartet.getTypeAt(2));
     }
 
     private void converterDemo() {
