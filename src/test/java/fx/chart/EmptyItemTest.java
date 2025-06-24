@@ -1,12 +1,11 @@
 package fx.chart;
 
-import fx.chart.toolbox.unit.Converter;
 import fx.chart.data.ValueChartItem;
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYZChartItem;
 import fx.chart.series.XYSeries;
 import fx.chart.series.XYSeriesBuilder;
-import fx.chart.tools.Helper;
+import fx.chart.toolbox.unit.Converter;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -129,9 +128,9 @@ public class EmptyItemTest extends Application {
         double tempFahrenheitMin = tempConverter.convert(-10, FAHRENHEIT);
         double tempFahrenheitMax = tempConverter.convert(20, FAHRENHEIT);
 
-        lineChartXAxisBottom = Helper.createBottomAxis(-10, NO_OF_X_VALUES, true, AXIS_WIDTH);
-        lineChartYAxisLeft = Helper.createLeftAxis(-10, 20, true, AXIS_WIDTH);
-        lineChartYAxisRight = Helper.createRightAxis(tempFahrenheitMin, tempFahrenheitMax, false, AXIS_WIDTH);
+        lineChartXAxisBottom = Axis.bottom(-10, NO_OF_X_VALUES, true, AXIS_WIDTH);
+        lineChartYAxisLeft = Axis.left(-10, 20, true, AXIS_WIDTH);
+        lineChartYAxisRight = Axis.right(tempFahrenheitMin, tempFahrenheitMax, false, AXIS_WIDTH);
 
         lineChartXAxisBottom.setZeroColor(Color.BLACK);
         lineChartYAxisLeft.setZeroColor(Color.BLACK);
@@ -143,8 +142,8 @@ public class EmptyItemTest extends Application {
 
 
         // AreaChart
-        areaChartXAxisBottom = Helper.createBottomAxis(0, NO_OF_X_VALUES, true, AXIS_WIDTH);
-        areaChartYAxisLeft = Helper.createLeftAxis(0, 20, true, AXIS_WIDTH);
+        areaChartXAxisBottom = Axis.bottom(0, NO_OF_X_VALUES, true, AXIS_WIDTH);
+        areaChartYAxisLeft = Axis.left(0, 20, true, AXIS_WIDTH);
         areaChart = new XYChart<>(new XYPane(xySeries2), areaChartXAxisBottom, areaChartYAxisLeft);
 
         xySeries2.setFill(new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, new Stop(0.0, Color.rgb(0, 0, 255, 0.75)), new Stop(1.0, Color.rgb(0, 255, 255, 0.25))));
@@ -152,16 +151,16 @@ public class EmptyItemTest extends Application {
         areaChart.getXYPane().setChartBackground(Color.rgb(50, 50, 50, 0.5));
 
         // SmoothLineChart
-        smoothLineChartXAxisBottom = Helper.createBottomAxis(0, NO_OF_X_VALUES, true, AXIS_WIDTH);
-        smoothLineChartYAxisLeft = Helper.createLeftAxis(0, 20, true, AXIS_WIDTH);
+        smoothLineChartXAxisBottom = Axis.bottom(0, NO_OF_X_VALUES, true, AXIS_WIDTH);
+        smoothLineChartYAxisLeft = Axis.left(0, 20, true, AXIS_WIDTH);
         smoothLineChart = new XYChart<>(new XYPane(xySeries3), smoothLineChartYAxisLeft, smoothLineChartXAxisBottom);
 
         Grid grid2 = new Grid(smoothLineChartXAxisBottom, smoothLineChartYAxisLeft);
         smoothLineChart.setGrid(grid2);
 
         // SmoothAreaChart
-        smoothAreaChartXAxisBottom = Helper.createBottomAxis(0, NO_OF_X_VALUES, true, AXIS_WIDTH);
-        smoothAreaChartYAxisLeft = Helper.createLeftAxis(0, 20, true, AXIS_WIDTH);
+        smoothAreaChartXAxisBottom = Axis.bottom(0, NO_OF_X_VALUES, true, AXIS_WIDTH);
+        smoothAreaChartYAxisLeft = Axis.left(0, 20, true, AXIS_WIDTH);
         smoothAreaChart = new XYChart<>(new XYPane(xySeries4), smoothAreaChartYAxisLeft, smoothAreaChartXAxisBottom);
 
         xySeries4.setFill(new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, new Stop(0.0, Color.rgb(255, 255, 255, 0.6)), new Stop(1.0, Color.TRANSPARENT)));

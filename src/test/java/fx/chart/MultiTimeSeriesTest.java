@@ -170,10 +170,10 @@ public class MultiTimeSeriesTest extends Application {
         // MultiTimeSeriesChart
         double start = xAxisValues1.stream().min(Comparator.comparingDouble(Double::doubleValue)).get();
         double end = xAxisValues1.stream().max(Comparator.comparingDouble(Double::doubleValue)).get();
-        xAxis = Helper.createBottomAxis(start, end, "Time [s]", true, AXIS_WIDTH);
+        xAxis = Axis.bottom(start, end, "Time [s]", true, AXIS_WIDTH);
         xAxis.setDecimals(1);
 
-        yAxis = Helper.createLeftAxis(yAxisMinValue, yAxisMaxValue, "Ratio", true, AXIS_WIDTH);
+        yAxis = Axis.left(yAxisMinValue, yAxisMaxValue, "Ratio", true, AXIS_WIDTH);
         yAxis.setDecimals(2);
 
         xAxis.setZeroColor(Color.BLACK);

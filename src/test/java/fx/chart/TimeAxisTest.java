@@ -1,8 +1,8 @@
 package fx.chart;
 
-import fx.chart.toolbox.unit.Converter;
 import fx.chart.data.TYChartItem;
 import fx.chart.series.XYSeries;
+import fx.chart.toolbox.unit.Converter;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -28,6 +28,7 @@ import static fx.chart.toolbox.unit.UnitDefinition.FAHRENHEIT;
  * Time: 08:40
  */
 public class TimeAxisTest extends Application {
+
     private static final Double AXIS_WIDTH = 25d;
     private static final Color[] COLORS = {Color.RED, Color.BLUE, Color.CYAN, Color.LIME};
     private static final Random RND = new Random();
@@ -82,7 +83,7 @@ public class TimeAxisTest extends Application {
     }
 
     private Axis createLeftYAxis(final double MIN, final double MAX, final boolean AUTO_SCALE) {
-        Axis axis = new Axis(Orientation.VERTICAL, Position.LEFT);
+        Axis axis = Axis.linear(Orientation.VERTICAL, Position.LEFT);
         axis.setMinValue(MIN);
         axis.setMaxValue(MAX);
         axis.setPrefWidth(AXIS_WIDTH);
@@ -96,7 +97,7 @@ public class TimeAxisTest extends Application {
     }
 
     private Axis createRightYAxis(final double MIN, final double MAX, final boolean AUTO_SCALE) {
-        Axis axis = new Axis(Orientation.VERTICAL, Position.RIGHT);
+        Axis axis = Axis.linear(Orientation.VERTICAL, Position.RIGHT);
         axis.setMinValue(MIN);
         axis.setMaxValue(MAX);
         axis.setPrefWidth(AXIS_WIDTH);

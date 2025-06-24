@@ -3,7 +3,6 @@ package fx.chart;
 import fx.chart.data.XYChartItem;
 import fx.chart.series.XYSeries;
 import fx.chart.series.XYSeriesBuilder;
-import fx.chart.tools.Helper;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -60,8 +59,8 @@ public class ScatterTest extends Application {
                 .symbolsVisible(true)
                 .build();
 
-        scatterChartXAxisCenter = Helper.createCenterXAxis(-20, 20, true, 30);
-        scatterChartYAxisCenter = Helper.createCenterYAxis(-20, 20, true, AXIS_WIDTH);
+        scatterChartXAxisCenter = Axis.centerX(-20, 20, true, 30);
+        scatterChartYAxisCenter = Axis.centerY(-20, 20, true, AXIS_WIDTH);
         scatterChart = new XYChart<>(new XYPane(xySeries5), scatterChartYAxisCenter, scatterChartXAxisCenter);
         scatterChart.getXYPane().setCrossHairVisible(false);
 

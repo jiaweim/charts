@@ -1,9 +1,9 @@
 package fx.chart.pareto;
 
-import fx.chart.font.Fonts;
-import fx.chart.toolboxfx.geom.Point;
 import fx.chart.Axis;
 import fx.chart.Position;
+import fx.chart.font.Fonts;
+import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
 import javafx.beans.property.*;
 import javafx.collections.ObservableList;
@@ -140,8 +140,8 @@ public class ParetoPanel extends Region {
 
         textPane = new AnchorPane();
 
-        yAxisLeft = Helper.createLeftAxis(0, paretoModel.getTotal(), false, 80d);
-        yAxisRight = Helper.createRightAxis(0, 100, true, 80d);
+        yAxisLeft = Axis.left(0, paretoModel.getTotal(), false, 80d);
+        yAxisRight = Axis.right(0, 100, true, 80d);
 
         maxValue = new DoublePropertyBase(paretoModel.getTotal()) {
             @Override

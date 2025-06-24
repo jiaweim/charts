@@ -108,7 +108,7 @@ public class TimeSeriesPredictionTest extends Application {
                 .leftAnchor(axisWidth)
                 .build();
 
-        Axis yAxis = Helper.createLeftAxis(yAxisMinValue, yAxisMaxValue, "Value", true, axisWidth);
+        Axis yAxis = Axis.left(yAxisMinValue, yAxisMaxValue, "Value", true, axisWidth);
         yAxis.setDecimals(2);
 
         XYPane xyPane = new XYPane(listOfSeries);

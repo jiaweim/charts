@@ -19,402 +19,401 @@ import java.util.Locale;
 
 
 /**
- * User: hansolo
- * Date: 07.01.18
- * Time: 06:32
+ * Builder for Axis
+ *
+ * @author Jiawei Mao
+ * @author Gerrit Grunwald
+ * @version 1.0.0
+ * @since 24 Jun 2025, 10:01 AM
  */
-public class AxisBuilder<B extends AxisBuilder<B>> {
+public class AxisBuilder {
+
     private HashMap<String, Property> properties = new LinkedHashMap<>();
     private Orientation orientation;
     private Position position;
 
-
-    // ******************** Constructors **************************************
     protected AxisBuilder(final Orientation ORIENTATION, final Position POSITION) {
         orientation = ORIENTATION;
         position = POSITION;
     }
 
-
-    // ******************** Methods *******************************************
-    public static final AxisBuilder create(final Orientation ORIENTATION, final Position POSITION) {
+    public static AxisBuilder create(final Orientation ORIENTATION, final Position POSITION) {
         return new AxisBuilder(ORIENTATION, POSITION);
     }
 
-    public final B minValue(final double MIN_VALUE) {
+    public final AxisBuilder minValue(final double MIN_VALUE) {
         properties.put("minValue", new SimpleDoubleProperty(MIN_VALUE));
-        return (B) this;
+        return this;
     }
 
-    public final B maxValue(final double MAX_VALUE) {
+    public final AxisBuilder maxValue(final double MAX_VALUE) {
         properties.put("maxValue", new SimpleDoubleProperty(MAX_VALUE));
-        return (B) this;
+        return this;
     }
 
-    public final B setStart(final long EPOCH_SECONDS) {
+    public final AxisBuilder setStart(final long EPOCH_SECONDS) {
         if (0 > EPOCH_SECONDS) {
             throw new IllegalArgumentException("Epoch seconds cannot be smaller than 0");
         }
         properties.put("start", new SimpleObjectProperty<>(LocalDateTime.ofInstant(Instant.ofEpochSecond(EPOCH_SECONDS), ZoneId.systemDefault())));
-        return (B) this;
+        return this;
     }
 
-    public final B setStart(final long EPOCH_SECONDS, final ZoneId ZONE_ID) {
+    public final AxisBuilder setStart(final long EPOCH_SECONDS, final ZoneId ZONE_ID) {
         if (0 > EPOCH_SECONDS || null == ZONE_ID) {
             throw new IllegalArgumentException("Epoch seconds cannot be smaller than 0 and zone id cannot be null");
         }
         properties.put("start", new SimpleObjectProperty<>(LocalDateTime.ofInstant(Instant.ofEpochSecond(EPOCH_SECONDS), ZONE_ID)));
-        return (B) this;
+        return this;
     }
 
-    public final B setStart(final Instant INSTANT) {
+    public final AxisBuilder setStart(final Instant INSTANT) {
         if (null == INSTANT) {
             throw new IllegalArgumentException("Instant cannot be null");
         }
         properties.put("start", new SimpleObjectProperty<>(LocalDateTime.ofInstant(INSTANT, ZoneId.systemDefault())));
-        return (B) this;
+        return this;
     }
 
-    public final B setStart(final Instant INSTANT, final ZoneId ZONE_ID) {
+    public final AxisBuilder setStart(final Instant INSTANT, final ZoneId ZONE_ID) {
         if (null == INSTANT || null == ZONE_ID) {
             throw new IllegalArgumentException("Instant or zone id cannot be null");
         }
         properties.put("start", new SimpleObjectProperty<>(LocalDateTime.ofInstant(INSTANT, ZONE_ID)));
-        return (B) this;
+        return this;
     }
 
-    public final B start(final LocalDateTime DATE_TIME) {
+    public final AxisBuilder start(final LocalDateTime DATE_TIME) {
         properties.put("start", new SimpleObjectProperty<>(DATE_TIME));
-        return (B) this;
+        return this;
     }
 
-    public final B setEnd(final long EPOCH_SECONDS) {
+    public final AxisBuilder setEnd(final long EPOCH_SECONDS) {
         if (0 > EPOCH_SECONDS) {
             throw new IllegalArgumentException("Epoch seconds cannot be smaller than 0");
         }
         properties.put("end", new SimpleObjectProperty<>(LocalDateTime.ofInstant(Instant.ofEpochSecond(EPOCH_SECONDS), ZoneId.systemDefault())));
-        return (B) this;
+        return this;
     }
 
-    public final B setEnd(final long EPOCH_SECONDS, final ZoneId ZONE_ID) {
+    public final AxisBuilder setEnd(final long EPOCH_SECONDS, final ZoneId ZONE_ID) {
         if (0 > EPOCH_SECONDS || null == ZONE_ID) {
             throw new IllegalArgumentException("Epoch seconds cannot be smaller than 0 and zone id cannot be null");
         }
         properties.put("end", new SimpleObjectProperty<>(LocalDateTime.ofInstant(Instant.ofEpochSecond(EPOCH_SECONDS), ZONE_ID)));
-        return (B) this;
+        return this;
     }
 
-    public final B setEnd(final Instant INSTANT) {
+    public final AxisBuilder setEnd(final Instant INSTANT) {
         if (null == INSTANT) {
             throw new IllegalArgumentException("Instant cannot be null");
         }
         properties.put("end", new SimpleObjectProperty<>(LocalDateTime.ofInstant(INSTANT, ZoneId.systemDefault())));
-        return (B) this;
+        return this;
     }
 
-    public final B setEnd(final Instant INSTANT, final ZoneId ZONE_ID) {
+    public final AxisBuilder setEnd(final Instant INSTANT, final ZoneId ZONE_ID) {
         if (null == INSTANT || null == ZONE_ID) {
             throw new IllegalArgumentException("Instant or zone id cannot be null");
         }
         properties.put("end", new SimpleObjectProperty<>(LocalDateTime.ofInstant(INSTANT, ZONE_ID)));
-        return (B) this;
+        return this;
     }
 
-    public final B end(final LocalDateTime DATE_TIME) {
+    public final AxisBuilder end(final LocalDateTime DATE_TIME) {
         properties.put("end", new SimpleObjectProperty<>(DATE_TIME));
-        return (B) this;
+        return this;
     }
 
-    public final B autoScale(final boolean AUTO) {
+    public final AxisBuilder autoScale(final boolean AUTO) {
         properties.put("autoScale", new SimpleBooleanProperty(AUTO));
-        return (B) this;
+        return this;
     }
 
-    public final B title(final String TITLE) {
+    public final AxisBuilder title(final String TITLE) {
         properties.put("title", new SimpleStringProperty(TITLE));
-        return (B) this;
+        return this;
     }
 
-    public final B unit(final String UNIT) {
+    public final AxisBuilder unit(final String UNIT) {
         properties.put("unit", new SimpleStringProperty(UNIT));
-        return (B) this;
+        return this;
     }
 
-    public final B type(final AxisType TYPE) {
+    public final AxisBuilder type(final AxisType TYPE) {
         properties.put("axisType", new SimpleObjectProperty<>(TYPE));
-        return (B) this;
+        return this;
     }
 
-    public final B foregroundColor(final Color COLOR) {
+    public final AxisBuilder foregroundColor(final Color COLOR) {
         properties.put("foregroundColor", new SimpleObjectProperty<>(COLOR));
-        return (B) this;
+        return this;
     }
 
-    public final B axisBackgroundColor(final Color COLOR) {
+    public final AxisBuilder axisBackgroundColor(final Color COLOR) {
         properties.put("axisBackgroundColor", new SimpleObjectProperty<>(COLOR));
-        return (B) this;
+        return this;
     }
 
-    public final B axisColor(final Color COLOR) {
+    public final AxisBuilder axisColor(final Color COLOR) {
         properties.put("axisColor", new SimpleObjectProperty<>(COLOR));
-        return (B) this;
+        return this;
     }
 
-    public final B tickLabelColor(final Color COLOR) {
+    public final AxisBuilder tickLabelColor(final Color COLOR) {
         properties.put("tickLabelColor", new SimpleObjectProperty<>(COLOR));
-        return (B) this;
+        return this;
     }
 
-    public final B titleColor(final Color COLOR) {
+    public final AxisBuilder titleColor(final Color COLOR) {
         properties.put("titleColor", new SimpleObjectProperty<>(COLOR));
-        return (B) this;
+        return this;
     }
 
-    public final B tickMarkColor(final Color COLOR) {
+    public final AxisBuilder tickMarkColor(final Color COLOR) {
         properties.put("tickMarkColor", new SimpleObjectProperty<>(COLOR));
-        return (B) this;
+        return this;
     }
 
-    public final B minorTickMarkColor(final Color COLOR) {
+    public final AxisBuilder minorTickMarkColor(final Color COLOR) {
         properties.put("minorTickMarkColor", new SimpleObjectProperty<>(COLOR));
-        return (B) this;
+        return this;
     }
 
-    public final B mediumTickMarkColor(final Color COLOR) {
+    public final AxisBuilder mediumTickMarkColor(final Color COLOR) {
         properties.put("mediumTickMarkColor", new SimpleObjectProperty<>(COLOR));
-        return (B) this;
+        return this;
     }
 
-    public final B majorTickMarkColor(final Color COLOR) {
+    public final AxisBuilder majorTickMarkColor(final Color COLOR) {
         properties.put("majorTickMarkColor", new SimpleObjectProperty<>(COLOR));
-        return (B) this;
+        return this;
     }
 
-    public final B tickMarksVisible(final boolean VISIBLE) {
+    public final AxisBuilder tickMarksVisible(final boolean VISIBLE) {
         properties.put("tickMarksVisible", new SimpleBooleanProperty(VISIBLE));
-        return (B) this;
+        return this;
     }
 
-    public final B minorTickMarksVisible(final boolean VISIBLE) {
+    public final AxisBuilder minorTickMarksVisible(final boolean VISIBLE) {
         properties.put("minorTickMarksVisible", new SimpleBooleanProperty(VISIBLE));
-        return (B) this;
+        return this;
     }
 
-    public final B mediumTickMarksVisible(final boolean VISIBLE) {
+    public final AxisBuilder mediumTickMarksVisible(final boolean VISIBLE) {
         properties.put("mediumTickMarksVisible", new SimpleBooleanProperty(VISIBLE));
-        return (B) this;
+        return this;
     }
 
-    public final B majorTickMarksVisible(final boolean VISIBLE) {
+    public final AxisBuilder majorTickMarksVisible(final boolean VISIBLE) {
         properties.put("majorTickMarksVisible", new SimpleBooleanProperty(VISIBLE));
-        return (B) this;
+        return this;
     }
 
-    public final B sameTickMarkLength(final boolean SAME_LENGTH) {
+    public final AxisBuilder sameTickMarkLength(final boolean SAME_LENGTH) {
         properties.put("sameTickMarkLength", new SimpleBooleanProperty(SAME_LENGTH));
-        return (B) this;
+        return this;
     }
 
-    public final B zeroColor(final Color COLOR) {
+    public final AxisBuilder zeroColor(final Color COLOR) {
         properties.put("zeroColor", new SimpleObjectProperty<>(COLOR));
-        return (B) this;
+        return this;
     }
 
-    public final B minorTickSpace(final double SPACE) {
+    public final AxisBuilder minorTickSpace(final double SPACE) {
         properties.put("minorTickSpace", new SimpleDoubleProperty(SPACE));
-        return (B) this;
+        return this;
     }
 
-    public final B majorTickSpace(final double SPACE) {
+    public final AxisBuilder majorTickSpace(final double SPACE) {
         properties.put("majorTickSpace", new SimpleDoubleProperty(SPACE));
-        return (B) this;
+        return this;
     }
 
-    public final B tickLabelsVisible(final boolean VISIBLE) {
+    public final AxisBuilder tickLabelsVisible(final boolean VISIBLE) {
         properties.put("tickLabelsVisible", new SimpleBooleanProperty(VISIBLE));
-        return (B) this;
+        return this;
     }
 
-    public final B mediumTimeAxisTickLabelsVisible(final boolean VISIBLE) {
+    public final AxisBuilder mediumTimeAxisTickLabelsVisible(final boolean VISIBLE) {
         properties.put("mediumTimeAxisTickLabelsVisible", new SimpleBooleanProperty(VISIBLE));
-        return (B) this;
+        return this;
     }
 
-    public final B onlyFirstAndLastTickLabelVisible(final boolean VISIBLE) {
+    public final AxisBuilder onlyFirstAndLastTickLabelVisible(final boolean VISIBLE) {
         properties.put("onlyFirstAndLastTickLabelVisible", new SimpleBooleanProperty(VISIBLE));
-        return (B) this;
+        return this;
     }
 
-    public final B locale(final Locale LOCALE) {
+    public final AxisBuilder locale(final Locale LOCALE) {
         properties.put("locale", new SimpleObjectProperty<>(LOCALE));
-        return (B) this;
+        return this;
     }
 
-    public final B decimals(final int DECIMALS) {
+    public final AxisBuilder decimals(final int DECIMALS) {
         properties.put("decimals", new SimpleIntegerProperty(DECIMALS));
-        return (B) this;
+        return this;
     }
 
-    public final B tickLabelOrientation(final TickLabelOrientation ORIENTATION) {
+    public final AxisBuilder tickLabelOrientation(final TickLabelOrientation ORIENTATION) {
         properties.put("tickLabelOrientation", new SimpleObjectProperty<>(ORIENTATION));
-        return (B) this;
+        return this;
     }
 
-    public final B tickLabelFormat(final TickLabelFormat FORMAT) {
+    public final AxisBuilder tickLabelFormat(final TickLabelFormat FORMAT) {
         properties.put("tickLabelFormat", new SimpleObjectProperty<>(FORMAT));
-        return (B) this;
+        return this;
     }
 
-    public final B autoTitleFontSize(final boolean AUTO) {
+    public final AxisBuilder autoTitleFontSize(final boolean AUTO) {
         properties.put("autoTitleFontSize", new SimpleBooleanProperty(AUTO));
-        return (B) this;
+        return this;
     }
 
-    public final B autoFontSize(final boolean AUTO) {
+    public final AxisBuilder autoFontSize(final boolean AUTO) {
         properties.put("autoFontSize", new SimpleBooleanProperty(AUTO));
-        return (B) this;
+        return this;
     }
 
-    public final B tickLabelFontSize(final double SIZE) {
+    public final AxisBuilder tickLabelFontSize(final double SIZE) {
         properties.put("tickLabelFontSize", new SimpleDoubleProperty(SIZE));
-        return (B) this;
+        return this;
     }
 
-    public final B titleFontSize(final double SIZE) {
+    public final AxisBuilder titleFontSize(final double SIZE) {
         properties.put("titleFontSize", new SimpleDoubleProperty(SIZE));
-        return (B) this;
+        return this;
     }
 
-    public final B zoneId(final ZoneId ID) {
+    public final AxisBuilder zoneId(final ZoneId ID) {
         properties.put("zoneId", new SimpleObjectProperty<>(ID));
-        return (B) this;
+        return this;
     }
 
-    public final B dateTimeFormatPattern(final String PATTERN) {
+    public final AxisBuilder dateTimeFormatPattern(final String PATTERN) {
         properties.put("dateTimeFormatPattern", new SimpleStringProperty(PATTERN));
-        return (B) this;
+        return this;
     }
 
-    public final B numberFormatter(final StringConverter<Number> FORMATTER) {
+    public final AxisBuilder numberFormatter(final StringConverter<Number> FORMATTER) {
         properties.put("numberFormatter", new SimpleObjectProperty<>(FORMATTER));
-        return (B) this;
+        return this;
     }
 
-    public final B categories(final String... CATEGORIES) {
+    public final AxisBuilder categories(final String... CATEGORIES) {
         properties.put("categoriesArray", new SimpleObjectProperty<>(CATEGORIES));
-        return (B) this;
+        return this;
     }
 
-    public final B categories(final List<String> CATEGORIES) {
+    public final AxisBuilder categories(final List<String> CATEGORIES) {
         properties.put("categoriesList", new SimpleObjectProperty(CATEGORIES));
-        return (B) this;
+        return this;
     }
-
 
     // General properties
-    public final B prefSize(final double WIDTH, final double HEIGHT) {
+    public final AxisBuilder prefSize(final double WIDTH, final double HEIGHT) {
         properties.put("prefSize", new SimpleObjectProperty<>(new Dimension2D(WIDTH, HEIGHT)));
-        return (B) this;
+        return this;
     }
 
-    public final B minSize(final double WIDTH, final double HEIGHT) {
+    public final AxisBuilder minSize(final double WIDTH, final double HEIGHT) {
         properties.put("minSize", new SimpleObjectProperty<>(new Dimension2D(WIDTH, HEIGHT)));
-        return (B) this;
+        return this;
     }
 
-    public final B maxSize(final double WIDTH, final double HEIGHT) {
+    public final AxisBuilder maxSize(final double WIDTH, final double HEIGHT) {
         properties.put("maxSize", new SimpleObjectProperty<>(new Dimension2D(WIDTH, HEIGHT)));
-        return (B) this;
+        return this;
     }
 
-    public final B prefWidth(final double PREF_WIDTH) {
+    public final AxisBuilder prefWidth(final double PREF_WIDTH) {
         properties.put("prefWidth", new SimpleDoubleProperty(PREF_WIDTH));
-        return (B) this;
+        return this;
     }
 
-    public final B prefHeight(final double PREF_HEIGHT) {
+    public final AxisBuilder prefHeight(final double PREF_HEIGHT) {
         properties.put("prefHeight", new SimpleDoubleProperty(PREF_HEIGHT));
-        return (B) this;
+        return this;
     }
 
-    public final B minWidth(final double MIN_WIDTH) {
+    public final AxisBuilder minWidth(final double MIN_WIDTH) {
         properties.put("minWidth", new SimpleDoubleProperty(MIN_WIDTH));
-        return (B) this;
+        return this;
     }
 
-    public final B minHeight(final double MIN_HEIGHT) {
+    public final AxisBuilder minHeight(final double MIN_HEIGHT) {
         properties.put("minHeight", new SimpleDoubleProperty(MIN_HEIGHT));
-        return (B) this;
+        return this;
     }
 
-    public final B maxWidth(final double MAX_WIDTH) {
+    public final AxisBuilder maxWidth(final double MAX_WIDTH) {
         properties.put("maxWidth", new SimpleDoubleProperty(MAX_WIDTH));
-        return (B) this;
+        return this;
     }
 
-    public final B maxHeight(final double MAX_HEIGHT) {
+    public final AxisBuilder maxHeight(final double MAX_HEIGHT) {
         properties.put("maxHeight", new SimpleDoubleProperty(MAX_HEIGHT));
-        return (B) this;
+        return this;
     }
 
-    public final B scaleX(final double SCALE_X) {
+    public final AxisBuilder scaleX(final double SCALE_X) {
         properties.put("scaleX", new SimpleDoubleProperty(SCALE_X));
-        return (B) this;
+        return this;
     }
 
-    public final B scaleY(final double SCALE_Y) {
+    public final AxisBuilder scaleY(final double SCALE_Y) {
         properties.put("scaleY", new SimpleDoubleProperty(SCALE_Y));
-        return (B) this;
+        return this;
     }
 
-    public final B layoutX(final double LAYOUT_X) {
+    public final AxisBuilder layoutX(final double LAYOUT_X) {
         properties.put("layoutX", new SimpleDoubleProperty(LAYOUT_X));
-        return (B) this;
+        return this;
     }
 
-    public final B layoutY(final double LAYOUT_Y) {
+    public final AxisBuilder layoutY(final double LAYOUT_Y) {
         properties.put("layoutY", new SimpleDoubleProperty(LAYOUT_Y));
-        return (B) this;
+        return this;
     }
 
-    public final B translateX(final double TRANSLATE_X) {
+    public final AxisBuilder translateX(final double TRANSLATE_X) {
         properties.put("translateX", new SimpleDoubleProperty(TRANSLATE_X));
-        return (B) this;
+        return this;
     }
 
-    public final B translateY(final double TRANSLATE_Y) {
+    public final AxisBuilder translateY(final double TRANSLATE_Y) {
         properties.put("translateY", new SimpleDoubleProperty(TRANSLATE_Y));
-        return (B) this;
+        return this;
     }
 
-    public final B padding(final Insets INSETS) {
+    public final AxisBuilder padding(final Insets INSETS) {
         properties.put("padding", new SimpleObjectProperty<>(INSETS));
-        return (B) this;
+        return this;
     }
 
-    public final B topAnchor(final double VALUE) {
+    public final AxisBuilder topAnchor(final double VALUE) {
         properties.put("topAnchor", new SimpleDoubleProperty(VALUE));
-        return (B) this;
+        return this;
     }
 
-    public final B rightAnchor(final double VALUE) {
+    public final AxisBuilder rightAnchor(final double VALUE) {
         properties.put("rightAnchor", new SimpleDoubleProperty(VALUE));
-        return (B) this;
+        return this;
     }
 
-    public final B bottomAnchor(final double VALUE) {
+    public final AxisBuilder bottomAnchor(final double VALUE) {
         properties.put("bottomAnchor", new SimpleDoubleProperty(VALUE));
-        return (B) this;
+        return this;
     }
 
-    public final B leftAnchor(final double VALUE) {
+    public final AxisBuilder leftAnchor(final double VALUE) {
         properties.put("leftAnchor", new SimpleDoubleProperty(VALUE));
-        return (B) this;
+        return this;
     }
 
 
     public final Axis build() {
-        final Axis axis = new Axis(orientation, position);
+        final Axis axis = Axis.linear(orientation, position);
 
         if (properties.keySet().contains("categoriesArray")) {
             axis.setCategories(((ObjectProperty<String[]>) properties.get("categoriesArray")).get());
@@ -426,7 +425,7 @@ public class AxisBuilder<B extends AxisBuilder<B>> {
         if (properties.keySet().contains("axisType")) {
             AxisType type = ((ObjectProperty<AxisType>) properties.get("axisType")).get();
             axis.setType(type);
-            if (AxisType.TIME == type) {
+            if (type == AxisType.TIME) {
                 LocalDateTime start = null;
                 LocalDateTime end = null;
                 if (properties.keySet().contains("start")) {

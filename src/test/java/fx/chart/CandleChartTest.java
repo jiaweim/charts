@@ -7,7 +7,6 @@ import fx.chart.data.ChartItem;
 import fx.chart.data.TYChartItem;
 import fx.chart.event.ChartEvt;
 import fx.chart.series.XYSeries;
-import fx.chart.tools.Helper;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -73,12 +72,12 @@ public class CandleChartTest extends Application {
         LocalDateTime end = LocalDateTime.ofInstant(endInstant, ZoneId.systemDefault());
 
 
-        xAxisBottom = Helper.createBottomTimeAxis(start, end, "MM:yyyy", true, INSET, INSET, 0d);
+        xAxisBottom = Axis.bottomTime(start, end, "MM:yyyy", true, INSET, INSET, 0d);
         xAxisBottom.setAxisColor(Color.WHITE);
         xAxisBottom.setTickMarkColor(Color.WHITE);
         xAxisBottom.setTickLabelColor(Color.WHITE);
 
-        yAxisLeft = Helper.createLeftAxis(minValue, maxValue, true, INSET);
+        yAxisLeft = Axis.left(minValue, maxValue, true, INSET);
         yAxisLeft.setDecimals(1);
         yAxisLeft.setAxisColor(Color.WHITE);
         yAxisLeft.setTickMarkColor(Color.WHITE);

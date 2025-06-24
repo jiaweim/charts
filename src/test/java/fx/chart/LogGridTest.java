@@ -65,7 +65,7 @@ public class LogGridTest extends Application {
     }
 
     private Axis createLeftYAxis(final double MIN, final double MAX, final boolean AUTO_SCALE) {
-        Axis axis = new Axis(Orientation.VERTICAL, Position.LEFT);
+        Axis axis = Axis.linear(Orientation.VERTICAL, Position.LEFT);
         axis.setMinValue(MIN);
         axis.setMaxValue(MAX);
         axis.setPrefWidth(AXIS_WIDTH);
@@ -79,7 +79,7 @@ public class LogGridTest extends Application {
     }
 
     private Axis createRightYAxis(final double MIN, final double MAX, final boolean AUTO_SCALE) {
-        Axis axis = new Axis(Orientation.VERTICAL, Position.RIGHT);
+        Axis axis = Axis.linear(Orientation.VERTICAL, Position.RIGHT);
         axis.setMinValue(MIN);
         axis.setMaxValue(MAX);
         axis.setPrefWidth(AXIS_WIDTH);
@@ -93,7 +93,7 @@ public class LogGridTest extends Application {
     }
 
     private Axis createBottomXAxis(final double MIN, final double MAX, final boolean AUTO_SCALE) {
-        Axis axis = new Axis(Orientation.HORIZONTAL, Position.BOTTOM);
+        Axis axis = Axis.linear(Orientation.HORIZONTAL, Position.BOTTOM);
         axis.setMinValue(MIN);
         axis.setMaxValue(MAX);
         axis.setPrefHeight(AXIS_WIDTH);
@@ -107,7 +107,7 @@ public class LogGridTest extends Application {
     }
 
     private Axis createTopXAxis(final double MIN, final double MAX, final boolean AUTO_SCALE) {
-        Axis axis = new Axis(Orientation.HORIZONTAL, Position.TOP);
+        Axis axis = Axis.linear(Orientation.HORIZONTAL, Position.TOP);
         axis.setMinValue(MIN);
         axis.setMaxValue(MAX);
         axis.setPrefHeight(AXIS_WIDTH);
