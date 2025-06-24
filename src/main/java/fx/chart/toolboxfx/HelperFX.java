@@ -2,7 +2,6 @@ package fx.chart.toolboxfx;
 
 import fx.chart.toolbox.Helper;
 import fx.chart.toolbox.Statistics;
-import fx.chart.toolbox.tuples.Pair;
 import fx.chart.toolboxfx.geom.*;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
@@ -23,6 +22,8 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import pdk.util.tuple.Tuple;
+import pdk.util.tuple.Tuple2;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -901,19 +902,19 @@ public class HelperFX {
         return output;
     }
 
-    public static final int nearestPoint(final Point p, final List<Point> points) {
-        Pair<Double, Integer> smallestDistance = new Pair<>(0d, 0);
+    public static int nearestPoint(final Point p, final List<Point> points) {
+        Tuple2<Double, Integer> smallestDistance = Tuple.of(0d, 0);
         for (int i = 0; i < points.size(); i++) {
             double distance = distance(p.getX(), p.getY(), points.get(i).getX(), points.get(i).getY());
             if (i == 0) {
-                smallestDistance = new Pair<>(distance, i);
+                smallestDistance = Tuple.of(distance, i);
             } else {
-                if (distance < smallestDistance.getA()) {
-                    smallestDistance = new Pair<>(distance, i);
+                if (distance < smallestDistance._1) {
+                    smallestDistance = Tuple.of(distance, i);
                 }
             }
         }
-        return smallestDistance.getB();
+        return smallestDistance._2();
     }
 
     public static final String padLeft(final String text, final String filler, final int n) {
@@ -1448,7 +1449,7 @@ public class HelperFX {
 
 
     // Smooth given path defined by it's list of path elements
-    public static final Path smoothPath(final ObservableList<PathElement> elements, final boolean filled) {
+    public static Path smoothPath(final ObservableList<PathElement> elements, final boolean filled) {
         if (elements.isEmpty()) {
             return new Path();
         }
@@ -1465,9 +1466,9 @@ public class HelperFX {
         }
         double zeroY = ((MoveTo) elements.get(0)).getY();
         List<PathElement> smoothedElements = new ArrayList<>();
-        Pair<Point[], Point[]> result = calcCurveControlPoints(dataPoints);
-        Point[] firstControlPoints = result.getA();
-        Point[] secondControlPoints = result.getB();
+        Tuple2<Point[], Point[]> result = calcCurveControlPoints(dataPoints);
+        Point[] firstControlPoints = result._1();
+        Point[] secondControlPoints = result._2;
         // Start path dependent on filled or not
         if (filled) {
             smoothedElements.add(new MoveTo(dataPoints[0].getX(), zeroY));
@@ -1491,7 +1492,7 @@ public class HelperFX {
         return new Path(smoothedElements);
     }
 
-    private static final Pair<Point[], Point[]> calcCurveControlPoints(Point[] dataPoints) {
+    private static Tuple2<Point[], Point[]> calcCurveControlPoints(Point[] dataPoints) {
         Point[] firstControlPoints;
         Point[] secondControlPoints;
         int n = dataPoints.length - 1;
@@ -1500,7 +1501,7 @@ public class HelperFX {
             firstControlPoints[0] = new Point((2 * dataPoints[0].getX() + dataPoints[1].getX()) / 3, (2 * dataPoints[0].getY() + dataPoints[1].getY()) / 3);
             secondControlPoints = new Point[1];
             secondControlPoints[0] = new Point(2 * firstControlPoints[0].getX() - dataPoints[0].getX(), 2 * firstControlPoints[0].getY() - dataPoints[0].getY());
-            return new Pair<>(firstControlPoints, secondControlPoints);
+            return Tuple.of(firstControlPoints, secondControlPoints);
         }
 
         // Calculate first Bezier control points
@@ -1538,7 +1539,7 @@ public class HelperFX {
                 secondControlPoints[i] = new Point((dataPoints[n].getX() + x[n - 1]) / 2, (dataPoints[n].getY() + y[n - 1]) / 2);
             }
         }
-        return new Pair<>(firstControlPoints, secondControlPoints);
+        return Tuple.of(firstControlPoints, secondControlPoints);
     }
 
     private static final double[] getFirstControlPoints(double[] rhs) {
