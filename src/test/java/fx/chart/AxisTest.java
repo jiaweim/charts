@@ -1,7 +1,6 @@
 package fx.chart;
 
 import fx.chart.toolbox.unit.Converter;
-import fx.chart.tools.Helper;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -29,14 +28,14 @@ public class AxisTest extends Application {
 
     @Override
     public void init() {
-        xAxisBottom = Helper.createBottomAxis(-20, 20, 50);
-        xAxisTop = Helper.createTopAxis(0, 100, AXIS_HEIGHT);
-        yAxisLeft = Helper.createLeftAxis(-20, 20, AXIS_WIDTH);
+        xAxisBottom = Axis.bottom(-20, 20, 50);
+        xAxisTop = Axis.top(0, 100, AXIS_HEIGHT);
+        yAxisLeft = Axis.left(-20, 20, AXIS_WIDTH);
 
         Converter tempConverter = new Converter(TEMPERATURE, CELSIUS); // Type Temperature with BaseUnit Celsius
         double tempFahrenheitMin = tempConverter.convert(-20, FAHRENHEIT);
         double tempFahrenheitMax = tempConverter.convert(20, FAHRENHEIT);
-        yAxisRight = Helper.createRightAxis(tempFahrenheitMin, tempFahrenheitMax, false, AXIS_WIDTH);
+        yAxisRight = Axis.right(tempFahrenheitMin, tempFahrenheitMax, false, AXIS_WIDTH);
 
         AnchorPane.setTopAnchor(yAxisLeft, AXIS_HEIGHT);
         AnchorPane.setTopAnchor(xAxisTop, 0d);

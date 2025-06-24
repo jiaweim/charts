@@ -26,7 +26,7 @@ public class BoxPlotsTest extends Application {
 
     @Override
     public void init() {
-        yAxisLeft = Helper.createLeftAxis(0, 100, true, INSET);
+        yAxisLeft = Axis.left(0, 100, true, INSET);
         yAxisLeft.setDecimals(0);
         yAxisLeft.setAxisColor(Color.WHITE);
         yAxisLeft.setTickMarkColor(Color.WHITE);

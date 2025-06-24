@@ -1,10 +1,10 @@
 package fx.chart;
 
-import fx.chart.toolboxfx.GradientLookup;
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYChartItemBuilder;
 import fx.chart.series.XYSeries;
 import fx.chart.series.XYSeriesBuilder;
+import fx.chart.toolboxfx.GradientLookup;
 import fx.chart.tools.Helper;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -60,8 +60,8 @@ public class PoincarePlotTest extends Application {
 
 
         // Poincare Plot
-        yAxisLeft = Helper.createAxis(0, 400, true, AXIS_WIDTH, Orientation.VERTICAL, Position.LEFT);
-        xAxisBottom = Helper.createAxis(0, 400, true, AXIS_WIDTH, Orientation.HORIZONTAL, Position.BOTTOM);
+        yAxisLeft = Axis.axis(0, 400, true, AXIS_WIDTH, Orientation.VERTICAL, Position.LEFT);
+        xAxisBottom = Axis.axis(0, 400, true, AXIS_WIDTH, Orientation.HORIZONTAL, Position.BOTTOM);
 
         yAxisLeft.setForegroundColor(Color.WHITE);
         xAxisBottom.setForegroundColor(Color.WHITE);

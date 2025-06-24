@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.hansolo.fx</groupId>
     <artifactId>charts</artifactId>
-    <version>21.0.27</version>
+    <version>21.1.0</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

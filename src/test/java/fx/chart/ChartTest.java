@@ -8,7 +8,6 @@ import fx.chart.series.XYSeriesBuilder;
 import fx.chart.series.XYZSeries;
 import fx.chart.series.YSeries;
 import fx.chart.toolbox.unit.Converter;
-import fx.chart.tools.Helper;
 import fx.chart.tools.LineStyle;
 import fx.chart.tools.Marker;
 import fx.chart.tools.MarkerBuilder;
@@ -153,9 +152,9 @@ public class ChartTest extends Application {
         double tempFahrenheitMin = tempConverter.convert(-10, FAHRENHEIT);
         double tempFahrenheitMax = tempConverter.convert(20, FAHRENHEIT);
 
-        lineChartXAxisBottom = Helper.createBottomAxis(-10, NO_OF_X_VALUES, true, AXIS_WIDTH);
-        lineChartYAxisLeft = Helper.createLeftAxis(-10, 20, true, AXIS_WIDTH);
-        lineChartYAxisRight = Helper.createRightAxis(tempFahrenheitMin, tempFahrenheitMax, false, AXIS_WIDTH);
+        lineChartXAxisBottom = Axis.bottom(-10, NO_OF_X_VALUES, true, AXIS_WIDTH);
+        lineChartYAxisLeft = Axis.left(-10, 20, true, AXIS_WIDTH);
+        lineChartYAxisRight = Axis.right(tempFahrenheitMin, tempFahrenheitMax, false, AXIS_WIDTH);
 
         lineChartXAxisBottom.setZeroColor(Color.BLACK);
         lineChartYAxisLeft.setZeroColor(Color.BLACK);
@@ -174,8 +173,8 @@ public class ChartTest extends Application {
         lineChart.addMarker(marker2);
 
         // AreaChart
-        areaChartXAxisBottom = Helper.createBottomAxis(0, NO_OF_X_VALUES, true, AXIS_WIDTH);
-        areaChartYAxisLeft = Helper.createLeftAxis(0, 20, true, AXIS_WIDTH);
+        areaChartXAxisBottom = Axis.bottom(0, NO_OF_X_VALUES, true, AXIS_WIDTH);
+        areaChartYAxisLeft = Axis.left(0, 20, true, AXIS_WIDTH);
         areaChart = new XYChart<>(new XYPane(xySeries2), areaChartXAxisBottom, areaChartYAxisLeft);
         areaChart.getXYPane().setCrossHairVisible(true);
 
@@ -184,16 +183,16 @@ public class ChartTest extends Application {
         areaChart.getXYPane().setChartBackground(Color.rgb(50, 50, 50, 0.5));
 
         // SmoothLineChart
-        smoothLineChartXAxisBottom = Helper.createBottomAxis(0, NO_OF_X_VALUES, true, AXIS_WIDTH);
-        smoothLineChartYAxisLeft = Helper.createLeftAxis(0, 20, true, AXIS_WIDTH);
+        smoothLineChartXAxisBottom = Axis.bottom(0, NO_OF_X_VALUES, true, AXIS_WIDTH);
+        smoothLineChartYAxisLeft = Axis.left(0, 20, true, AXIS_WIDTH);
         smoothLineChart = new XYChart<>(new XYPane(xySeries3), smoothLineChartYAxisLeft, smoothLineChartXAxisBottom);
 
         Grid grid2 = new Grid(smoothLineChartXAxisBottom, smoothLineChartYAxisLeft);
         smoothLineChart.setGrid(grid2);
 
         // SmoothAreaChart
-        smoothAreaChartXAxisBottom = Helper.createBottomAxis(0, NO_OF_X_VALUES, true, AXIS_WIDTH);
-        smoothAreaChartYAxisLeft = Helper.createLeftAxis(0, 20, true, AXIS_WIDTH);
+        smoothAreaChartXAxisBottom = Axis.bottom(0, NO_OF_X_VALUES, true, AXIS_WIDTH);
+        smoothAreaChartYAxisLeft = Axis.left(0, 20, true, AXIS_WIDTH);
         smoothAreaChart = new XYChart<>(new XYPane(xySeries4), smoothAreaChartYAxisLeft, smoothAreaChartXAxisBottom);
 
         xySeries4.setFill(new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, new Stop(0.0, Color.rgb(255, 255, 255, 0.6)), new Stop(1.0, Color.TRANSPARENT)));
@@ -203,10 +202,10 @@ public class ChartTest extends Application {
 
 
         // ScatterChart
-        scatterChartXAxisBottom = Helper.createAxis(-20, 20, true, AXIS_WIDTH, Orientation.HORIZONTAL, Position.BOTTOM);
-        scatterChartXAxisCenter = Helper.createCenterXAxis(-20, 20, true, AXIS_WIDTH);
-        scatterChartYAxisLeft = Helper.createAxis(-20, 20, true, AXIS_WIDTH, Orientation.VERTICAL, Position.LEFT);
-        scatterChartYAxisCenter = Helper.createCenterYAxis(-20, 20, true, AXIS_WIDTH);
+        scatterChartXAxisBottom = Axis.axis(-20, 20, true, AXIS_WIDTH, Orientation.HORIZONTAL, Position.BOTTOM);
+        scatterChartXAxisCenter = Axis.centerX(-20, 20, true, AXIS_WIDTH);
+        scatterChartYAxisLeft = Axis.axis(-20, 20, true, AXIS_WIDTH, Orientation.VERTICAL, Position.LEFT);
+        scatterChartYAxisCenter = Axis.centerY(-20, 20, true, AXIS_WIDTH);
         scatterChart = new XYChart<>(new XYPane(xySeries5), scatterChartYAxisCenter, scatterChartXAxisCenter);
         scatterChart.getXYPane().setCrossHairVisible(true);
 

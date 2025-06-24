@@ -155,7 +155,7 @@ public class DateAxisTest extends Application {
     }
 
     private Axis createLeftYAxis(final double MIN, final double MAX, final boolean AUTO_SCALE) {
-        Axis axis = new Axis(Orientation.VERTICAL, Position.LEFT);
+        Axis axis = Axis.linear(Orientation.VERTICAL, Position.LEFT);
         axis.setMinValue(MIN);
         axis.setMaxValue(MAX);
         axis.setPrefWidth(AXIS_WIDTH);
