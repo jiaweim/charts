@@ -2,10 +2,9 @@ package fx.chart.event;
 
 import fx.chart.data.Item;
 import fx.chart.data.TreeNode;
-import fx.chart.toolbox.evt.EvtType;
-import fx.chart.toolbox.evt.type.ChangeEvt;
+import fx.chart.event.type.ChangeEvt;
 
-import static fx.chart.toolbox.Constants.*;
+import static fx.chart.util.Constants.*;
 
 
 public class TreeNodeEvt<T extends Item> extends ChangeEvt {

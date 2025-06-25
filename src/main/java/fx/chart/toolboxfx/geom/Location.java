@@ -1,14 +1,14 @@
 package fx.chart.toolboxfx.geom;
 
-import fx.chart.toolbox.Helper;
-import fx.chart.toolbox.evt.Evt;
-import fx.chart.toolbox.evt.EvtObserver;
-import fx.chart.toolbox.evt.EvtType;
-import fx.chart.toolbox.geo.GeoLocation;
-import fx.chart.toolbox.geo.GeoLocationBuilder;
+import fx.chart.util.Helper;
+import fx.chart.event.Evt;
+import fx.chart.event.EvtObserver;
+import fx.chart.event.EvtType;
+import fx.chart.util.geo.GeoLocation;
+import fx.chart.util.geo.GeoLocationBuilder;
 import fx.chart.toolboxfx.Constants;
 import fx.chart.toolboxfx.HelperFX;
-import fx.chart.toolboxfx.evt.type.LocationChangeEvt;
+import fx.chart.event.type.LocationChangeEvt;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.event.EventHandler;
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static fx.chart.toolbox.Constants.*;
+import static fx.chart.util.Constants.*;
 
 
 public class Location {

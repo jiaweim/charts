@@ -1,8 +1,8 @@
 package fx.chart.toolboxfx.geom;
 
-import fx.chart.toolbox.Helper;
+import fx.chart.util.Helper;
 
-import static fx.chart.toolbox.Constants.*;
+import static fx.chart.util.Constants.*;
 
 public class CornerRadii {
     private double topLeft;

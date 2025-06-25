@@ -5,7 +5,7 @@ import fx.chart.data.TreeNode;
 import fx.chart.event.ChartEvt;
 import fx.chart.event.TreeNodeEvt;
 import fx.chart.geometry.Circle;
-import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.event.EvtObserver;
 import fx.chart.toolboxfx.FontMetrix;
 import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;

@@ -1,8 +1,8 @@
 package fx.chart;
 
 import fx.chart.event.ChartEvt;
-import fx.chart.toolbox.evt.EvtObserver;
-import fx.chart.toolbox.evt.EvtType;
+import fx.chart.event.EvtObserver;
+import fx.chart.event.EvtType;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.ObjectProperty;

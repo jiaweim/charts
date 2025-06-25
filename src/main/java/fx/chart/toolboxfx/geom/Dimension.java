@@ -1,6 +1,6 @@
 package fx.chart.toolboxfx.geom;
 
-import static fx.chart.toolbox.Constants.*;
+import static fx.chart.util.Constants.*;
 
 public class Dimension {
     private int hash;

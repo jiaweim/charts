@@ -1,6 +1,6 @@
 package fx.chart.heatmap;
 
-import fx.chart.toolbox.Helper;
+import fx.chart.util.Helper;
 import fx.chart.toolboxfx.HelperFX;
 import fx.chart.toolboxfx.geom.Point;
 import javafx.animation.Interpolator;

@@ -1,8 +1,8 @@
 package fx.chart.country;
 
-import fx.chart.toolbox.evt.Evt;
-import fx.chart.toolbox.evt.EvtObserver;
-import fx.chart.toolbox.evt.EvtType;
+import fx.chart.event.Evt;
+import fx.chart.event.EvtObserver;
+import fx.chart.event.EvtType;
 import fx.chart.country.evt.CountryEvt;
 import fx.chart.country.tools.*;
 import fx.chart.heatmap.*;

@@ -11,7 +11,7 @@ A library for scientific charts in JavaFX.
 
 Most of the charts are implemented by making use of the JavaFX Canvas node, this means there is NO support for CSS using this charts and mouse interaction is more tricky as when using the SceneGraph. You can define 2 X-Axis and 2 Y-Axis with a different scaling. In addition you can overlay a grid which sometimes can be handy.
 
-This is still a work in development, but here are some of the charts being worked on so far. 
+This is still a work in development, but here are some of the charts being worked on so far.
 
 ## Getting started
 Please take a look at the [gettingstarted](https://github.com/HanSolo/gettingstarted) project to learn how to get started with charts

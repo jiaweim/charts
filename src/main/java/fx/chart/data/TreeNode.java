@@ -2,8 +2,8 @@ package fx.chart.data;
 
 
 import fx.chart.event.TreeNodeEvt;
-import fx.chart.toolbox.evt.EvtObserver;
-import fx.chart.toolbox.evt.EvtType;
+import fx.chart.event.EvtObserver;
+import fx.chart.event.EvtType;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;

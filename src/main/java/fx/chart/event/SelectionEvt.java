@@ -1,6 +1,5 @@
 package fx.chart.event;
 
-import fx.chart.toolbox.evt.EvtType;
 import fx.chart.data.ChartItem;
 import fx.chart.series.ChartItemSeries;
 

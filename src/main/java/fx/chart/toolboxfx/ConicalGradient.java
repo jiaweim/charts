@@ -1,6 +1,6 @@
 package fx.chart.toolboxfx;
 
-import fx.chart.toolbox.Helper;
+import fx.chart.util.Helper;
 import javafx.animation.Interpolator;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;

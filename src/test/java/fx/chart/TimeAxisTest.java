@@ -2,7 +2,7 @@ package fx.chart;
 
 import fx.chart.data.TYChartItem;
 import fx.chart.series.XYSeries;
-import fx.chart.toolbox.unit.Converter;
+import fx.chart.util.unit.Converter;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static fx.chart.toolbox.unit.Category.TEMPERATURE;
-import static fx.chart.toolbox.unit.UnitDefinition.CELSIUS;
-import static fx.chart.toolbox.unit.UnitDefinition.FAHRENHEIT;
+import static fx.chart.util.unit.Category.TEMPERATURE;
+import static fx.chart.util.unit.UnitDefinition.CELSIUS;
+import static fx.chart.util.unit.UnitDefinition.FAHRENHEIT;
 
 
 /**

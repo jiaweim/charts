@@ -1,6 +1,6 @@
 package fx.chart.toolboxfx;
 
-import fx.chart.toolboxfx.evt.type.LocationChangeEvt;
+import fx.chart.event.type.LocationChangeEvt;
 import fx.chart.toolboxfx.geom.Bounds;
 import fx.chart.toolboxfx.geom.Location;
 

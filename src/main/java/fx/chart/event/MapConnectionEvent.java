@@ -1,8 +1,6 @@
 package fx.chart.event;
 
 import fx.chart.data.MapConnection;
-import fx.chart.toolbox.evt.Evt;
-import fx.chart.toolbox.evt.EvtType;
 
 public class MapConnectionEvent<T extends MapConnection> {
 
