@@ -172,6 +172,25 @@
         <tag>main</tag>
     </scm>
 
+    <developers>
+        <developer>
+            <name>Jiawei Mao</name>
+            <email>jiaweiM_philo@hotmail.com</email>
+            <url>https://github.com/jiaweim</url>
+        </developer>
+        <developer>
+            <name>Gerrit Grunwald</name>
+            <url>https://github.com/HanSolo</url>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
     <repositories>
         <repository>
             <id>central</id>
