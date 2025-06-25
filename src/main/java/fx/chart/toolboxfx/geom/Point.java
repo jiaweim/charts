@@ -1,11 +1,11 @@
 package fx.chart.toolboxfx.geom;
 
-import fx.chart.toolbox.Constants;
+import fx.chart.util.Constants;
 import fx.chart.toolboxfx.HelperFX;
 
 import java.util.List;
 
-import static fx.chart.toolbox.Constants.*;
+import static fx.chart.util.Constants.*;
 
 
 public class Point implements Comparable<Point>, Cloneable {

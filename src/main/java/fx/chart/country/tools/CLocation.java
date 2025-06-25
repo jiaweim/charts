@@ -2,7 +2,7 @@ package fx.chart.country.tools;
 
 import fx.chart.country.Country;
 import fx.chart.country.evt.CountryEvt;
-import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.event.EvtObserver;
 import fx.chart.toolboxfx.geom.Location;
 import fx.chart.toolboxfx.geom.Poi;
 import fx.chart.toolboxfx.geom.PoiSize;

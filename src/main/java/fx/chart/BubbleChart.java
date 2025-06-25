@@ -3,7 +3,7 @@ package fx.chart;
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvt;
 import fx.chart.geometry.Circle;
-import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.event.EvtObserver;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TooltipPopup;
 import javafx.animation.AnimationTimer;

@@ -1,8 +1,8 @@
 package fx.chart;
 
-import fx.chart.toolbox.evt.Evt;
-import fx.chart.toolbox.evt.EvtObserver;
-import fx.chart.toolbox.evt.EvtType;
+import fx.chart.event.Evt;
+import fx.chart.event.EvtObserver;
+import fx.chart.event.EvtType;
 import fx.chart.data.Connection;
 import fx.chart.data.PlotItem;
 import fx.chart.event.ChartEvt;

@@ -2,7 +2,7 @@ package fx.chart;
 
 import fx.chart.data.XYItem;
 import fx.chart.event.ChartEvt;
-import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.event.EvtObserver;
 import fx.chart.font.Fonts;
 import fx.chart.toolboxfx.geom.Bounds;
 import fx.chart.tools.Helper;

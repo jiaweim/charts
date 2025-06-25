@@ -5,7 +5,7 @@ import fx.chart.data.PlotItem;
 import fx.chart.event.ChartEvt;
 import fx.chart.geometry.Path;
 import fx.chart.geometry.Rectangle;
-import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.event.EvtObserver;
 import fx.chart.toolboxfx.FontMetrix;
 import fx.chart.font.Fonts;
 import fx.chart.toolboxfx.geom.Bounds;

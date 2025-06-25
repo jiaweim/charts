@@ -18,7 +18,7 @@
 
 package fx.chart.toolboxfx;
 
-import fx.chart.toolbox.Helper;
+import fx.chart.util.Helper;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Stop;
 

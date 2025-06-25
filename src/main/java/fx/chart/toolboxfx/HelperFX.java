@@ -1,7 +1,7 @@
 package fx.chart.toolboxfx;
 
-import fx.chart.toolbox.Helper;
-import fx.chart.toolbox.Statistics;
+import fx.chart.util.Helper;
+import fx.chart.util.Statistics;
 import fx.chart.toolboxfx.geom.*;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
@@ -36,9 +36,9 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import static fx.chart.toolbox.Constants.EPSILON;
-import static fx.chart.toolbox.Helper.clamp;
-import static fx.chart.toolbox.Helper.round;
+import static fx.chart.util.Constants.EPSILON;
+import static fx.chart.util.Helper.clamp;
+import static fx.chart.util.Helper.round;
 
 
 public class HelperFX {
@@ -1195,19 +1195,19 @@ public class HelperFX {
         return new double[]{y, u, v};
     }
 
-    public static final boolean isBright(final Color color) {return Double.compare(colorToYUV(color)[0], 0.5) >= 0.0;}
+    public static boolean isBright(final Color color) {return Double.compare(colorToYUV(color)[0], 0.5) >= 0.0;}
 
-    public static final boolean isDark(final Color color) {return colorToYUV(color)[0] < 0.5;}
+    public static boolean isDark(final Color color) {return colorToYUV(color)[0] < 0.5;}
 
-    public static final Color getContrastColor(final Color color) {
+    public static Color getContrastColor(final Color color) {
         return color.getBrightness() > 0.5 ? Color.BLACK : Color.WHITE;
     }
 
-    public static final Color getColorWithOpacity(final Color color, final double opacity) {
+    public static Color getColorWithOpacity(final Color color, final double opacity) {
         return Color.color(color.getRed(), color.getGreen(), color.getBlue(), clamp(0.0, 1.0, opacity));
     }
 
-    public static final List<Color> createColorPalette(final Color fromColor, final Color toColor, final int noOfColors) {
+    public static List<Color> createColorPalette(final Color fromColor, final Color toColor, final int noOfColors) {
         int steps = clamp(1, 12, noOfColors) - 1;
         double step = 1.0 / steps;
         double deltaRed = (toColor.getRed() - fromColor.getRed()) * step;
@@ -1229,7 +1229,7 @@ public class HelperFX {
         return palette;
     }
 
-    public static final Color[] createColorVariations(final Color color, final int newNoOfColors) {
+    public static Color[] createColorVariations(final Color color, final int newNoOfColors) {
         int noOfColors = clamp(1, 12, newNoOfColors);
         double step = 0.8 / noOfColors;
         double hue = color.getHue();
@@ -1241,7 +1241,7 @@ public class HelperFX {
         return colors;
     }
 
-    public static final Color getColorAt(final List<Stop> stopList, final double positionOfColor) {
+    public static Color getColorAt(final List<Stop> stopList, final double positionOfColor) {
         Map<Double, Stop> stops = new TreeMap<>();
         for (Stop stop : stopList) {
             stops.put(stop.getOffset(), stop);
@@ -1283,7 +1283,7 @@ public class HelperFX {
         return color;
     }
 
-    public static final Color interpolateColor(final Stop lowerBound, final Stop upperBound, final double position) {
+    public static Color interpolateColor(final Stop lowerBound, final Stop upperBound, final double position) {
         final double pos = (position - lowerBound.getOffset()) / (upperBound.getOffset() - lowerBound.getOffset());
 
         final double deltaRed = (upperBound.getColor().getRed() - lowerBound.getColor().getRed()) * pos;
@@ -1299,15 +1299,15 @@ public class HelperFX {
         return Color.color(red, green, blue, opacity);
     }
 
-    public static final Color interpolateColor(final Color color1, final Color color2, final double fraction) {
+    public static Color interpolateColor(final Color color1, final Color color2, final double fraction) {
         return interpolateColor(color1, color2, fraction, -1);
     }
 
-    public static final Color getColorAt(final LinearGradient gradient, final double fraction) {
+    public static Color getColorAt(final LinearGradient gradient, final double fraction) {
         return getColorWithOpacityAt(gradient, fraction, 1.0);
     }
 
-    public static final Color getColorWithOpacityAt(final LinearGradient gradient, final double fraction, final double targetOpacity) {
+    public static Color getColorWithOpacityAt(final LinearGradient gradient, final double fraction, final double targetOpacity) {
         List<Stop> stops = gradient.getStops();
         double frac = fraction < 0f ? 0f : (fraction > 1 ? 1 : fraction);
         Stop lowerStop = new Stop(0.0, stops.get(0).getColor());
@@ -1329,7 +1329,7 @@ public class HelperFX {
         return interpolateColor(lowerStop.getColor(), upperStop.getColor(), interpolationFraction, targetOpacity);
     }
 
-    public static final Color interpolateColor(final Color color1, final Color color2, final double fraction, final double targetOpacity) {
+    public static Color interpolateColor(final Color color1, final Color color2, final double fraction, final double targetOpacity) {
         double frac = clamp(0, 1, fraction);
         double targetOpct = targetOpacity < 0 ? targetOpacity : clamp(0, 1, fraction);
 
@@ -1361,17 +1361,17 @@ public class HelperFX {
         return Color.color(red, green, blue, opacity);
     }
 
-    public static final void enableNode(final Node node, final boolean enable) {
+    public static void enableNode(final Node node, final boolean enable) {
         node.setManaged(enable);
         node.setVisible(enable);
     }
 
-    public static final void scaleNodeTo(final Node node, final double targetWidth, final double targetHeight) {
+    public static void scaleNodeTo(final Node node, final double targetWidth, final double targetHeight) {
         node.setScaleX(targetWidth / node.getLayoutBounds().getWidth());
         node.setScaleY(targetHeight / node.getLayoutBounds().getHeight());
     }
 
-    public static final Point[] smoothSparkLine(final List<Double> dataList, final double minValue, final double maxValue, final javafx.scene.shape.Rectangle graphBounds, final int noOfDatapoints) {
+    public static Point[] smoothSparkLine(final List<Double> dataList, final double minValue, final double maxValue, final javafx.scene.shape.Rectangle graphBounds, final int noOfDatapoints) {
         int size = dataList.size();
         Point[] points = new Point[size];
 
@@ -1397,7 +1397,7 @@ public class HelperFX {
         return subdividePoints(points, 16);
     }
 
-    public static final void drawRoundedRect(final GraphicsContext ctx, final Bounds bounds, final CornerRadii radii) {
+    public static void drawRoundedRect(final GraphicsContext ctx, final Bounds bounds, final CornerRadii radii) {
         double x = bounds.getX();
         double y = bounds.getY();
         double width = bounds.getWidth();
@@ -1426,13 +1426,13 @@ public class HelperFX {
      * @param distance      in % (0-1)
      * @return
      */
-    public static final Point getCubicBezierXYatT(final Point startPoint, final Point controlPoint1, final Point controlPoint2, final Point endPoint, final double distance) {
+    public static Point getCubicBezierXYatT(final Point startPoint, final Point controlPoint1, final Point controlPoint2, final Point endPoint, final double distance) {
         final double x = cubicN(distance, startPoint.getX(), controlPoint1.getX(), controlPoint2.getX(), endPoint.getX());
         final double y = cubicN(distance, startPoint.getY(), controlPoint1.getY(), controlPoint2.getY(), endPoint.getY());
         return new Point(x, y);
     }
 
-    public static final double[] getCubicBezierXYatT(final double startPointX, final double startPointY,
+    public static double[] getCubicBezierXYatT(final double startPointX, final double startPointY,
             final double controlPoint1X, final double controlPoint1Y,
             final double controlPoint2X, final double controlPoint2Y,
             final double endPointX, final double endPointY, final double distance) {
@@ -1441,7 +1441,7 @@ public class HelperFX {
         return new double[]{x, y};
     }
 
-    private static final double cubicN(final double distance, final double a, final double b, final double c, final double d) {
+    private static double cubicN(final double distance, final double a, final double b, final double c, final double d) {
         final double t2 = distance * distance;
         final double t3 = t2 * distance;
         return a + (-a * 3 + distance * (3 * a - a * distance)) * distance + (3 * b + distance * (-6 * b + b * 3 * distance)) * distance + (c * 3 - c * 3 * distance) * t2 + d * t3;

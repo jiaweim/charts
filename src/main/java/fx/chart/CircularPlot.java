@@ -4,7 +4,7 @@ import fx.chart.data.Connection;
 import fx.chart.data.PlotItem;
 import fx.chart.event.ChartEvt;
 import fx.chart.geometry.Path;
-import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.event.EvtObserver;
 import fx.chart.font.Fonts;
 import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;

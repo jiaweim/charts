@@ -1,15 +1,15 @@
 package fx.chart;
 
-import fx.chart.toolbox.unit.Converter;
+import fx.chart.util.unit.Converter;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-import static fx.chart.toolbox.unit.Category.TEMPERATURE;
-import static fx.chart.toolbox.unit.UnitDefinition.CELSIUS;
-import static fx.chart.toolbox.unit.UnitDefinition.FAHRENHEIT;
+import static fx.chart.util.unit.Category.TEMPERATURE;
+import static fx.chart.util.unit.UnitDefinition.CELSIUS;
+import static fx.chart.util.unit.UnitDefinition.FAHRENHEIT;
 
 
 /**

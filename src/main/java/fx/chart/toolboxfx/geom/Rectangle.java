@@ -2,7 +2,7 @@ package fx.chart.toolboxfx.geom;
 
 import java.util.Objects;
 
-import static fx.chart.toolbox.Constants.*;
+import static fx.chart.util.Constants.*;
 
 public class Rectangle {
 

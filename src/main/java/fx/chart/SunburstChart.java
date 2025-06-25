@@ -4,7 +4,7 @@ package fx.chart;
 import fx.chart.data.ChartItem;
 import fx.chart.data.TreeNode;
 import fx.chart.event.TreeNodeEvt;
-import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.event.EvtObserver;
 import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TextOrientation;

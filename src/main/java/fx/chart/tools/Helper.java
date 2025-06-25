@@ -4,7 +4,7 @@ import fx.chart.TickLabelOrientation;
 import fx.chart.data.ChartItem;
 import fx.chart.data.DataPoint;
 import fx.chart.data.XYChartItem;
-import fx.chart.toolbox.Constants;
+import fx.chart.util.Constants;
 import fx.chart.toolboxfx.geom.*;
 import javafx.animation.Interpolator;
 import javafx.application.Platform;

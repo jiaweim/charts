@@ -1,8 +1,8 @@
 package fx.chart.country.evt;
 
-import fx.chart.toolbox.evt.EvtPriority;
-import fx.chart.toolbox.evt.EvtType;
-import fx.chart.toolbox.evt.type.ChangeEvt;
+import fx.chart.event.EvtPriority;
+import fx.chart.event.EvtType;
+import fx.chart.event.type.ChangeEvt;
 
 public class CountryEvt<T> extends ChangeEvt {
     public static final EvtType<CountryEvt> ANY = new EvtType<>(ChangeEvt.ANY, "ANY");

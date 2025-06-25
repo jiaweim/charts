@@ -7,7 +7,7 @@ import fx.chart.data.XYChartItem;
 import fx.chart.event.ChartEvt;
 import fx.chart.event.SeriesEvent;
 import fx.chart.event.SeriesEventListener;
-import fx.chart.toolbox.evt.EvtObserver;
+import fx.chart.event.EvtObserver;
 import fx.chart.tools.Helper;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
