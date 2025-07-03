@@ -1,11 +1,12 @@
 package fx.chart;
 
+import fx.chart.color.ColorUtils;
 import fx.chart.data.Connection;
 import fx.chart.data.PlotItem;
 import fx.chart.event.ChartEvt;
-import fx.chart.geometry.Path;
 import fx.chart.event.EvtObserver;
 import fx.chart.font.Fonts;
+import fx.chart.geometry.Path;
 import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
 import javafx.application.Platform;
@@ -760,9 +761,9 @@ public class CircularPlot extends Region {
                 Color connectionFill;
                 Connection connection = getConnection(item, outgoingItem);
                 if (null != connection && !connection.getFill().equals(Color.TRANSPARENT)) {
-                    connectionFill = Helper.getColorWithOpacity(connection.getFill(), getConnectionOpacity());
+                    connectionFill = ColorUtils.getColorWithOpacity(connection.getFill(), getConnectionOpacity());
                 } else {
-                    connectionFill = Helper.getColorWithOpacity(item.getFill(), getConnectionOpacity());
+                    connectionFill = ColorUtils.getColorWithOpacity(item.getFill(), getConnectionOpacity());
                 }
 
                 // Draw flow

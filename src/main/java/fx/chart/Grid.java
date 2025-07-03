@@ -1,5 +1,6 @@
 package fx.chart;
 
+import fx.chart.color.ColorUtils;
 import fx.chart.event.ChartEvt;
 import fx.chart.tools.Helper;
 import javafx.beans.DefaultProperty;
@@ -15,11 +16,13 @@ import javafx.scene.paint.Paint;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-
 /**
- * User: hansolo
- * Date: 02.08.17
- * Time: 17:06
+ * Create grid-line in the XYPane
+ *
+ * @author Jiawei Mao
+ * @author Gerrit Grunwald
+ * @version 1.0.0
+ * @since 03 Jul 2025, 3:24 PM
  */
 @DefaultProperty("children")
 public class Grid extends Region {
@@ -33,44 +36,57 @@ public class Grid extends Region {
     private static final double MIN_MAJOR_LINE_WIDTH = 1;
     private static final double MIN_MEDIUM_LINE_WIDTH = 0.75;
     private static final double MIN_MINOR_LINE_WIDTH = 0.5;
-    private double size;
+
     private double width;
     private double height;
-    private Axis xAxis;
-    private Axis yAxis;
+
+    private final Axis xAxis;
+    private final Axis yAxis;
+
     private double _gridOpacity;
-    private DoubleProperty gridOpacity;
+    private DoubleProperty gridOpacityProperty;
+
     private Paint _majorHGridLinePaint;
-    private ObjectProperty<Paint> majorHGridLinePaint;
+    private ObjectProperty<Paint> majorHGridLinePaintProperty;
+
     private Paint _mediumHGridLinePaint;
-    private ObjectProperty<Paint> mediumHGridLinePaint;
+    private ObjectProperty<Paint> mediumHGridLinePaintProperty;
+
     private Paint _minorHGridLinePaint;
     private ObjectProperty<Paint> minorHGridLinePaint;
+
     private boolean _majorHGridLinesVisible;
-    private BooleanProperty majorHGridLinesVisible;
+    private BooleanProperty majorHGridLinesVisibleProperty;
+
     private boolean _mediumHGridLinesVisible;
-    private BooleanProperty mediumHGridLinesVisible;
+    private BooleanProperty mediumHGridLinesVisibleProperty;
+
     private boolean _minorHGridLinesVisible;
-    private BooleanProperty minorHGridLinesVisible;
+    private BooleanProperty minorHGridLinesVisibleProperty;
+
     private Paint _majorVGridLinePaint;
-    private ObjectProperty<Paint> majorVGridLinePaint;
+    private ObjectProperty<Paint> majorVGridLinePaintProperty;
+
     private Paint _mediumVGridLinePaint;
-    private ObjectProperty<Paint> mediumVGridLinePaint;
+    private ObjectProperty<Paint> mediumVGridLinePaintProperty;
+
     private Paint _minorVGridLinePaint;
-    private ObjectProperty<Paint> minorVGridLinePaint;
+    private ObjectProperty<Paint> minorVGridLinePaintProperty;
+
     private boolean _majorVGridLinesVisible;
-    private BooleanProperty majorVGridLinesVisible;
+    private BooleanProperty majorVGridLinesVisibleProperty;
+
     private boolean _mediumVGridLinesVisible;
-    private BooleanProperty mediumVGridLinesVisible;
+    private BooleanProperty mediumVGridLinesVisibleProperty;
+
     private boolean _minorVGridLinesVisible;
-    private BooleanProperty minorVGridLinesVisible;
+    private BooleanProperty minorVGridLinesVisibleProperty;
+
     private double[] dashes;
     private Canvas canvas;
     private GraphicsContext ctx;
     private Pane pane;
 
-
-    // ******************** Constructors **************************************
     public Grid(final Axis X_AXIS, final Axis Y_AXIS) {
         if (null == X_AXIS || null == Y_AXIS) {
             throw new IllegalArgumentException("Axis cannot be null");
@@ -96,8 +112,6 @@ public class Grid extends Region {
         registerListeners();
     }
 
-
-    // ******************** Initialization ************************************
     private void initGraphics() {
         if (Double.compare(getPrefWidth(), 0.0) <= 0 || Double.compare(getPrefHeight(), 0.0) <= 0 || Double.compare(getWidth(), 0.0) <= 0 ||
                 Double.compare(getHeight(), 0.0) <= 0) {
@@ -146,20 +160,20 @@ public class Grid extends Region {
     @Override
     public ObservableList<Node> getChildren() {return super.getChildren();}
 
-    public double getGridOpacity() {return null == gridOpacity ? _gridOpacity : gridOpacity.get();}
+    public double getGridOpacity() {return null == gridOpacityProperty ? _gridOpacity : gridOpacityProperty.get();}
 
     public void setGridOpacity(final double OPACITY) {
-        if (null == gridOpacity) {
+        if (null == gridOpacityProperty) {
             _gridOpacity = Helper.clamp(0, 1, OPACITY);
             drawGrid();
         } else {
-            gridOpacity.set(OPACITY);
+            gridOpacityProperty.set(OPACITY);
         }
     }
 
     public DoubleProperty gridOpacityProperty() {
-        if (null == gridOpacity) {
-            gridOpacity = new DoublePropertyBase(_gridOpacity) {
+        if (null == gridOpacityProperty) {
+            gridOpacityProperty = new DoublePropertyBase(_gridOpacity) {
                 @Override
                 protected void invalidated() {drawGrid();}
 
@@ -170,23 +184,23 @@ public class Grid extends Region {
                 public String getName() {return "gridOpacity";}
             };
         }
-        return gridOpacity;
+        return gridOpacityProperty;
     }
 
-    public Paint getMajorHGridLinePaint() {return null == majorHGridLinePaint ? _majorHGridLinePaint : majorHGridLinePaint.get();}
+    public Paint getMajorHGridLinePaint() {return null == majorHGridLinePaintProperty ? _majorHGridLinePaint : majorHGridLinePaintProperty.get();}
 
     public void setMajorHGridLinePaint(final Paint PAINT) {
-        if (null == majorHGridLinePaint) {
+        if (null == majorHGridLinePaintProperty) {
             _majorHGridLinePaint = PAINT;
             drawGrid();
         } else {
-            majorHGridLinePaint.set(PAINT);
+            majorHGridLinePaintProperty.set(PAINT);
         }
     }
 
     public ObjectProperty<Paint> majorHGridLinePaintProperty() {
-        if (null == majorHGridLinePaint) {
-            majorHGridLinePaint = new ObjectPropertyBase<Paint>(_majorHGridLinePaint) {
+        if (null == majorHGridLinePaintProperty) {
+            majorHGridLinePaintProperty = new ObjectPropertyBase<Paint>(_majorHGridLinePaint) {
                 @Override
                 protected void invalidated() {drawGrid();}
 
@@ -198,23 +212,23 @@ public class Grid extends Region {
             };
             _majorHGridLinePaint = null;
         }
-        return majorHGridLinePaint;
+        return majorHGridLinePaintProperty;
     }
 
-    public Paint getMediumHGridLinePaint() {return null == mediumHGridLinePaint ? _mediumHGridLinePaint : mediumHGridLinePaint.get();}
+    public Paint getMediumHGridLinePaint() {return null == mediumHGridLinePaintProperty ? _mediumHGridLinePaint : mediumHGridLinePaintProperty.get();}
 
     public void setMediumHGridLinePaint(final Paint PAINT) {
-        if (null == mediumHGridLinePaint) {
+        if (null == mediumHGridLinePaintProperty) {
             _mediumHGridLinePaint = PAINT;
             drawGrid();
         } else {
-            mediumHGridLinePaint.set(PAINT);
+            mediumHGridLinePaintProperty.set(PAINT);
         }
     }
 
     public ObjectProperty<Paint> mediumHGridLinePaintProperty() {
-        if (null == mediumHGridLinePaint) {
-            mediumHGridLinePaint = new ObjectPropertyBase<Paint>(_mediumHGridLinePaint) {
+        if (null == mediumHGridLinePaintProperty) {
+            mediumHGridLinePaintProperty = new ObjectPropertyBase<Paint>(_mediumHGridLinePaint) {
                 @Override
                 protected void invalidated() {drawGrid();}
 
@@ -226,7 +240,7 @@ public class Grid extends Region {
             };
             _mediumHGridLinePaint = null;
         }
-        return mediumHGridLinePaint;
+        return mediumHGridLinePaintProperty;
     }
 
     public Paint getMinorHGridLinePaint() {return null == minorHGridLinePaint ? _minorHGridLinePaint : minorHGridLinePaint.get();}
@@ -257,20 +271,35 @@ public class Grid extends Region {
         return minorHGridLinePaint;
     }
 
-    public boolean getMajorHGridLinesVisible() {return null == majorHGridLinesVisible ? _majorHGridLinesVisible : majorHGridLinesVisible.get();}
+    public void setMajorGridLineVisible(boolean visible) {
+        setMajorVGridLinesVisible(visible);
+        setMajorHGridLinesVisible(visible);
+    }
+
+    public void setMediumGridLineVisible(boolean visible) {
+        setMediumVGridLinesVisible(visible);
+        setMediumHGridLinesVisible(visible);
+    }
+
+    public void setMinorGridLinesVisible(boolean visible) {
+        setMinorVGridLinesVisible(visible);
+        setMinorHGridLinesVisible(visible);
+    }
+
+    public boolean getMajorHGridLinesVisible() {return null == majorHGridLinesVisibleProperty ? _majorHGridLinesVisible : majorHGridLinesVisibleProperty.get();}
 
     public void setMajorHGridLinesVisible(final boolean VISIBLE) {
-        if (null == majorHGridLinesVisible) {
+        if (null == majorHGridLinesVisibleProperty) {
             _majorHGridLinesVisible = VISIBLE;
             drawGrid();
         } else {
-            majorHGridLinesVisible.set(VISIBLE);
+            majorHGridLinesVisibleProperty.set(VISIBLE);
         }
     }
 
     public BooleanProperty majorHGridLinesVisibleProperty() {
-        if (null == majorHGridLinesVisible) {
-            majorHGridLinesVisible = new BooleanPropertyBase(_majorHGridLinesVisible) {
+        if (null == majorHGridLinesVisibleProperty) {
+            majorHGridLinesVisibleProperty = new BooleanPropertyBase(_majorHGridLinesVisible) {
                 @Override
                 protected void invalidated() {drawGrid();}
 
@@ -281,23 +310,23 @@ public class Grid extends Region {
                 public String getName() {return "majorHGridLinesVisible";}
             };
         }
-        return majorHGridLinesVisible;
+        return majorHGridLinesVisibleProperty;
     }
 
-    public boolean getMediumHGridLinesVisible() {return null == mediumHGridLinesVisible ? _mediumHGridLinesVisible : mediumHGridLinesVisible.get();}
+    public boolean getMediumHGridLinesVisible() {return null == mediumHGridLinesVisibleProperty ? _mediumHGridLinesVisible : mediumHGridLinesVisibleProperty.get();}
 
     public void setMediumHGridLinesVisible(final boolean VISIBLE) {
-        if (null == mediumHGridLinesVisible) {
+        if (null == mediumHGridLinesVisibleProperty) {
             _mediumHGridLinesVisible = VISIBLE;
             drawGrid();
         } else {
-            mediumHGridLinesVisible.set(VISIBLE);
+            mediumHGridLinesVisibleProperty.set(VISIBLE);
         }
     }
 
     public BooleanProperty mediumHGridLinesVisibleProperty() {
-        if (null == mediumHGridLinesVisible) {
-            mediumHGridLinesVisible = new BooleanPropertyBase(_mediumHGridLinesVisible) {
+        if (null == mediumHGridLinesVisibleProperty) {
+            mediumHGridLinesVisibleProperty = new BooleanPropertyBase(_mediumHGridLinesVisible) {
                 @Override
                 protected void invalidated() {drawGrid();}
 
@@ -308,23 +337,23 @@ public class Grid extends Region {
                 public String getName() {return "mediumHGridLinesVisible";}
             };
         }
-        return mediumHGridLinesVisible;
+        return mediumHGridLinesVisibleProperty;
     }
 
-    public boolean getMinorHGridLinesVisible() {return null == minorHGridLinesVisible ? _minorHGridLinesVisible : minorHGridLinesVisible.get();}
+    public boolean getMinorHGridLinesVisible() {return null == minorHGridLinesVisibleProperty ? _minorHGridLinesVisible : minorHGridLinesVisibleProperty.get();}
 
     public void setMinorHGridLinesVisible(final boolean VISIBLE) {
-        if (null == minorHGridLinesVisible) {
+        if (null == minorHGridLinesVisibleProperty) {
             _minorHGridLinesVisible = VISIBLE;
             drawGrid();
         } else {
-            minorHGridLinesVisible.set(VISIBLE);
+            minorHGridLinesVisibleProperty.set(VISIBLE);
         }
     }
 
     public BooleanProperty minorHGridLinesVisibleProperty() {
-        if (null == minorHGridLinesVisible) {
-            minorHGridLinesVisible = new BooleanPropertyBase(_minorHGridLinesVisible) {
+        if (null == minorHGridLinesVisibleProperty) {
+            minorHGridLinesVisibleProperty = new BooleanPropertyBase(_minorHGridLinesVisible) {
                 @Override
                 protected void invalidated() {drawGrid();}
 
@@ -335,23 +364,23 @@ public class Grid extends Region {
                 public String getName() {return "minorHGridLinesVisible";}
             };
         }
-        return minorHGridLinesVisible;
+        return minorHGridLinesVisibleProperty;
     }
 
-    public Paint getMajorVGridLinePaint() {return null == majorVGridLinePaint ? _majorVGridLinePaint : majorVGridLinePaint.get();}
+    public Paint getMajorVGridLinePaint() {return null == majorVGridLinePaintProperty ? _majorVGridLinePaint : majorVGridLinePaintProperty.get();}
 
     public void setMajorVGridLinePaint(final Paint PAINT) {
-        if (null == majorVGridLinePaint) {
+        if (null == majorVGridLinePaintProperty) {
             _majorVGridLinePaint = PAINT;
             drawGrid();
         } else {
-            majorVGridLinePaint.set(PAINT);
+            majorVGridLinePaintProperty.set(PAINT);
         }
     }
 
     public ObjectProperty<Paint> majorVGridLinePaintProperty() {
-        if (null == majorVGridLinePaint) {
-            majorVGridLinePaint = new ObjectPropertyBase<Paint>(_majorVGridLinePaint) {
+        if (null == majorVGridLinePaintProperty) {
+            majorVGridLinePaintProperty = new ObjectPropertyBase<Paint>(_majorVGridLinePaint) {
                 @Override
                 protected void invalidated() {drawGrid();}
 
@@ -363,23 +392,23 @@ public class Grid extends Region {
             };
             _majorVGridLinePaint = null;
         }
-        return majorVGridLinePaint;
+        return majorVGridLinePaintProperty;
     }
 
-    public Paint getMediumVGridLinePaint() {return null == mediumVGridLinePaint ? _mediumVGridLinePaint : mediumVGridLinePaint.get();}
+    public Paint getMediumVGridLinePaint() {return null == mediumVGridLinePaintProperty ? _mediumVGridLinePaint : mediumVGridLinePaintProperty.get();}
 
     public void setMediumVGridLinePaint(final Paint PAINT) {
-        if (null == mediumVGridLinePaint) {
+        if (null == mediumVGridLinePaintProperty) {
             _mediumVGridLinePaint = PAINT;
             drawGrid();
         } else {
-            mediumVGridLinePaint.set(PAINT);
+            mediumVGridLinePaintProperty.set(PAINT);
         }
     }
 
     public ObjectProperty<Paint> mediumVGridLinePaintProperty() {
-        if (null == mediumVGridLinePaint) {
-            mediumVGridLinePaint = new ObjectPropertyBase<Paint>(_mediumVGridLinePaint) {
+        if (null == mediumVGridLinePaintProperty) {
+            mediumVGridLinePaintProperty = new ObjectPropertyBase<Paint>(_mediumVGridLinePaint) {
                 @Override
                 protected void invalidated() {drawGrid();}
 
@@ -391,23 +420,23 @@ public class Grid extends Region {
             };
             _mediumVGridLinePaint = null;
         }
-        return mediumVGridLinePaint;
+        return mediumVGridLinePaintProperty;
     }
 
-    public Paint getMinorVGridLinePaint() {return null == minorVGridLinePaint ? _minorVGridLinePaint : minorVGridLinePaint.get();}
+    public Paint getMinorVGridLinePaint() {return null == minorVGridLinePaintProperty ? _minorVGridLinePaint : minorVGridLinePaintProperty.get();}
 
     public void setMinorVGridLinePaint(final Paint PAINT) {
-        if (null == minorVGridLinePaint) {
+        if (null == minorVGridLinePaintProperty) {
             _minorVGridLinePaint = PAINT;
             drawGrid();
         } else {
-            minorVGridLinePaint.set(PAINT);
+            minorVGridLinePaintProperty.set(PAINT);
         }
     }
 
     public ObjectProperty<Paint> minorVGridLinePaintProperty() {
-        if (null == minorVGridLinePaint) {
-            minorVGridLinePaint = new ObjectPropertyBase<Paint>(_minorVGridLinePaint) {
+        if (null == minorVGridLinePaintProperty) {
+            minorVGridLinePaintProperty = new ObjectPropertyBase<Paint>(_minorVGridLinePaint) {
                 @Override
                 protected void invalidated() {drawGrid();}
 
@@ -419,23 +448,23 @@ public class Grid extends Region {
             };
             _minorVGridLinePaint = null;
         }
-        return minorVGridLinePaint;
+        return minorVGridLinePaintProperty;
     }
 
-    public boolean getMajorVGridLinesVisible() {return null == majorVGridLinesVisible ? _majorVGridLinesVisible : majorVGridLinesVisible.get();}
+    public boolean getMajorVGridLinesVisible() {return null == majorVGridLinesVisibleProperty ? _majorVGridLinesVisible : majorVGridLinesVisibleProperty.get();}
 
     public void setMajorVGridLinesVisible(final boolean VISIBLE) {
-        if (null == majorVGridLinesVisible) {
+        if (null == majorVGridLinesVisibleProperty) {
             _majorVGridLinesVisible = VISIBLE;
             drawGrid();
         } else {
-            majorVGridLinesVisible.set(VISIBLE);
+            majorVGridLinesVisibleProperty.set(VISIBLE);
         }
     }
 
     public BooleanProperty majorVGridLinesVisibleProperty() {
-        if (null == majorVGridLinesVisible) {
-            majorVGridLinesVisible = new BooleanPropertyBase(_majorVGridLinesVisible) {
+        if (null == majorVGridLinesVisibleProperty) {
+            majorVGridLinesVisibleProperty = new BooleanPropertyBase(_majorVGridLinesVisible) {
                 @Override
                 protected void invalidated() {drawGrid();}
 
@@ -446,23 +475,23 @@ public class Grid extends Region {
                 public String getName() {return "majorVGridLinesVisible";}
             };
         }
-        return majorVGridLinesVisible;
+        return majorVGridLinesVisibleProperty;
     }
 
-    public boolean getMediumVGridLinesVisible() {return null == mediumVGridLinesVisible ? _mediumVGridLinesVisible : mediumVGridLinesVisible.get();}
+    public boolean getMediumVGridLinesVisible() {return null == mediumVGridLinesVisibleProperty ? _mediumVGridLinesVisible : mediumVGridLinesVisibleProperty.get();}
 
     public void setMediumVGridLinesVisible(final boolean VISIBLE) {
-        if (null == mediumVGridLinesVisible) {
+        if (null == mediumVGridLinesVisibleProperty) {
             _mediumVGridLinesVisible = VISIBLE;
             drawGrid();
         } else {
-            mediumVGridLinesVisible.set(VISIBLE);
+            mediumVGridLinesVisibleProperty.set(VISIBLE);
         }
     }
 
     public BooleanProperty mediumVGridLinesVisibleProperty() {
-        if (null == mediumVGridLinesVisible) {
-            mediumVGridLinesVisible = new BooleanPropertyBase(_mediumVGridLinesVisible) {
+        if (null == mediumVGridLinesVisibleProperty) {
+            mediumVGridLinesVisibleProperty = new BooleanPropertyBase(_mediumVGridLinesVisible) {
                 @Override
                 protected void invalidated() {drawGrid();}
 
@@ -473,23 +502,23 @@ public class Grid extends Region {
                 public String getName() {return "mediumVGridLinesVisible";}
             };
         }
-        return mediumVGridLinesVisible;
+        return mediumVGridLinesVisibleProperty;
     }
 
-    public boolean getMinorVGridLinesVisible() {return null == minorVGridLinesVisible ? _minorVGridLinesVisible : minorVGridLinesVisible.get();}
+    public boolean getMinorVGridLinesVisible() {return null == minorVGridLinesVisibleProperty ? _minorVGridLinesVisible : minorVGridLinesVisibleProperty.get();}
 
     public void setMinorVGridLinesVisible(final boolean VISIBLE) {
-        if (null == minorVGridLinesVisible) {
+        if (null == minorVGridLinesVisibleProperty) {
             _minorVGridLinesVisible = VISIBLE;
             drawGrid();
         } else {
-            minorVGridLinesVisible.set(VISIBLE);
+            minorVGridLinesVisibleProperty.set(VISIBLE);
         }
     }
 
     public BooleanProperty minorVGridLinesVisibleProperty() {
-        if (null == minorVGridLinesVisible) {
-            minorVGridLinesVisible = new BooleanPropertyBase(_minorVGridLinesVisible) {
+        if (null == minorVGridLinesVisibleProperty) {
+            minorVGridLinesVisibleProperty = new BooleanPropertyBase(_minorVGridLinesVisible) {
                 @Override
                 protected void invalidated() {drawGrid();}
 
@@ -500,7 +529,7 @@ public class Grid extends Region {
                 public String getName() {return "minorVGridLinesVisible";}
             };
         }
-        return minorVGridLinesVisible;
+        return minorVGridLinesVisibleProperty;
     }
 
     public void setGridLinePaint(final Paint PAINT) {
@@ -536,13 +565,13 @@ public class Grid extends Region {
         double mediumLineWidth = 25 * 0.006 < MIN_MEDIUM_LINE_WIDTH ? MIN_MEDIUM_LINE_WIDTH : 25 * 0.005;
         double minorLineWidth = 25 * 0.005 < MIN_MINOR_LINE_WIDTH ? MIN_MINOR_LINE_WIDTH : 25 * 0.003;
 
-        Paint minorHGridColor = null == getMinorHGridLinePaint() ? Helper.getColorWithOpacity(yAxis.getMinorTickMarkColor(), getGridOpacity()) : getMinorHGridLinePaint();
-        Paint mediumHGridColor = null == getMediumHGridLinePaint() ? Helper.getColorWithOpacity(yAxis.getMediumTickMarkColor(), getGridOpacity()) : getMediumHGridLinePaint();
-        Paint majorHGridColor = null == getMinorHGridLinePaint() ? Helper.getColorWithOpacity(yAxis.getMajorTickMarkColor(), getGridOpacity()) : getMinorHGridLinePaint();
+        Paint minorHGridColor = null == getMinorHGridLinePaint() ? ColorUtils.getColorWithOpacity(yAxis.getMinorTickMarkColor(), getGridOpacity()) : getMinorHGridLinePaint();
+        Paint mediumHGridColor = null == getMediumHGridLinePaint() ? ColorUtils.getColorWithOpacity(yAxis.getMediumTickMarkColor(), getGridOpacity()) : getMediumHGridLinePaint();
+        Paint majorHGridColor = null == getMinorHGridLinePaint() ? ColorUtils.getColorWithOpacity(yAxis.getMajorTickMarkColor(), getGridOpacity()) : getMinorHGridLinePaint();
 
-        Paint minorVGridColor = null == getMajorVGridLinePaint() ? Helper.getColorWithOpacity(xAxis.getMinorTickMarkColor(), getGridOpacity()) : getMajorVGridLinePaint();
-        Paint mediumVGridColor = null == getMediumVGridLinePaint() ? Helper.getColorWithOpacity(xAxis.getMediumTickMarkColor(), getGridOpacity()) : getMediumVGridLinePaint();
-        Paint majorVGridColor = null == getMinorVGridLinePaint() ? Helper.getColorWithOpacity(xAxis.getMajorTickMarkColor(), getGridOpacity()) : getMinorVGridLinePaint();
+        Paint minorVGridColor = null == getMajorVGridLinePaint() ? ColorUtils.getColorWithOpacity(xAxis.getMinorTickMarkColor(), getGridOpacity()) : getMajorVGridLinePaint();
+        Paint mediumVGridColor = null == getMediumVGridLinePaint() ? ColorUtils.getColorWithOpacity(xAxis.getMediumTickMarkColor(), getGridOpacity()) : getMediumVGridLinePaint();
+        Paint majorVGridColor = null == getMinorVGridLinePaint() ? ColorUtils.getColorWithOpacity(xAxis.getMajorTickMarkColor(), getGridOpacity()) : getMinorVGridLinePaint();
 
         AxisType xAxisType = xAxis.getType();
         double minX = xAxis.getMinValue();
@@ -652,7 +681,6 @@ public class Grid extends Region {
             }
         }
 
-
         minorTickSpaceBD = BigDecimal.valueOf(minorTickSpaceY);
         majorTickSpaceBD = BigDecimal.valueOf(majorTickSpaceY);
         mediumCheck2 = BigDecimal.valueOf(2 * minorTickSpaceY);
@@ -747,7 +775,6 @@ public class Grid extends Region {
     private void resize() {
         width = getWidth() - getInsets().getLeft() - getInsets().getRight();
         height = getHeight() - getInsets().getTop() - getInsets().getBottom();
-        size = width < height ? width : height;
 
         if (width > 0 && height > 0) {
             pane.setMaxSize(width, height);

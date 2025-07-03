@@ -1,9 +1,9 @@
 package fx.chart;
 
 import fx.chart.event.ChartEvt;
-import fx.chart.font.Fonts;
 import fx.chart.event.EvtObserver;
 import fx.chart.event.EvtType;
+import fx.chart.font.Fonts;
 import fx.chart.toolboxfx.geom.Bounds;
 import fx.chart.tools.Helper;
 import fx.chart.tools.Helper.Interval;
@@ -411,8 +411,12 @@ public class Axis extends Region {
     private Locale _locale;
     private ObjectProperty<Locale> localeProperty;
 
+    /**
+     * set the number of decimal for the tick label
+     */
     private int _decimals;
-    private IntegerProperty decimals;
+    private IntegerProperty decimalsProperty;
+
     private String tickLabelFormatString;
     private StringConverter<Number> numberFormatter;
 
@@ -863,7 +867,7 @@ public class Axis extends Region {
         return end;
     }
 
-    public boolean isAutoScale() {return null == autoScaleProperty ? _autoScale : autoScaleProperty.get();}
+    public boolean isAutoScale() {return autoScaleProperty == null ? _autoScale : autoScaleProperty.get();}
 
     public void setAutoScale(final boolean AUTO_SCALE) {
         if (null == autoScaleProperty) {
@@ -1528,25 +1532,25 @@ public class Axis extends Region {
         return localeProperty;
     }
 
-    public int getDecimals() {return null == decimals ? _decimals : decimals.get();}
+    public int getDecimals() {return null == decimalsProperty ? _decimals : decimalsProperty.get();}
 
     public void setDecimals(final int DECIMALS) {
-        if (null == decimals) {
+        if (null == decimalsProperty) {
             _decimals = Helper.clamp(0, 12, DECIMALS);
-            tickLabelFormatString = new StringBuilder("%.").append(Integer.toString(_decimals)).append("f").toString();
+            tickLabelFormatString = "%." + _decimals + "f";
             redraw();
         } else {
-            decimals.set(DECIMALS);
+            decimalsProperty.set(DECIMALS);
         }
     }
 
     public IntegerProperty decimals() {
-        if (null == decimals) {
-            decimals = new IntegerPropertyBase(_decimals) {
+        if (null == decimalsProperty) {
+            decimalsProperty = new IntegerPropertyBase(_decimals) {
                 @Override
                 protected void invalidated() {
                     set(Helper.clamp(0, 12, get()));
-                    tickLabelFormatString = new StringBuilder("%.").append(Integer.toString(get())).append("f").toString();
+                    tickLabelFormatString = "%." + get() + "f";
                     redraw();
                 }
 
@@ -1557,7 +1561,7 @@ public class Axis extends Region {
                 public String getName() {return "decimals";}
             };
         }
-        return decimals;
+        return decimalsProperty;
     }
 
     public TickLabelOrientation getTickLabelOrientation() {return null == tickLabelOrientationProperty ? _tickLabelOrientation : tickLabelOrientationProperty.get();}

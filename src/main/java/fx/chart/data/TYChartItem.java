@@ -12,8 +12,7 @@ import java.time.LocalDateTime;
 public class TYChartItem extends XYChartItem {
 
     private LocalDateTime _t;
-    private ObjectProperty<LocalDateTime> t;
-
+    private ObjectProperty<LocalDateTime> tProperty;
 
     public TYChartItem() {
         this(LocalDateTime.now(), 0, "", Color.RED, Symbol.NONE);
@@ -40,22 +39,20 @@ public class TYChartItem extends XYChartItem {
         _t = T;
     }
 
-
-    // ******************** Methods ***************************************
-    public LocalDateTime getT() {return null == t ? _t : t.get();}
+    public LocalDateTime getT() {return null == tProperty ? _t : tProperty.get();}
 
     public void setT(final LocalDateTime T) {
-        if (null == t) {
+        if (null == tProperty) {
             _t = T;
             super.setX(_t.toEpochSecond(Helper.getZoneOffset()));
         } else {
-            t.set(T);
+            tProperty.set(T);
         }
     }
 
     public ObjectProperty<LocalDateTime> tProperty() {
-        if (null == t) {
-            t = new ObjectPropertyBase<LocalDateTime>(_t) {
+        if (null == tProperty) {
+            tProperty = new ObjectPropertyBase<>(_t) {
                 @Override
                 protected void invalidated() {TYChartItem.super.setX(get().toEpochSecond(Helper.getZoneOffset()));}
 
@@ -67,18 +64,17 @@ public class TYChartItem extends XYChartItem {
             };
             _t = null;
         }
-        return t;
+        return tProperty;
     }
 
 
     @Override
     public String toString() {
-        return new StringBuilder().append("{\n")
-                .append("  \"name\":\"").append(getName()).append("\",\n")
-                .append("  \"t\":").append(getT()).append(",\n")
-                .append("  \"y\":").append(getY()).append(",\n")
-                .append("  \"symbol\":\"").append(getSymbol().name()).append("\"\n")
-                .append("}")
-                .toString();
+        return "{\n" +
+                "  \"name\":\"" + getName() + "\",\n" +
+                "  \"t\":" + getT() + ",\n" +
+                "  \"y\":" + getY() + ",\n" +
+                "  \"symbol\":\"" + getSymbol().name() + "\"\n" +
+                "}";
     }
 }

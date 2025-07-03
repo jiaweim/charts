@@ -3,6 +3,7 @@ module eu.hansolo.fx.charts {
     // Java
     requires java.base;
     requires java.logging;
+    requires java.management;
 
     // Java-FX
     requires javafx.base;
@@ -11,9 +12,7 @@ module eu.hansolo.fx.charts {
     requires javafx.swing;
 
     // 3rd party
-    requires ch.qos.logback.classic;
     requires org.slf4j;
-    requires java.management;
     requires pdk.util;
 
     opens fx.chart.country to javafx.graphics;

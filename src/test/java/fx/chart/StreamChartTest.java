@@ -2,6 +2,7 @@ package fx.chart;
 
 import fx.chart.StreamChart.Category;
 import fx.chart.StreamChart.Type;
+import fx.chart.color.ColorUtils;
 import fx.chart.data.ChartItem;
 import fx.chart.data.ChartItemBuilder;
 import fx.chart.event.ChartEvt;
@@ -45,7 +46,7 @@ public class StreamChartTest extends Application {
 
         Colors(final Color COLOR) {
             color = COLOR;
-            translucentColor = Helper.getColorWithOpacity(color, 0.75);
+            translucentColor = ColorUtils.getColorWithOpacity(color, 0.75);
         }
 
         public Color get() {return color;}

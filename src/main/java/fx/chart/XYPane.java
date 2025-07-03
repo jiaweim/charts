@@ -2,19 +2,14 @@ package fx.chart;
 
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.CursorEvent;
-import fx.chart.event.CursorEventListener;
-import fx.chart.event.SeriesEventListener;
+import fx.chart.event.*;
 import fx.chart.font.Fonts;
 import fx.chart.series.Series;
 import fx.chart.series.XYSeries;
-import fx.chart.util.Statistics;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
 import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TooltipPopup;
+import fx.chart.util.Statistics;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -42,9 +37,13 @@ import java.util.stream.Collectors;
 import static fx.chart.ChartType.SMOOTH_POLAR;
 import static fx.chart.tools.Helper.clamp;
 
-
 /**
- * Created by hansolo on 16.07.17.
+ * A pane to hold xy-chart
+ *
+ * @author Jiawei Mao
+ * @author Gerrit Grunwald
+ * @version 1.0.0
+ * @since 03 Jul 2025, 2:39 PM
  */
 public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
@@ -57,6 +56,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     private static final double MIN_SYMBOL_SIZE = 2;
     private static final double MAX_SYMBOL_SIZE = 6;
     private static final int SUB_DIVISIONS = 24;
+
     private static double aspectRatio;
     private boolean keepAspect;
     private double size;
@@ -75,29 +75,39 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     private double scaleY;
     private double symbolSize;
     private int noOfBands;
+
     private double _lowerBoundX;
-    private DoubleProperty lowerBoundX;
+    private DoubleProperty lowerBoundXProperty;
     private double _upperBoundX;
-    private DoubleProperty upperBoundX;
+    private DoubleProperty upperBoundXProperty;
     private double _lowerBoundY;
-    private DoubleProperty lowerBoundY;
+    private DoubleProperty lowerBoundYProperty;
     private double _upperBoundY;
-    private DoubleProperty upperBoundY;
+    private DoubleProperty upperBoundYProperty;
+
     private boolean referenceZero;
+
     private double _thresholdY;
-    private DoubleProperty thresholdY;
+    private DoubleProperty thresholdYProperty;
+
     private boolean _thresholdYVisible;
-    private BooleanProperty thresholdYVisible;
+    private BooleanProperty thresholdYVisibleProperty;
+
     private Color _thresholdYColor;
     private ObjectProperty<Color> thresholdYColor;
+
     private PolarTickStep _polarTickStep;
     private ObjectProperty<PolarTickStep> polarTickStep;
+
     private Paint _envelopeFill;
     private ObjectProperty<Paint> envelopeFill;
+
     private Color _envelopeStroke;
     private ObjectProperty<Color> envelopeStroke;
+
     private Color _averageStroke;
     private ObjectProperty<Color> averageStroke;
+
     private Paint _stdDeviationFill;
     private ObjectProperty<Paint> stdDeviationFill;
     private Color _stdDeviationStroke;
@@ -119,8 +129,6 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     private List<CursorEventListener> cursorEventListeners;
     private Map<EvtType, List<EvtObserver<ChartEvt>>> observers = new ConcurrentHashMap<>();
 
-
-    // ******************** Constructors **************************************
     public XYPane(final List<XYSeries<T>> SERIES) {
         this(Color.TRANSPARENT, 1, SERIES.toArray(new XYSeries[0]));
     }
@@ -304,20 +312,20 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         redraw();
     }
 
-    public double getLowerBoundX() {return null == lowerBoundX ? _lowerBoundX : lowerBoundX.get();}
+    public double getLowerBoundX() {return null == lowerBoundXProperty ? _lowerBoundX : lowerBoundXProperty.get();}
 
     public void setLowerBoundX(final double VALUE) {
-        if (null == lowerBoundX) {
+        if (null == lowerBoundXProperty) {
             _lowerBoundX = VALUE;
             resize();
         } else {
-            lowerBoundX.set(VALUE);
+            lowerBoundXProperty.set(VALUE);
         }
     }
 
     public DoubleProperty lowerBoundXProperty() {
-        if (null == lowerBoundX) {
-            lowerBoundX = new DoublePropertyBase(_lowerBoundX) {
+        if (null == lowerBoundXProperty) {
+            lowerBoundXProperty = new DoublePropertyBase(_lowerBoundX) {
                 @Override
                 protected void invalidated() {resize();}
 
@@ -328,23 +336,23 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 public String getName() {return "lowerBoundX";}
             };
         }
-        return lowerBoundX;
+        return lowerBoundXProperty;
     }
 
-    public double getUpperBoundX() {return null == upperBoundX ? _upperBoundX : upperBoundX.get();}
+    public double getUpperBoundX() {return null == upperBoundXProperty ? _upperBoundX : upperBoundXProperty.get();}
 
     public void setUpperBoundX(final double VALUE) {
-        if (null == upperBoundX) {
+        if (null == upperBoundXProperty) {
             _upperBoundX = VALUE;
             resize();
         } else {
-            upperBoundX.set(VALUE);
+            upperBoundXProperty.set(VALUE);
         }
     }
 
     public DoubleProperty upperBoundXProperty() {
-        if (null == upperBoundX) {
-            upperBoundX = new DoublePropertyBase(_upperBoundX) {
+        if (null == upperBoundXProperty) {
+            upperBoundXProperty = new DoublePropertyBase(_upperBoundX) {
                 @Override
                 protected void invalidated() {resize();}
 
@@ -355,23 +363,23 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 public String getName() {return "upperBoundX";}
             };
         }
-        return upperBoundX;
+        return upperBoundXProperty;
     }
 
-    public double getLowerBoundY() {return null == lowerBoundY ? _lowerBoundY : lowerBoundY.get();}
+    public double getLowerBoundY() {return null == lowerBoundYProperty ? _lowerBoundY : lowerBoundYProperty.get();}
 
     public void setLowerBoundY(final double VALUE) {
-        if (null == lowerBoundY) {
+        if (null == lowerBoundYProperty) {
             _lowerBoundY = VALUE;
             resize();
         } else {
-            lowerBoundY.set(VALUE);
+            lowerBoundYProperty.set(VALUE);
         }
     }
 
     public DoubleProperty lowerBoundYProperty() {
-        if (null == lowerBoundY) {
-            lowerBoundY = new DoublePropertyBase(_lowerBoundY) {
+        if (null == lowerBoundYProperty) {
+            lowerBoundYProperty = new DoublePropertyBase(_lowerBoundY) {
                 @Override
                 protected void invalidated() {resize();}
 
@@ -382,23 +390,23 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 public String getName() {return "lowerBoundY";}
             };
         }
-        return lowerBoundY;
+        return lowerBoundYProperty;
     }
 
-    public double getUpperBoundY() {return null == upperBoundY ? _upperBoundY : upperBoundY.get();}
+    public double getUpperBoundY() {return null == upperBoundYProperty ? _upperBoundY : upperBoundYProperty.get();}
 
     public void setUpperBoundY(final double VALUE) {
-        if (null == upperBoundY) {
+        if (null == upperBoundYProperty) {
             _upperBoundY = VALUE;
             resize();
         } else {
-            upperBoundY.set(VALUE);
+            upperBoundYProperty.set(VALUE);
         }
     }
 
     public DoubleProperty upperBoundYProperty() {
-        if (null == upperBoundY) {
-            upperBoundY = new DoublePropertyBase(_upperBoundY) {
+        if (null == upperBoundYProperty) {
+            upperBoundYProperty = new DoublePropertyBase(_upperBoundY) {
                 @Override
                 protected void invalidated() {resize();}
 
@@ -409,7 +417,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 public String getName() {return "upperBoundY";}
             };
         }
-        return upperBoundY;
+        return upperBoundYProperty;
     }
 
     public boolean isReferenceZero() {return referenceZero;}
@@ -437,20 +445,20 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
     public List<XYSeries<T>> getListOfSeries() {return listOfSeries;}
 
-    public double getThresholdY() {return null == thresholdY ? _thresholdY : thresholdY.get();}
+    public double getThresholdY() {return null == thresholdYProperty ? _thresholdY : thresholdYProperty.get();}
 
     public void setThresholdY(final double THRESHOLD) {
-        if (null == thresholdY) {
+        if (null == thresholdYProperty) {
             _thresholdY = THRESHOLD;
             redraw();
         } else {
-            thresholdY.set(THRESHOLD);
+            thresholdYProperty.set(THRESHOLD);
         }
     }
 
     public DoubleProperty thresholdYProperty() {
-        if (null == thresholdY) {
-            thresholdY = new DoublePropertyBase(_thresholdY) {
+        if (null == thresholdYProperty) {
+            thresholdYProperty = new DoublePropertyBase(_thresholdY) {
                 @Override
                 protected void invalidated() {redraw();}
 
@@ -461,23 +469,23 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 public String getName() {return "thresholdY";}
             };
         }
-        return thresholdY;
+        return thresholdYProperty;
     }
 
-    public boolean isThresholdYVisible() {return null == thresholdYVisible ? _thresholdYVisible : thresholdYVisible.get();}
+    public boolean isThresholdYVisible() {return null == thresholdYVisibleProperty ? _thresholdYVisible : thresholdYVisibleProperty.get();}
 
     public void setThresholdYVisible(final boolean VISIBLE) {
-        if (null == thresholdYVisible) {
+        if (null == thresholdYVisibleProperty) {
             _thresholdYVisible = VISIBLE;
             redraw();
         } else {
-            thresholdYVisible.set(VISIBLE);
+            thresholdYVisibleProperty.set(VISIBLE);
         }
     }
 
     public BooleanProperty thresholdYVisibleProperty() {
-        if (null == thresholdYVisible) {
-            thresholdYVisible = new BooleanPropertyBase(_thresholdYVisible) {
+        if (null == thresholdYVisibleProperty) {
+            thresholdYVisibleProperty = new BooleanPropertyBase(_thresholdYVisible) {
                 @Override
                 protected void invalidated() {redraw();}
 
@@ -488,7 +496,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 public String getName() {return "thresholdYVisible";}
             };
         }
-        return thresholdYVisible;
+        return thresholdYVisibleProperty;
     }
 
     public Color getThresholdYColor() {return null == thresholdYColor ? _thresholdYColor : thresholdYColor.get();}
@@ -935,22 +943,28 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         }
     }
 
-    private void drawLine(final XYSeries<T> SERIES, final boolean SHOW_POINTS) {
-        if (null == SERIES || !SERIES.isVisible() || SERIES.getItems().isEmpty()) {
+    /**
+     * draw a line chart
+     *
+     * @param series     {@link XYSeries}
+     * @param showPoints true if show symbol
+     */
+    private void drawLine(final XYSeries<T> series, final boolean showPoints) {
+        if (null == series || !series.isVisible() || series.getItems().isEmpty()) {
             return;
         }
         final double LOWER_BOUND_X = getLowerBoundX();
         final double LOWER_BOUND_Y = getLowerBoundY();
-        List<T> items = SERIES.getItems();
+        List<T> items = series.getItems();
         double oldX = (items.get(0).getX() - LOWER_BOUND_X) * scaleX;
         double oldY = height - (items.get(0).getY() - LOWER_BOUND_Y) * scaleY;
         boolean wasEmpty = items.get(0).isEmptyItem();
 
-        ctx.setLineWidth(SERIES.getStrokeWidth() > -1 ? SERIES.getStrokeWidth() : size * 0.0025);
-        ctx.setStroke(SERIES.getStroke());
+        ctx.setLineWidth(series.getStrokeWidth() > -1 ? series.getStrokeWidth() : size * 0.0025);
+        ctx.setStroke(series.getStroke());
         ctx.setFill(Color.TRANSPARENT);
 
-        for (T item : SERIES.getItems()) {
+        for (T item : series.getItems()) {
             double x = (item.getX() - LOWER_BOUND_X) * scaleX;
             double y = height - (item.getY() - LOWER_BOUND_Y) * scaleY;
             boolean isEmpty = item.isEmptyItem();
@@ -962,8 +976,8 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             wasEmpty = isEmpty;
         }
 
-        if (SHOW_POINTS) {
-            drawSymbols(SERIES);
+        if (showPoints) {
+            drawSymbols(series);
         }
     }
 
@@ -2184,24 +2198,24 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         return mapOfBands;
     }
 
-    private void drawSymbols(final XYSeries<T> SERIES) {
-        if (!SERIES.isVisible()) {
+    private void drawSymbols(final XYSeries<T> series) {
+        if (!series.isVisible()) {
             return;
         }
-        final double LOWER_BOUND_X = getLowerBoundX();
-        final double LOWER_BOUND_Y = getLowerBoundY();
-        Symbol seriesSymbol = SERIES.getSymbol();
-        Color symbolFill = SERIES.getSymbolFill();
-        Color symbolStroke = SERIES.getSymbolStroke();
-        double size = SERIES.getSymbolSize() > -1 ? SERIES.getSymbolSize() : symbolSize;
-        for (T item : SERIES.getItems()) {
-            double x = (item.getX() - LOWER_BOUND_X) * scaleX;
-            double y = height - (item.getY() - LOWER_BOUND_Y) * scaleY;
+        final double lowerBoundX = getLowerBoundX();
+        final double lowerBoundY = getLowerBoundY();
+        Symbol seriesSymbol = series.getSymbol();
+        Color symbolFill = series.getSymbolFill();
+        Color symbolStroke = series.getSymbolStroke();
+        double size = series.getSymbolSize() > -1 ? series.getSymbolSize() : symbolSize;
+        for (T item : series.getItems()) {
+            double x = (item.getX() - lowerBoundX) * scaleX;
+            double y = height - (item.getY() - lowerBoundY) * scaleY;
             Symbol itemSymbol = item.getSymbol();
             if (item.isEmptyItem()) {
                 continue;
             }
-            if (Symbol.NONE == itemSymbol) {
+            if (itemSymbol == Symbol.NONE) {
                 drawSymbol(x, y, symbolFill, symbolStroke, seriesSymbol, size);
             } else {
                 drawSymbol(x, y, item.getFill(), item.getStroke(), itemSymbol, size);
@@ -2209,50 +2223,61 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         }
     }
 
-    private void drawSymbol(final double X, final double Y, final Paint FILL, final Paint STROKE, final Symbol SYMBOL, final double SYMBOL_SIZE) {
-        double halfSymbolSize = SYMBOL_SIZE * 0.5;
+    /**
+     * draw a symbol
+     *
+     * @param x          center x coordinate of the symbol
+     * @param y          center y coordinate of the symbol
+     * @param fill       fill color
+     * @param stroke     stroke color
+     * @param symbol     {@link Symbol}
+     * @param symbolSize size
+     */
+    private void drawSymbol(final double x, final double y, final Paint fill, final Paint stroke,
+            final Symbol symbol, final double symbolSize) {
+        double halfSymbolSize = symbolSize * 0.5;
         ctx.save();
-        switch (SYMBOL) {
+        switch (symbol) {
             case NONE:
                 break;
             case SQUARE:
-                ctx.setStroke(STROKE);
-                ctx.setFill(FILL);
-                ctx.fillRect(X - halfSymbolSize, Y - halfSymbolSize, SYMBOL_SIZE, SYMBOL_SIZE);
-                ctx.strokeRect(X - halfSymbolSize, Y - halfSymbolSize, SYMBOL_SIZE, SYMBOL_SIZE);
+                ctx.setStroke(stroke);
+                ctx.setFill(fill);
+                ctx.fillRect(x - halfSymbolSize, y - halfSymbolSize, symbolSize, symbolSize);
+                ctx.strokeRect(x - halfSymbolSize, y - halfSymbolSize, symbolSize, symbolSize);
                 break;
             case TRIANGLE:
-                ctx.setStroke(STROKE);
-                ctx.setFill(FILL);
+                ctx.setStroke(stroke);
+                ctx.setFill(fill);
                 ctx.beginPath();
-                ctx.moveTo(X, Y - halfSymbolSize);
-                ctx.lineTo(X + halfSymbolSize, Y + halfSymbolSize);
-                ctx.lineTo(X - halfSymbolSize, Y + halfSymbolSize);
-                ctx.lineTo(X, Y - halfSymbolSize);
+                ctx.moveTo(x, y - halfSymbolSize);
+                ctx.lineTo(x + halfSymbolSize, y + halfSymbolSize);
+                ctx.lineTo(x - halfSymbolSize, y + halfSymbolSize);
+                ctx.lineTo(x, y - halfSymbolSize);
                 ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
                 break;
             case STAR:
-                ctx.setStroke(STROKE);
+                ctx.setStroke(stroke);
                 ctx.setFill(null);
-                ctx.strokeLine(X - halfSymbolSize, Y, X + halfSymbolSize, Y);
-                ctx.strokeLine(X, Y - halfSymbolSize, X, Y + halfSymbolSize);
-                ctx.strokeLine(X - halfSymbolSize, Y - halfSymbolSize, X + halfSymbolSize, Y + halfSymbolSize);
-                ctx.strokeLine(X + halfSymbolSize, Y - halfSymbolSize, X - halfSymbolSize, Y + halfSymbolSize);
+                ctx.strokeLine(x - halfSymbolSize, y, x + halfSymbolSize, y);
+                ctx.strokeLine(x, y - halfSymbolSize, x, y + halfSymbolSize);
+                ctx.strokeLine(x - halfSymbolSize, y - halfSymbolSize, x + halfSymbolSize, y + halfSymbolSize);
+                ctx.strokeLine(x + halfSymbolSize, y - halfSymbolSize, x - halfSymbolSize, y + halfSymbolSize);
                 break;
             case CROSS:
-                ctx.setStroke(STROKE);
+                ctx.setStroke(stroke);
                 ctx.setFill(null);
-                ctx.strokeLine(X - halfSymbolSize, Y, X + halfSymbolSize, Y);
-                ctx.strokeLine(X, Y - halfSymbolSize, X, Y + halfSymbolSize);
+                ctx.strokeLine(x - halfSymbolSize, y, x + halfSymbolSize, y);
+                ctx.strokeLine(x, y - halfSymbolSize, x, y + halfSymbolSize);
                 break;
             case CIRCLE:
             default:
-                ctx.setStroke(STROKE);
-                ctx.setFill(FILL);
-                ctx.fillOval(X - halfSymbolSize, Y - halfSymbolSize, SYMBOL_SIZE, SYMBOL_SIZE);
-                ctx.strokeOval(X - halfSymbolSize, Y - halfSymbolSize, SYMBOL_SIZE, SYMBOL_SIZE);
+                ctx.setStroke(stroke);
+                ctx.setFill(fill);
+                ctx.fillOval(x - halfSymbolSize, y - halfSymbolSize, symbolSize, symbolSize);
+                ctx.strokeOval(x - halfSymbolSize, y - halfSymbolSize, symbolSize, symbolSize);
                 break;
         }
         ctx.restore();

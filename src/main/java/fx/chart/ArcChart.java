@@ -1,12 +1,13 @@
 package fx.chart;
 
+import fx.chart.color.ColorUtils;
 import fx.chart.data.Connection;
 import fx.chart.data.PlotItem;
 import fx.chart.event.ChartEvt;
-import fx.chart.geometry.Circle;
-import fx.chart.geometry.Path;
 import fx.chart.event.EvtObserver;
 import fx.chart.font.Fonts;
+import fx.chart.geometry.Circle;
+import fx.chart.geometry.Path;
 import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
 import javafx.application.Platform;
@@ -55,7 +56,7 @@ public class ArcChart extends Region {
     private boolean _tickLabelsVisible;
     private TickLabelOrientation _tickLabelOrientation;
     private double _connectionOpacity;
-    private DoubleProperty connectionOpacity;
+    private DoubleProperty connectionOpacityProperty;
     private Locale _locale;
     private ObjectProperty<Locale> locale;
     private boolean _coloredConnections;
@@ -83,8 +84,6 @@ public class ArcChart extends Region {
     private String formatString;
     private ObservableList<Connection> connections;
 
-
-    // ******************** Constructors **************************************
     public ArcChart() {
         _tickMarkColor = Color.BLACK;
         _textColor = Color.BLACK;
@@ -325,20 +324,20 @@ public class ArcChart extends Region {
         redraw();
     }
 
-    public double getConnectionOpacity() {return null == connectionOpacity ? _connectionOpacity : connectionOpacity.get();}
+    public double getConnectionOpacity() {return null == connectionOpacityProperty ? _connectionOpacity : connectionOpacityProperty.get();}
 
     public void setConnectionOpacity(final double OPACITY) {
-        if (null == connectionOpacity) {
-            _connectionOpacity = Helper.clamp(0.1, 1.0, OPACITY);
+        if (null == connectionOpacityProperty) {
+            _connectionOpacity = Math.clamp(OPACITY, 0.1, 1.0);
             redraw();
         } else {
-            connectionOpacity.set(OPACITY);
+            connectionOpacityProperty.set(OPACITY);
         }
     }
 
     public DoubleProperty connectionOpacityProperty() {
-        if (null == connectionOpacity) {
-            connectionOpacity = new DoublePropertyBase(_connectionOpacity) {
+        if (null == connectionOpacityProperty) {
+            connectionOpacityProperty = new DoublePropertyBase(_connectionOpacity) {
                 @Override
                 protected void invalidated() {
                     set(Helper.clamp(0.1, 1.0, get()));
@@ -352,7 +351,7 @@ public class ArcChart extends Region {
                 public String getName() {return "connectionOpacity";}
             };
         }
-        return connectionOpacity;
+        return connectionOpacityProperty;
     }
 
     public Locale getLocale() {return null == locale ? _locale : locale.get();}
@@ -721,11 +720,11 @@ public class ArcChart extends Region {
                 Connection connection = getConnection(item, outgoingItem);
                 if (getColoredConnections()) {
                     if (getSortByCluster() && null != item.getCluster()) {
-                        connectionStroke = Helper.getColorWithOpacity(item.getCluster().getFill(), getConnectionOpacity());
+                        connectionStroke = ColorUtils.getColorWithOpacity(item.getCluster().getFill(), getConnectionOpacity());
                     } else if (null != connection && !connection.getFill().equals(Color.TRANSPARENT)) {
-                        connectionStroke = Helper.getColorWithOpacity(connection.getFill(), getConnectionOpacity());
+                        connectionStroke = ColorUtils.getColorWithOpacity(connection.getFill(), getConnectionOpacity());
                     } else {
-                        connectionStroke = Helper.getColorWithOpacity(item.getFill(), getConnectionOpacity());
+                        connectionStroke = ColorUtils.getColorWithOpacity(item.getFill(), getConnectionOpacity());
                     }
                 } else {
                     connectionStroke = getConnectionColor();
@@ -741,7 +740,7 @@ public class ArcChart extends Region {
                     path.arcTo(arcWidth * 0.5, arcWidth * 0.5, 180, false, true, outgoingItemPoint.getX(), outgoingItemPoint.getY());
                 } else {
                     if (arcWidth < 0) {
-                        path.setStroke(Helper.getColorWithOpacity(connectionStroke, getConnectionOpacity() * 0.5));
+                        path.setStroke(ColorUtils.getColorWithOpacity(connectionStroke, getConnectionOpacity() * 0.5));
                         path.arcTo(arcWidth * 0.5, arcWidth * 0.5, -180, false, false, outgoingItemPoint.getX(), outgoingItemPoint.getY());
                     } else {
                         path.arcTo(arcWidth * 0.5, arcWidth * 0.5, 180, false, true, outgoingItemPoint.getX(), outgoingItemPoint.getY());
@@ -777,9 +776,9 @@ public class ArcChart extends Region {
                         connectionStroke = getSelectionColor();
                     } else {
                         if (getSortByCluster() && null != selectedItem.getCluster()) {
-                            connectionStroke = Helper.getColorWithOpacity(selectedItem.getCluster().getFill(), getConnectionOpacity());
+                            connectionStroke = ColorUtils.getColorWithOpacity(selectedItem.getCluster().getFill(), getConnectionOpacity());
                         } else {
-                            connectionStroke = Helper.getColorWithOpacity(selectedItem.getFill(), getConnectionOpacity());
+                            connectionStroke = ColorUtils.getColorWithOpacity(selectedItem.getFill(), getConnectionOpacity());
                         }
                     }
                 }
@@ -794,7 +793,7 @@ public class ArcChart extends Region {
                     path.arcTo(arcWidth * 0.5, arcWidth * 0.5, 180, false, true, outgoingItemPoint.getX(), outgoingItemPoint.getY());
                 } else {
                     if (arcWidth < 0) {
-                        path.setStroke(Helper.getColorWithOpacity(connectionStroke, getConnectionOpacity() * 0.5));
+                        path.setStroke(ColorUtils.getColorWithOpacity(connectionStroke, getConnectionOpacity() * 0.5));
                         path.arcTo(arcWidth * 0.5, arcWidth * 0.5, -180, false, false, outgoingItemPoint.getX(), outgoingItemPoint.getY());
                     } else {
                         path.arcTo(arcWidth * 0.5, arcWidth * 0.5, 180, false, true, outgoingItemPoint.getX(), outgoingItemPoint.getY());

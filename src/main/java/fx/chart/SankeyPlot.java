@@ -1,13 +1,14 @@
 package fx.chart;
 
+import fx.chart.color.ColorUtils;
 import fx.chart.data.Connection;
 import fx.chart.data.PlotItem;
 import fx.chart.event.ChartEvt;
+import fx.chart.event.EvtObserver;
+import fx.chart.font.Fonts;
 import fx.chart.geometry.Path;
 import fx.chart.geometry.Rectangle;
-import fx.chart.event.EvtObserver;
 import fx.chart.toolboxfx.FontMetrix;
-import fx.chart.font.Fonts;
 import fx.chart.toolboxfx.geom.Bounds;
 import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
@@ -1063,8 +1064,8 @@ public class SankeyPlot extends Region {
                         } else {
                             connection.setFill(new LinearGradient(0, 0, 1, 0,
                                     true, CycleMethod.NO_CYCLE,
-                                    new Stop(0, Helper.getColorWithOpacity(item.getFill(), connectionOpacity)),
-                                    new Stop(1, Helper.getColorWithOpacity(outgoingItem.getFill(), connectionOpacity))));
+                                    new Stop(0, ColorUtils.getColorWithOpacity(item.getFill(), connectionOpacity)),
+                                    new Stop(1, ColorUtils.getColorWithOpacity(outgoingItem.getFill(), connectionOpacity))));
                         }
 
                         // Draw the bezier curve
