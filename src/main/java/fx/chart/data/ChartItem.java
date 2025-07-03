@@ -26,9 +26,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class ChartItem implements Item, Comparable<ChartItem> {
+
     protected final ChartEvt UPDATE_EVENT = new ChartEvt(ChartItem.this, ChartEvt.ITEM_UPDATE);
     protected final ChartEvt FINISHED_EVENT = new ChartEvt(ChartItem.this, ChartEvt.FINISHED);
     protected final ChartEvt SELECTED_EVENT = new ChartEvt(ChartItem.this, ChartEvt.SELECTED);
+
     protected Map<EvtType, List<EvtObserver<ChartEvt>>> observers = new ConcurrentHashMap<>();
     private int _index;
     private IntegerProperty index;

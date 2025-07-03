@@ -1,5 +1,6 @@
 package fx.chart;
 
+import fx.chart.color.ColorUtils;
 import fx.chart.data.ChartItem;
 import fx.chart.data.DataObject;
 import fx.chart.event.ChartEvt;
@@ -159,8 +160,8 @@ public class ParallelCoordinatesChart extends Region {
         rect = new Rectangle();
         rect.setMouseTransparent(true);
         rect.setVisible(false);
-        rect.setStroke(Helper.getColorWithOpacity(selectionRectColor, 0.5));
-        rect.setFill(Helper.getColorWithOpacity(selectionRectColor, 0.25));
+        rect.setStroke(ColorUtils.getColorWithOpacity(selectionRectColor, 0.5));
+        rect.setFill(ColorUtils.getColorWithOpacity(selectionRectColor, 0.25));
 
         connectionCanvas = new Canvas(PREFERRED_WIDTH, PREFERRED_HEIGHT);
         connectionCanvas.setMouseTransparent(true);
@@ -171,7 +172,7 @@ public class ParallelCoordinatesChart extends Region {
         dragText = new Text("");
         dragText.setVisible(false);
         dragText.setTextOrigin(VPos.CENTER);
-        dragText.setFill(Helper.getColorWithOpacity(getHeaderColor(), 0.5));
+        dragText.setFill(ColorUtils.getColorWithOpacity(getHeaderColor(), 0.5));
 
 
         getChildren().setAll(axisCanvas, rect, connectionCanvas, dragText);
@@ -254,7 +255,7 @@ public class ParallelCoordinatesChart extends Region {
     public void setHeaderColor(final Color COLOR) {
         if (null == headerColor) {
             _headerColor = COLOR;
-            dragText.setFill(Helper.getColorWithOpacity(_headerColor, 0.5));
+            dragText.setFill(ColorUtils.getColorWithOpacity(_headerColor, 0.5));
             redraw();
         } else {
             headerColor.set(COLOR);
@@ -266,7 +267,7 @@ public class ParallelCoordinatesChart extends Region {
             headerColor = new ObjectPropertyBase<Color>(_headerColor) {
                 @Override
                 protected void invalidated() {
-                    dragText.setFill(Helper.getColorWithOpacity(get(), 0.5));
+                    dragText.setFill(ColorUtils.getColorWithOpacity(get(), 0.5));
                     redraw();
                 }
 
@@ -485,8 +486,8 @@ public class ParallelCoordinatesChart extends Region {
     public void setSelectionRectColor(final Color COLOR) {
         if (null == selectionRectColor) {
             _selectionRectColor = COLOR;
-            rect.setStroke(Helper.getColorWithOpacity(_selectionRectColor, 0.5));
-            rect.setFill(Helper.getColorWithOpacity(_selectionRectColor, 0.25));
+            rect.setStroke(ColorUtils.getColorWithOpacity(_selectionRectColor, 0.5));
+            rect.setFill(ColorUtils.getColorWithOpacity(_selectionRectColor, 0.25));
             redraw();
         } else {
             selectionRectColor.set(COLOR);
@@ -498,8 +499,8 @@ public class ParallelCoordinatesChart extends Region {
             selectionRectColor = new ObjectPropertyBase<Color>(_selectionRectColor) {
                 @Override
                 protected void invalidated() {
-                    rect.setStroke(Helper.getColorWithOpacity(get(), 0.5));
-                    rect.setFill(Helper.getColorWithOpacity(get(), 0.25));
+                    rect.setStroke(ColorUtils.getColorWithOpacity(get(), 0.5));
+                    rect.setFill(ColorUtils.getColorWithOpacity(get(), 0.25));
                     redraw();
                 }
 

@@ -4,8 +4,8 @@ import fx.chart.TickLabelOrientation;
 import fx.chart.data.ChartItem;
 import fx.chart.data.DataPoint;
 import fx.chart.data.XYChartItem;
-import fx.chart.util.Constants;
 import fx.chart.toolboxfx.geom.*;
+import fx.chart.util.Constants;
 import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -121,7 +121,7 @@ public class Helper {
         return VALUE;
     }
 
-    public static final double clamp(final double MIN, final double MAX, final double VALUE) {
+    public static double clamp(final double MIN, final double MAX, final double VALUE) {
         if (Double.compare(VALUE, MIN) < 0) return MIN;
         if (Double.compare(VALUE, MAX) > 0) return MAX;
         return VALUE;
@@ -405,14 +405,6 @@ public class Helper {
     public static final Point rotate(final Point P1, final Point ROTATION_CENTER, final double ANGLE) {
         double[] xy = rotate(P1.getX(), P1.getY(), ROTATION_CENTER.getX(), ROTATION_CENTER.getY(), ANGLE);
         return new Point(xy[0], xy[1]);
-    }
-
-    public static final Color getColorWithOpacity(final Color COLOR, final double OPACITY) {
-        double red = COLOR.getRed();
-        double green = COLOR.getGreen();
-        double blue = COLOR.getBlue();
-        double opacity = clamp(0, 1, OPACITY);
-        return Color.color(red, green, blue, opacity);
     }
 
     public static final boolean isPowerOf10(final double VALUE) {

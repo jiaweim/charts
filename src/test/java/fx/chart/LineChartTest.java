@@ -131,7 +131,7 @@ public class LineChartTest extends Application {
                 .tickMarkColor(Color.web("#85949B"))
                 //.tickMarksVisible(false)
                 // test the new numberFormatter as well
-                .numberFormatter(new StringConverter<Number>() {
+                .numberFormatter(new StringConverter<>() {
                     private final DecimalFormat df = new DecimalFormat("##0 m");
 
                     @Override

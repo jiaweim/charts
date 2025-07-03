@@ -37,8 +37,8 @@ public class AxisBuilder {
         position = POSITION;
     }
 
-    public static AxisBuilder create(final Orientation ORIENTATION, final Position POSITION) {
-        return new AxisBuilder(ORIENTATION, POSITION);
+    public static AxisBuilder create(final Orientation orientation, final Position position) {
+        return new AxisBuilder(orientation, position);
     }
 
     public final AxisBuilder minValue(final double MIN_VALUE) {

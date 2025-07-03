@@ -12,39 +12,42 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-
 /**
- * Created by hansolo on 16.07.17.
+ * A 2D chart data point
+ *
+ * @author Jiawei Mao
+ * @author Gerrit Grunwald
+ * @version 1.0.0
+ * @since 03 Jul 2025, 2:16 PM
  */
 public class XYChartItem implements XYItem, Comparable<XYChartItem> {
 
     private final ChartEvt ITEM_EVENT = new ChartEvt(XYChartItem.this, ChartEvt.ITEM_UPDATE);
-    private Map<EvtType, List<EvtObserver<ChartEvt>>> observers;
+    private final Map<EvtType, List<EvtObserver<ChartEvt>>> observers;
+
     private double _x;
-    private DoubleProperty x;
+    private DoubleProperty xProperty;
     private double _y;
-    private DoubleProperty y;
+    private DoubleProperty yProperty;
     private String _name;
-    private StringProperty name;
+    private StringProperty nameProperty;
     private Color _fill;
-    private ObjectProperty<Color> fill;
+    private ObjectProperty<Color> fillProperty;
     private Color _stroke;
-    private ObjectProperty<Color> stroke;
+    private ObjectProperty<Color> strokeProperty;
     private Symbol _symbol;
-    private ObjectProperty<Symbol> symbol;
+    private ObjectProperty<Symbol> symbolProperty;
     private boolean _isEmpty;
-    private BooleanProperty isEmpty;
+    private BooleanProperty isEmptyProperty;
     private String _tooltipText;
-    private StringProperty tooltipText;
+    private StringProperty tooltipTextProperty;
 
-
-    // ******************** Constructors **********************************
     public XYChartItem() {
         this(0, 0, "", Color.RED, Color.TRANSPARENT, Symbol.NONE, "", false);
     }
 
-    public XYChartItem(final boolean IS_EMPTY) {
-        this(0, 0, "", Color.RED, Color.TRANSPARENT, Symbol.NONE, "", IS_EMPTY);
+    public XYChartItem(final boolean isEmpty) {
+        this(0, 0, "", Color.RED, Color.TRANSPARENT, Symbol.NONE, "", isEmpty);
     }
 
     public XYChartItem(final double X, final double Y) {
@@ -111,37 +114,48 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
         this(X, Y, NAME, FILL, STROKE, SYMBOL, "", IS_EMPTY);
     }
 
-    public XYChartItem(final double X, final double Y, final String NAME, final Color FILL, final Color STROKE, final Symbol SYMBOL, final String TOOLTIP, final boolean IS_EMPTY) {
-        _x = X;
-        _y = Y;
-        _name = NAME;
-        _fill = FILL;
-        _stroke = STROKE;
-        _symbol = SYMBOL;
-        _isEmpty = IS_EMPTY;
-        _tooltipText = TOOLTIP;
+    /**
+     * Create a data item
+     *
+     * @param x       x value
+     * @param y       y value
+     * @param name    data name
+     * @param fill    fill color
+     * @param stroke  stroke
+     * @param symbol  {@link Symbol}
+     * @param tooltip tooltip text
+     * @param isEmpty true if it is an empty data
+     */
+    public XYChartItem(final double x, final double y, final String name,
+            final Color fill, final Color stroke, final Symbol symbol, final String tooltip, final boolean isEmpty) {
+        _x = x;
+        _y = y;
+        _name = name;
+        _fill = fill;
+        _stroke = stroke;
+        _symbol = symbol;
+        _isEmpty = isEmpty;
+        _tooltipText = tooltip;
         observers = new ConcurrentHashMap<>();
     }
 
-
-    // ******************** Methods ***************************************
     @Override
-    public double getX() {return null == x ? _x : x.get();}
+    public double getX() {return null == xProperty ? _x : xProperty.get();}
 
     @Override
     public void setX(final double X) {
-        if (null == x) {
+        if (null == xProperty) {
             _x = X;
             fireChartEvt(ITEM_EVENT);
         } else {
-            x.set(X);
+            xProperty.set(X);
         }
     }
 
     @Override
     public DoubleProperty xProperty() {
-        if (null == x) {
-            x = new DoublePropertyBase(_x) {
+        if (null == xProperty) {
+            xProperty = new DoublePropertyBase(_x) {
                 @Override
                 protected void invalidated() {
                     fireChartEvt(ITEM_EVENT);
@@ -154,26 +168,26 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
                 public String getName() {return "x";}
             };
         }
-        return x;
+        return xProperty;
     }
 
     @Override
-    public double getY() {return null == y ? _y : y.get();}
+    public double getY() {return null == yProperty ? _y : yProperty.get();}
 
     @Override
     public void setY(final double Y) {
-        if (null == y) {
+        if (null == yProperty) {
             _y = Y;
             fireChartEvt(ITEM_EVENT);
         } else {
-            y.set(Y);
+            yProperty.set(Y);
         }
     }
 
     @Override
     public DoubleProperty yProperty() {
-        if (null == y) {
-            y = new DoublePropertyBase(_y) {
+        if (null == yProperty) {
+            yProperty = new DoublePropertyBase(_y) {
                 @Override
                 protected void invalidated() {
                     fireChartEvt(ITEM_EVENT);
@@ -186,24 +200,24 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
                 public String getName() {return "y";}
             };
         }
-        return y;
+        return yProperty;
     }
 
     @Override
-    public String getName() {return null == name ? _name : name.get();}
+    public String getName() {return null == nameProperty ? _name : nameProperty.get();}
 
     public void setName(final String NAME) {
-        if (null == name) {
+        if (null == nameProperty) {
             _name = NAME;
             fireChartEvt(ITEM_EVENT);
         } else {
-            name.set(NAME);
+            nameProperty.set(NAME);
         }
     }
 
     public StringProperty nameProperty() {
-        if (null == name) {
-            name = new StringPropertyBase(_name) {
+        if (null == nameProperty) {
+            nameProperty = new StringPropertyBase(_name) {
                 @Override
                 protected void invalidated() {fireChartEvt(ITEM_EVENT);}
 
@@ -215,24 +229,24 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
             };
             _name = null;
         }
-        return name;
+        return nameProperty;
     }
 
     @Override
-    public Color getFill() {return null == fill ? _fill : fill.get();}
+    public Color getFill() {return null == fillProperty ? _fill : fillProperty.get();}
 
     public void setFill(final Color FILL) {
-        if (null == fill) {
+        if (null == fillProperty) {
             _fill = FILL;
             fireChartEvt(ITEM_EVENT);
         } else {
-            fill.set(FILL);
+            fillProperty.set(FILL);
         }
     }
 
     public ObjectProperty<Color> fillProperty() {
-        if (null == fill) {
-            fill = new ObjectPropertyBase<Color>(_fill) {
+        if (null == fillProperty) {
+            fillProperty = new ObjectPropertyBase<Color>(_fill) {
                 @Override
                 protected void invalidated() {fireChartEvt(ITEM_EVENT);}
 
@@ -244,24 +258,24 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
             };
             _fill = null;
         }
-        return fill;
+        return fillProperty;
     }
 
     @Override
-    public Color getStroke() {return null == stroke ? _stroke : stroke.get();}
+    public Color getStroke() {return null == strokeProperty ? _stroke : strokeProperty.get();}
 
     public void setStroke(final Color STROKE) {
-        if (null == stroke) {
+        if (null == strokeProperty) {
             _stroke = STROKE;
             fireChartEvt(ITEM_EVENT);
         } else {
-            stroke.set(STROKE);
+            strokeProperty.set(STROKE);
         }
     }
 
     public ObjectProperty<Color> strokeProperty() {
-        if (null == stroke) {
-            stroke = new ObjectPropertyBase<Color>(_stroke) {
+        if (null == strokeProperty) {
+            strokeProperty = new ObjectPropertyBase<Color>(_stroke) {
                 @Override
                 protected void invalidated() {fireChartEvt(ITEM_EVENT);}
 
@@ -273,24 +287,24 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
             };
             _stroke = null;
         }
-        return stroke;
+        return strokeProperty;
     }
 
     @Override
-    public Symbol getSymbol() {return null == symbol ? _symbol : symbol.get();}
+    public Symbol getSymbol() {return null == symbolProperty ? _symbol : symbolProperty.get();}
 
     public void setSymbol(final Symbol SYMBOL) {
-        if (null == symbol) {
+        if (null == symbolProperty) {
             _symbol = SYMBOL;
             fireChartEvt(ITEM_EVENT);
         } else {
-            symbol.set(SYMBOL);
+            symbolProperty.set(SYMBOL);
         }
     }
 
     public ObjectProperty<Symbol> symbolProperty() {
-        if (null == symbol) {
-            symbol = new ObjectPropertyBase<Symbol>(_symbol) {
+        if (null == symbolProperty) {
+            symbolProperty = new ObjectPropertyBase<Symbol>(_symbol) {
                 @Override
                 protected void invalidated() {fireChartEvt(ITEM_EVENT);}
 
@@ -302,26 +316,26 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
             };
             _symbol = null;
         }
-        return symbol;
+        return symbolProperty;
     }
 
     @Override
-    public String getTooltipText() {return null == tooltipText ? _tooltipText : tooltipText.get();}
+    public String getTooltipText() {return null == tooltipTextProperty ? _tooltipText : tooltipTextProperty.get();}
 
     @Override
     public void setTooltipText(final String TOOLTIP) {
-        if (null == tooltipText) {
+        if (null == tooltipTextProperty) {
             _tooltipText = TOOLTIP;
             fireChartEvt(ITEM_EVENT);
         } else {
-            tooltipText.set(TOOLTIP);
+            tooltipTextProperty.set(TOOLTIP);
         }
     }
 
     @Override
     public StringProperty tooltipTextProperty() {
-        if (null == tooltipText) {
-            tooltipText = new StringPropertyBase(_tooltipText) {
+        if (null == tooltipTextProperty) {
+            tooltipTextProperty = new StringPropertyBase(_tooltipText) {
                 @Override
                 protected void invalidated() {fireChartEvt(ITEM_EVENT);}
 
@@ -333,24 +347,24 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
             };
             _tooltipText = null;
         }
-        return tooltipText;
+        return tooltipTextProperty;
     }
 
     @Override
-    public boolean isEmptyItem() {return null == isEmpty ? _isEmpty : isEmpty.get();}
+    public boolean isEmptyItem() {return null == isEmptyProperty ? _isEmpty : isEmptyProperty.get();}
 
     public void setIsEmpty(final boolean isEmpty) {
-        if (null == this.isEmpty) {
+        if (null == this.isEmptyProperty) {
             _isEmpty = isEmpty;
             fireChartEvt(ITEM_EVENT);
         } else {
-            this.isEmpty.set(isEmpty);
+            this.isEmptyProperty.set(isEmpty);
         }
     }
 
     public BooleanProperty isEmptyProperty() {
-        if (null == isEmpty) {
-            isEmpty = new BooleanPropertyBase(_isEmpty) {
+        if (null == isEmptyProperty) {
+            isEmptyProperty = new BooleanPropertyBase(_isEmpty) {
                 @Override
                 protected void invalidated() {fireChartEvt(ITEM_EVENT);}
 
@@ -361,7 +375,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
                 public String getName() {return "isEmpty";}
             };
         }
-        return isEmpty;
+        return isEmptyProperty;
     }
 
 

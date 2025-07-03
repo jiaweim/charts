@@ -49,8 +49,6 @@ public class XYSeries<T extends XYItem> extends Series {
         setSymbolsVisible(SYMBOLS_VISIBLE);
     }
 
-
-    // ******************** Methods *******************************************
     @Override
     public ObservableList<T> getItems() {return items;}
 

@@ -1,6 +1,7 @@
 package fx.chart;
 
 import fx.chart.SankeyPlot.StreamFillMode;
+import fx.chart.color.ColorUtils;
 import fx.chart.data.PlotItem;
 import fx.chart.tools.Helper;
 import javafx.scene.paint.Color;
@@ -26,7 +27,7 @@ public class OfflineRenderTest2 {
 
         Colors(final Color COLOR) {
             color = COLOR;
-            translucentColor = Helper.getColorWithOpacity(color, 0.75);
+            translucentColor = ColorUtils.getColorWithOpacity(color, 0.75);
         }
 
         public Color get() {return color;}
