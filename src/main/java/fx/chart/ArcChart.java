@@ -282,7 +282,7 @@ public class ArcChart extends Region {
 
     public void setDecimals(final int DECIMALS) {
         if (null == decimals) {
-            _decimals = Helper.clamp(0, 6, DECIMALS);
+            _decimals = Math.clamp(DECIMALS, 0, 6);
             formatString = new StringBuilder("%.").append(getDecimals()).append("f").toString();
             redraw();
         } else {
@@ -295,7 +295,7 @@ public class ArcChart extends Region {
             decimals = new IntegerPropertyBase(_decimals) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0, 6, get()));
+                    set(Math.clamp(get(), 0, 6));
                     formatString = new StringBuilder("%.").append(get()).append("f").toString();
                     redraw();
                 }
@@ -340,7 +340,7 @@ public class ArcChart extends Region {
             connectionOpacityProperty = new DoublePropertyBase(_connectionOpacity) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0.1, 1.0, get()));
+                    set(Math.clamp(get(), 0.1, 1.0));
                     redraw();
                 }
 
@@ -713,7 +713,7 @@ public class ArcChart extends Region {
             ctx.setLineCap(StrokeLineCap.BUTT);
             item.getOutgoing().forEach((outgoingItem, value) -> {
                 Point outgoingItemPoint = itemPoints.get(outgoingItem);
-                double connectionWidth = getWeightConnections() ? Helper.clamp(2, maxConnectionWidth, value * connectionWidthFactor) : 2;
+                double connectionWidth = getWeightConnections() ? Math.clamp(value * connectionWidthFactor, 2, maxConnectionWidth) : 2;
                 double arcWidth = outgoingItemPoint.getX() - itemPoint.getX();
 
                 Color connectionStroke;
@@ -767,7 +767,7 @@ public class ArcChart extends Region {
             selectedItem.getOutgoing().forEach((outgoingItem, value) -> {
                 Point itemPoint = itemPoints.get(selectedItem);
                 Point outgoingItemPoint = itemPoints.get(outgoingItem);
-                double connectionWidth = getWeightConnections() ? Helper.clamp(2, maxConnectionWidth, value * connectionWidthFactor) : 2;
+                double connectionWidth = getWeightConnections() ? Math.clamp(value * connectionWidthFactor, 2, maxConnectionWidth) : 2;
                 double arcWidth = outgoingItemPoint.getX() - itemPoint.getX();
                 Color connectionStroke = getConnectionColor();
                 Connection connection = getConnection(selectedItem, outgoingItem);
@@ -806,7 +806,7 @@ public class ArcChart extends Region {
         // Draw item dots
         Collections.reverse(sortedItems);
         sortedItems.forEach(item -> {
-            double itemSize = getWeightDots() ? Helper.clamp(minItemSize, maxItemSize, item.getSumOfOutgoing() * itemSizeFactor) : minItemSize;
+            double itemSize = getWeightDots() ? Math.clamp(item.getSumOfOutgoing() * itemSizeFactor, minItemSize, maxItemSize) : minItemSize;
             Point itemPoint = itemPoints.get(item);
             double itemX = itemPoint.getX();
             double itemY = itemPoint.getY();

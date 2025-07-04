@@ -2,7 +2,6 @@ package fx.chart;
 
 import fx.chart.data.XYChartItem;
 import fx.chart.series.XYSeries;
-import fx.chart.series.XYSeriesBuilder;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -49,7 +48,7 @@ public class ScatterTest extends Application {
             xyItems4.add(new XYChartItem(i, RND.nextDouble() * 40 - 20, "P" + i, COLORS[RND.nextInt(3)], "P" + i));
         }
 
-        xySeries5 = XYSeriesBuilder.create()
+        xySeries5 = XYSeries.builder()
                 .items(xyItems4)
                 .chartType(ChartType.SCATTER)
                 .fill(Color.TRANSPARENT)

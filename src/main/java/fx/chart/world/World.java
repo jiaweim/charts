@@ -4,8 +4,8 @@ import fx.chart.country.Country;
 import fx.chart.country.tools.CRegion;
 import fx.chart.data.MapConnection;
 import fx.chart.data.WeightedMapPoints;
-import fx.chart.heatmap.*;
 import fx.chart.font.Fonts;
+import fx.chart.heatmap.*;
 import fx.chart.toolboxfx.geom.Location;
 import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
@@ -618,7 +618,7 @@ public class World extends Region {
     public double getConnectionWidth() {return connectionWidth;}
 
     public void setConnectionWidth(final double WIDTH) {
-        connectionWidth = Helper.clamp(0.5, 10, WIDTH);
+        connectionWidth = Math.clamp(WIDTH, 0.5, 10);
         redraw();
     }
 

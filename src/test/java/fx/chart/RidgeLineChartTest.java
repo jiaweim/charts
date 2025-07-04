@@ -2,7 +2,6 @@ package fx.chart;
 
 import fx.chart.data.XYChartItem;
 import fx.chart.series.XYSeries;
-import fx.chart.series.XYSeriesBuilder;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -36,7 +35,7 @@ public class RidgeLineChartTest extends Application {
         Map<Integer, List<XYChartItem>> items = createItems();
 
         for (int i = 0; i < items.keySet().size(); i++) {
-            XYSeries xySeries = XYSeriesBuilder.create()
+            XYSeries xySeries = XYSeries.builder()
                     .items(items.get(i))
                     .chartType(ChartType.RIDGE_LINE)
                     .fill(gradient)

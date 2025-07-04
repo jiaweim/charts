@@ -1,7 +1,6 @@
 package fx.chart;
 
 import fx.chart.data.ChartItem;
-import fx.chart.tools.Helper;
 import fx.chart.tools.NumberFormat;
 import fx.chart.tools.Order;
 import javafx.beans.property.*;
@@ -147,7 +146,7 @@ public class BarChartBuilder<B extends BarChartBuilder<B>> {
     }
 
     public final B barCornerRadius(final double barCornerRadius) {
-        properties.put("barCornerRadius", new SimpleDoubleProperty(Helper.clamp(0, 20, barCornerRadius)));
+        properties.put("barCornerRadius", new SimpleDoubleProperty(Math.clamp(barCornerRadius, 0, 20)));
         return (B) this;
     }
 

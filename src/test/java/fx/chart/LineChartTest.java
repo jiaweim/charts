@@ -2,7 +2,6 @@ package fx.chart;
 
 import fx.chart.data.XYChartItem;
 import fx.chart.series.XYSeries;
-import fx.chart.series.XYSeriesBuilder;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -69,7 +68,7 @@ public class LineChartTest extends Application {
         p12 = new XYChartItem(12, RND.nextDouble() * 300 + 200, "Dec", "December");
 
 
-        xySeries1 = XYSeriesBuilder.create()
+        xySeries1 = XYSeries.builder()
                 .items(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12)
                 .chartType(ChartType.SMOOTH_AREA)
                 .fill(Color.web("#00AEF520"))
@@ -81,7 +80,7 @@ public class LineChartTest extends Application {
                 .symbolsVisible(true)
                 .build();
 
-        xySeries2 = XYSeriesBuilder.create()
+        xySeries2 = XYSeries.builder()
                 .items(new XYChartItem(1, 280, "Jan", "January"),
                         new XYChartItem(2, 190, "Feb", "February"),
                         new XYChartItem(3, 280, "Mar", "March"),
@@ -246,7 +245,7 @@ public class LineChartTest extends Application {
     }
 
     private XYSeries createSeries() {
-        XYSeries xySeries = XYSeriesBuilder.create()
+        XYSeries xySeries = XYSeries.builder()
                 .items(new XYChartItem(1, 600, "Jan", "January"),
                         new XYChartItem(2, 760, "Feb", "February"),
                         new XYChartItem(3, 585, "Mar", "March"),

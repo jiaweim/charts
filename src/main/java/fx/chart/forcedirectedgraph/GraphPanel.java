@@ -1,6 +1,5 @@
 package fx.chart.forcedirectedgraph;
 
-import fx.chart.tools.Helper;
 import javafx.animation.AnimationTimer;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
@@ -717,7 +716,7 @@ public class GraphPanel extends Region {
 
     public void setEdgeWidthFactor(final double WIDTH) {
         if (null == edgeWidthFactor) {
-            _edgeWidthFactor = Helper.clamp(1, 10, WIDTH);
+            _edgeWidthFactor = Math.clamp(WIDTH, 1, 10);
             redraw();
         } else {
             edgeWidthFactor.set(WIDTH);
@@ -729,7 +728,7 @@ public class GraphPanel extends Region {
             edgeWidthFactor = new DoublePropertyBase(_edgeWidthFactor) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(1, 10, get()));
+                    set(Math.clamp(get(), 1, 10));
                     redraw();
                 }
 
@@ -779,7 +778,7 @@ public class GraphPanel extends Region {
 
     public void setNodeBorderWidth(final double WIDTH) {
         if (null == nodeBorderWidth) {
-            _nodeBorderWidth = Helper.clamp(1, 10, WIDTH);
+            _nodeBorderWidth = Math.clamp(WIDTH, 1, 10);
             redraw();
         } else {
             nodeBorderWidth.set(WIDTH);
@@ -791,7 +790,7 @@ public class GraphPanel extends Region {
             nodeBorderWidth = new DoublePropertyBase(_nodeBorderWidth) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(1, 10, get()));
+                    set(Math.clamp(get(), 1, 10));
                     redraw();
                 }
 

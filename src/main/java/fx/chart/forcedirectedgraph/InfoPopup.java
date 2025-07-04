@@ -230,7 +230,7 @@ public class InfoPopup extends Popup {
 
     public void setTimeout(final long TIMEOUT) {
         if (null == timeout) {
-            _timeout = Helper.clamp(0, MAX_TIMEOUT, TIMEOUT);
+            _timeout = Math.clamp(TIMEOUT, 0, MAX_TIMEOUT);
         } else {
             timeout.set(TIMEOUT);
         }
@@ -240,7 +240,7 @@ public class InfoPopup extends Popup {
         if (null == timeout) {
             timeout = new LongPropertyBase(_timeout) {
                 @Override
-                protected void invalidated() {Helper.clamp(0, MAX_TIMEOUT, get());}
+                protected void invalidated() {Math.clamp(get(), 0, MAX_TIMEOUT);}
 
                 @Override
                 public Object getBean() {return InfoPopup.this;}
@@ -256,7 +256,7 @@ public class InfoPopup extends Popup {
 
     public void setDecimals(final int DECIMALS) {
         if (null == decimals) {
-            _decimals = Helper.clamp(0, 6, DECIMALS);
+            _decimals = Math.clamp(DECIMALS, 0, 6);
             formatString = new StringBuilder("%.").append(_decimals).append("f ").append(getUnit()).toString();
         } else {
             decimals.set(DECIMALS);
@@ -268,7 +268,7 @@ public class InfoPopup extends Popup {
             decimals = new IntegerPropertyBase(_decimals) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0, MAX_DECIMALS, get()));
+                    set(Math.clamp(get(), 0, MAX_DECIMALS));
                     formatString = new StringBuilder("%.").append(get()).append("f ").append(_unit).toString();
                 }
 

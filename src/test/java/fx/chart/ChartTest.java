@@ -4,13 +4,12 @@ import fx.chart.data.ValueChartItem;
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYZChartItem;
 import fx.chart.series.XYSeries;
-import fx.chart.series.XYSeriesBuilder;
 import fx.chart.series.XYZSeries;
 import fx.chart.series.YSeries;
-import fx.chart.util.unit.Converter;
 import fx.chart.tools.LineStyle;
 import fx.chart.tools.Marker;
 import fx.chart.tools.MarkerBuilder;
+import fx.chart.util.unit.Converter;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -102,7 +101,7 @@ public class ChartTest extends Application {
             xyItems4.add(new XYChartItem(i, RND.nextDouble() * 40 - 20, "P" + i, COLORS[RND.nextInt(3)], "P" + i));
         }
 
-        xySeries1 = XYSeriesBuilder.create()
+        xySeries1 = XYSeries.builder()
                 .items(xyItems1)
                 .chartType(ChartType.LINE)
                 .fill(Color.TRANSPARENT)
@@ -112,7 +111,7 @@ public class ChartTest extends Application {
                 .symbolsVisible(true)
                 .build();
 
-        xySeries2 = XYSeriesBuilder.create()
+        xySeries2 = XYSeries.builder()
                 .items(xyItems2)
                 .chartType(ChartType.AREA)
                 .fill(Color.TRANSPARENT)
@@ -131,7 +130,7 @@ public class ChartTest extends Application {
         xySeries3.setSymbolStroke(Color.TRANSPARENT);
         xySeries4.setSymbolStroke(Color.TRANSPARENT);
 
-        xySeries5 = XYSeriesBuilder.create()
+        xySeries5 = XYSeries.builder()
                 .items(xyItems4)
                 .chartType(ChartType.SCATTER)
                 .fill(Color.TRANSPARENT)
@@ -142,7 +141,7 @@ public class ChartTest extends Application {
                 .build();
 
 
-        ySeries = new YSeries(yItem, ChartType.DONUT);
+        ySeries = new YSeries<>(yItem, ChartType.DONUT);
         donutChart = new YPane(ySeries);
 
         xyzSeries = new XYZSeries(xyzItem, ChartType.BUBBLE);

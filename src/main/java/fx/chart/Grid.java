@@ -164,7 +164,7 @@ public class Grid extends Region {
 
     public void setGridOpacity(final double OPACITY) {
         if (null == gridOpacityProperty) {
-            _gridOpacity = Helper.clamp(0, 1, OPACITY);
+            _gridOpacity = Math.clamp(OPACITY, 0, 1);
             drawGrid();
         } else {
             gridOpacityProperty.set(OPACITY);

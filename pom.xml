@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.jiaweim</groupId>
     <artifactId>fx-chart</artifactId>
-    <version>21.5.0</version>
+    <version>21.6.0</version>
     <name>JavaFX Chart Library</name>
     <url>https://github.com/jiaweim/charts</url>
     <description>
@@ -24,7 +24,7 @@
         <dependency>
             <groupId>io.github.jiaweim</groupId>
             <artifactId>pdk-util</artifactId>
-            <version>0.9.1</version>
+            <version>0.10.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

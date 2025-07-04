@@ -160,7 +160,7 @@ public class AreaHeatMap extends Region {
 
     public void setQuality(final int QUALITY) {
         if (null == quality) {
-            _quality = Helper.clamp(2, 32, QUALITY);
+            _quality = Math.clamp(QUALITY, 2, 32);
             redraw();
         } else {
             quality.set(QUALITY);
@@ -172,7 +172,7 @@ public class AreaHeatMap extends Region {
             quality = new IntegerPropertyBase(_quality) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(2, 32, get()));
+                    set(Math.clamp(get(), 2, 32));
                     redraw();
                 }
 
@@ -190,7 +190,7 @@ public class AreaHeatMap extends Region {
 
     public void setNoOfCloserInfluentialPoints(final int NUMBER_OF_POINTS) {
         if (null == noOfCloserInfluentPoints) {
-            _noOfCloserInfluentPoints = Helper.clamp(1, 10, NUMBER_OF_POINTS);
+            _noOfCloserInfluentPoints = Math.clamp(NUMBER_OF_POINTS, 1, 10);
             redraw();
         } else {
             noOfCloserInfluentPoints.set(NUMBER_OF_POINTS);
@@ -202,7 +202,7 @@ public class AreaHeatMap extends Region {
             noOfCloserInfluentPoints = new IntegerPropertyBase(_noOfCloserInfluentPoints) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(1, 10, get()));
+                    set(Math.clamp(get(), 1, 10));
                     redraw();
                 }
 
@@ -220,7 +220,7 @@ public class AreaHeatMap extends Region {
 
     public void setHeatMapOpacity(final double OPACITY) {
         if (null == heatMapOpacity) {
-            _heatMapOpacity = Helper.clamp(0, 1, OPACITY);
+            _heatMapOpacity = Math.clamp(OPACITY, 0, 1);
             redraw();
         } else {
             heatMapOpacity.set(OPACITY);
@@ -232,7 +232,7 @@ public class AreaHeatMap extends Region {
             heatMapOpacity = new DoublePropertyBase(_heatMapOpacity) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0, 1, get()));
+                    set(Math.clamp(get(), 0, 1));
                     redraw();
                 }
 
@@ -430,7 +430,7 @@ public class AreaHeatMap extends Region {
         double max = 50;
         double delta = max - min;
         double levels = 25;
-        double value = Helper.clamp(min, max, VALUE);
+        double value = Math.clamp(VALUE, min, max);
         double tmp = 1 - (1 - limit) - (((value - min) * limit) / delta);
         if (LEVELS) {
             tmp = Math.round(tmp * levels) / levels;

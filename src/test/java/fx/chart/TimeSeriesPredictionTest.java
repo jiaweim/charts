@@ -3,7 +3,6 @@ package fx.chart;
 import fx.chart.data.TYChartItem;
 import fx.chart.data.XYChartItem;
 import fx.chart.series.XYSeries;
-import fx.chart.series.XYSeriesBuilder;
 import fx.chart.tools.Helper;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -125,7 +124,7 @@ public class TimeSeriesPredictionTest extends Application {
     }
 
     private XYSeries<TYChartItem> createSeries(final ChartType chartType, final LocalDateTime start, final ChronoUnit timeStep, final Color fill, final Color stroke, final List<Double> data) {
-        final XYSeries<TYChartItem> series = XYSeriesBuilder.create()
+        final XYSeries<TYChartItem> series = new XYSeries.Builder<TYChartItem>()
                 .chartType(chartType)
                 .fill(fill)
                 .stroke(stroke)

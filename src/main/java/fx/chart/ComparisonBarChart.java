@@ -1,15 +1,11 @@
 package fx.chart;
 
 import fx.chart.data.ChartItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.SelectionEvt;
+import fx.chart.event.*;
+import fx.chart.font.Fonts;
 import fx.chart.geometry.Rectangle;
 import fx.chart.series.ChartItemSeries;
 import fx.chart.series.Series;
-import fx.chart.event.Evt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
-import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import fx.chart.tools.NumberFormat;
@@ -988,13 +984,13 @@ public class ComparisonBarChart extends Region {
             Category category = categories.get(i);
 
             ChartItem leftItem = items1.stream().filter(it -> it.getCategory().getName().equals(category.getName())).findFirst().get();
-            double leftValue = Helper.clamp(0, Double.MAX_VALUE, leftItem.getValue());
+            double leftValue = Math.clamp(leftItem.getValue(), 0, Double.MAX_VALUE);
             double leftBarWidth = leftValue / maxValue * maxBarWidth;
             double leftBarX = inset + maxBarWidth - leftBarWidth;
             double leftBarY = inset + (i * barHeight) + (i * barSpacer);
 
             ChartItem rightItem = items2.stream().filter(it -> it.getCategory().getName().equals(category.getName())).findFirst().get();
-            double rightValue = Helper.clamp(0, Double.MAX_VALUE, rightItem.getValue());
+            double rightValue = Math.clamp(rightItem.getValue(), 0, Double.MAX_VALUE);
             double rightBarWidth = rightValue / maxValue * maxBarWidth;
             double rightBarX = inset + maxBarWidth + categoryWidth;
             double rightBarY = inset + (i * barHeight) + (i * barSpacer);

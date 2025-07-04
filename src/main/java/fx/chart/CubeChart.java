@@ -1,7 +1,7 @@
 package fx.chart;
 
-import fx.chart.toolboxfx.FontMetrix;
 import fx.chart.font.Fonts;
+import fx.chart.toolboxfx.FontMetrix;
 import fx.chart.tools.Helper;
 import fx.chart.tools.P2d;
 import fx.chart.tools.P3d;
@@ -100,7 +100,7 @@ public class CubeChart extends Region {
         leftValue = new DoublePropertyBase(0) {
             @Override
             protected void invalidated() {
-                set(Helper.clamp(0.0, 1.0, get()));
+                set(Math.clamp(get(), 0.0, 1.0));
                 redraw();
             }
 
@@ -113,7 +113,7 @@ public class CubeChart extends Region {
         rightValue = new DoublePropertyBase(0) {
             @Override
             protected void invalidated() {
-                set(Helper.clamp(0.0, 1.0, get()));
+                set(Math.clamp(get(), 0.0, 1.0));
                 redraw();
             }
 
@@ -498,14 +498,14 @@ public class CubeChart extends Region {
     public double getLeftValue() {return leftValue.get();}
 
     public void setLeftValue(final double leftValue) {
-        this.leftValue.set(Helper.clamp(0.0, 1.0, leftValue));
+        this.leftValue.set(Math.clamp(leftValue, 0.0, 1.0));
     }
 
     public DoubleProperty leftValueProperty() {return leftValue;}
 
     public double getRightValue() {return rightValue.get();}
 
-    public void setRightValue(final double rightValue) {this.rightValue.set(Helper.clamp(0.0, 1.0, rightValue));}
+    public void setRightValue(final double rightValue) {this.rightValue.set(Math.clamp(rightValue, 0.0, 1.0));}
 
     public DoubleProperty rightValueProperty() {return rightValue;}
 

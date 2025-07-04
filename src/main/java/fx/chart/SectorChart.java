@@ -2,10 +2,10 @@ package fx.chart;
 
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvt;
-import fx.chart.series.ChartItemSeries;
 import fx.chart.event.EvtObserver;
 import fx.chart.event.EvtType;
 import fx.chart.font.Fonts;
+import fx.chart.series.ChartItemSeries;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import javafx.beans.InvalidationListener;
@@ -29,8 +29,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import static fx.chart.tools.Helper.clamp;
 
 
 public class SectorChart extends Region {
@@ -291,7 +289,7 @@ public class SectorChart extends Region {
             if (allSeries.isEmpty()) {
                 _threshold = VALUE;
             } else {
-                _threshold = clamp(getMinValue(), getMaxValue(), VALUE);
+                _threshold = Math.clamp(VALUE, getMinValue(), getMaxValue());
             }
             drawChart();
         } else {
@@ -306,7 +304,7 @@ public class SectorChart extends Region {
                 protected void invalidated() {
                     if (!allSeries.isEmpty()) {
                         originalThreshold = get();
-                        set(clamp(getMinValue(), getMaxValue(), get()));
+                        set(Math.clamp(get(), getMinValue(), getMaxValue()));
                     }
                     drawChart();
                 }
@@ -720,8 +718,8 @@ public class SectorChart extends Region {
             ChartItemSeries<ChartItem> series = allSeries.get(i);
             for (int j = 0; j < series.getItems().size(); j++) {
                 ChartItem item = series.getItems().get(j);
-                radiusFactor = clamp(0.0, 1.0, (item.getValue() / range));
-                radius = clamp(circleInnerRadius, circleOuterRadius, circleInnerRadius + (radiusFactor * deltaRadius));
+                radiusFactor = Math.clamp((item.getValue() / range), 0.0, 1.0);
+                radius = Math.clamp(circleInnerRadius + (radiusFactor * deltaRadius), circleInnerRadius, circleOuterRadius);
 
                 if (radialBarChartMode) {
                     double dxo = Math.tan(halfAngleStepRad) * radius * itemWidthFactor * 0.75;
@@ -765,9 +763,9 @@ public class SectorChart extends Region {
         // draw threshold line
         if (isThresholdVisible()) {
             ctx.save();
-            radiusFactor = (clamp(0.0, 1.0, (getThreshold() / range)));
-            radius = clamp(circleInnerRadius, circleOuterRadius, radiusFactor * deltaRadius);
-            ctx.setLineWidth(clamp(0.75d, 1d, size * 0.005));
+            radiusFactor = Math.clamp((getThreshold() / range), 0.0, 1.0);
+            radius = Math.clamp(radiusFactor * deltaRadius, circleInnerRadius, circleOuterRadius);
+            ctx.setLineWidth(Math.clamp(size * 0.005, 0.75, 1.0));
             ctx.setLineDashes(new double[]{6, 3});
             ctx.setStroke(getThresholdColor());
             ctx.strokeOval(0.5 * size - radius, 0.5 * size - radius, 2 * radius, 2 * radius);

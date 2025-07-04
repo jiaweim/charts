@@ -364,7 +364,7 @@ public class SankeyPlot extends Region {
 
     public void setItemWidth(final int WIDTH) {
         if (null == itemWidth) {
-            _itemWidth = Helper.clamp(2, 50, WIDTH);
+            _itemWidth = Math.clamp(WIDTH, 2, 50);
             prepareData();
         } else {
             itemWidth.set(WIDTH);
@@ -376,7 +376,7 @@ public class SankeyPlot extends Region {
             itemWidth = new IntegerPropertyBase(_itemWidth) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(2, 50, get()));
+                    set(Math.clamp(get(), 2, 50));
                     prepareData();
                 }
 
@@ -421,7 +421,7 @@ public class SankeyPlot extends Region {
 
     public void setItemGap(final int GAP) {
         if (null == itemGap) {
-            _itemGap = Helper.clamp(0, 100, GAP);
+            _itemGap = Math.clamp(GAP, 0, 100);
             prepareData();
         } else {
             itemGap.set(GAP);
@@ -433,7 +433,7 @@ public class SankeyPlot extends Region {
             itemGap = new IntegerPropertyBase(_itemGap) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0, 100, get()));
+                    set(Math.clamp(get(), 0, 100));
                     prepareData();
                 }
 
@@ -478,7 +478,7 @@ public class SankeyPlot extends Region {
 
     public void setDecimals(final int DECIMALS) {
         if (null == decimals) {
-            _decimals = Helper.clamp(0, 6, DECIMALS);
+            _decimals = Math.clamp(DECIMALS, 0, 6);
             formatString = new StringBuilder("%.").append(getDecimals()).append("f").toString();
             redraw();
         } else {
@@ -491,7 +491,7 @@ public class SankeyPlot extends Region {
             decimals = new IntegerPropertyBase(_decimals) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0, 6, get()));
+                    set(Math.clamp(get(), 0, 6));
                     formatString = new StringBuilder("%.").append(get()).append("f").toString();
                     redraw();
                 }
@@ -639,7 +639,7 @@ public class SankeyPlot extends Region {
 
     public void setConnectionOpacity(final double OPACITY) {
         if (null == connectionOpacity) {
-            _connectionOpacity = Helper.clamp(0.1, 1.0, OPACITY);
+            _connectionOpacity = Math.clamp(OPACITY, 0.1, 1.0);
             redraw();
         } else {
             connectionOpacity.set(OPACITY);
@@ -651,7 +651,7 @@ public class SankeyPlot extends Region {
             connectionOpacity = new DoublePropertyBase(_connectionOpacity) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0.1, 1.0, get()));
+                    set(Math.clamp(get(), 0.1, 1.0));
                     redraw();
                 }
 
@@ -992,7 +992,7 @@ public class SankeyPlot extends Region {
             canvas.setHeight(height);
             canvas.relocate((getWidth() - width) * 0.5, (getHeight() - height) * 0.5);
 
-            fontSize = Helper.clamp(6, 24, size * 0.025);
+            fontSize = Math.clamp(size * 0.025, 6, 24);
             ctx.setTextBaseline(VPos.CENTER);
             if (getUseCustomFont() && null != getCustomFont()) {
                 Font cFont = new Font(getCustomFont().getName(), fontSize);

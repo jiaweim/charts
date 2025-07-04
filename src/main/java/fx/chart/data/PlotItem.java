@@ -7,7 +7,6 @@ import fx.chart.event.ChartEvt;
 import fx.chart.event.EvtObserver;
 import fx.chart.event.EvtType;
 import fx.chart.font.Fonts;
-import fx.chart.tools.Helper;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -463,7 +462,7 @@ public class PlotItem implements Item, Comparable<PlotItem> {
 
     public void addToOutgoing(final PlotItem ITEM, final double VALUE) {
         if (!outgoing.containsKey(ITEM)) {
-            outgoing.put(ITEM, Helper.clamp(0, Double.MAX_VALUE, VALUE));
+            outgoing.put(ITEM, Math.clamp(VALUE, 0, Double.MAX_VALUE));
             establishConnections();
             fireChartEvt(ITEM_EVENT);
         }
@@ -495,7 +494,7 @@ public class PlotItem implements Item, Comparable<PlotItem> {
 
     protected void addToIncoming(final PlotItem ITEM, final double VALUE) {
         if (!incoming.containsKey(ITEM)) {
-            incoming.put(ITEM, Helper.clamp(0, Double.MAX_VALUE, VALUE));
+            incoming.put(ITEM, Math.clamp(VALUE, 0, Double.MAX_VALUE));
             fireChartEvt(ITEM_EVENT);
         }
     }

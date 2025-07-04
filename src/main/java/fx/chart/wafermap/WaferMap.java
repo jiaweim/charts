@@ -1,11 +1,11 @@
 package fx.chart.wafermap;
 
-import fx.chart.toolboxfx.geom.Point;
 import fx.chart.geometry.Rectangle;
 import fx.chart.heatmap.ColorMapping;
 import fx.chart.heatmap.HeatMap;
 import fx.chart.heatmap.HeatMapBuilder;
 import fx.chart.heatmap.OpacityDistribution;
+import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
 import javafx.beans.DefaultProperty;
 import javafx.beans.binding.Bindings;
@@ -562,7 +562,7 @@ public class WaferMap extends Region {
     }
 
     public void setHeatmapSpotRadius(final double spotRadius) {
-        heatmap.setSpotRadius(Helper.clamp(1, 20, spotRadius));
+        heatmap.setSpotRadius(Math.clamp(spotRadius, 1, 20));
         if (getHeatmapVisible()) {
             heatmap.clearHeatMap();
             resize();
@@ -570,7 +570,7 @@ public class WaferMap extends Region {
     }
 
     public void setHeatmapOpacity(final double opacity) {
-        heatmap.setOpacity(Helper.clamp(0.0, 1.0, opacity));
+        heatmap.setOpacity(Math.clamp(opacity, 0.0, 1.0));
     }
 
     public void setClassConfigMap(final Map<Integer, ClassConfig> classConfigMap) {
@@ -667,11 +667,11 @@ public class WaferMap extends Region {
     private void resize() {
         width = getWidth() - getInsets().getLeft() - getInsets().getRight();
         height = getHeight() - getInsets().getTop() - getInsets().getBottom();
-        size = width < height ? width : height;
+        size = Math.min(width, height);
 
         if (width > 0 && height > 0) {
             factor = size / kla.getSampleSize();
-            defectSize = Helper.clamp(1, 3, size / 150);
+            defectSize = Math.clamp(size / 150, 1, 3);
             halfDefectSize = defectSize * 0.5;
             centerX = size * 0.5;
             centerY = size * 0.5;

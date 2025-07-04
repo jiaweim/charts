@@ -1,8 +1,8 @@
 package fx.chart;
 
 import fx.chart.data.ValueItem;
-import fx.chart.series.YSeries;
 import fx.chart.font.Fonts;
+import fx.chart.series.YSeries;
 import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
 import javafx.beans.property.*;
@@ -26,8 +26,6 @@ import javafx.scene.text.TextAlignment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import static fx.chart.tools.Helper.clamp;
 
 public class YPane<T extends ValueItem> extends Region implements ChartArea {
     private static final double PREFERRED_WIDTH = 250;
@@ -609,7 +607,7 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
         // draw threshold line
         if (isThresholdYVisible()) {
             double r = ((getThresholdY() - MIN_VALUE) / DATA_RANGE);
-            ctx.setLineWidth(clamp(1d, 3d, size * 0.005));
+            ctx.setLineWidth(Math.clamp(size * 0.005, 1d, 3d));
             ctx.setStroke(getThresholdYColor());
             ctx.strokeOval(0.5 * size - OFFSET - r * RANGE, 0.5 * size - OFFSET - r * RANGE,
                     2 * (r * RANGE + OFFSET), 2 * (r * RANGE + OFFSET));

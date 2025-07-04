@@ -58,6 +58,7 @@ public class XYChart<T extends XYItem> extends Region {
 
     private Canvas markerCanvas;
     private GraphicsContext markerCtx;
+
     private Axis yAxisL;
     private Axis yAxisC;
     private Axis yAxisR;
@@ -252,7 +253,7 @@ public class XYChart<T extends XYItem> extends Region {
     }
 
     public StringProperty titleProperty() {
-        if (null == titleProperty) {
+        if (titleProperty == null) {
             titleProperty = new StringPropertyBase(_title) {
                 @Override
                 protected void invalidated() {refresh();}
@@ -434,7 +435,7 @@ public class XYChart<T extends XYItem> extends Region {
     }
 
     private void drawMarkerCanvas() {
-        if (null == markerCanvas) {
+        if (markerCanvas == null) {
             return;
         }
         markerCtx.clearRect(0, 0, width, height);
@@ -676,7 +677,7 @@ public class XYChart<T extends XYItem> extends Region {
     private void resize() {
         width = getWidth() - getInsets().getLeft() - getInsets().getRight();
         height = getHeight() - getInsets().getTop() - getInsets().getBottom();
-        size = width > height ? width : height;
+        size = Math.max(width, height);
 
         if (width > 0 && height > 0) {
             pane.setMaxSize(width, height);

@@ -3,8 +3,8 @@ package fx.chart;
 
 import fx.chart.data.ChartItem;
 import fx.chart.data.TreeNode;
-import fx.chart.event.TreeNodeEvt;
 import fx.chart.event.EvtObserver;
+import fx.chart.event.TreeNodeEvt;
 import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TextOrientation;
@@ -27,8 +27,6 @@ import javafx.scene.text.TextAlignment;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
-
-import static fx.chart.tools.Helper.clamp;
 
 @DefaultProperty("children")
 public class SunburstChart<T extends ChartItem> extends Region {

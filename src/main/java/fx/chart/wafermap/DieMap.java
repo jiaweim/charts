@@ -380,15 +380,15 @@ public class DieMap extends Region {
     private void resize() {
         width = getWidth() - getInsets().getLeft() - getInsets().getRight();
         height = getHeight() - getInsets().getTop() - getInsets().getBottom();
-        size = width < height ? width : height;
+        size = Math.min(width, height);
 
         if (width > 0 && height > 0) {
-            defectSize = Helper.clamp(1, 5, size / 100);
+            defectSize = Math.clamp(size / 100, 1, 5);
             halfDefectSize = defectSize * 0.5;
             if (null == die) {
                 factor = 1.0;
             } else {
-                double maxDieSize = die.getSizeX() > die.getSizeY() ? die.getSizeX() : die.getSizeY();
+                double maxDieSize = Math.max(die.getSizeX(), die.getSizeY());
                 factor = size / maxDieSize;
             }
             canvas.setWidth(size);

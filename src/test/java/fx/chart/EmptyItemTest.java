@@ -4,7 +4,6 @@ import fx.chart.data.ValueChartItem;
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYZChartItem;
 import fx.chart.series.XYSeries;
-import fx.chart.series.XYSeriesBuilder;
 import fx.chart.util.unit.Converter;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -82,7 +81,7 @@ public class EmptyItemTest extends Application {
             xyItems4.add(new XYChartItem(i, RND.nextDouble() * 40 - 20, "P" + i, COLORS[RND.nextInt(3)]));
         }
 
-        xySeries1 = XYSeriesBuilder.create()
+        xySeries1 = XYSeries.builder()
                 .items(xyItems1)
                 .chartType(ChartType.LINE)
                 .fill(Color.TRANSPARENT)
@@ -93,7 +92,7 @@ public class EmptyItemTest extends Application {
                 .symbolSize(10)
                 .build();
 
-        xySeries2 = XYSeriesBuilder.create()
+        xySeries2 = XYSeries.builder()
                 .items(xyItems2)
                 .chartType(ChartType.AREA)
                 .fill(Color.TRANSPARENT)
@@ -113,7 +112,7 @@ public class EmptyItemTest extends Application {
         xySeries3.setSymbolStroke(Color.TRANSPARENT);
         xySeries4.setSymbolStroke(Color.TRANSPARENT);
 
-        xySeries5 = XYSeriesBuilder.create()
+        xySeries5 = XYSeries.builder()
                 .items(xyItems4)
                 .chartType(ChartType.SCATTER)
                 .fill(Color.TRANSPARENT)

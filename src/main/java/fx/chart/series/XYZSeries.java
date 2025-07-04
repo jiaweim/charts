@@ -28,7 +28,7 @@ public class XYZSeries<T extends XYZItem> extends Series {
     }
 
     @Override
-    public ObservableList<T> getItems() {return items;}
+    public ObservableList<T> getItems() {return items_;}
 
     public double getMinX() {return getItems().stream().min(Comparator.comparingDouble(T::getX)).get().getX();}
 

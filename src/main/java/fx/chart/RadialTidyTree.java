@@ -3,11 +3,11 @@ package fx.chart;
 import fx.chart.data.ChartItem;
 import fx.chart.data.TreeNode;
 import fx.chart.event.ChartEvt;
-import fx.chart.event.TreeNodeEvt;
-import fx.chart.geometry.Circle;
 import fx.chart.event.EvtObserver;
-import fx.chart.toolboxfx.FontMetrix;
+import fx.chart.event.TreeNodeEvt;
 import fx.chart.font.Fonts;
+import fx.chart.geometry.Circle;
+import fx.chart.toolboxfx.FontMetrix;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import fx.chart.tools.TextOrientation;
@@ -32,9 +32,6 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-
-import static fx.chart.tools.Helper.clamp;
-
 
 public class RadialTidyTree<T extends ChartItem> extends Region {
     private static final double PREFERRED_WIDTH = 250;
@@ -732,7 +729,7 @@ public class RadialTidyTree<T extends ChartItem> extends Region {
                 T item = currentNode.getItem();
                 Paint paint = getUseColorFromParent() ? parentNode.getItem().getFill() : item.getFill();
                 double angleStep = currentNode.isLeaf() ? angleStepMap.get(level) : angleStepMap.get(parentNode.getDepth());
-                double angleRange = Helper.clamp(0, MAX_ANGLE_RANGE, angleStep * (parentNode.getNoOfChildren() - 1));
+                double angleRange = Math.clamp(angleStep * (parentNode.getNoOfChildren() - 1), 0, MAX_ANGLE_RANGE);
                 if (null == previousParent || !previousParent.equals(parentNode)) {
                     previousParent = parentNode;
                     nodeInParentCounter = 0;

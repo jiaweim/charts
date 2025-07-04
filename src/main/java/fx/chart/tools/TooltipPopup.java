@@ -154,7 +154,7 @@ public class TooltipPopup extends Popup {
 
     public void setTimeout(final long TIMEOUT) {
         if (null == timeout) {
-            _timeout = Helper.clamp(0, MAX_TIMEOUT, TIMEOUT);
+            _timeout = Math.clamp(TIMEOUT, 0, MAX_TIMEOUT);
         } else {
             timeout.set(TIMEOUT);
         }
@@ -164,7 +164,7 @@ public class TooltipPopup extends Popup {
         if (null == timeout) {
             timeout = new LongPropertyBase(_timeout) {
                 @Override
-                protected void invalidated() {Helper.clamp(0, MAX_TIMEOUT, get());}
+                protected void invalidated() {Math.clamp(get(), 0, MAX_TIMEOUT);}
 
                 @Override
                 public Object getBean() {return TooltipPopup.this;}

@@ -1,14 +1,10 @@
 package fx.chart;
 
 import fx.chart.data.ChartItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.SelectionEvt;
+import fx.chart.event.*;
+import fx.chart.font.Fonts;
 import fx.chart.series.ChartItemSeries;
 import fx.chart.series.Series;
-import fx.chart.event.Evt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
-import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import fx.chart.tools.NumberFormat;
@@ -322,7 +318,7 @@ public class ComparisonRingChart extends Region {
         // Check Series 1
         for (int i = 0; i < noOfItems1; i++) {
             ChartItem item = sortedItems1.get(i);
-            double value = Helper.clamp(0, Double.MAX_VALUE, item.getValue());
+            double value = Math.clamp(item.getValue(), 0, Double.MAX_VALUE);
             double barWH = size - barWidth1 - (2 * i * barWidth1 - barSpacer) - (2 * i * barSpacer);
             double angle = value / maxValue1 * 180.0;
 
@@ -339,7 +335,7 @@ public class ComparisonRingChart extends Region {
         // Check Series 2
         for (int i = 0; i < noOfItems2; i++) {
             ChartItem item = sortedItems2.get(i);
-            double value = Helper.clamp(0, Double.MAX_VALUE, item.getValue());
+            double value = Math.clamp(item.getValue(), 0, Double.MAX_VALUE);
             double barWH = size - barWidth2 - (2 * i * barWidth2 - barSpacer) - (2 * i * barSpacer);
             double angle = value / maxValue2 * 180.0;
 
@@ -488,7 +484,7 @@ public class ComparisonRingChart extends Region {
         // Draw bars 1
         for (int i = 0; i < noOfItems1; i++) {
             ChartItem item = sortedItems1.get(i);
-            double value = Helper.clamp(0, Double.MAX_VALUE, item.getValue());
+            double value = Math.clamp(item.getValue(), 0, Double.MAX_VALUE);
             double barXY = (barWidth1 * 0.5) + (i * barWidth1) + (i * barSpacer) + 1;
             double barWH = size - barWidth1 - (2 * i * barWidth1 - barSpacer) - (2 * i * barSpacer) - 2;
             double angle = value / maxValue1 * 180.0;
@@ -515,7 +511,7 @@ public class ComparisonRingChart extends Region {
         // Draw bars 2
         for (int i = 0; i < noOfItems2; i++) {
             ChartItem item = sortedItems2.get(i);
-            double value = Helper.clamp(0, Double.MAX_VALUE, item.getValue());
+            double value = Math.clamp(item.getValue(), 0, Double.MAX_VALUE);
             double barXY = (barWidth2 * 0.5) + (i * barWidth2) + (i * barSpacer) + 1;
             double barWH = size - barWidth2 - (2 * i * barWidth2 - barSpacer) - (2 * i * barSpacer) - 2;
             double angle = value / maxValue2 * 180.0;
