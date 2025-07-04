@@ -157,7 +157,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         scaleX = 1;
         scaleY = 1;
         symbolSize = 2;
-        noOfBands = clamp(1, 5, BANDS);
+        noOfBands = Math.clamp(BANDS, 1, 5);
         lowerBoundX_ = 0;
         upperBoundX_ = 100;
         _lowerBoundY = 0;
@@ -314,7 +314,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     public int getNoOfBands() {return noOfBands;}
 
     public void setNoOfBands(final int BANDS) {
-        noOfBands = clamp(1, 5, BANDS);
+        noOfBands = Math.clamp(BANDS, 1, 5);
         redraw();
     }
 

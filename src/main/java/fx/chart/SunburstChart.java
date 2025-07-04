@@ -388,7 +388,7 @@ public class SunburstChart<T extends ChartItem> extends Region {
      */
     public void setDecimals(final int DECIMALS) {
         if (null == decimals) {
-            _decimals = clamp(0, 5, DECIMALS);
+            _decimals = Math.clamp(DECIMALS, 0, 5);
             formatString = "%." + _decimals + "f";
             redraw();
         } else {
@@ -401,7 +401,7 @@ public class SunburstChart<T extends ChartItem> extends Region {
             decimals = new IntegerPropertyBase(_decimals) {
                 @Override
                 protected void invalidated() {
-                    set(clamp(0, 5, get()));
+                    set(Math.clamp(get(), 0, 5));
                     formatString = new StringBuilder("%.").append(get()).append("f").toString();
                     redraw();
                 }
