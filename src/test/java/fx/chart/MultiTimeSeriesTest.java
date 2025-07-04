@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import pdk.util.ResourceUtils;
 
 import java.util.*;
 
@@ -24,7 +25,7 @@ public class MultiTimeSeriesTest extends Application {
     public void init() {
         // Data Series 1
         List<XYSeries<XYChartItem>> listOfSeries1 = new ArrayList<>();
-        String filename1 = MultiTimeSeriesTest.class.getResource("data1.csv").toExternalForm().replaceAll("file:", "");
+        String filename1 = ResourceUtils.getResourceFile(MultiTimeSeriesTest.class.getClassLoader(), "fx/chart/data1.csv").getAbsolutePath();
         String data1 = Helper.readTextFile(filename1);
         String[] lines1 = data1.split(System.getProperty("line.separator"));
         String firstLine1 = lines1[0];
@@ -70,7 +71,7 @@ public class MultiTimeSeriesTest extends Application {
 
         // Data Series 2
         List<XYSeries<XYChartItem>> listOfSeries2 = new ArrayList<>();
-        String filename2 = MultiTimeSeriesTest.class.getResource("data2.csv").toExternalForm().replaceAll("file:", "");
+        String filename2 = ResourceUtils.getResourceFile(MultiTimeSeriesTest.class.getClassLoader(), "fx/chart/data2.csv").getAbsolutePath();
         String data2 = Helper.readTextFile(filename2);
         String[] lines2 = data2.split(System.getProperty("line.separator"));
         String firstLine2 = lines2[0];
@@ -117,7 +118,7 @@ public class MultiTimeSeriesTest extends Application {
 
         // Data Series 3
         List<XYSeries<XYChartItem>> listOfSeries3 = new ArrayList<>();
-        String filename3 = MultiTimeSeriesTest.class.getResource("data3.csv").toExternalForm().replaceAll("file:", "");
+        String filename3 = ResourceUtils.getResourceFile(MultiTimeSeriesTest.class.getClassLoader(), "fx/chart/data3.csv").getAbsolutePath();
         String data3 = Helper.readTextFile(filename3);
         String[] lines3 = data3.split(System.getProperty("line.separator"));
         String firstLine3 = lines3[0];

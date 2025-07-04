@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import pdk.util.ResourceUtils;
 
 import java.util.Optional;
 
@@ -20,7 +21,8 @@ public class WaferMapTest extends Application {
 
     @Override
     public void init() {
-        String filename = WaferMapTest.class.getResource("12.KLA").toString().replace("file:", "");
+        String filename = ResourceUtils.getResourceFile(WaferMapTest.class.getClassLoader(), "fx/chart/12.KLA").getAbsolutePath();
+//        String filename = WaferMapTest.class.getResource("12.KLA").toString().replace("file:", "");
         Optional<KLA> klaOpt = KLAParser.INSTANCE.parse(filename);
 
         //System.out.println(klaOpt.get());

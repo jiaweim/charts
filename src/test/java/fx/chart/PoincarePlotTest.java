@@ -92,7 +92,7 @@ public class PoincarePlotTest extends Application {
     }
 
 
-    public static final List<SGV> getData() {
+    public static List<SGV> getData() {
         List<SGV> sgvData = new ArrayList<>();
 
         String filename = PoincarePlotTest.class.getResource("data4.csv").toExternalForm().replaceAll("file:", "");

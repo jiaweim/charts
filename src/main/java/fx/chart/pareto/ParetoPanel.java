@@ -30,12 +30,14 @@ import java.util.stream.Collectors;
  * Stefan Mettler, orizion (github)
  */
 public class ParetoPanel extends Region {
+
     private static final double PREFERRED_WIDTH = 600;
     private static final double PREFERRED_HEIGHT = 600;
     private static final double MINIMUM_WIDTH = 50;
     private static final double MINIMUM_HEIGHT = 50;
     private static final double MAXIMUM_WIDTH = 2048;
     private static final double MAXIMUM_HEIGHT = 1024;
+
     private double width;
     private double height;
     private Canvas canvas;

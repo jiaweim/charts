@@ -61,8 +61,10 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     private double size;
     private double width;
     private double height;
+
     private Paint chartBackground_;
     private ObjectProperty<Paint> chartBackgroundProperty;
+
     private ObservableList<XYSeries<T>> listOfSeries;
     private Canvas canvas;
     private GraphicsContext ctx;
@@ -125,9 +127,9 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     private ObservableList<XYPaneOverlay> overlays;
     private TooltipPopup popup;
     private SeriesEventListener seriesListener;
-    private EventHandler<MouseEvent> mouseHandler;
-    private List<CursorEventListener> cursorEventListeners;
-    private Map<EvtType, List<EvtObserver<ChartEvt>>> observers = new ConcurrentHashMap<>();
+    private final EventHandler<MouseEvent> mouseHandler;
+    private final List<CursorEventListener> cursorEventListeners;
+    private final Map<EvtType, List<EvtObserver<ChartEvt>>> observers = new ConcurrentHashMap<>();
 
     public XYPane(final List<XYSeries<T>> SERIES) {
         this(Color.TRANSPARENT, 1, SERIES.toArray(new XYSeries[0]));

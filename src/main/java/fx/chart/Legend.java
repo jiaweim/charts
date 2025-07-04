@@ -20,20 +20,20 @@ import java.util.List;
  */
 @DefaultProperty("children")
 public class Legend extends FlowPane {
+
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
     private static final double MINIMUM_WIDTH = 20;
     private static final double MINIMUM_HEIGHT = 18;
     private static final double MAXIMUM_WIDTH = 1024;
     private static final double MAXIMUM_HEIGHT = 1024;
+
     private double size;
     private double width;
     private double height;
     private ObservableList<LegendItem> legendItems;
     private ListChangeListener<LegendItem> itemListListener;
 
-
-    // ******************** Constructors **************************************
     public Legend() {
         this(new ArrayList<>());
     }
@@ -58,8 +58,6 @@ public class Legend extends FlowPane {
         registerListeners();
     }
 
-
-    // ******************** Initialization ************************************
     private void initGraphics() {
         if (Double.compare(getPrefWidth(), 0.0) <= 0 || Double.compare(getPrefHeight(), 0.0) <= 0 || Double.compare(getWidth(), 0.0) <= 0 ||
                 Double.compare(getHeight(), 0.0) <= 0) {
