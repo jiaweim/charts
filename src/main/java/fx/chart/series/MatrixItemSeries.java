@@ -25,7 +25,7 @@ public class MatrixItemSeries<T extends MatrixItem> extends Series {
     }
 
     @Override
-    public ObservableList<T> getItems() {return (ObservableList<T>) items;}
+    public ObservableList<T> getItems() {return (ObservableList<T>) items_;}
 
     public int getMinX() {return getItems().stream().min(Comparator.comparingInt(T::getX)).get().getX();}
 

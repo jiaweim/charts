@@ -2,7 +2,6 @@ package fx.chart;
 
 import fx.chart.data.XYChartItem;
 import fx.chart.series.XYSeries;
-import fx.chart.series.XYSeriesBuilder;
 import fx.chart.tools.Helper;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -55,7 +54,7 @@ public class MultiTimeSeriesTest extends Application {
         }
 
         seriesDataMap1.entrySet().forEach(entry -> {
-            XYSeries<XYChartItem> xySeries = XYSeriesBuilder.create()
+            XYSeries<XYChartItem> xySeries = XYSeries.builder()
                     .items(entry.getValue().toArray(new XYChartItem[0]))
                     .chartType(ChartType.MULTI_TIME_SERIES)
                     .fill(Color.TRANSPARENT)
@@ -101,7 +100,7 @@ public class MultiTimeSeriesTest extends Application {
         }
 
         seriesDataMap2.entrySet().forEach(entry -> {
-            XYSeries<XYChartItem> xySeries = XYSeriesBuilder.create()
+            XYSeries<XYChartItem> xySeries = XYSeries.builder()
                     .items(entry.getValue().toArray(new XYChartItem[0]))
                     .chartType(ChartType.MULTI_TIME_SERIES)
                     .fill(Color.TRANSPARENT)
@@ -148,7 +147,7 @@ public class MultiTimeSeriesTest extends Application {
         }
 
         seriesDataMap3.entrySet().forEach(entry -> {
-            XYSeries<XYChartItem> xySeries = XYSeriesBuilder.create()
+            XYSeries<XYChartItem> xySeries = XYSeries.builder()
                     .items(entry.getValue().toArray(new XYChartItem[0]))
                     .chartType(ChartType.MULTI_TIME_SERIES)
                     .fill(Color.TRANSPARENT)

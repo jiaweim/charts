@@ -179,7 +179,7 @@ public class PixelMatrix extends Region {
     public double getSpacerSizeFactor() {return spacerSizeFactor;}
 
     public void setSpacerSizeFactor(final double FACTOR) {
-        spacerSizeFactor = Helper.clamp(0.0, 0.2, FACTOR);
+        spacerSizeFactor = Math.clamp(FACTOR, 0.0, 0.2);
         spacer = useSpacer ? pixelSize * spacerSizeFactor : 0;
         pixelSizeMinusDoubleSpacer = pixelSize - spacer * 2;
         drawMatrix();

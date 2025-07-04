@@ -1,9 +1,8 @@
 package fx.chart.data;
 
+import fx.chart.event.ChartEvt;
 import fx.chart.event.EvtObserver;
 import fx.chart.event.EvtType;
-import fx.chart.event.ChartEvt;
-import fx.chart.tools.Helper;
 import fx.chart.tools.MapPoint;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
@@ -73,7 +72,7 @@ public class MapConnection {
         _startColor = START_COLOR;
         _endColor = END_COLOR;
         _gradientFill = GRADIENT_FILL;
-        _lineWidth = Helper.clamp(0.5, 10, LINE_WIDTH);
+        _lineWidth = Math.clamp(LINE_WIDTH, 0.5, 10);
     }
 
 
@@ -264,7 +263,7 @@ public class MapConnection {
 
     public void setLineWidth(final double LINE_WIDTH) {
         if (null == lineWidth) {
-            _lineWidth = Helper.clamp(0.5, 10, LINE_WIDTH);
+            _lineWidth = Math.clamp(LINE_WIDTH, 0.5, 10);
             fireChartEvt(UPDATED_EVENT);
         } else {
             lineWidth.set(LINE_WIDTH);
@@ -276,7 +275,7 @@ public class MapConnection {
             lineWidth = new DoublePropertyBase(_lineWidth) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0.5, 10, get()));
+                    set(Math.clamp(get(), 0.5, 10));
                     fireChartEvt(UPDATED_EVENT);
                 }
 

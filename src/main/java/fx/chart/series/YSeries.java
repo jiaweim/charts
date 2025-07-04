@@ -38,7 +38,7 @@ public class YSeries<T extends ValueItem> extends Series {
     }
 
     @Override
-    public ObservableList<T> getItems() {return items;}
+    public ObservableList<T> getItems() {return items_;}
 
     public double getMinY() {return getItems().stream().min(Comparator.comparingDouble(T::getValue)).get().getValue();}
 

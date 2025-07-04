@@ -3,7 +3,6 @@ package fx.chart;
 import fx.chart.data.ChartItem;
 import fx.chart.data.DataObject;
 import fx.chart.event.ChartEvt;
-import fx.chart.tools.Helper;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -127,23 +126,23 @@ public class ParallelCoordinatesChartTest extends Application {
 
         public double getCylinder() {return cylinder.getValue();}
 
-        public void setCylinder(final double CYLINDER) {cylinder.setValue((int) Helper.clamp(0, Double.MAX_VALUE, CYLINDER));}
+        public void setCylinder(final double CYLINDER) {cylinder.setValue((int) Math.clamp(CYLINDER, 0, Double.MAX_VALUE));}
 
         public double getPower() {return power.getValue();}
 
-        public void setPower(final double POWER) {power.setValue(Helper.clamp(0, Double.MAX_VALUE, POWER));}
+        public void setPower(final double POWER) {power.setValue(Math.clamp(POWER, 0, Double.MAX_VALUE));}
 
         public double getAcceleration() {return acceleration.getValue();}
 
-        public void setAcceleration(final double ACCELERATION) {acceleration.setValue(Helper.clamp(0, Double.MAX_VALUE, ACCELERATION));}
+        public void setAcceleration(final double ACCELERATION) {acceleration.setValue(Math.clamp(ACCELERATION, 0, Double.MAX_VALUE));}
 
         public double getWeight() {return weight.getValue();}
 
-        public void setWeight(final double WEIGHT) {weight.setValue(Helper.clamp(0, Double.MAX_VALUE, WEIGHT));}
+        public void setWeight(final double WEIGHT) {weight.setValue(Math.clamp(WEIGHT, 0, Double.MAX_VALUE));}
 
         public double getConsumption() {return consumption.getValue();}
 
-        public void setConsumption(final double CONSUMPTION) {consumption.setValue(Helper.clamp(0, Double.MAX_VALUE, CONSUMPTION));}
+        public void setConsumption(final double CONSUMPTION) {consumption.setValue(Math.clamp(CONSUMPTION, 0, Double.MAX_VALUE));}
 
         @Override
         public String getName() {return NAME;}

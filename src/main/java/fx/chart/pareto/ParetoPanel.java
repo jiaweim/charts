@@ -468,11 +468,11 @@ public class ParetoPanel extends Region {
                         if (isUseCalculatedSubBarColors()) {
                             subBarColor = Helper.isBright(barColor)
                                     ? Color.hsb(subBarColor.getHue(),
-                                    Helper.clamp(0, 1, subBarColor.getSaturation() * 1.75),
-                                    Helper.clamp(0, 1, subBarColor.getBrightness() * 0.75))
+                                    Math.clamp(subBarColor.getSaturation() * 1.75, 0, 1),
+                                    Math.clamp(subBarColor.getBrightness() * 0.75, 0, 1))
                                     : Color.hsb(subBarColor.getHue(),
-                                    Helper.clamp(0, 1, subBarColor.getSaturation() * 0.75),
-                                    Helper.clamp(0, 1, subBarColor.getBrightness() * 1.75));
+                                    Math.clamp(subBarColor.getSaturation() * 0.75, 0, 1),
+                                    Math.clamp(subBarColor.getBrightness() * 1.75, 0, 1));
                             ctx.setFill(subBarColor);
                         } else {
                             ctx.setFill(subBar.getFillColor());

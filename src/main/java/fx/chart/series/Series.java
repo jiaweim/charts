@@ -8,7 +8,6 @@ import fx.chart.event.ChartEvt;
 import fx.chart.event.EvtObserver;
 import fx.chart.event.SeriesEvent;
 import fx.chart.event.SeriesEventListener;
-import fx.chart.tools.Helper;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -21,17 +20,22 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-
 /**
- * Created by hansolo on 16.07.17.
+ * data series
+ *
+ * @author Jiawei Mao
+ * @author Gerrit Grunwald
+ * @version 1.0.0
+ * @since 04 Jul 2025, 10:27 AM
  */
 public abstract class Series<T extends Item> {
 
     public final SeriesEvent UPDATE_EVENT = new SeriesEvent(Series.this);
 
-    protected String _name;
+    protected String name_;
     protected StringProperty nameProperty;
-    protected Paint _fill;
+
+    protected Paint fill_;
     protected ObjectProperty<Paint> fillProperty;
 
     protected Paint _stroke;
@@ -40,46 +44,55 @@ public abstract class Series<T extends Item> {
     protected double _strokeWidth;
     protected DoubleProperty strokeWidthProperty;
 
-    protected Color _textFill;
-    protected ObjectProperty<Color> textFill;
+    protected Color textFill_;
+    protected ObjectProperty<Color> textFillProperty;
+
     protected Color _symbolFill;
-    protected ObjectProperty<Color> symbolFill;
+    protected ObjectProperty<Color> symbolFillProperty;
+
     protected Color _symbolStroke;
-    protected ObjectProperty<Color> symbolStroke;
+    protected ObjectProperty<Color> symbolStrokeProperty;
 
     protected Symbol _symbol;
     protected ObjectProperty<Symbol> symbolProperty;
 
-    protected boolean _symbolsVisible;
-    protected BooleanProperty symbolsVisible;
-    protected double _symbolSize;
-    protected DoubleProperty symbolSize;
+    protected boolean symbolsVisible_;
+    protected BooleanProperty symbolsVisibleProperty;
 
-    protected boolean _visible;
+    protected double _symbolSize;
+    protected DoubleProperty symbolSizeProperty;
+
+    protected boolean visible_;
     protected BooleanProperty visibleProperty;
+
     protected boolean _animated;
-    protected BooleanProperty animated;
+    protected BooleanProperty animatedProperty;
+
     protected long _animationDuration;
-    protected LongProperty animationDuration;
+    protected LongProperty animationDurationProperty;
+
     //ADDED property to see if wrapping should be used or not by default false. Keeps the previous functionality the same.
     protected boolean _withWrapping;
-    protected BooleanProperty withWrapping;
-    protected ChartType chartType;
-    protected ObservableList<T> items;
-    private CopyOnWriteArrayList<SeriesEventListener> listeners;
-    private ListChangeListener<T> itemListener;
-    private EvtObserver<ChartEvt> itemObserver;
+    protected BooleanProperty withWrappingProperty;
+
+    protected ChartType chartType_;
+    protected ObservableList<T> items_;
+    private final CopyOnWriteArrayList<SeriesEventListener> listeners_;
+    private final ListChangeListener<T> itemListener_;
+    private final EvtObserver<ChartEvt> itemObserver_;
 
     public Series() {
         this(null, ChartType.SCATTER, "", Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, Symbol.CIRCLE);
     }
 
-    public Series(final T... ITEMS) {
-        this(Arrays.asList(ITEMS), ChartType.SCATTER, "", Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, Symbol.CIRCLE);
+    @SafeVarargs
+    public Series(final T... items) {
+        this(Arrays.asList(items), ChartType.SCATTER, "", Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, Symbol.CIRCLE);
     }
 
-    public Series(final ChartType TYPE, final T... ITEMS) {
-        this(Arrays.asList(ITEMS), TYPE, "", Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, Symbol.CIRCLE);
+    @SafeVarargs
+    public Series(final ChartType type, final T... items) {
+        this(Arrays.asList(items), type, "", Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, Symbol.CIRCLE);
     }
 
     public Series(final List<T> ITEMS, final ChartType TYPE) {
@@ -106,29 +119,29 @@ public abstract class Series<T extends Item> {
         this(ITEMS, TYPE, NAME, FILL, STROKE, Color.BLACK, Color.BLACK, SYMBOL);
     }
 
-    public Series(final List<T> ITEMS, final ChartType TYPE, final String NAME, final Paint FILL, final Paint STROKE, final Color SYMBOL_FILL, final Color SYMBOL_STROKE, final Symbol SYMBOL) {
-        _name = NAME;
-        _fill = FILL;
+    public Series(final List<T> items, final ChartType type, final String name, final Paint FILL, final Paint STROKE, final Color SYMBOL_FILL, final Color SYMBOL_STROKE, final Symbol SYMBOL) {
+        name_ = name;
+        fill_ = FILL;
         _stroke = STROKE;
-        _textFill = Color.BLACK;
+        textFill_ = Color.BLACK;
         _symbolFill = SYMBOL_FILL;
         _symbolStroke = SYMBOL_STROKE;
         _symbol = SYMBOL;
-        _symbolsVisible = true;
+        symbolsVisible_ = true;
         _symbolSize = -1;
         _strokeWidth = -1;
-        _visible = true;
+        visible_ = true;
         _animated = false;
         _animationDuration = 800;
         _withWrapping = false;
-        chartType = TYPE;
-        items = FXCollections.observableArrayList();
-        itemListener = change -> fireSeriesEvent(UPDATE_EVENT);
-        itemObserver = e -> fireSeriesEvent(UPDATE_EVENT);
-        listeners = new CopyOnWriteArrayList<>();
+        chartType_ = type;
+        items_ = FXCollections.observableArrayList();
+        itemListener_ = change -> fireSeriesEvent(UPDATE_EVENT);
+        itemObserver_ = e -> fireSeriesEvent(UPDATE_EVENT);
+        listeners_ = new CopyOnWriteArrayList<>();
 
-        if (null != ITEMS) {
-            items.setAll(ITEMS);
+        if (null != items) {
+            items_.setAll(items);
         }
 
         registerListeners();
@@ -137,46 +150,49 @@ public abstract class Series<T extends Item> {
 
     // ******************** Initialization ************************************
     private void registerListeners() {
-        items.addListener((ListChangeListener<T>) c -> {
+        items_.addListener((ListChangeListener<T>) c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
                     c.getAddedSubList().forEach(item -> {
                         if (item instanceof XYChartItem) {
                             XYChartItem xyChartItem = (XYChartItem) item;
-                            xyChartItem.addChartEvtObserver(ChartEvt.ANY, itemObserver);
+                            xyChartItem.addChartEvtObserver(ChartEvt.ANY, itemObserver_);
                         }
                     });
                 } else if (c.wasRemoved()) {
                     c.getRemoved().forEach(item -> {
                         if (item instanceof XYChartItem) {
                             XYChartItem xyChartItem = (XYChartItem) item;
-                            xyChartItem.removeChartEvtObserver(ChartEvt.ANY, itemObserver);
+                            xyChartItem.removeChartEvtObserver(ChartEvt.ANY, itemObserver_);
                         }
                     });
                 }
             }
         });
-        items.addListener(itemListener);
+        items_.addListener(itemListener_);
     }
 
+    /**
+     * Get data items in this series
+     *
+     * @return data list
+     */
+    public ObservableList<T> getItems() {return items_;}
 
-    // ******************** Methods *******************************************
-    public ObservableList<T> getItems() {return items;}
+    public void setItems(final Collection<T> ITEMS) {items_.setAll(ITEMS);}
 
-    public void setItems(final Collection<T> ITEMS) {items.setAll(ITEMS);}
+    public void setItems(final T... items) {setItems(Arrays.asList(items));}
 
-    public void setItems(final T... ITEMS) {setItems(Arrays.asList(ITEMS));}
-
-    public void setItems(final List<T> ITEMS) {items.setAll(ITEMS);}
+    public void setItems(final List<T> ITEMS) {items_.setAll(ITEMS);}
 
     /**
      * @return name of this series
      */
-    public String getName() {return null == nameProperty ? _name : nameProperty.get();}
+    public String getName() {return null == nameProperty ? name_ : nameProperty.get();}
 
     public void setName(final String NAME) {
         if (null == nameProperty) {
-            _name = NAME;
+            name_ = NAME;
             fireSeriesEvent(UPDATE_EVENT);
         } else {
             nameProperty.set(NAME);
@@ -185,7 +201,7 @@ public abstract class Series<T extends Item> {
 
     public StringProperty nameProperty() {
         if (null == nameProperty) {
-            nameProperty = new StringPropertyBase(_name) {
+            nameProperty = new StringPropertyBase(name_) {
                 @Override
                 protected void invalidated() {fireSeriesEvent(UPDATE_EVENT);}
 
@@ -195,16 +211,16 @@ public abstract class Series<T extends Item> {
                 @Override
                 public String getName() {return "name";}
             };
-            _name = null;
+            name_ = null;
         }
         return nameProperty;
     }
 
-    public Paint getFill() {return null == fillProperty ? _fill : fillProperty.get();}
+    public Paint getFill() {return fillProperty == null ? fill_ : fillProperty.get();}
 
     public void setFill(final Paint PAINT) {
         if (null == fillProperty) {
-            _fill = PAINT;
+            fill_ = PAINT;
             refresh();
         } else {
             fillProperty.set(PAINT);
@@ -213,7 +229,7 @@ public abstract class Series<T extends Item> {
 
     public ObjectProperty<Paint> fillProperty() {
         if (null == fillProperty) {
-            fillProperty = new ObjectPropertyBase<Paint>(_fill) {
+            fillProperty = new ObjectPropertyBase<Paint>(fill_) {
                 @Override
                 protected void invalidated() {refresh();}
 
@@ -223,7 +239,7 @@ public abstract class Series<T extends Item> {
                 @Override
                 public String getName() {return "fill";}
             };
-            _fill = null;
+            fill_ = null;
         }
         return fillProperty;
     }
@@ -256,20 +272,20 @@ public abstract class Series<T extends Item> {
         return strokeProperty;
     }
 
-    public Color getTextFill() {return null == textFill ? _textFill : textFill.get();}
+    public Color getTextFill() {return null == textFillProperty ? textFill_ : textFillProperty.get();}
 
     public void setTextFill(final Color COLOR) {
-        if (null == textFill) {
-            _textFill = COLOR;
+        if (null == textFillProperty) {
+            textFill_ = COLOR;
             refresh();
         } else {
-            textFill.set(COLOR);
+            textFillProperty.set(COLOR);
         }
     }
 
     public ObjectProperty<Color> textFillProperty() {
-        if (null == textFill) {
-            textFill = new ObjectPropertyBase<>(_textFill) {
+        if (null == textFillProperty) {
+            textFillProperty = new ObjectPropertyBase<>(textFill_) {
                 @Override
                 protected void invalidated() {refresh();}
 
@@ -279,25 +295,25 @@ public abstract class Series<T extends Item> {
                 @Override
                 public String getName() {return "textFill";}
             };
-            _textFill = null;
+            textFill_ = null;
         }
-        return textFill;
+        return textFillProperty;
     }
 
-    public Color getSymbolFill() {return null == symbolFill ? _symbolFill : symbolFill.get();}
+    public Color getSymbolFill() {return null == symbolFillProperty ? _symbolFill : symbolFillProperty.get();}
 
     public void setSymbolFill(final Color COLOR) {
-        if (null == symbolFill) {
+        if (null == symbolFillProperty) {
             _symbolFill = COLOR;
             refresh();
         } else {
-            symbolFill.set(COLOR);
+            symbolFillProperty.set(COLOR);
         }
     }
 
     public ObjectProperty<Color> symbolFillProperty() {
-        if (null == symbolFill) {
-            symbolFill = new ObjectPropertyBase<>(_symbolFill) {
+        if (null == symbolFillProperty) {
+            symbolFillProperty = new ObjectPropertyBase<>(_symbolFill) {
                 @Override
                 protected void invalidated() {refresh();}
 
@@ -309,23 +325,23 @@ public abstract class Series<T extends Item> {
             };
             _symbolFill = null;
         }
-        return symbolFill;
+        return symbolFillProperty;
     }
 
-    public Color getSymbolStroke() {return null == symbolStroke ? _symbolStroke : symbolStroke.get();}
+    public Color getSymbolStroke() {return null == symbolStrokeProperty ? _symbolStroke : symbolStrokeProperty.get();}
 
     public void setSymbolStroke(final Color COLOR) {
-        if (null == symbolStroke) {
+        if (null == symbolStrokeProperty) {
             _symbolStroke = COLOR;
             refresh();
         } else {
-            symbolStroke.set(COLOR);
+            symbolStrokeProperty.set(COLOR);
         }
     }
 
     public ObjectProperty<Color> symbolStrokeProperty() {
-        if (null == symbolStroke) {
-            symbolStroke = new ObjectPropertyBase<>(_symbolStroke) {
+        if (null == symbolStrokeProperty) {
+            symbolStrokeProperty = new ObjectPropertyBase<>(_symbolStroke) {
                 @Override
                 protected void invalidated() {refresh();}
 
@@ -337,7 +353,7 @@ public abstract class Series<T extends Item> {
             };
             _symbolStroke = null;
         }
-        return symbolStroke;
+        return symbolStrokeProperty;
     }
 
     public Symbol getSymbol() {return null == symbolProperty ? _symbol : symbolProperty.get();}
@@ -368,20 +384,20 @@ public abstract class Series<T extends Item> {
         return symbolProperty;
     }
 
-    public boolean getSymbolsVisible() {return null == symbolsVisible ? _symbolsVisible : symbolsVisible.get();}
+    public boolean getSymbolsVisible() {return symbolsVisibleProperty == null ? symbolsVisible_ : symbolsVisibleProperty.get();}
 
-    public void setSymbolsVisible(final boolean VISIBLE) {
-        if (null == symbolsVisible) {
-            _symbolsVisible = VISIBLE;
+    public void setSymbolsVisible(final boolean visible) {
+        if (symbolsVisibleProperty == null) {
+            symbolsVisible_ = visible;
             fireSeriesEvent(UPDATE_EVENT);
         } else {
-            symbolsVisible.set(VISIBLE);
+            symbolsVisibleProperty.set(visible);
         }
     }
 
     public BooleanProperty symbolsVisibleProperty() {
-        if (null == symbolsVisible) {
-            symbolsVisible = new BooleanPropertyBase(_symbolsVisible) {
+        if (null == symbolsVisibleProperty) {
+            symbolsVisibleProperty = new BooleanPropertyBase(symbolsVisible_) {
                 @Override
                 protected void invalidated() {fireSeriesEvent(UPDATE_EVENT);}
 
@@ -392,33 +408,33 @@ public abstract class Series<T extends Item> {
                 public String getName() {return "symbolsVisible";}
             };
         }
-        return symbolsVisible;
+        return symbolsVisibleProperty;
     }
 
-    public ChartType getChartType() {return chartType;}
+    public ChartType getChartType() {return chartType_;}
 
     public void setChartType(final ChartType TYPE) {
-        chartType = TYPE;
+        chartType_ = TYPE;
         refresh();
     }
 
-    public double getSymbolSize() {return null == symbolSize ? _symbolSize : symbolSize.get();}
+    public double getSymbolSize() {return null == symbolSizeProperty ? _symbolSize : symbolSizeProperty.get();}
 
     public void setSymbolSize(final double SIZE) {
-        if (null == symbolSize) {
-            _symbolSize = Helper.clamp(1, 24, SIZE);
+        if (null == symbolSizeProperty) {
+            _symbolSize = Math.clamp(SIZE, 1, 24);
             fireSeriesEvent(UPDATE_EVENT);
         } else {
-            symbolSize.set(SIZE);
+            symbolSizeProperty.set(SIZE);
         }
     }
 
     public DoubleProperty symbolSizeProperty() {
-        if (null == symbolSize) {
-            symbolSize = new DoublePropertyBase(_symbolSize) {
+        if (null == symbolSizeProperty) {
+            symbolSizeProperty = new DoublePropertyBase(_symbolSize) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(1, 24, get()));
+                    set(Math.clamp(get(), 1, 24));
                     fireSeriesEvent(UPDATE_EVENT);
                 }
 
@@ -429,14 +445,14 @@ public abstract class Series<T extends Item> {
                 public String getName() {return "symbolSize";}
             };
         }
-        return symbolSize;
+        return symbolSizeProperty;
     }
 
     public double getStrokeWidth() {return null == strokeWidthProperty ? _strokeWidth : strokeWidthProperty.get();}
 
     public void setStrokeWidth(final double WIDTH) {
         if (null == strokeWidthProperty) {
-            _strokeWidth = Helper.clamp(1, 24, WIDTH);
+            _strokeWidth = Math.clamp(WIDTH, 1, 24);
             fireSeriesEvent(UPDATE_EVENT);
         } else {
             strokeWidthProperty.set(WIDTH);
@@ -448,7 +464,7 @@ public abstract class Series<T extends Item> {
             strokeWidthProperty = new DoublePropertyBase(_strokeWidth) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(1, 24, get()));
+                    set(Math.clamp(get(), 1, 24));
                     fireSeriesEvent(UPDATE_EVENT);
                 }
 
@@ -462,11 +478,11 @@ public abstract class Series<T extends Item> {
         return strokeWidthProperty;
     }
 
-    public boolean isVisible() {return null == visibleProperty ? _visible : visibleProperty.get();}
+    public boolean isVisible() {return null == visibleProperty ? visible_ : visibleProperty.get();}
 
     public void setVisible(final boolean visible) {
         if (null == this.visibleProperty) {
-            _visible = visible;
+            visible_ = visible;
             fireSeriesEvent(UPDATE_EVENT);
         } else {
             this.visibleProperty.set(visible);
@@ -475,7 +491,7 @@ public abstract class Series<T extends Item> {
 
     public BooleanProperty visibleProperty() {
         if (null == visibleProperty) {
-            visibleProperty = new BooleanPropertyBase(_visible) {
+            visibleProperty = new BooleanPropertyBase(visible_) {
                 @Override
                 protected void invalidated() {fireSeriesEvent(UPDATE_EVENT);}
 
@@ -489,19 +505,19 @@ public abstract class Series<T extends Item> {
         return visibleProperty;
     }
 
-    public boolean isAnimated() {return null == animated ? _animated : animated.get();}
+    public boolean isAnimated() {return null == animatedProperty ? _animated : animatedProperty.get();}
 
     public void setAnimated(final boolean ANIMATED) {
-        if (null == animated) {
+        if (null == animatedProperty) {
             _animated = ANIMATED;
         } else {
-            animated.set(ANIMATED);
+            animatedProperty.set(ANIMATED);
         }
     }
 
     public BooleanProperty animatedProperty() {
-        if (null == animated) {
-            animated = new BooleanPropertyBase(_animated) {
+        if (null == animatedProperty) {
+            animatedProperty = new BooleanPropertyBase(_animated) {
                 @Override
                 public Object getBean() {return Series.this;}
 
@@ -509,22 +525,22 @@ public abstract class Series<T extends Item> {
                 public String getName() {return "animated";}
             };
         }
-        return animated;
+        return animatedProperty;
     }
 
-    public long getAnimationDuration() {return null == animationDuration ? _animationDuration : animationDuration.get();}
+    public long getAnimationDuration() {return null == animationDurationProperty ? _animationDuration : animationDurationProperty.get();}
 
     public void setAnimationDuration(final long DURATION) {
-        if (null == animationDuration) {
-            _animationDuration = Helper.clamp(10, 10000, DURATION);
+        if (null == animationDurationProperty) {
+            _animationDuration = Math.clamp(DURATION, 10, 10000);
         } else {
-            animationDuration.set(Helper.clamp(10, 10000, DURATION));
+            animationDurationProperty.set(Math.clamp(DURATION, 10, 10000));
         }
     }
 
     public LongProperty animationDurationProperty() {
-        if (null == animationDuration) {
-            animationDuration = new LongPropertyBase(_animationDuration) {
+        if (null == animationDurationProperty) {
+            animationDurationProperty = new LongPropertyBase(_animationDuration) {
                 @Override
                 public Object getBean() {return Series.this;}
 
@@ -532,25 +548,25 @@ public abstract class Series<T extends Item> {
                 public String getName() {return "animationDuration";}
             };
         }
-        return animationDuration;
+        return animationDurationProperty;
     }
 
     // ADDED accessors for the withWrapping boolean value and associated property.
 
-    public boolean isWithWrapping() {return null == withWrapping ? _withWrapping : withWrapping.get();}
+    public boolean isWithWrapping() {return null == withWrappingProperty ? _withWrapping : withWrappingProperty.get();}
 
     public void setWithWrapping(final boolean WITH_WRAPPING) {
-        if (null == withWrapping) {
+        if (null == withWrappingProperty) {
             _withWrapping = WITH_WRAPPING;
             fireSeriesEvent(UPDATE_EVENT);
         } else {
-            withWrapping.set(WITH_WRAPPING);
+            withWrappingProperty.set(WITH_WRAPPING);
         }
     }
 
     public BooleanProperty withWrappingProperty() {
-        if (null == withWrapping) {
-            withWrapping = new BooleanPropertyBase(_withWrapping) {
+        if (null == withWrappingProperty) {
+            withWrappingProperty = new BooleanPropertyBase(_withWrapping) {
                 @Override
                 protected void invalidated() {fireSeriesEvent(UPDATE_EVENT);}
 
@@ -561,12 +577,12 @@ public abstract class Series<T extends Item> {
                 public String getName() {return "withWrapping";}
             };
         }
-        return symbolsVisible;
+        return symbolsVisibleProperty;
     }
 
-    public int getNoOfItems() {return items.size();}
+    public int getNoOfItems() {return items_.size();}
 
-    public void dispose() {items.remove(itemListener);}
+    public void dispose() {items_.remove(itemListener_);}
 
     public void refresh() {fireSeriesEvent(UPDATE_EVENT);}
 
@@ -575,15 +591,15 @@ public abstract class Series<T extends Item> {
     public void setOnSeriesEvent(final SeriesEventListener LISTENER) {addSeriesEventListener(LISTENER);}
 
     public void addSeriesEventListener(final SeriesEventListener LISTENER) {
-        if (!listeners.contains(LISTENER)) listeners.add(LISTENER);
+        if (!listeners_.contains(LISTENER)) listeners_.add(LISTENER);
     }
 
     public void removeSeriesEventListener(final SeriesEventListener LISTENER) {
-        if (listeners.contains(LISTENER)) listeners.remove(LISTENER);
+        if (listeners_.contains(LISTENER)) listeners_.remove(LISTENER);
     }
 
     public void fireSeriesEvent(final SeriesEvent EVENT) {
-        for (SeriesEventListener listener : listeners) {
+        for (SeriesEventListener listener : listeners_) {
             listener.onModelEvent(EVENT);
         }
     }

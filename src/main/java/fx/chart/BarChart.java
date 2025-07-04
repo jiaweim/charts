@@ -1,15 +1,11 @@
 package fx.chart;
 
 import fx.chart.data.ChartItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.SelectionEvt;
+import fx.chart.event.*;
+import fx.chart.font.Fonts;
 import fx.chart.geometry.Rectangle;
 import fx.chart.series.ChartItemSeries;
 import fx.chart.series.ChartItemSeriesBuilder;
-import fx.chart.event.Evt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
-import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import fx.chart.tools.NumberFormat;
@@ -768,7 +764,7 @@ public class BarChart<T extends ChartItem> extends Region {
 
     public void setAnimationDuration(final long animationDuration) {
         if (null == this.animationDuration) {
-            _animationDuration = Helper.clamp(10, 10000, animationDuration);
+            _animationDuration = Math.clamp(animationDuration, 10, 10000);
             series.setAnimationDuration(_animationDuration);
             prepareSeries();
         } else {
@@ -781,7 +777,7 @@ public class BarChart<T extends ChartItem> extends Region {
             animationDuration = new LongPropertyBase(_animationDuration) {
                 @Override
                 protected void invalidated() {
-                    long ad = Helper.clamp(10, 10000, get());
+                    long ad = Math.clamp(get(), 10, 10000);
                     series.setAnimationDuration(ad);
                     prepareSeries();
                     set(ad);
@@ -801,7 +797,7 @@ public class BarChart<T extends ChartItem> extends Region {
 
     public void setMinNumberOfBars(final int minNumberOfBars) {
         if (null == this.minNumberOfBars) {
-            _minNumberOfBars = Helper.clamp(1, Integer.MAX_VALUE, minNumberOfBars);
+            _minNumberOfBars = Math.clamp(minNumberOfBars, 1, Integer.MAX_VALUE);
             redraw();
         } else {
             this.minNumberOfBars.set(minNumberOfBars);
@@ -813,7 +809,7 @@ public class BarChart<T extends ChartItem> extends Region {
             minNumberOfBars = new IntegerPropertyBase(_minNumberOfBars) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(1, Integer.MAX_VALUE, get()));
+                    set(Math.clamp(get(), 1, Integer.MAX_VALUE));
                     redraw();
                 }
 
@@ -885,10 +881,10 @@ public class BarChart<T extends ChartItem> extends Region {
 
     public void setBarCornerRadius(final double barCornerRadius) {
         if (null == this.barCornerRadius) {
-            _barCornerRadius = Helper.clamp(0, 20, barCornerRadius);
+            _barCornerRadius = Math.clamp(barCornerRadius, 0, 20);
             redraw();
         } else {
-            this.barCornerRadius.set(Helper.clamp(0, 20, barCornerRadius));
+            this.barCornerRadius.set(Math.clamp(barCornerRadius, 0, 20));
         }
     }
 
@@ -1094,7 +1090,7 @@ public class BarChart<T extends ChartItem> extends Region {
         // Draw bars
         for (int i = 0; i < noOfItems; i++) {
             ChartItem item = items.get(i);
-            double itemValue = Helper.clamp(0, Double.MAX_VALUE, item.getValue());
+            double itemValue = Math.clamp(item.getValue(), 0, Double.MAX_VALUE);
             double barWidth = 0 == maxValue ? 0 : itemValue / maxValue * maxBarWidth;
             double barY = inset + (i * barHeight) + (i * barSpacer);
 
@@ -1239,7 +1235,7 @@ public class BarChart<T extends ChartItem> extends Region {
         // Draw bars
         for (int i = 0; i < noOfItems; i++) {
             ChartItem item = items.get(i);
-            double itemValue = Helper.clamp(0, Double.MAX_VALUE, item.getValue());
+            double itemValue = Math.clamp(item.getValue(), 0, Double.MAX_VALUE);
             double barHeight = 0 == maxValue ? 0 : itemValue / maxValue * maxBarHeight;
             double barX = inset + (i * barWidth) + (i * barSpacer);
 

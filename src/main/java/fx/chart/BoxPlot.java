@@ -3,11 +3,11 @@ package fx.chart;
 import fx.chart.color.MaterialDesignColors;
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvt;
-import fx.chart.series.ChartItemSeries;
-import fx.chart.util.Statistics;
 import fx.chart.event.EvtObserver;
+import fx.chart.series.ChartItemSeries;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TooltipPopup;
+import fx.chart.util.Statistics;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -302,7 +302,7 @@ public class BoxPlot<T extends ChartItem> extends Region {
 
     public void setDecimals(final int DECIMALS) {
         if (null == decimals) {
-            _decimals = Helper.clamp(0, 6, DECIMALS);
+            _decimals = Math.clamp(DECIMALS, 0, 6);
             formatString = new StringBuilder("%.").append(getDecimals()).append("f").toString();
             redraw();
         } else {
@@ -315,7 +315,7 @@ public class BoxPlot<T extends ChartItem> extends Region {
             decimals = new IntegerPropertyBase(_decimals) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0, 6, get()));
+                    set(Math.clamp(get(), 0, 6));
                     formatString = new StringBuilder("%.").append(get()).append("f").toString();
                     redraw();
                 }

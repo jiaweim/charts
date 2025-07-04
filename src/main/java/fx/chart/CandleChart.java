@@ -3,8 +3,8 @@ package fx.chart;
 import fx.chart.color.MaterialDesignColors;
 import fx.chart.data.CandleChartItem;
 import fx.chart.event.ChartEvt;
-import fx.chart.geometry.Rectangle;
 import fx.chart.event.EvtObserver;
+import fx.chart.geometry.Rectangle;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TooltipPopup;
 import javafx.beans.DefaultProperty;
@@ -226,7 +226,7 @@ public class CandleChart extends Region {
 
     public void setDecimals(final int DECIMALS) {
         if (null == decimals) {
-            _decimals = Helper.clamp(0, 6, DECIMALS);
+            _decimals = Math.clamp(DECIMALS, 0, 6);
             formatString = new StringBuilder("%.").append(getDecimals()).append("f").toString();
             redraw();
         } else {
@@ -239,7 +239,7 @@ public class CandleChart extends Region {
             decimals = new IntegerPropertyBase(_decimals) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0, 6, get()));
+                    set(Math.clamp(get(), 0, 6));
                     formatString = new StringBuilder("%.").append(get()).append("f").toString();
                     redraw();
                 }
@@ -451,7 +451,7 @@ public class CandleChart extends Region {
 
     public void setMinNumberOfItems(final int minNumberOfItems) {
         if (null == this.minNumberOfItems) {
-            _minNumberOfItems = Helper.clamp(1, Integer.MAX_VALUE, minNumberOfItems);
+            _minNumberOfItems = Math.clamp(minNumberOfItems, 1, Integer.MAX_VALUE);
             redraw();
         } else {
             this.minNumberOfItems.set(minNumberOfItems);
@@ -463,7 +463,7 @@ public class CandleChart extends Region {
             minNumberOfItems = new IntegerPropertyBase(_minNumberOfItems) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(1, Integer.MAX_VALUE, get()));
+                    set(Math.clamp(get(), 1, Integer.MAX_VALUE));
                     redraw();
                 }
 

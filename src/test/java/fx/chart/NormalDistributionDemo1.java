@@ -2,7 +2,6 @@ package fx.chart;
 
 import fx.chart.data.XYChartItem;
 import fx.chart.series.XYSeries;
-import fx.chart.series.XYSeriesBuilder;
 import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -27,7 +26,7 @@ public class NormalDistributionDemo1 extends Application {
     @Override
     public void init() {
 
-        XYSeries<XYChartItem> series = XYSeriesBuilder.create()
+        XYSeries<XYChartItem> series = XYSeries.builder()
                 .items(createData())
                 .chartType(ChartType.LINE)
                 .fill(Color.TRANSPARENT)
@@ -46,11 +45,12 @@ public class NormalDistributionDemo1 extends Application {
                 .titleFontSize(12)
                 .build();
 
-
 //        Axis left = Axis.left(0, 0.5, true, axisWidth);
         Axis bottom = Axis.bottom(-5.0, 5.0, true, axisWidth);
 
-        chart = new XYChart<>(new XYPane<>(series), left, bottom);
+        XYPane pane = new XYPane(series);
+        pane.setChartBackground(Color.WHITE);
+        chart = new XYChart<>(pane, left, bottom);
 
         Grid grid = new Grid(left, bottom);
         grid.setGridLineDashes(2.0, 2.0);

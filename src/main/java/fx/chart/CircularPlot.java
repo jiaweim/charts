@@ -294,7 +294,7 @@ public class CircularPlot extends Region {
 
     public void setDecimals(final int DECIMALS) {
         if (null == decimals) {
-            _decimals = Helper.clamp(0, 6, DECIMALS);
+            _decimals = Math.clamp(DECIMALS, 0, 6);
             formatString = new StringBuilder("%.").append(getDecimals()).append("f").toString();
             redraw();
         } else {
@@ -307,7 +307,7 @@ public class CircularPlot extends Region {
             decimals = new IntegerPropertyBase(_decimals) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0, 6, get()));
+                    set(Math.clamp(get(), 0, 6));
                     formatString = new StringBuilder("%.").append(get()).append("f").toString();
                     redraw();
                 }
@@ -326,7 +326,7 @@ public class CircularPlot extends Region {
 
     public void setSegmentGap(final double GAP) {
         if (null == segmentGap) {
-            _segmentGap = Helper.clamp(0, 10, GAP);
+            _segmentGap = Math.clamp(GAP, 0, 10);
             redraw();
         } else {
             segmentGap.set(GAP);
@@ -338,7 +338,7 @@ public class CircularPlot extends Region {
             segmentGap = new DoublePropertyBase(_segmentGap) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0, 10, get()));
+                    set(Math.clamp(get(), 0, 10));
                     redraw();
                 }
 
@@ -425,7 +425,7 @@ public class CircularPlot extends Region {
 
     public void setConnectionOpacity(final double OPACITY) {
         if (null == connectionOpacity) {
-            _connectionOpacity = Helper.clamp(0.1, 1.0, OPACITY);
+            _connectionOpacity = Math.clamp(OPACITY, 0.1, 1.0);
             redraw();
         } else {
             connectionOpacity.set(OPACITY);
@@ -437,7 +437,7 @@ public class CircularPlot extends Region {
             connectionOpacity = new DoublePropertyBase(_connectionOpacity) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0.1, 1.0, get()));
+                    set(Math.clamp(get(), 0.1, 1.0));
                     redraw();
                 }
 

@@ -2,7 +2,6 @@ package fx.chart;
 
 import fx.chart.data.XYChartItem;
 import fx.chart.series.XYSeries;
-import fx.chart.series.XYSeriesBuilder;
 import javafx.scene.paint.Color;
 
 import java.util.List;
@@ -27,7 +26,7 @@ public final class ChartFactory {
             String yAxisLabel, double minY, double maxY, int yDecimal,
             Color lineColor, List<XYChartItem> dataset) {
 
-        XYSeries series = XYSeriesBuilder.create()
+        XYSeries<XYChartItem> series = XYSeries.builder()
                 .items(dataset)
                 .chartType(ChartType.LINE)
                 .fill(Color.TRANSPARENT)

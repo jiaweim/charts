@@ -3,7 +3,6 @@ package fx.chart;
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYChartItemBuilder;
 import fx.chart.series.XYSeries;
-import fx.chart.series.XYSeriesBuilder;
 import fx.chart.toolboxfx.GradientLookup;
 import fx.chart.tools.Helper;
 import javafx.application.Application;
@@ -48,7 +47,7 @@ public class PoincarePlotTest extends Application {
             xyItems.add(XYChartItemBuilder.create().x(sgv.date).y(sgv.sgv).symbol(Symbol.CIRCLE).fill(color).build());
         }
 
-        xySeries = XYSeriesBuilder.create()
+        xySeries = XYSeries.builder()
                 .items(xyItems)
                 .chartType(ChartType.POINCARE)
                 .fill(Color.TRANSPARENT)

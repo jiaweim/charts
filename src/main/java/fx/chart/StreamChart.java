@@ -2,10 +2,10 @@ package fx.chart;
 
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvt;
-import fx.chart.geometry.Path;
 import fx.chart.event.EvtObserver;
-import fx.chart.toolboxfx.FontMetrix;
 import fx.chart.font.Fonts;
+import fx.chart.geometry.Path;
+import fx.chart.toolboxfx.FontMetrix;
 import fx.chart.toolboxfx.geom.Bounds;
 import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
@@ -490,7 +490,7 @@ public class StreamChart extends Region {
 
     public void setItemWidth(final int WIDTH) {
         if (null == itemWidth) {
-            _itemWidth = Helper.clamp(2, MAX_ITEM_WIDTH, WIDTH);
+            _itemWidth = Math.clamp(WIDTH, 2, MAX_ITEM_WIDTH);
             prepareData();
         } else {
             itemWidth.set(WIDTH);
@@ -502,7 +502,7 @@ public class StreamChart extends Region {
             itemWidth = new IntegerPropertyBase(_itemWidth) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(2, 100, get()));
+                    set(Math.clamp(get(), 2, 100));
                     prepareData();
                 }
 
@@ -547,7 +547,7 @@ public class StreamChart extends Region {
 
     public void setItemGap(final int GAP) {
         if (null == itemGap) {
-            _itemGap = Helper.clamp(0, 100, GAP);
+            _itemGap = Math.clamp(GAP, 0, 100);
             prepareData();
         } else {
             itemGap.set(GAP);
@@ -559,7 +559,7 @@ public class StreamChart extends Region {
             itemGap = new IntegerPropertyBase(_itemGap) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0, 100, get()));
+                    set(Math.clamp(get(), 0, 100));
                     prepareData();
                 }
 
@@ -604,7 +604,7 @@ public class StreamChart extends Region {
 
     public void setDecimals(final int DECIMALS) {
         if (null == decimals) {
-            _decimals = Helper.clamp(0, 6, DECIMALS);
+            _decimals = Math.clamp(DECIMALS, 0, 6);
             formatString = new StringBuilder("%.").append(getDecimals()).append("f").toString();
             redraw();
         } else {
@@ -617,7 +617,7 @@ public class StreamChart extends Region {
             decimals = new IntegerPropertyBase(_decimals) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0, 6, get()));
+                    set(Math.clamp(get(), 0, 6));
                     formatString = new StringBuilder("%.").append(get()).append("f").toString();
                     redraw();
                 }
@@ -664,7 +664,7 @@ public class StreamChart extends Region {
 
     public void setItemTextThreshold(final double ITEM_TEXT_THRESHOLD) {
         if (null == itemTextThreshold) {
-            _itemTextThreshold = Helper.clamp(1, Double.MAX_VALUE, ITEM_TEXT_THRESHOLD);
+            _itemTextThreshold = Math.clamp(ITEM_TEXT_THRESHOLD, 1, Double.MAX_VALUE);
             redraw();
         } else {
             itemTextThreshold.set(ITEM_TEXT_THRESHOLD);
@@ -676,7 +676,7 @@ public class StreamChart extends Region {
             itemTextThreshold = new DoublePropertyBase(_itemTextThreshold) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(1, Double.MAX_VALUE, get()));
+                    set(Math.clamp(get(), 1, Double.MAX_VALUE));
                     redraw();
                 }
 
@@ -959,8 +959,8 @@ public class StreamChart extends Region {
             canvas.relocate((getWidth() - width) * 0.5, (getHeight() - height) * 0.5);
 
             ctx.setTextBaseline(VPos.CENTER);
-            itemFont = Fonts.latoRegular(Helper.clamp(8, 20, size * 0.025));
-            categoryFont = Fonts.latoRegular(Helper.clamp(8, 20, size * 0.025));
+            itemFont = Fonts.latoRegular(Math.clamp(size * 0.025, 8, 20));
+            categoryFont = Fonts.latoRegular(Math.clamp(size * 0.025, 8, 20));
             itemFontMetrix = new FontMetrix(itemFont);
 
             groupBy(getCategory());

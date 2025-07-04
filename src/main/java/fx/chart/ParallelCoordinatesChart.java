@@ -370,7 +370,7 @@ public class ParallelCoordinatesChart extends Region {
 
     public void setDecimals(final int DECIMALS) {
         if (null == decimals) {
-            _decimals = Helper.clamp(0, 6, DECIMALS);
+            _decimals = Math.clamp(DECIMALS, 0, 6);
             formatString = new StringBuilder("%.").append(_decimals).append("f").toString();
             redraw();
         } else {
@@ -383,7 +383,7 @@ public class ParallelCoordinatesChart extends Region {
             decimals = new IntegerPropertyBase(_decimals) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0, 6, get()));
+                    set(Math.clamp(get(), 0, 6));
                     formatString = new StringBuilder("%.").append(get()).append("f").toString();
                     redraw();
                 }
@@ -740,7 +740,7 @@ public class ParallelCoordinatesChart extends Region {
             wasDragged = false;
         } else if (MouseEvent.MOUSE_DRAGGED.equals(TYPE)) {
             if (rect.isVisible()) {
-                selectionRect.setHeight(Helper.clamp(selectionStartY, height - 0.5, Y) - selectionRect.getY());
+                selectionRect.setHeight(Math.clamp(Y, selectionStartY, height - 0.5) - selectionRect.getY());
                 selectionRect.setWidth(AXIS_WIDTH);
                 resizeSelectionRect();
             } else if (dragText.isVisible()) {
@@ -758,7 +758,7 @@ public class ParallelCoordinatesChart extends Region {
                     redraw();
                 }
             } else if (rect.isVisible() && wasDragged) {
-                selectionEndY = null == selectedCategory ? -1 : Helper.clamp(selectionStartY, height - 0.5, Y);
+                selectionEndY = null == selectedCategory ? -1 : Math.clamp(Y, selectionStartY, height - 0.5);
                 if (selectionStartY > HEADER_HEIGHT && selectionEndY > -1) {
                     selectionRect.setWidth(10);
                     selectionRect.setY(selectionStartY);
@@ -851,7 +851,7 @@ public class ParallelCoordinatesChart extends Region {
             double range = maxValue - minValue;
             double minorTickSpace = axisParam[2];
             double majorTickSpace = axisParam[3];
-            Font headerFont = Fonts.opensansRegular(Helper.clamp(8, 24, headerFontSize));
+            Font headerFont = Fonts.opensansRegular(Math.clamp(headerFontSize, 8, 24));
 
             double stepSize = Math.abs(axisHeight / range);
             double maxY = axisY + axisHeight;
@@ -871,7 +871,7 @@ public class ParallelCoordinatesChart extends Region {
             axisCtx.fillText(category, axisX, 5);
             if (!unit.isEmpty()) {
                 axisCtx.setFill(getUnitColor());
-                axisCtx.setFont(Fonts.opensansRegular(Helper.clamp(8, 24, unitFontSize)));
+                axisCtx.setFont(Fonts.opensansRegular(Math.clamp(unitFontSize, 8, 24)));
                 axisCtx.fillText(String.join("", "[", unit, "]"), axisX, 18);
             }
 
@@ -880,7 +880,7 @@ public class ParallelCoordinatesChart extends Region {
             axisCtx.strokeLine(axisX, axisY, axisX, maxY);
 
             // TickMarks
-            axisCtx.setFont(Fonts.opensansRegular(Helper.clamp(8, 24, axisFontSize)));
+            axisCtx.setFont(Fonts.opensansRegular(Math.clamp(axisFontSize, 8, 24)));
             axisCtx.setFill(getTickLabelColor());
             double tmpStep = minorTickSpace;
             BigDecimal minorTickSpaceBD = BigDecimal.valueOf(minorTickSpace);
@@ -942,7 +942,7 @@ public class ParallelCoordinatesChart extends Region {
                 // Max
                 axisCtx.strokeLine(axisX - 3, axisY, axisX + 3, axisY);
 
-                axisCtx.setFont(Fonts.opensansRegular(Helper.clamp(8, 24, axisFontSize)));
+                axisCtx.setFont(Fonts.opensansRegular(Math.clamp(axisFontSize, 8, 24)));
                 axisCtx.setFill(Color.BLACK);
                 if (i == (noOfCategories - 1)) {
                     axisCtx.setTextAlign(TextAlignment.RIGHT);
@@ -969,7 +969,7 @@ public class ParallelCoordinatesChart extends Region {
 
     private void drawConnections() {
         connectionCtx.clearRect(0, 0, width, height);
-        connectionCtx.setFont(Fonts.opensansRegular(Helper.clamp(8, 24, size * 0.015)));
+        connectionCtx.setFont(Fonts.opensansRegular(Math.clamp(size * 0.015, 8, 24)));
 
         int noOfCategories = categories.size();
         Color selectedColor = getSelectedColor();
@@ -1013,7 +1013,7 @@ public class ParallelCoordinatesChart extends Region {
         double spacer = availableWidth / (noOfCategories - 1);
 
         connectionCtx.clearRect(0, 0, width, height);
-        connectionCtx.setFont(Fonts.opensansRegular(Helper.clamp(8, 24, size * 0.015)));
+        connectionCtx.setFont(Fonts.opensansRegular(Math.clamp(size * 0.015, 8, 24)));
 
         Color selectedColor = getSelectedColor();
         Color unselectedColor = getUnselectedColor();

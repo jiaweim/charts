@@ -57,6 +57,7 @@ import java.util.stream.Collectors;
 
 
 public class Helper {
+
     public static final double MIN_FONT_SIZE = 5;
     public static final double MAX_TICK_MARK_LENGTH = 0.125;
     public static final double MAX_TICK_MARK_WIDTH = 0.02;
@@ -109,59 +110,25 @@ public class Helper {
         public long getMinorTickSpace() {return MINOR_TICK_SPACE;}
     }
 
-    public static final int clamp(final int MIN, final int MAX, final int VALUE) {
-        if (VALUE < MIN) return MIN;
-        if (VALUE > MAX) return MAX;
-        return VALUE;
-    }
-
-    public static final long clamp(final long MIN, final long MAX, final long VALUE) {
-        if (VALUE < MIN) return MIN;
-        if (VALUE > MAX) return MAX;
-        return VALUE;
-    }
-
-    public static double clamp(final double MIN, final double MAX, final double VALUE) {
-        if (Double.compare(VALUE, MIN) < 0) return MIN;
-        if (Double.compare(VALUE, MAX) > 0) return MAX;
-        return VALUE;
-    }
-
-    public static final Instant clamp(final Instant MIN, final Instant MAX, final Instant VALUE) {
+    public static Instant clamp(final Instant MIN, final Instant MAX, final Instant VALUE) {
         if (VALUE.isBefore(MIN)) return MIN;
         if (VALUE.isAfter(MAX)) return MAX;
         return VALUE;
     }
 
-    public static final LocalDateTime clamp(final LocalDateTime MIN, final LocalDateTime MAX, final LocalDateTime VALUE) {
+    public static LocalDateTime clamp(final LocalDateTime MIN, final LocalDateTime MAX, final LocalDateTime VALUE) {
         if (VALUE.isBefore(MIN)) return MIN;
         if (VALUE.isAfter(MAX)) return MAX;
         return VALUE;
     }
 
-    public static final LocalDate clamp(final LocalDate MIN, final LocalDate MAX, final LocalDate VALUE) {
+    public static LocalDate clamp(final LocalDate MIN, final LocalDate MAX, final LocalDate VALUE) {
         if (VALUE.isBefore(MIN)) return MIN;
         if (VALUE.isAfter(MAX)) return MAX;
         return VALUE;
     }
 
-    public static final double clampMin(final double MIN, final double VALUE) {
-        if (VALUE < MIN) return MIN;
-        return VALUE;
-    }
-
-    public static final double clampMax(final double MAX, final double VALUE) {
-        if (VALUE > MAX) return MAX;
-        return VALUE;
-    }
-
-    public static final double nearest(final double LESS, final double VALUE, final double MORE) {
-        double lessDiff = VALUE - LESS;
-        double moreDiff = MORE - VALUE;
-        return lessDiff < moreDiff ? LESS : MORE;
-    }
-
-    public static final double[] calcAutoScale(final double MIN_VALUE, final double MAX_VALUE) {
+    public static double[] calcAutoScale(final double MIN_VALUE, final double MAX_VALUE) {
         double maxNoOfMajorTicks = 10;
         double maxNoOfMinorTicks = 10;
         double minorTickSpace = 1;
@@ -175,7 +142,7 @@ public class Helper {
         return new double[]{minorTickSpace, majorTickSpace, niceMinValue, niceMaxValue};
     }
 
-    public static final double calcNiceNumber(final double RANGE, final boolean ROUND) {
+    public static double calcNiceNumber(final double RANGE, final boolean ROUND) {
         double niceFraction;
         double exponent = Math.floor(Math.log10(RANGE));   // exponent of range
         double fraction = RANGE / Math.pow(10, exponent);  // fractional part of range
@@ -425,8 +392,8 @@ public class Helper {
         return maxEntry.getKey();
     }
 
-    public static final List<Color> createColorPalette(final Color FROM_COLOR, final Color TO_COLOR, final int NO_OF_COLORS) {
-        int steps = clamp(1, 50, NO_OF_COLORS) - 1;
+    public static List<Color> createColorPalette(final Color FROM_COLOR, final Color TO_COLOR, final int NO_OF_COLORS) {
+        int steps = Math.clamp(NO_OF_COLORS, 1, 50) - 1;
         double step = 1.0 / steps;
         double deltaRed = (TO_COLOR.getRed() - FROM_COLOR.getRed()) * step;
         double deltaGreen = (TO_COLOR.getGreen() - FROM_COLOR.getGreen()) * step;
@@ -437,10 +404,10 @@ public class Helper {
         Color currentColor = FROM_COLOR;
         palette.add(currentColor);
         for (int i = 0; i < steps; i++) {
-            double red = clamp(0d, 1d, (currentColor.getRed() + deltaRed));
-            double green = clamp(0d, 1d, (currentColor.getGreen() + deltaGreen));
-            double blue = clamp(0d, 1d, (currentColor.getBlue() + deltaBlue));
-            double opacity = clamp(0d, 1d, (currentColor.getOpacity() + deltaOpacity));
+            double red = Math.clamp((currentColor.getRed() + deltaRed), 0d, 1d);
+            double green = Math.clamp((currentColor.getGreen() + deltaGreen), 0d, 1d);
+            double blue = Math.clamp((currentColor.getBlue() + deltaBlue), 0d, 1d);
+            double opacity = Math.clamp((currentColor.getOpacity() + deltaOpacity), 0d, 1d);
             currentColor = Color.color(red, green, blue, opacity);
             palette.add(currentColor);
         }
@@ -458,16 +425,16 @@ public class Helper {
         double saturationStep = saturation / STEPS;
         double brightnessStep = brightness / STEPS;
         double halfSteps = STEPS / 2;
-        Color fromColor = COLOR.hsb(hue, saturation, clamp(0, 1, brightness + brightnessStep * halfSteps));
-        Color toColor = COLOR.hsb(hue, saturation, clamp(0, 1, brightness - brightnessStep * halfSteps));
+        Color fromColor = COLOR.hsb(hue, saturation, Math.clamp(brightness + brightnessStep * halfSteps, 0, 1));
+        Color toColor = COLOR.hsb(hue, saturation, Math.clamp(brightness - brightnessStep * halfSteps, 0, 1));
         return new Color[]{fromColor, toColor};
     }
 
-    public static final List<Color> createColorVariations(final Color COLOR, final int NO_OF_COLORS) {
+    public static List<Color> createColorVariations(final Color COLOR, final int NO_OF_COLORS) {
         if (NO_OF_COLORS > 25) {
             throw new IllegalArgumentException("Not more than 25 number of colors are allowed");
         }
-        int noOfColors = clamp(1, 25, NO_OF_COLORS);
+        int noOfColors = Math.clamp(NO_OF_COLORS, 1, 25);
         double step = 0.8 / noOfColors;
         double hue = COLOR.getHue();
         double brg = COLOR.getBrightness();
@@ -478,7 +445,7 @@ public class Helper {
         return colors;
     }
 
-    public static final LinearGradient createColorVariationGradient(final Color COLOR, final int NO_OF_COLORS) {
+    public static LinearGradient createColorVariationGradient(final Color COLOR, final int NO_OF_COLORS) {
         List<Color> colorVariations = createColorVariations(COLOR, NO_OF_COLORS);
         List<Stop> stops = new ArrayList<>(NO_OF_COLORS);
         double step = 1.0 / NO_OF_COLORS;
@@ -488,15 +455,15 @@ public class Helper {
         return new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
     }
 
-    public static final double[] colorToYUV(final Color COLOR) {
+    public static double[] colorToYUV(final Color COLOR) {
         final double WEIGHT_FACTOR_RED = 0.299;
         final double WEIGHT_FACTOR_GREEN = 0.587;
         final double WEIGHT_FACTOR_BLUE = 0.144;
         final double U_MAX = 0.436;
         final double V_MAX = 0.615;
-        double y = clamp(0, 1, WEIGHT_FACTOR_RED * COLOR.getRed() + WEIGHT_FACTOR_GREEN * COLOR.getGreen() + WEIGHT_FACTOR_BLUE * COLOR.getBlue());
-        double u = clamp(-U_MAX, U_MAX, U_MAX * ((COLOR.getBlue() - y) / (1 - WEIGHT_FACTOR_BLUE)));
-        double v = clamp(-V_MAX, V_MAX, V_MAX * ((COLOR.getRed() - y) / (1 - WEIGHT_FACTOR_RED)));
+        double y = Math.clamp(WEIGHT_FACTOR_RED * COLOR.getRed() + WEIGHT_FACTOR_GREEN * COLOR.getGreen() + WEIGHT_FACTOR_BLUE * COLOR.getBlue(), 0, 1);
+        double u = Math.clamp(U_MAX * ((COLOR.getBlue() - y) / (1 - WEIGHT_FACTOR_BLUE)), -U_MAX, U_MAX);
+        double v = Math.clamp(V_MAX * ((COLOR.getRed() - y) / (1 - WEIGHT_FACTOR_RED)), -V_MAX, V_MAX);
         return new double[]{y, u, v};
     }
 
@@ -668,12 +635,12 @@ public class Helper {
         return (Color) Interpolator.LINEAR.interpolate(lowerStop.getColor(), upperStop.getColor(), interpolationFraction);
     }
 
-    public static final String shortenNumber(final double NUMBER, final int DECIMALS) {
-        return shortenNumber(NUMBER, clamp(0, 12, DECIMALS), Locale.US);
+    public static String shortenNumber(final double NUMBER, final int DECIMALS) {
+        return shortenNumber(NUMBER, Math.clamp(DECIMALS, 0, 12), Locale.US);
     }
 
-    public static final String shortenNumber(final double NUMBER, final int DECIMALS, final Locale LOCALE) {
-        String formatString = new StringBuilder("%.").append(clamp(0, 12, DECIMALS)).append("f").toString();
+    public static String shortenNumber(final double NUMBER, final int DECIMALS, final Locale LOCALE) {
+        String formatString = new StringBuilder("%.").append(Math.clamp(DECIMALS, 0, 12)).append("f").toString();
         double value;
         for (int i = ABBREVIATIONS.length - 1; i >= 0; i--) {
             value = Math.pow(1000, i + 1);
@@ -684,7 +651,7 @@ public class Helper {
         return String.format(LOCALE, formatString, NUMBER);
     }
 
-    public static final <T extends Point> boolean isInPolygon(final double X, final double Y, final List<T> POLYGON) {
+    public static <T extends Point> boolean isInPolygon(final double X, final double Y, final List<T> POLYGON) {
         int noOfPointsInPolygon = POLYGON.size();
         double[] pointsX = new double[noOfPointsInPolygon];
         double[] pointsY = new double[noOfPointsInPolygon];
@@ -695,21 +662,21 @@ public class Helper {
         return isInPolygon(X, Y, noOfPointsInPolygon, pointsX, pointsY);
     }
 
-    public static final <T extends Point> double squareDistance(final T P1, final T P2) {
+    public static <T extends Point> double squareDistance(final T P1, final T P2) {
         return squareDistance(P1.getX(), P1.getY(), P2.getX(), P2.getY());
     }
 
-    public static final double squareDistance(final double X1, final double Y1, final double X2, final double Y2) {
+    public static double squareDistance(final double X1, final double Y1, final double X2, final double Y2) {
         double deltaX = (X1 - X2);
         double deltaY = (Y1 - Y2);
         return (deltaX * deltaX) + (deltaY * deltaY);
     }
 
-    public static final double distance(final double X1, final double Y1, final double X2, final double Y2) {
+    public static double distance(final double X1, final double Y1, final double X2, final double Y2) {
         return Math.sqrt((X2 - X1) * (X2 - X1) + (Y2 - Y1) * (Y2 - Y1));
     }
 
-    public static final <T extends Point> Point getMidPoint(final T P1, final T P2) {
+    public static <T extends Point> Point getMidPoint(final T P1, final T P2) {
         return new Point((P1.getX() + P2.getX()) / 2.0, (P1.getY() + P2.getY()) / 2.0);
     }
 
@@ -760,9 +727,9 @@ public class Helper {
     }
 
     public static Color hslToRGB(double hue, double saturation, double luminance, double opacity) {
-        saturation = clamp(0, 1, saturation);
-        luminance = clamp(0, 1, luminance);
-        opacity = clamp(0, 1, opacity);
+        saturation = Math.clamp(saturation, 0, 1);
+        luminance = Math.clamp(luminance, 0, 1);
+        opacity = Math.clamp(opacity, 0, 1);
 
         hue = hue % 360.0;
         hue /= 360;
@@ -770,14 +737,14 @@ public class Helper {
         double q = luminance < 0.5 ? luminance * (1 + saturation) : (luminance + saturation) - (saturation * luminance);
         double p = 2 * luminance - q;
 
-        double r = clamp(0, 1, hueToRGB(p, q, hue + (1.0 / 3.0)));
-        double g = clamp(0, 1, hueToRGB(p, q, hue));
-        double b = clamp(0, 1, hueToRGB(p, q, hue - (1.0 / 3.0)));
+        double r = Math.clamp(hueToRGB(p, q, hue + (1.0 / 3.0)), 0, 1);
+        double g = Math.clamp(hueToRGB(p, q, hue), 0, 1);
+        double b = Math.clamp(hueToRGB(p, q, hue - (1.0 / 3.0)), 0, 1);
 
         return Color.color(r, g, b, opacity);
     }
 
-    private static final double hueToRGB(double p, double q, double t) {
+    private static double hueToRGB(double p, double q, double t) {
         if (t < 0) t += 1;
         if (t > 1) t -= 1;
         if (6 * t < 1) {
@@ -916,7 +883,7 @@ public class Helper {
         String intRed = Integer.toString(Integer.parseInt(hexRed, 16));
         String intGreen = Integer.toString(Integer.parseInt(hexGreen, 16));
         String intBlue = Integer.toString(Integer.parseInt(hexBlue, 16));
-        String alpha = String.format(Locale.US, "%.3f", clamp(0, 1, ALPHA));
+        String alpha = String.format(Locale.US, "%.3f", Math.clamp(ALPHA, 0, 1));
 
         return String.join("", "colorToRGBA(", intRed, ", ", intGreen, ", ", intBlue, ",", alpha, ")");
     }
@@ -1058,9 +1025,9 @@ public class Helper {
         return interpolateColor(lowerStop.getColor(), upperStop.getColor(), interpolationFraction, TARGET_OPACITY);
     }
 
-    public static final Color interpolateColor(final Color COLOR1, final Color COLOR2, final double FRACTION, final double TARGET_OPACITY) {
-        double fraction = clamp(0, 1, FRACTION);
-        double targetOpacity = TARGET_OPACITY < 0 ? TARGET_OPACITY : clamp(0, 1, FRACTION);
+    public static Color interpolateColor(final Color COLOR1, final Color COLOR2, final double FRACTION, final double TARGET_OPACITY) {
+        double fraction = Math.clamp(FRACTION, 0, 1);
+        double targetOpacity = TARGET_OPACITY < 0 ? TARGET_OPACITY : Math.clamp(FRACTION, 0, 1);
 
         final double RED1 = COLOR1.getRed();
         final double GREEN1 = COLOR1.getGreen();
@@ -1082,10 +1049,10 @@ public class Helper {
         double blue = BLUE1 + (DELTA_BLUE * fraction);
         double opacity = targetOpacity < 0 ? OPACITY1 + (DELTA_OPACITY * fraction) : targetOpacity;
 
-        red = clamp(0, 1, red);
-        green = clamp(0, 1, green);
-        blue = clamp(0, 1, blue);
-        opacity = clamp(0, 1, opacity);
+        red = Math.clamp(red, 0, 1);
+        green = Math.clamp(green, 0, 1);
+        blue = Math.clamp(blue, 0, 1);
+        opacity = Math.clamp(opacity, 0, 1);
 
         return Color.color(red, green, blue, opacity);
     }

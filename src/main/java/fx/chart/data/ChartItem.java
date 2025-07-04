@@ -5,7 +5,6 @@ import fx.chart.Symbol;
 import fx.chart.event.ChartEvt;
 import fx.chart.event.EvtObserver;
 import fx.chart.event.EvtType;
-import fx.chart.tools.Helper;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -756,7 +755,7 @@ public class ChartItem implements Item, Comparable<ChartItem> {
 
     public long getAnimationDuration() {return animationDuration;}
 
-    public void setAnimationDuration(final long DURATION) {animationDuration = Helper.clamp(10, 10000, DURATION);}
+    public void setAnimationDuration(final long DURATION) {animationDuration = Math.clamp(DURATION, 10, 10000);}
 
     @Override
     public String toString() {

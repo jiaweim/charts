@@ -1,13 +1,9 @@
 package fx.chart;
 
 import fx.chart.data.ChartItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.SelectionEvt;
-import fx.chart.series.Series;
-import fx.chart.event.Evt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
+import fx.chart.event.*;
 import fx.chart.font.Fonts;
+import fx.chart.series.Series;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import fx.chart.tools.NumberFormat;
@@ -459,7 +455,7 @@ public class ConcentricRingChart extends Region {
         }
         for (int i = 0; i < noOfItems; i++) {
             ChartItem item = sortedItems.get(i);
-            double value = Helper.clamp(0, Double.MAX_VALUE, item.getValue());
+            double value = Math.clamp(item.getValue(), 0, Double.MAX_VALUE);
             double barWH = size - barWidth - (2 * i * barWidth - barSpacer) - (2 * i * barSpacer);
             double angle = value / maxValue * 270.0;
 
@@ -586,7 +582,7 @@ public class ConcentricRingChart extends Region {
         // Draw bars
         for (int i = 0; i < noOfItems; i++) {
             ChartItem item = sortedItems.get(i);
-            double value = Helper.clamp(0, Double.MAX_VALUE, item.getValue());
+            double value = Math.clamp(item.getValue(), 0, Double.MAX_VALUE);
             double barXY = (barWidth * 0.5) + (i * barWidth) + (i * barSpacer) + 1;
             double barWH = size - barWidth - (2 * i * barWidth - barSpacer) - (2 * i * barSpacer) - 2;
             double angle = value / maxValue * 270.0;
@@ -624,7 +620,7 @@ public class ConcentricRingChart extends Region {
 
     private void drawTextAlongArc(final GraphicsContext ctx, final String text, final double fontSize, final double centerX, final double centerY, final double radius, final double angle) {
         int length = text.length();
-        double charSpacer = Helper.clamp(2, 0.75 * fontSize, (7 / radius) * size * 0.13);
+        double charSpacer = Math.clamp((7 / radius) * size * 0.13, 2, 0.75 * fontSize);
         double textAngle = (charSpacer * (length + 0.5));
         if (angle > textAngle) {
             ctx.save();

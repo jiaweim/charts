@@ -17,7 +17,6 @@ public class Marker {
     private LineStyle lineStyle;
 
 
-    // ******************** Constructors **************************************
     public Marker(final Axis axis, final double value) {
         this(axis, value, Color.RED, 1, LineStyle.SOLID, "", Color.RED, "%.0f");
     }
@@ -30,17 +29,15 @@ public class Marker {
             throw new IllegalArgumentException("Marker axis position has to be either LEFT or BOTTOM");
         }
         this.axis = axis;
-        this.value = Helper.clamp(axis.getMinValue(), axis.getMaxValue(), value);
+        this.value = Math.clamp(value, axis.getMinValue(), axis.getMaxValue());
         this.stroke = null == stroke ? Color.RED : stroke;
-        this.lineWidth = Helper.clamp(1, 10, lineWidth);
+        this.lineWidth = Math.clamp(lineWidth, 1, 10);
         this.text = null == text ? "" : text;
         this.textFill = null == textFill ? Color.RED : textFill;
         this.formatString = null == formatString || formatString.isEmpty() ? "%.0f" : formatString;
         this.lineStyle = null == lineStyle ? LineStyle.SOLID : lineStyle;
     }
 
-
-    // ******************** Methods *******************************************
     public Axis getAxis() {return axis;}
 
     public double getValue() {return value;}
@@ -51,7 +48,7 @@ public class Marker {
 
     public double getLineWidth() {return lineWidth;}
 
-    public void setLineWidth(final double lineWidth) {this.lineWidth = Helper.clamp(1, 10, lineWidth);}
+    public void setLineWidth(final double lineWidth) {this.lineWidth = Math.clamp(lineWidth, 1, 10);}
 
     public LineStyle getLineStyle() {return lineStyle;}
 

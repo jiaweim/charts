@@ -49,6 +49,7 @@ import static pdk.util.ArgUtils.checkNotNull;
 @DefaultProperty("children")
 public class Axis extends Region {
 
+
     /**
      * Create a linear axis in range [0,100]
      *
@@ -688,7 +689,7 @@ public class Axis extends Region {
             if (VALUE > getMaxValue()) {
                 setMaxValue(VALUE);
             }
-            _minValue = Helper.clamp(-Double.MAX_VALUE, getMaxValue(), VALUE);
+            _minValue = Math.clamp(VALUE, -Double.MAX_VALUE, getMaxValue());
             fireChartEvt(AXIS_RANGE_CHANGED_EVT);
         } else {
             minValueProperty.set(VALUE);
@@ -788,7 +789,7 @@ public class Axis extends Region {
             if (VALUE < getMinValue()) {
                 setMinValue(VALUE);
             }
-            _maxValue = Helper.clamp(getMinValue(), Double.MAX_VALUE, VALUE);
+            _maxValue = Math.clamp(VALUE, getMinValue(), Double.MAX_VALUE);
             fireChartEvt(AXIS_RANGE_CHANGED_EVT);
         } else {
             maxValueProperty.set(VALUE);
@@ -1536,7 +1537,7 @@ public class Axis extends Region {
 
     public void setDecimals(final int DECIMALS) {
         if (null == decimalsProperty) {
-            _decimals = Helper.clamp(0, 12, DECIMALS);
+            _decimals = Math.clamp(DECIMALS, 0, 12);
             tickLabelFormatString = "%." + _decimals + "f";
             redraw();
         } else {
@@ -1549,7 +1550,7 @@ public class Axis extends Region {
             decimalsProperty = new IntegerPropertyBase(_decimals) {
                 @Override
                 protected void invalidated() {
-                    set(Helper.clamp(0, 12, get()));
+                    set(Math.clamp(get(), 0, 12));
                     tickLabelFormatString = "%." + get() + "f";
                     redraw();
                 }
@@ -2957,11 +2958,11 @@ public class Axis extends Region {
 
         if (width > 0 && height > 0) {
             if (isAutoTitleFontSize()) {
-                setTitleFontSize(Helper.clamp(8, 24, 0.175 * size));
+                setTitleFontSize(Math.clamp(0.175 * size, 8, 24));
             }
 
             if (isAutoFontSize()) {
-                setTickLabelFontSize(Helper.clamp(8, 24, 0.175 * size));
+                setTickLabelFontSize(Math.clamp(0.175 * size, 8, 24));
             }
 
             axisBounds.set(getInsets().getLeft(), getInsets().getTop(), width, height);
