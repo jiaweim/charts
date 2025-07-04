@@ -6,36 +6,40 @@ import fx.chart.heatmap.HeatMap;
 import fx.chart.heatmap.HeatMapBuilder;
 import fx.chart.heatmap.OpacityDistribution;
 import javafx.application.Application;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
-import javafx.scene.layout.StackPane;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 
 public class HeatMapTest extends Application {
+
     private HeatMap heatMap;
 
-    @Override public void init() {
+    @Override
+    public void init() {
         heatMap = HeatMapBuilder.create()
-                                .prefSize(400, 400)
-                                .colorMapping(ColorMapping.INFRARED_4)
-                                .spotRadius(20)
-                                .opacityDistribution(OpacityDistribution.CUSTOM)
-                                .fadeColors(true)
-                                .build();
+                .prefSize(400, 400)
+                .colorMapping(ColorMapping.INFRARED_4)
+                .spotRadius(20)
+                .opacityDistribution(OpacityDistribution.CUSTOM)
+                .fadeColors(true)
+                .build();
 
         heatMap.setOnMouseMoved(e -> heatMap.addSpot(e.getX(), e.getY()));
 
     }
 
-    @Override public void start(Stage stage) {
+    @Override
+    public void start(Stage stage) {
         StackPane pane = new StackPane(heatMap);
 
         // Setup a mouse event filter which adds spots to the heatmap as soon as the mouse will be moved across the pane
         pane.addEventFilter(MouseEvent.MOUSE_MOVED, event -> {
             double x = event.getX();
             double y = event.getY();
-            if (x < heatMap.getSpotRadius()) x = heatMap.getSpotRadius();
+            if (x < heatMap.getSpotRadius())
+                x = heatMap.getSpotRadius();
             if (x > pane.getWidth() - heatMap.getSpotRadius()) x = pane.getWidth() - heatMap.getSpotRadius();
             if (y < heatMap.getSpotRadius()) y = heatMap.getSpotRadius();
             if (y > pane.getHeight() - heatMap.getSpotRadius()) y = pane.getHeight() - heatMap.getSpotRadius();
@@ -52,7 +56,8 @@ public class HeatMapTest extends Application {
         stage.show();
     }
 
-    @Override public void stop() {
+    @Override
+    public void stop() {
         System.exit(0);
     }
 
