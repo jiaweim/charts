@@ -300,7 +300,7 @@ public enum KLAParser {
                     // Classes
                     CLASS_MATCHER.reset(line);
                     while (CLASS_MATCHER.find()) {
-                        final Integer classID = Integer.valueOf(CLASS_MATCHER.group(1));
+                        final int classID = Integer.parseInt(CLASS_MATCHER.group(1));
                         final String className = CLASS_MATCHER.group(2).replaceAll("\\\"", "");
                         final DefectClass defectClass = new DefectClass(classID, className);
                         classes.add(defectClass);
@@ -312,8 +312,8 @@ public enum KLAParser {
                     // Samples
                     SAMPLE_MATCHER.reset(line);
                     while (SAMPLE_MATCHER.find()) {
-                        final Integer indexX = Integer.valueOf(SAMPLE_MATCHER.group(1));
-                        final Integer indexY = Integer.valueOf(SAMPLE_MATCHER.group(2));
+                        final int indexX = Integer.parseInt(SAMPLE_MATCHER.group(1));
+                        final int indexY = Integer.parseInt(SAMPLE_MATCHER.group(2));
                         sampleTestPlan.add(new SampleTest(indexX, indexY));
                     }
                     if (CLASS_MATCHER.matches()) {

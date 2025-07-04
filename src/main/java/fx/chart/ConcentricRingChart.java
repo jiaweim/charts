@@ -638,12 +638,10 @@ public class ConcentricRingChart extends Region {
         }
     }
 
-
-    // ******************** Resizing ******************************************
     private void resize() {
         width = getWidth() - getInsets().getLeft() - getInsets().getRight();
         height = getHeight() - getInsets().getTop() - getInsets().getBottom();
-        size = width < height ? width : height;
+        size = Math.min(width, height);
 
         if (width > 0 && height > 0) {
             pane.setMaxSize(size, size);

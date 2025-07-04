@@ -7,10 +7,10 @@ import javafx.scene.paint.Color;
 import java.util.HashMap;
 
 public class MarkerBuilder<B extends MarkerBuilder<B>> {
+
     private HashMap<String, Property> properties = new HashMap<>();
     private Axis axis;
     private double value;
-
 
     protected MarkerBuilder(final Axis axis, final double value) {
         this.axis = axis;
@@ -18,7 +18,7 @@ public class MarkerBuilder<B extends MarkerBuilder<B>> {
     }
 
 
-    public static final MarkerBuilder create(final Axis axis, final double value) {
+    public static MarkerBuilder create(final Axis axis, final double value) {
         return new MarkerBuilder(axis, value);
     }
 

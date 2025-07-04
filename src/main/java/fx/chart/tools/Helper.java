@@ -1285,7 +1285,7 @@ public class Helper {
         }
     }
 
-    public static final boolean check4KLAFormat(final String filename) {
+    public static boolean check4KLAFormat(final String filename) {
         try {
             Path path = Path.of(filename);
             String content = Files.readString(path);

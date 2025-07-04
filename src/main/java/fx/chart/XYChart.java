@@ -53,11 +53,11 @@ public class XYChart<T extends XYItem> extends Region {
     private double height;
     private double size;
 
-    private ObservableList<XYPane<T>> xyPanes;
-    private ObservableList<Axis> axes;
+    private final ObservableList<XYPane<T>> xyPanes_;
+    private final ObservableList<Axis> axes_;
 
-    private Canvas markerCanvas;
-    private GraphicsContext markerCtx;
+    private Canvas markerCanvas_;
+    private GraphicsContext markerCtx_;
 
     private Axis yAxisL;
     private Axis yAxisC;
@@ -69,7 +69,7 @@ public class XYChart<T extends XYItem> extends Region {
     private double rightAxisWidth;
     private double bottomAxisHeight;
     private double leftAxisWidth;
-    private Grid grid;
+    private Grid grid_;
     private boolean hasLeftYAxis;
     private boolean hasCenterYAxis;
     private boolean hasRightYAxis;
@@ -86,46 +86,52 @@ public class XYChart<T extends XYItem> extends Region {
     private Color _titleColor;
     private ObjectProperty<Color> titleColorProperty;
 
-    private Color _subTitleColor;
+    private Color subTitleColor_;
     private ObjectProperty<Color> subTitleColorProperty;
 
-    private AnchorPane pane;
-    private BooleanBinding showing;
-    private EvtObserver<ChartEvt> axisObserver;
-    private EvtObserver<ChartEvt> updateObserver;
-    private List<Marker> markers;
+    private AnchorPane pane_;
+    private BooleanBinding showing_;
+    private final EvtObserver<ChartEvt> axisObserver_;
+    private final EvtObserver<ChartEvt> updateObserver_;
+    private final List<Marker> markers_;
 
-    public XYChart(final XYPane<T> XY_PANE, final Axis... AXIS) {
-        this(List.of(XY_PANE), null, AXIS);
+    /**
+     * Create a {@link XYChart} without grid
+     *
+     * @param xyPane {@link XYPane}
+     * @param axes   {@link Axis}
+     */
+    public XYChart(final XYPane<T> xyPane, final Axis... axes) {
+        this(List.of(xyPane), null, axes);
     }
 
-    public XYChart(final XYPane<T> XY_PANE, final Grid GRID, final Axis... AXIS) {
-        this(List.of(XY_PANE), GRID, AXIS);
+    public XYChart(final XYPane<T> xyPane, final Grid grid, final Axis... axes) {
+        this(List.of(xyPane), grid, axes);
     }
 
-    public XYChart(final List<XYPane<T>> XY_PANES, final Axis... AXIS) {
-        this(XY_PANES, null, AXIS);
+    public XYChart(final List<XYPane<T>> xyPanes, final Axis... axes) {
+        this(xyPanes, null, axes);
     }
 
-    public XYChart(final List<XYPane<T>> XY_PANES, final Grid GRID, final Axis... AXIS) {
-        if (null == XY_PANES) {
+    public XYChart(final List<XYPane<T>> xyPanes, final Grid grid, final Axis... axes) {
+        if (xyPanes == null) {
             throw new IllegalArgumentException("XYPanes cannot be null");
         }
-        long noOfPolarCharts = XY_PANES.stream().filter(xyPane -> xyPane.containsPolarChart()).count();
+        long noOfPolarCharts = xyPanes.stream().filter(xyPane -> xyPane.containsPolarChart()).count();
         if (noOfPolarCharts > 0) {
             throw new IllegalArgumentException("XYPane contains Polar chart type");
         }
-        xyPanes = FXCollections.observableList(new LinkedList<>(XY_PANES));
-        axes = FXCollections.observableList(Arrays.asList(AXIS));
-        grid = GRID;
+        xyPanes_ = FXCollections.observableList(new LinkedList<>(xyPanes));
+        axes_ = FXCollections.observableList(Arrays.asList(axes));
+        grid_ = grid;
         width = PREFERRED_WIDTH;
         height = PREFERRED_HEIGHT;
-        axisObserver = evt -> adjustChartRange();
-        updateObserver = evt -> drawMarkerCanvas();
-        markers = new ArrayList<>();
+        axisObserver_ = evt -> adjustChartRange();
+        updateObserver_ = evt -> drawMarkerCanvas();
+        markers_ = new ArrayList<>();
         _title = "";
         _subTitle = "";
-        XY_PANES.forEach(xyPane -> xyPane.addChartEvtObserver(ChartEvt.UPDATE, updateObserver));
+        xyPanes.forEach(xyPane -> xyPane.addChartEvtObserver(ChartEvt.UPDATE, updateObserver_));
         checkReferenceZero();
         initGraphics();
         registerListeners();
@@ -144,41 +150,41 @@ public class XYChart<T extends XYItem> extends Region {
 
         checkForAxis();
 
-        if (xyPanes.size() > 1) {
-            xyPanes.forEach(xyPane -> xyPane.setChartBackground(Color.TRANSPARENT));
+        if (xyPanes_.size() > 1) {
+            xyPanes_.forEach(xyPane -> xyPane.setChartBackground(Color.TRANSPARENT));
         }
 
         adjustChartRange();
 
         adjustAxisAnchors();
 
-        pane = new AnchorPane();
-        xyPanes.forEach(xyPane -> pane.getChildren().add(xyPane));
+        pane_ = new AnchorPane();
+        xyPanes_.forEach(xyPane -> pane_.getChildren().add(xyPane));
 
-        pane.getChildren().addAll(axes);
-        setGrid(grid);
+        pane_.getChildren().addAll(axes_);
+        setGrid(grid_);
 
-        markerCanvas = new Canvas(PREFERRED_WIDTH, PREFERRED_HEIGHT);
-        markerCtx = markerCanvas.getGraphicsContext2D();
+        markerCanvas_ = new Canvas(PREFERRED_WIDTH, PREFERRED_HEIGHT);
+        markerCtx_ = markerCanvas_.getGraphicsContext2D();
 
-        markerCanvas.setMouseTransparent(true);
+        markerCanvas_.setMouseTransparent(true);
 
-        pane.getChildren().addAll(markerCanvas);
+        pane_.getChildren().addAll(markerCanvas_);
 
-        getChildren().setAll(pane);
+        getChildren().setAll(pane_);
     }
 
     private void registerListeners() {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
-        xyPanes.addListener((ListChangeListener<XYPane<T>>) c -> {
+        xyPanes_.addListener((ListChangeListener<XYPane<T>>) c -> {
             if (c.wasAdded()) {
-                c.getAddedSubList().forEach(xyPane -> xyPane.addChartEvtObserver(ChartEvt.UPDATE, updateObserver));
+                c.getAddedSubList().forEach(xyPane -> xyPane.addChartEvtObserver(ChartEvt.UPDATE, updateObserver_));
             } else if (c.wasRemoved()) {
-                c.getRemoved().forEach(xyPane -> xyPane.removeChartEvtObserver(ChartEvt.UPDATE, updateObserver));
+                c.getRemoved().forEach(xyPane -> xyPane.removeChartEvtObserver(ChartEvt.UPDATE, updateObserver_));
             }
-            if (xyPanes.size() > 1) {
-                xyPanes.forEach(xyPane -> xyPane.setChartBackground(Color.TRANSPARENT));
+            if (xyPanes_.size() > 1) {
+                xyPanes_.forEach(xyPane -> xyPane.setChartBackground(Color.TRANSPARENT));
             }
             checkReferenceZero();
             refresh();
@@ -203,16 +209,16 @@ public class XYChart<T extends XYItem> extends Region {
             });
         }
 
-        axes.addListener((ListChangeListener<Axis>) c -> {
+        axes_.addListener((ListChangeListener<Axis>) c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(axis -> axis.addChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, axisObserver));
+                    c.getAddedSubList().forEach(axis -> axis.addChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, axisObserver_));
                 } else if (c.wasRemoved()) {
-                    c.getAddedSubList().forEach(axis -> axis.removeChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, axisObserver));
+                    c.getAddedSubList().forEach(axis -> axis.removeChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, axisObserver_));
                 }
             }
         });
-        axes.forEach(axis -> axis.addChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, axisObserver));
+        axes_.forEach(axis -> axis.addChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, axisObserver_));
     }
 
     @Override
@@ -237,8 +243,8 @@ public class XYChart<T extends XYItem> extends Region {
     public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public void dispose() {
-        axes.forEach(axis -> axis.removeChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, axisObserver));
-        xyPanes.forEach(xyPane -> xyPane.dispose());
+        axes_.forEach(axis -> axis.removeChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, axisObserver_));
+        xyPanes_.forEach(xyPane -> xyPane.dispose());
     }
 
     public String getTitle() {return null == titleProperty ? _title : titleProperty.get();}
@@ -274,7 +280,7 @@ public class XYChart<T extends XYItem> extends Region {
     public void setSubTitle(final String SUB_TITLE) {
         if (null == subTitleProperty) {
             _subTitle = SUB_TITLE;
-            xyPanes.forEach(xyPane -> xyPane.redraw());
+            xyPanes_.forEach(xyPane -> xyPane.redraw());
         } else {
             subTitleProperty.set(SUB_TITLE);
         }
@@ -284,7 +290,7 @@ public class XYChart<T extends XYItem> extends Region {
         if (null == subTitleProperty) {
             subTitleProperty = new StringPropertyBase(_subTitle) {
                 @Override
-                protected void invalidated() {xyPanes.forEach(xyPane -> xyPane.redraw());}
+                protected void invalidated() {xyPanes_.forEach(xyPane -> xyPane.redraw());}
 
                 @Override
                 public Object getBean() {return XYChart.this;}
@@ -325,11 +331,11 @@ public class XYChart<T extends XYItem> extends Region {
         return titleColorProperty;
     }
 
-    public Color getSubTitleColor() {return null == subTitleColorProperty ? _subTitleColor : subTitleColorProperty.get();}
+    public Color getSubTitleColor() {return null == subTitleColorProperty ? subTitleColor_ : subTitleColorProperty.get();}
 
     public void setSubTitleColor(final Color SUB_TITLE_COLOR) {
         if (null == subTitleColorProperty) {
-            _subTitleColor = SUB_TITLE_COLOR;
+            subTitleColor_ = SUB_TITLE_COLOR;
             refresh();
         } else {
             subTitleColorProperty.set(SUB_TITLE_COLOR);
@@ -338,7 +344,7 @@ public class XYChart<T extends XYItem> extends Region {
 
     public ObjectProperty<Color> subTitleColorProperty() {
         if (null == subTitleColorProperty) {
-            subTitleColorProperty = new ObjectPropertyBase<>(_subTitleColor) {
+            subTitleColorProperty = new ObjectPropertyBase<>(subTitleColor_) {
                 @Override
                 protected void invalidated() {refresh();}
 
@@ -348,66 +354,71 @@ public class XYChart<T extends XYItem> extends Region {
                 @Override
                 public String getName() {return "subTitleColor";}
             };
-            _subTitleColor = null;
+            subTitleColor_ = null;
         }
         return subTitleColorProperty;
     }
 
     public boolean isReferenceZero() {
-        if (xyPanes.size() > 0) {
-            return xyPanes.get(0).isReferenceZero();
+        if (xyPanes_.size() > 0) {
+            return xyPanes_.get(0).isReferenceZero();
         } else {
             return true;
         }
     }
 
     public void setReferenceZero(final boolean IS_ZERO) {
-        xyPanes.forEach(xyPane -> xyPane.setReferenceZero(IS_ZERO));
+        xyPanes_.forEach(xyPane -> xyPane.setReferenceZero(IS_ZERO));
     }
 
-    public void setGrid(final Grid GRID) {
-        if (null == GRID) return;
-        if (null != grid) {
-            pane.getChildren().remove(grid);
+    /**
+     * set the grid lines
+     *
+     * @param grid {@link Grid}
+     */
+    public void setGrid(final Grid grid) {
+        if (grid == null) return;
+        if (grid_ != null) {
+            pane_.getChildren().remove(grid_);
         }
-        grid = GRID;
-        pane.getChildren().add(0, grid);
+        grid_ = grid;
+        pane_.getChildren().addFirst(grid_);
         adjustGridAnchors();
     }
 
     public XYPane<T> getXYPane() {
-        return xyPanes.size() > 0 ? xyPanes.get(0) : null;
+        return !xyPanes_.isEmpty() ? xyPanes_.getFirst() : null;
     }
 
-    public List<XYPane<T>> getXYPanes() {return xyPanes;}
+    public List<XYPane<T>> getXYPanes() {return xyPanes_;}
 
     public void addXYPane(final XYPane<T> xyPane) {
-        xyPanes.add(xyPane);
+        xyPanes_.add(xyPane);
     }
 
     public void removeXYPane(final XYPane<T> xyPane) {
-        xyPanes.remove(xyPane);
+        xyPanes_.remove(xyPane);
     }
 
-    public List<Marker> getMarkers() {return new ArrayList<>(markers);}
+    public List<Marker> getMarkers() {return new ArrayList<>(markers_);}
 
     public void setMarkers(final List<Marker> markers) {
         List<Marker> validatedMarkers = validateMarkers(markers);
-        this.markers.clear();
-        validatedMarkers.forEach(marker -> this.markers.add(marker));
+        this.markers_.clear();
+        validatedMarkers.forEach(marker -> this.markers_.add(marker));
         refresh();
     }
 
     public void addMarker(final Marker marker) {
-        if (markers.contains(marker)) {
+        if (markers_.contains(marker)) {
             return;
         }
-        markers.add(marker);
+        markers_.add(marker);
         drawMarkerCanvas();
     }
 
     public void refresh() {
-        xyPanes.forEach(xyPane -> xyPane.redraw());
+        xyPanes_.forEach(xyPane -> xyPane.redraw());
         drawMarkerCanvas();
     }
 
@@ -435,14 +446,14 @@ public class XYChart<T extends XYItem> extends Region {
     }
 
     private void drawMarkerCanvas() {
-        if (markerCanvas == null) {
+        if (markerCanvas_ == null) {
             return;
         }
-        markerCtx.clearRect(0, 0, width, height);
-        markerCtx.setTextBaseline(VPos.BASELINE);
-        markerCtx.setLineCap(StrokeLineCap.BUTT);
-        markers.forEach(marker -> {
-            markerCtx.save();
+        markerCtx_.clearRect(0, 0, width, height);
+        markerCtx_.setTextBaseline(VPos.BASELINE);
+        markerCtx_.setLineCap(StrokeLineCap.BUTT);
+        markers_.forEach(marker -> {
+            markerCtx_.save();
             Axis axis = marker.getAxis();
             Bounds axisBounds = axis.getAxisBounds();
             String formatString = marker.getFormatString();
@@ -450,54 +461,54 @@ public class XYChart<T extends XYItem> extends Region {
             double value = marker.getValue();
             double fontSize = axis.getTitleFontSize();
             double lineWidth = marker.getLineWidth();
-            String markerText = new StringBuilder().append(marker.getText()).append(" (").append(String.format(Locale.US, formatString, value)).append(")").toString();
-            markerCtx.setLineWidth(lineWidth);
-            markerCtx.setStroke(marker.getStroke());
+            String markerText = marker.getText() + " (" + String.format(Locale.US, formatString, value) + ")";
+            markerCtx_.setLineWidth(lineWidth);
+            markerCtx_.setStroke(marker.getStroke());
             switch (marker.getLineStyle()) {
                 case SOLID:
-                    markerCtx.setLineDashes();
+                    markerCtx_.setLineDashes();
                     break;
                 case DASHED:
-                    markerCtx.setLineDashes(2 * lineWidth, lineWidth);
+                    markerCtx_.setLineDashes(2 * lineWidth, lineWidth);
                     break;
                 case DOTTED:
-                    markerCtx.setLineDashes(lineWidth, lineWidth);
+                    markerCtx_.setLineDashes(lineWidth, lineWidth);
                     break;
             }
-            markerCtx.setFont(Fonts.latoLight(fontSize * 1.5));
-            markerCtx.setFill(marker.getTextFill());
+            markerCtx_.setFont(Fonts.latoLight(fontSize * 1.5));
+            markerCtx_.setFill(marker.getTextFill());
             switch (axis.getOrientation()) {
                 case VERTICAL -> {
                     double textOffsetX = 5;
                     double textOffsetY = fontSize * 0.8;
                     double y = axisBounds.getMinY() + axis.getMinValue() * stepSize + axisBounds.getHeight() - value * stepSize;
-                    markerCtx.strokeLine(axisBounds.getWidth(), y, width - axisBounds.getWidth(), y);
-                    markerCtx.fillText(markerText, axisBounds.getWidth() + textOffsetX, y - textOffsetY);
+                    markerCtx_.strokeLine(axisBounds.getWidth(), y, width - axisBounds.getWidth(), y);
+                    markerCtx_.fillText(markerText, axisBounds.getWidth() + textOffsetX, y - textOffsetY);
                 }
                 case HORIZONTAL -> {
                     double textOffsetX = 5;
                     double textOffsetY = fontSize * 0.8;
                     double x = axisBounds.getHeight() - axis.getMinValue() * stepSize + value * stepSize;
-                    markerCtx.strokeLine(x, axisBounds.getMinY(), x, height - axisBounds.getHeight());
-                    markerCtx.fillText(markerText, x + textOffsetX, height - axisBounds.getHeight() - textOffsetY);
+                    markerCtx_.strokeLine(x, axisBounds.getMinY(), x, height - axisBounds.getHeight());
+                    markerCtx_.fillText(markerText, x + textOffsetX, height - axisBounds.getHeight() - textOffsetY);
                 }
             }
-            markerCtx.restore();
+            markerCtx_.restore();
         });
 
-        markerCtx.setFill(getTitleColor());
-        markerCtx.setFont(Font.font(size * 0.035));
-        markerCtx.setTextAlign(TextAlignment.CENTER);
-        markerCtx.setTextBaseline(VPos.CENTER);
-        markerCtx.fillText(getTitle(), width * 0.5, height * 0.1, width);
+        markerCtx_.setFill(getTitleColor());
+        markerCtx_.setFont(Font.font(size * 0.035));
+        markerCtx_.setTextAlign(TextAlignment.CENTER);
+        markerCtx_.setTextBaseline(VPos.CENTER);
+        markerCtx_.fillText(getTitle(), width * 0.5, height * 0.1, width);
 
-        markerCtx.setFill(getSubTitleColor());
-        markerCtx.setFont(Font.font(size * 0.0175));
-        markerCtx.fillText(getSubTitle(), width * 0.5, height * 0.1 + size * 0.035 * 1.25, width);
+        markerCtx_.setFill(getSubTitleColor());
+        markerCtx_.setFont(Font.font(size * 0.0175));
+        markerCtx_.fillText(getSubTitle(), width * 0.5, height * 0.1 + size * 0.035 * 1.25, width);
     }
 
     private void checkForAxis() {
-        axes.forEach(axis -> {
+        axes_.forEach(axis -> {
             Position position = axis.getPosition();
             switch (axis.getOrientation()) {
                 case HORIZONTAL:
@@ -551,7 +562,7 @@ public class XYChart<T extends XYItem> extends Region {
     }
 
     private void adjustChartRange() {
-        xyPanes.forEach(xyPane -> {
+        xyPanes_.forEach(xyPane -> {
             if (hasBottomXAxis) {
                 xyPane.setLowerBoundX(xAxisB.getMinValue());
                 xyPane.setUpperBoundX(xAxisB.getMaxValue());
@@ -577,8 +588,8 @@ public class XYChart<T extends XYItem> extends Region {
     }
 
     private void adjustAxisAnchors() {
-        xyPanes.forEach(xyPane -> {
-            axes.forEach(axis -> {
+        xyPanes_.forEach(xyPane -> {
+            axes_.forEach(axis -> {
                 if (Orientation.HORIZONTAL == axis.getOrientation()) {
                     AnchorPane.setLeftAnchor(axis, hasLeftYAxis ? leftAxisWidth : 0d);
                     AnchorPane.setRightAnchor(axis, hasRightYAxis ? rightAxisWidth : 0d);
@@ -638,16 +649,16 @@ public class XYChart<T extends XYItem> extends Region {
     }
 
     private void adjustGridAnchors() {
-        if (null == grid) return;
-        AnchorPane.setLeftAnchor(grid, hasLeftYAxis ? leftAxisWidth : 0d);
-        AnchorPane.setRightAnchor(grid, hasRightYAxis ? rightAxisWidth : 0d);
-        AnchorPane.setTopAnchor(grid, hasTopXAxis ? topAxisHeight : 0d);
-        AnchorPane.setBottomAnchor(grid, hasBottomXAxis ? bottomAxisHeight : 0d);
+        if (null == grid_) return;
+        AnchorPane.setLeftAnchor(grid_, hasLeftYAxis ? leftAxisWidth : 0d);
+        AnchorPane.setRightAnchor(grid_, hasRightYAxis ? rightAxisWidth : 0d);
+        AnchorPane.setTopAnchor(grid_, hasTopXAxis ? topAxisHeight : 0d);
+        AnchorPane.setBottomAnchor(grid_, hasBottomXAxis ? bottomAxisHeight : 0d);
     }
 
     private void setupBinding() {
-        showing = Bindings.selectBoolean(sceneProperty(), "window", "showing");
-        showing.addListener((o, ov, nv) -> {
+        showing_ = Bindings.selectBoolean(sceneProperty(), "window", "showing");
+        showing_.addListener((o, ov, nv) -> {
             if (nv) {
                 adjustCenterAxisAnchors();
             }
@@ -656,8 +667,8 @@ public class XYChart<T extends XYItem> extends Region {
 
     private void checkReferenceZero() {
         boolean isReferenceZero = true;
-        if (xyPanes.size() > 0) {
-            isReferenceZero = xyPanes.get(0).isReferenceZero();
+        if (xyPanes_.size() > 0) {
+            isReferenceZero = xyPanes_.get(0).isReferenceZero();
         }
         setReferenceZero(isReferenceZero);
     }
@@ -665,7 +676,7 @@ public class XYChart<T extends XYItem> extends Region {
     private List<Marker> validateMarkers(final List<Marker> markersToValidate) {
         List<Marker> validatedMarkers = new ArrayList<>();
         markersToValidate.forEach(marker -> {
-            if (axes.contains(marker.getAxis())) {
+            if (axes_.contains(marker.getAxis())) {
                 validatedMarkers.add(marker);
             }
         });
@@ -680,13 +691,13 @@ public class XYChart<T extends XYItem> extends Region {
         size = Math.max(width, height);
 
         if (width > 0 && height > 0) {
-            pane.setMaxSize(width, height);
-            pane.setPrefSize(width, height);
-            pane.relocate((getWidth() - width) * 0.5, (getHeight() - height) * 0.5);
+            pane_.setMaxSize(width, height);
+            pane_.setPrefSize(width, height);
+            pane_.relocate((getWidth() - width) * 0.5, (getHeight() - height) * 0.5);
 
-            markerCanvas.setWidth(width);
-            markerCanvas.setHeight(height);
-            markerCanvas.relocate(getInsets().getLeft(), getInsets().getTop());
+            markerCanvas_.setWidth(width);
+            markerCanvas_.setHeight(height);
+            markerCanvas_.relocate(getInsets().getLeft(), getInsets().getTop());
 
             adjustCenterAxisAnchors();
 

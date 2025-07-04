@@ -34,7 +34,6 @@ public class ParetoTest extends Application {
         pane.setPadding(new Insets(10));
         Scene scene = new Scene(pane);
 
-
         stage.setTitle("Pareto Chart");
         stage.setScene(scene);
         stage.setWidth(1200);
