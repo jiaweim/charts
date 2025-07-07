@@ -1,10 +1,6 @@
 # Charts
 
-[![GitHub stars](https://badgen.net/github/stars/HanSolo/charts)](https://GitHub.com/HanSolo/charts/stargazers/)
-
-[![GitHub license](https://badgen.net/github/license/HanSolo/charts)](https://github.com/HanSolo/charts/blob/master/LICENSE)
-
-[![JFXCentral](https://img.shields.io/badge/Find_me_on-JFXCentral-blue?logo=googlechrome&logoColor=white)](https://www.jfx-central.com/libraries/charts)
+[![GitHub license](https://badgen.net/github/license/HanSolo/charts)](https://github.com/jiaweim/charts/blob/master/LICENSE)
 
 <br>
 A library for scientific charts in JavaFX. 
@@ -13,12 +9,10 @@ Most of the charts are implemented by making use of the JavaFX Canvas node, this
 
 This is still a work in development, but here are some of the charts being worked on so far.
 
-## Getting started
-Please take a look at the [gettingstarted](https://github.com/HanSolo/gettingstarted) project to learn how to get started with charts
-related to imports, required modules etc.
+## Chart Types
 
 
-## Area heat map
+### Area heat map
 ![Area heat map](https://i.ibb.co/kM77mrL/Area-Heat-Map-2020-09-04-07-47-41.png)
 
 
