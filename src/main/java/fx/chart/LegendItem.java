@@ -1,7 +1,7 @@
 package fx.chart;
 
-import fx.chart.toolboxfx.HelperFX;
 import fx.chart.font.Fonts;
+import fx.chart.toolboxfx.HelperFX;
 import fx.chart.toolboxfx.geom.Dimension;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;
@@ -26,6 +26,14 @@ import javafx.scene.text.TextAlignment;
  * Date: 05.01.18
  * Time: 20:33
  */
+/**
+ *
+ *
+ * @author Jiawei Mao
+ * @author Gerrit Grunwald
+ * @version 1.0.0
+ * @since 2025-07-07, 21:57
+ */
 @DefaultProperty("children")
 public class LegendItem extends Region {
 
@@ -35,19 +43,20 @@ public class LegendItem extends Region {
     private static final double MINIMUM_HEIGHT = 8;
     private static final double MAXIMUM_WIDTH = 1024;
     private static final double MAXIMUM_HEIGHT = 1024;
+
     private double size;
     private double width;
     private double height;
-    private Symbol _symbol;
-    private ObjectProperty<Symbol> symbol;
-    private String _text;
-    private StringProperty text;
-    private Color _symbolFill;
-    private ObjectProperty<Color> symbolFill;
-    private Color _symbolStroke;
-    private ObjectProperty<Color> symbolStroke;
-    private Color _textColor;
-    private ObjectProperty<Color> textColor;
+    private Symbol symbol_;
+    private ObjectProperty<Symbol> symbolProperty;
+    private String text_;
+    private StringProperty textProperty;
+    private Color symbolFill_;
+    private ObjectProperty<Color> symbolFillProperty;
+    private Color symbolStroke_;
+    private ObjectProperty<Color> symbolStrokeProperty;
+    private Color textColor_;
+    private ObjectProperty<Color> textColorProperty;
     private double symbolSize;
     private Canvas canvas;
     private GraphicsContext ctx;
@@ -55,8 +64,6 @@ public class LegendItem extends Region {
     private Dimension textDim;
     private Pane pane;
 
-
-    // ******************** Constructors **************************************
     public LegendItem(final String TEXT, final Color SYMBOL_COLOR) {
         this(Symbol.CIRCLE, TEXT, SYMBOL_COLOR, Color.WHITE, Color.BLACK);
     }
@@ -69,12 +76,21 @@ public class LegendItem extends Region {
         this(SYMBOL, TEXT, SYMBOL_FILL, SYMBOL_STROKE, Color.BLACK);
     }
 
-    public LegendItem(final Symbol SYMBOL, final String TEXT, final Color SYMBOL_FILL, final Color SYMBOL_STROKE, final Color TEXT_COLOR) {
-        _symbol = SYMBOL;
-        _text = TEXT;
-        _symbolFill = SYMBOL_FILL;
-        _symbolStroke = SYMBOL_STROKE;
-        _textColor = TEXT_COLOR;
+    /**
+     * Create a {@link LegendItem}
+     *
+     * @param symbol
+     * @param text
+     * @param symbolFill
+     * @param symbolStroke
+     * @param textColor
+     */
+    public LegendItem(final Symbol symbol, final String text, final Color symbolFill, final Color symbolStroke, final Color textColor) {
+        symbol_ = symbol;
+        text_ = text;
+        symbolFill_ = symbolFill;
+        symbolStroke_ = symbolStroke;
+        textColor_ = textColor;
         initGraphics();
         registerListeners();
     }
@@ -140,20 +156,20 @@ public class LegendItem extends Region {
     @Override
     public ObservableList<Node> getChildren() {return super.getChildren();}
 
-    public Symbol getSymbol() {return null == symbol ? _symbol : symbol.get();}
+    public Symbol getSymbol() {return null == symbolProperty ? symbol_ : symbolProperty.get();}
 
     public void setSymbol(final Symbol SYMBOL) {
-        if (null == symbol) {
-            _symbol = SYMBOL;
+        if (null == symbolProperty) {
+            symbol_ = SYMBOL;
             redraw();
         } else {
-            symbol.set(SYMBOL);
+            symbolProperty.set(SYMBOL);
         }
     }
 
     public ObjectProperty<Symbol> symbolProperty() {
-        if (null == symbol) {
-            symbol = new ObjectPropertyBase<Symbol>(_symbol) {
+        if (null == symbolProperty) {
+            symbolProperty = new ObjectPropertyBase<Symbol>(symbol_) {
                 @Override
                 protected void invalidated() {redraw();}
 
@@ -163,25 +179,25 @@ public class LegendItem extends Region {
                 @Override
                 public String getName() {return "symbol";}
             };
-            _symbol = null;
+            symbol_ = null;
         }
-        return symbol;
+        return symbolProperty;
     }
 
-    public String getText() {return null == text ? _text : text.get();}
+    public String getText() {return null == textProperty ? text_ : textProperty.get();}
 
     public void setText(final String TEXT) {
-        if (null == text) {
-            _text = TEXT;
+        if (null == textProperty) {
+            text_ = TEXT;
             resize();
         } else {
-            text.set(TEXT);
+            textProperty.set(TEXT);
         }
     }
 
     public StringProperty textProperty() {
-        if (null == text) {
-            text = new StringPropertyBase(_text) {
+        if (null == textProperty) {
+            textProperty = new StringPropertyBase(text_) {
                 @Override
                 protected void invalidated() {resize();}
 
@@ -191,25 +207,25 @@ public class LegendItem extends Region {
                 @Override
                 public String getName() {return "text";}
             };
-            _text = null;
+            text_ = null;
         }
-        return text;
+        return textProperty;
     }
 
-    public Color getSymbolFill() {return null == symbolFill ? _symbolFill : symbolFill.get();}
+    public Color getSymbolFill() {return null == symbolFillProperty ? symbolFill_ : symbolFillProperty.get();}
 
     public void setSymbolFill(final Color COLOR) {
-        if (null == symbolFill) {
-            _symbolFill = COLOR;
+        if (null == symbolFillProperty) {
+            symbolFill_ = COLOR;
             redraw();
         } else {
-            symbolFill.set(COLOR);
+            symbolFillProperty.set(COLOR);
         }
     }
 
     public ObjectProperty<Color> symbolFillProperty() {
-        if (null == symbolFill) {
-            symbolFill = new ObjectPropertyBase<Color>(_symbolFill) {
+        if (null == symbolFillProperty) {
+            symbolFillProperty = new ObjectPropertyBase<Color>(symbolFill_) {
                 @Override
                 protected void invalidated() {redraw();}
 
@@ -219,25 +235,25 @@ public class LegendItem extends Region {
                 @Override
                 public String getName() {return "symbolFill";}
             };
-            _symbolFill = null;
+            symbolFill_ = null;
         }
-        return symbolFill;
+        return symbolFillProperty;
     }
 
-    public Color getSymbolStroke() {return null == symbolStroke ? _symbolStroke : symbolStroke.get();}
+    public Color getSymbolStroke() {return null == symbolStrokeProperty ? symbolStroke_ : symbolStrokeProperty.get();}
 
     public void setSymbolStroke(final Color COLOR) {
-        if (null == symbolStroke) {
-            _symbolStroke = COLOR;
+        if (null == symbolStrokeProperty) {
+            symbolStroke_ = COLOR;
             redraw();
         } else {
-            symbolStroke.set(COLOR);
+            symbolStrokeProperty.set(COLOR);
         }
     }
 
     public ObjectProperty<Color> symbolStrokeProperty() {
-        if (null == symbolStroke) {
-            symbolStroke = new ObjectPropertyBase<Color>(_symbolStroke) {
+        if (null == symbolStrokeProperty) {
+            symbolStrokeProperty = new ObjectPropertyBase<Color>(symbolStroke_) {
                 @Override
                 protected void invalidated() {redraw();}
 
@@ -247,25 +263,25 @@ public class LegendItem extends Region {
                 @Override
                 public String getName() {return "symbolStroke";}
             };
-            _symbolStroke = null;
+            symbolStroke_ = null;
         }
-        return symbolStroke;
+        return symbolStrokeProperty;
     }
 
-    public Color getTextColor() {return null == textColor ? _textColor : textColor.get();}
+    public Color getTextColor() {return null == textColorProperty ? textColor_ : textColorProperty.get();}
 
     public void setTextColor(final Color COLOR) {
-        if (null == textColor) {
-            _textColor = COLOR;
+        if (null == textColorProperty) {
+            textColor_ = COLOR;
             redraw();
         } else {
-            textColor.set(COLOR);
+            textColorProperty.set(COLOR);
         }
     }
 
     public ObjectProperty<Color> textColorProperty() {
-        if (null == textColor) {
-            textColor = new ObjectPropertyBase<Color>(_textColor) {
+        if (null == textColorProperty) {
+            textColorProperty = new ObjectPropertyBase<Color>(textColor_) {
                 @Override
                 protected void invalidated() {redraw();}
 
@@ -275,9 +291,9 @@ public class LegendItem extends Region {
                 @Override
                 public String getName() {return "textColor";}
             };
-            _textColor = null;
+            textColor_ = null;
         }
-        return textColor;
+        return textColorProperty;
     }
 
 

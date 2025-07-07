@@ -28,10 +28,10 @@ public class AreaHeatMapTest extends Application {
     @Override
     public void init() {
         List<DataPoint> randomPoints = new ArrayList<>(29);
-        //randomPoints.add(new DataPoint(0, 0, 0));
-        //randomPoints.add(new DataPoint(400, 0, 0));
-        //randomPoints.add(new DataPoint(400, 400, 0));
-        //randomPoints.add(new DataPoint(0, 400, 0));
+        randomPoints.add(new DataPoint(0, 0, 0));
+        randomPoints.add(new DataPoint(400, 0, 0));
+        randomPoints.add(new DataPoint(400, 400, 0));
+        randomPoints.add(new DataPoint(0, 400, 0));
         for (int counter = 0; counter < 25; counter++) {
             double x = RND.nextDouble() * 400;
             double y = RND.nextDouble() * 400;
