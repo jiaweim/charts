@@ -37,13 +37,13 @@ public final class ChartFactory {
         leftAxis.setTitle(yAxisLabel);
         leftAxis.setDecimals(yDecimal);
         leftAxis.setTickLabelFontSize(12);
-        leftAxis.setAutoFontSize(false);
+        leftAxis.setAutoTickLabelFontSize(false);
 
         Axis bottomAxis = Axis.bottom(minX, maxX, 36.);
         bottomAxis.setTitle(xAxisLabel);
         bottomAxis.setDecimals(xDecimal);
         bottomAxis.setTickLabelFontSize(12);
-        bottomAxis.setAutoFontSize(false);
+        bottomAxis.setAutoTickLabelFontSize(false);
 
         XYPane pane = new XYPane(series);
 

@@ -513,7 +513,7 @@ public class AxisBuilder {
                         axis.setTickLabelOrientation(((ObjectProperty<TickLabelOrientation>) property).get());
                 case "tickLabelFormat" -> axis.setTickLabelFormat(((ObjectProperty<TickLabelFormat>) property).get());
                 case "autoTitleFontSize" -> axis.setAutoTitleFontSize(((BooleanProperty) property).get());
-                case "autoFontSize" -> axis.setAutoFontSize(((BooleanProperty) property).get());
+                case "autoFontSize" -> axis.setAutoTickLabelFontSize(((BooleanProperty) property).get());
                 case "tickLabelFontSize" -> axis.setTickLabelFontSize(((DoubleProperty) property).get());
                 case "titleFontSize" -> axis.setTitleFontSize(((DoubleProperty) property).get());
                 case "zoneId" -> axis.setZoneId(((ObjectProperty<ZoneId>) property).get());

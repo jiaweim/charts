@@ -1,7 +1,7 @@
 package fx.chart.data;
 
 import fx.chart.Symbol;
-import fx.chart.tools.Helper;
+import fx.chart.util.TimeUtils;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.scene.paint.Color;
@@ -35,7 +35,7 @@ public class TYChartItem extends XYChartItem {
     }
 
     public TYChartItem(final LocalDateTime T, final double Y, final String NAME, final Color FILL, final Symbol SYMBOL) {
-        super(T.toEpochSecond(Helper.getZoneOffset()), Y, NAME, FILL, Color.TRANSPARENT, SYMBOL);
+        super(T.toEpochSecond(TimeUtils.getZoneOffset()), Y, NAME, FILL, Color.TRANSPARENT, SYMBOL);
         _t = T;
     }
 
@@ -44,7 +44,7 @@ public class TYChartItem extends XYChartItem {
     public void setT(final LocalDateTime T) {
         if (null == tProperty) {
             _t = T;
-            super.setX(_t.toEpochSecond(Helper.getZoneOffset()));
+            super.setX(_t.toEpochSecond(TimeUtils.getZoneOffset()));
         } else {
             tProperty.set(T);
         }
@@ -54,7 +54,7 @@ public class TYChartItem extends XYChartItem {
         if (null == tProperty) {
             tProperty = new ObjectPropertyBase<>(_t) {
                 @Override
-                protected void invalidated() {TYChartItem.super.setX(get().toEpochSecond(Helper.getZoneOffset()));}
+                protected void invalidated() {TYChartItem.super.setX(get().toEpochSecond(TimeUtils.getZoneOffset()));}
 
                 @Override
                 public Object getBean() {return TYChartItem.this;}
