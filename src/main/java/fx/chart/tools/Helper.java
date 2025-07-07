@@ -6,6 +6,7 @@ import fx.chart.data.DataPoint;
 import fx.chart.data.XYChartItem;
 import fx.chart.toolboxfx.geom.*;
 import fx.chart.util.Constants;
+import fx.chart.util.TimeUtils;
 import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -45,7 +46,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.Map.Entry;
@@ -938,14 +942,14 @@ public class Helper {
         return convexHull;
     }
 
-    private static final <T extends Point> double distance(final T P1, final T P2, final T P3) {
+    private static <T extends Point> double distance(final T P1, final T P2, final T P3) {
         double deltaX = P2.getX() - P1.getX();
         double deltaY = P2.getY() - P1.getY();
         double num = deltaX * (P1.getY() - P3.getY()) - deltaY * (P1.getX() - P3.getX());
         return Math.abs(num);
     }
 
-    private static final <T extends Point> void hullSet(final T P1, final T P2, final List<T> POINTS, final List<T> HULL) {
+    private static <T extends Point> void hullSet(final T P1, final T P2, final List<T> POINTS, final List<T> HULL) {
         int insertPosition = HULL.indexOf(P2);
 
         if (POINTS.size() == 0) {
@@ -994,16 +998,16 @@ public class Helper {
         hullSet(point, P2, leftSetPB, HULL);
     }
 
-    private static final <T extends Point> int pointLocation(final T P1, final T P2, final T P3) {
+    private static <T extends Point> int pointLocation(final T P1, final T P2, final T P3) {
         double cp1 = (P2.getX() - P1.getX()) * (P3.getY() - P1.getY()) - (P2.getY() - P1.getY()) * (P3.getX() - P1.getX());
         return cp1 > 0 ? 1 : Double.compare(cp1, 0) == 0 ? 0 : -1;
     }
 
-    public static final Color interpolateColor(final Color COLOR1, final Color COLOR2, final double FRACTION) {
+    public static Color interpolateColor(final Color COLOR1, final Color COLOR2, final double FRACTION) {
         return interpolateColor(COLOR1, COLOR2, FRACTION, -1);
     }
 
-    public static final Color getColorWithOpacityAt(final LinearGradient GRADIENT, final double FRACTION, final double TARGET_OPACITY) {
+    public static Color getColorWithOpacityAt(final LinearGradient GRADIENT, final double FRACTION, final double TARGET_OPACITY) {
         List<Stop> stops = GRADIENT.getStops();
         double fraction = FRACTION < 0f ? 0f : (FRACTION > 1 ? 1 : FRACTION);
         Stop lowerStop = new Stop(0.0, stops.get(0).getColor());
@@ -1057,34 +1061,18 @@ public class Helper {
         return Color.color(red, green, blue, opacity);
     }
 
-    public static final <T> Predicate<T> not(Predicate<T> predicate) {return predicate.negate();}
+    public static <T> Predicate<T> not(Predicate<T> predicate) {return predicate.negate();}
 
-    public static final ZoneOffset getZoneOffset() {return getZoneOffset(ZoneId.systemDefault());}
+    public static LocalDateTime toRealValue(final double VALUE) {return TimeUtils.toDateTime((long) VALUE);}
 
-    public static final ZoneOffset getZoneOffset(final ZoneId ZONE_ID) {return ZONE_ID.getRules().getOffset(Instant.now());}
+    public static LocalDateTime toRealValue(final double VALUE, final ZoneId ZONE_ID) {return TimeUtils.toDateTime((long) VALUE, ZONE_ID);}
 
-    public static final long toMillis(final LocalDateTime DATE_TIME, final ZoneOffset ZONE_OFFSET) {return toSeconds(DATE_TIME, ZONE_OFFSET) * 1000;}
-
-    public static final long toSeconds(final LocalDateTime DATE_TIME, final ZoneOffset ZONE_OFFSET) {return DATE_TIME.toEpochSecond(ZONE_OFFSET);}
-
-    public static final double toNumericValue(final LocalDateTime DATE) {return toNumericValue(DATE, ZoneId.systemDefault());}
-
-    public static final double toNumericValue(final LocalDateTime DATE, final ZoneId ZONE_ID) {return Helper.toSeconds(DATE, Helper.getZoneOffset(ZONE_ID));}
-
-    public static final LocalDateTime toRealValue(final double VALUE) {return secondsToLocalDateTime((long) VALUE);}
-
-    public static final LocalDateTime toRealValue(final double VALUE, final ZoneId ZONE_ID) {return secondsToLocalDateTime((long) VALUE, ZONE_ID);}
-
-    public static final LocalDateTime secondsToLocalDateTime(final long SECONDS) {return LocalDateTime.ofInstant(Instant.ofEpochSecond(SECONDS), ZoneId.systemDefault());}
-
-    public static final LocalDateTime secondsToLocalDateTime(final long SECONDS, final ZoneId ZONE_ID) {return LocalDateTime.ofInstant(Instant.ofEpochSecond(SECONDS), ZONE_ID);}
-
-    public static final String secondsToHHMMString(final long SECONDS) {
+    public static String secondsToHHMMString(final long SECONDS) {
         long[] hhmmss = secondsToHHMMSS(SECONDS);
         return String.format("%02d:%02d:%02d", hhmmss[0], hhmmss[1], hhmmss[2]);
     }
 
-    public static final long[] secondsToHHMMSS(final long SECONDS) {
+    public static long[] secondsToHHMMSS(final long SECONDS) {
         long seconds = SECONDS % 60;
         long minutes = (SECONDS / 60) % 60;
         long hours = (SECONDS / (60 * 60)) % 24;

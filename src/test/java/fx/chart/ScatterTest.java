@@ -70,7 +70,7 @@ public class ScatterTest extends Application {
 //        scatterChartXAxisCenter.setTickLabelFont(Axis.DEFAULT_TICK_LABEL_FONT);
         scatterChartXAxisCenter.setTickLabelFontSize(12);
         scatterChartYAxisCenter.setTickLabelFontSize(16);
-        scatterChartXAxisCenter.setAutoFontSize(false);
+        scatterChartXAxisCenter.setAutoTickLabelFontSize(false);
 
     }
 
