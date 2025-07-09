@@ -1,7 +1,5 @@
 package fx.chart.toolboxfx.geom;
 
-import fx.chart.util.Helper;
-
 import static fx.chart.util.Constants.*;
 
 public class CornerRadii {
@@ -28,23 +26,21 @@ public class CornerRadii {
         this.bottomLeft = bottomLeft;
     }
 
-
-    // ******************** Methods *******************************************
     public double getTopLeft() {return topLeft;}
 
-    public void setTopLeft(final double value) {topLeft = Helper.clamp(0, Double.MAX_VALUE, value);}
+    public void setTopLeft(final double value) {topLeft = Math.clamp(value, 0, Double.MAX_VALUE);}
 
     public double getTopRight() {return topRight;}
 
-    public void setTopRight(final double value) {topRight = Helper.clamp(0, Double.MAX_VALUE, value);}
+    public void setTopRight(final double value) {topRight = Math.clamp(value, 0, Double.MAX_VALUE);}
 
     public double getBottomRight() {return bottomRight;}
 
-    public void setBottomRight(final double value) {bottomRight = Helper.clamp(0, Double.MAX_VALUE, value);}
+    public void setBottomRight(final double value) {bottomRight = Math.clamp(value, 0, Double.MAX_VALUE);}
 
     public double getBottomLeft() {return bottomLeft;}
 
-    public void setBottomLeft(final double value) {bottomLeft = Helper.clamp(0, Double.MAX_VALUE, value);}
+    public void setBottomLeft(final double value) {bottomLeft = Math.clamp(value, 0, Double.MAX_VALUE);}
 
     @Override
     public String toString() {

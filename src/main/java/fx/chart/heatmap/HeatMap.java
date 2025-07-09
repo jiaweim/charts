@@ -1,6 +1,5 @@
 package fx.chart.heatmap;
 
-import fx.chart.util.Helper;
 import fx.chart.toolboxfx.HelperFX;
 import fx.chart.toolboxfx.geom.Point;
 import javafx.animation.Interpolator;
@@ -61,12 +60,12 @@ public class HeatMap extends ImageView {
 
     public HeatMap(final double width, final double height, Mapping colorMapping, final double spotRadius, final boolean fadeColors, final double heatMapOpacity, final OpacityDistribution opacityDistribution) {
         super();
-        this.width = (int) Helper.clamp(10, 4096, width);
-        this.height = (int) Helper.clamp(10, 4096, height);
-        this.oldWidth = (int) Helper.clamp(10, 4096, width);
-        this.oldHeight = (int) Helper.clamp(10, 4096, height);
+        this.width = (int) Math.clamp(width, 10, 4096);
+        this.height = (int) Math.clamp(height, 10, 4096);
+        this.oldWidth = (int) Math.clamp(width, 10, 4096);
+        this.oldHeight = (int) Math.clamp(height, 10, 4096);
         this.colorMapping = null == colorMapping ? ColorMapping.INFRARED_4 : colorMapping;
-        this.spotRadius = Helper.clamp(1, 30, spotRadius);
+        this.spotRadius = Math.clamp(spotRadius, 1, 30);
         this.fadeColors = fadeColors;
         this.opacityDistribution = null == opacityDistribution ? OpacityDistribution.LINEAR : opacityDistribution;
 

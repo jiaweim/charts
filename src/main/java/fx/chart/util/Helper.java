@@ -6,14 +6,9 @@ import fx.chart.util.geo.GeoLocation;
 import java.io.*;
 import java.lang.management.*;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.time.temporal.ChronoField;
 import java.time.temporal.WeekFields;
 import java.util.*;
@@ -32,6 +27,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 
 public class Helper {
+
     private Helper() {}
 
     private static final String[] DETECT_ALPINE_CMDS = {"/bin/sh", "-c", "cat /etc/os-release | grep 'NAME=' | grep -ic 'Alpine'"};
@@ -141,130 +137,14 @@ public class Helper {
         }
     }
 
-    public static final <T extends Number> T clamp(final T min, final T max, final T value) {
-        if (value.doubleValue() < min.doubleValue()) return min;
-        if (value.doubleValue() > max.doubleValue()) return max;
-        return value;
+    public static double round(final double value, final int precision) {
+        final int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
     }
 
-    public static final int clamp(final int min, final int max, final int value) {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
+    public static boolean equals(final double a, final double b) {return a == b || Math.abs(a - b) < EPSILON;}
 
-    public static final long clamp(final long min, final long max, final long value) {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
-
-    public static final double clamp(final double min, final double max, final double value) {
-        if (Double.compare(value, min) < 0) return min;
-        if (Double.compare(value, max) > 0) return max;
-        return value;
-    }
-
-    public static final Instant clamp(final Instant min, final Instant max, final Instant value) {
-        if (value.isBefore(min)) return min;
-        if (value.isAfter(max)) return max;
-        return value;
-    }
-
-    public static final LocalDateTime clamp(final LocalDateTime min, final LocalDateTime max, final LocalDateTime value) {
-        if (value.isBefore(min)) return min;
-        if (value.isAfter(max)) return max;
-        return value;
-    }
-
-    public static final LocalDate clamp(final LocalDate min, final LocalDate max, final LocalDate value) {
-        if (value.isBefore(min)) return min;
-        if (value.isAfter(max)) return max;
-        return value;
-    }
-
-    public static final double clampMin(final double min, final double value) {
-        if (value < min) return min;
-        return value;
-    }
-
-    public static final double clampMax(final double max, final double value) {
-        if (value > max) return max;
-        return value;
-    }
-
-    public static final boolean almostEqual(final double value1, final double value2, final double epsilon) {
-        return Math.abs(value1 - value2) < epsilon;
-    }
-
-    public static final double round(final double value, final int precision) {
-        final int SCALE = (int) Math.pow(10, precision);
-        return (double) Math.round(value * SCALE) / SCALE;
-    }
-
-    public static final double roundTo(final double value, final double target) {return target * (Math.round(value / target));}
-
-    public static final double roundToHalf(final double value) {return Math.round(value * 2) / 2.0;}
-
-    public static final int roundDoubleToInt(final double value) {
-        double dAbs = Math.abs(value);
-        int i = (int) dAbs;
-        double result = dAbs - (double) i;
-        if (result < 0.5) {
-            return value < 0 ? -i : i;
-        } else {
-            return value < 0 ? -(i + 1) : i + 1;
-        }
-    }
-
-    public static final boolean equals(final double a, final double b) {return a == b || Math.abs(a - b) < EPSILON;}
-
-    public static final boolean biggerThan(final double a, final double b) {return (a - b) > EPSILON;}
-
-    public static final boolean lessThan(final double a, final double b) {return (b - a) > EPSILON;}
-
-    public static final boolean isPositiveInteger(final String text) {
-        if (null == text || text.isEmpty()) {
-            return false;
-        }
-        return Constants.POSITIVE_INTEGER_PATTERN.matcher(text).matches();
-    }
-
-    public static final String trimPrefix(final String text, final String prefix) {
-        return text.replaceFirst(prefix, "");
-    }
-
-    public static final DateTimeFormatter getDateFormat(final Locale locale) {
-        if (Locale.US == locale) {
-            return DateTimeFormatter.ofPattern("MM/dd/YYYY");
-        } else if (Locale.CHINA == locale) {
-            return DateTimeFormatter.ofPattern("YYYY.MM.dd");
-        } else {
-            return DateTimeFormatter.ofPattern("dd.MM.YYYY");
-        }
-    }
-
-    public static final DateTimeFormatter getLocalizedDateFormat(final Locale locale) {
-        return DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale);
-    }
-
-    public static final String normalize(final String text) {
-        String normalized = text.replace("\u00fc", "ue")
-                .replace("\u00f6", "oe")
-                .replace("\u00e4", "ae")
-                .replace("\u00df", "ss");
-
-        normalized = normalized.replace("\u00dc(?=[a-z\u00fc\u00f6\u00e4\u00df ])", "Ue")
-                .replace("\u00d6(?=[a-z\u00fc\u00f6\u00e4\u00df ])", "Oe")
-                .replace("\u00c4(?=[a-z\u00fc\u00f6\u00e4\u00df ])", "Ae");
-
-        normalized = normalized.replace("\u00dc", "UE")
-                .replace("\u00d6", "OE")
-                .replace("\u00c4", "AE");
-        return normalized;
-    }
-
-    public static final int getDegrees(final double decDeg) {return (int) decDeg;}
+    public static int getDegrees(final double decDeg) {return (int) decDeg;}
 
     public static final int getMinutes(final double decDeg) {return (int) ((decDeg - getDegrees(decDeg)) * 60);}
 
@@ -290,134 +170,38 @@ public class Helper {
         }, ArrayList::new);
     }
 
-    public static final double getDoubleFromText(final String text) {
-        if (null == text || text.isEmpty()) {
-            return 0.0;
-        }
-        FLOAT_MATCHER.reset(text);
-        String result = "";
-        double number = 0;
-        try {
-            while (FLOAT_MATCHER.find()) {
-                result = FLOAT_MATCHER.group(0);
-            }
-            number = Double.parseDouble(result);
-        } catch (IllegalStateException | NumberFormatException ex) {
-            return 0.0;
-        }
-        return number;
-    }
-
-    public static final int getIntFromText(final String text) {
-        INT_MATCHER.reset(text);
-        String result = "";
-        int number = 0;
-        try {
-            while (INT_MATCHER.find()) {
-                result = INT_MATCHER.group(0);
-            }
-            number = Integer.parseInt(result);
-        } catch (IllegalStateException | NumberFormatException ex) {
-            return 0;
-        }
-
-        return number;
-    }
-
-    public static final String getHexColorFromString(final String text) {
-        HEX_MATCHER.reset(text);
-        String result = "";
-        try {
-            while (HEX_MATCHER.find()) {
-                result = HEX_MATCHER.group(0);
-            }
-        } catch (IllegalStateException ex) {
-            return "-";
-        }
-        return result;
-    }
-
-    public static final String readFromInputStream(final InputStream inputStream) throws IOException {
-        StringBuilder resultStringBuilder = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, Charset.defaultCharset()))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                resultStringBuilder.append(line).append("\n");
-            }
-        }
-        return resultStringBuilder.toString();
-    }
-
-    public static final String readTextFileToString(final String filename) {
-        if (null == filename || !new File(filename).exists()) {
-            throw new IllegalArgumentException("File: " + filename + " not found or null");
-        }
-        try {
-            Path fileObj = Path.of(filename);
-            return Files.readString(fileObj);
-        } catch (IOException e) {
-            return "";
-        }
-    }
-
-    public static final String readTextFileToString(final File file) {
-        if (null == file || !file.isFile()) {
-            throw new IllegalArgumentException("Given file is either null or no file");
-        }
-        try {
-            Path fileObj = file.toPath();
-            return Files.readString(fileObj);
-        } catch (IOException e) {
-            return "";
-        }
-    }
-
-    public static final void saveStringToTextFile(final String filename, final String text) {
-        if (null == filename || filename.isEmpty()) {
-            throw new IllegalArgumentException("filename cannot be null or empty");
-        }
-        if (null == text || text.isEmpty()) {
-            throw new IllegalArgumentException("text cannot be null or empty");
-        }
-        try {
-            Files.write(Paths.get("/" + filename), text.getBytes(Charset.defaultCharset()));
-        } catch (IOException e) {
-            //System.out.println("Error saving download text file. " + e);
-        }
-    }
-
-    public static final LocalDate getFirstDayOfWeek(final int year, final int weekNumber, final Locale locale) {
+    public static LocalDate getFirstDayOfWeek(final int year, final int weekNumber, final Locale locale) {
         return LocalDate
                 .of(year, 2, 1)
                 .with(WeekFields.of(locale).getFirstDayOfWeek())
                 .with(WeekFields.of(locale).weekOfWeekBasedYear(), weekNumber);
     }
 
-    public static final long getEpochSecondsOfFirstDayOfWeek(final int year, final int weekNumber, final Locale locale) {
+    public static long getEpochSecondsOfFirstDayOfWeek(final int year, final int weekNumber, final Locale locale) {
         return getFirstDayOfWeek(year, weekNumber, locale).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
     }
 
-    public static final LocalDate getLastDayOfWeek(final int year, final int weekNumber, final Locale locale) {
+    public static LocalDate getLastDayOfWeek(final int year, final int weekNumber, final Locale locale) {
         return getFirstDayOfWeek(year, weekNumber, locale).plusDays(6);
     }
 
-    public static final long getEpochSecondsOfLastDayOfWeek(final int year, final int weekNumber, final Locale locale) {
+    public static long getEpochSecondsOfLastDayOfWeek(final int year, final int weekNumber, final Locale locale) {
         return getLastDayOfWeek(year, weekNumber, locale).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
     }
 
-    public static final int getWeekOfYear(final ZonedDateTime zonedDateTime) {return getWeekOfYear(zonedDateTime.toInstant(), zonedDateTime.getZone());}
+    public static int getWeekOfYear(final ZonedDateTime zonedDateTime) {return getWeekOfYear(zonedDateTime.toInstant(), zonedDateTime.getZone());}
 
-    public static final int getWeekOfYeear(final Instant instant) {return getWeekOfYear(instant, ZoneId.systemDefault());}
+    public static int getWeekOfYeear(final Instant instant) {return getWeekOfYear(instant, ZoneId.systemDefault());}
 
-    public static final int getWeekOfYear(final Instant instant, final ZoneId zoneId) {return getWeekOfYear(LocalDate.ofInstant(instant, zoneId));}
+    public static int getWeekOfYear(final Instant instant, final ZoneId zoneId) {return getWeekOfYear(LocalDate.ofInstant(instant, zoneId));}
 
-    public static final int getWeekOfYear(final LocalDateTime dateTime) {return getWeekOfYear(dateTime.toLocalDate());}
+    public static int getWeekOfYear(final LocalDateTime dateTime) {return getWeekOfYear(dateTime.toLocalDate());}
 
-    public static final int getWeekOfYear(final LocalDate date) {return date.get(ChronoField.ALIGNED_WEEK_OF_YEAR);}
+    public static int getWeekOfYear(final LocalDate date) {return date.get(ChronoField.ALIGNED_WEEK_OF_YEAR);}
 
-    public static final int getWeekOfYear(final long epochSeconds) {return getWeekOfYear(epochSeconds, ZoneId.systemDefault());}
+    public static int getWeekOfYear(final long epochSeconds) {return getWeekOfYear(epochSeconds, ZoneId.systemDefault());}
 
-    public static final int getWeekOfYear(final long epochSeconds, final ZoneId zoneId) {
+    public static int getWeekOfYear(final long epochSeconds, final ZoneId zoneId) {
         if (epochSeconds < 0) {
             throw new IllegalArgumentException("Epochseconds cannot be smaller than 0");
         }
@@ -458,40 +242,30 @@ public class Helper {
         return hasDecimal ? formatter.format(truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
 
-    public static final <K, V extends Comparable<V>> V getMaxValueInMap(final Map<K, V> map) {
-        Entry<K, V> maxEntry = Collections.max(map.entrySet(), Comparator.comparing(Entry::getValue));
-        return maxEntry.getValue();
-    }
-
-    public static final <K, V extends Comparable<V>> K getKeyWithMaxValueInMap(final Map<K, V> map) {
-        Entry<K, V> maxEntry = Collections.max(map.entrySet(), Comparator.comparing(Entry::getValue));
-        return maxEntry.getKey();
-    }
-
     public static final String secondsToHHMMSSString(final long seconds) {
         final long[] hhmmss = secondsToHHMMSS(seconds);
         return String.format("%02d:%02d:%02d", hhmmss[0], hhmmss[1], hhmmss[2]);
     }
 
-    public static final long[] secondsToHHMMSS(final long seconds) {
+    public static long[] secondsToHHMMSS(final long seconds) {
         final long secs = seconds % 60;
         final long minutes = (seconds / 60) % 60;
         final long hours = (seconds / 3600) % 24;
         return new long[]{hours, minutes, secs};
     }
 
-    public static final String secondsToHHMMString(final long seconds) {
+    public static String secondsToHHMMString(final long seconds) {
         final long[] hhmmss = secondsToHHMM(seconds);
         return String.format("%02d:%02d", hhmmss[0], hhmmss[1]);
     }
 
-    public static final long[] secondsToHHMM(final long seconds) {
+    public static long[] secondsToHHMM(final long seconds) {
         final long minutes = (seconds / 60) % 60;
         final long hours = (seconds / 3600) % 24;
         return new long[]{hours, minutes};
     }
 
-    public static final String secondsToDDHHMMSSString(final long seconds) {
+    public static String secondsToDDHHMMSSString(final long seconds) {
         final long[] ddhhmm = secondsToDDHHMMSS(seconds);
         if (ddhhmm[0] == 0) {
             return String.format("%02d:%02d:%02d", ddhhmm[1], ddhhmm[2], ddhhmm[3]);
@@ -500,7 +274,7 @@ public class Helper {
         }
     }
 
-    public static final long[] secondsToDDHHMMSS(final long seconds) {
+    public static long[] secondsToDDHHMMSS(final long seconds) {
         final long secs = seconds % 60;
         final long minutes = (seconds / 60) % 60;
         final long hours = (seconds / 3_600) % 24;
@@ -508,7 +282,7 @@ public class Helper {
         return new long[]{days, hours, minutes, secs};
     }
 
-    public static final String secondsToDDHHMMString(final long seconds) {
+    public static String secondsToDDHHMMString(final long seconds) {
         final long[] ddhhmm = secondsToDDHHMM(seconds);
         if (ddhhmm[0] == 0) {
             return String.format("%02d:%02d", ddhhmm[1], ddhhmm[2]);
@@ -531,13 +305,13 @@ public class Helper {
         return crc32.getValue();
     }
 
-    public static final String getMD5(final String text) {return bytesToHex(getMD5Bytes(text.getBytes(UTF_8)));}
+    public static String getMD5(final String text) {return bytesToHex(getMD5Bytes(text.getBytes(UTF_8)));}
 
-    public static final String getMD5(final byte[] bytes) {
+    public static String getMD5(final byte[] bytes) {
         return bytesToHex(getMD5Bytes(bytes));
     }
 
-    public static final byte[] getMD5Bytes(final byte[] bytes) {
+    public static byte[] getMD5Bytes(final byte[] bytes) {
         final MessageDigest md;
         try {
             md = MessageDigest.getInstance("MD5");

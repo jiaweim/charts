@@ -49,7 +49,7 @@ public class QuickHull {
         return convexHull;
     }
 
-    private static final double distance(final Point p1, final Point p2, final Point p3) {
+    private static double distance(final Point p1, final Point p2, final Point p3) {
         double ABx = p2.x - p1.x;
         double ABy = p2.y - p1.y;
         double num = ABx * (p1.y - p3.y) - ABy * (p1.x - p3.x);
@@ -59,7 +59,7 @@ public class QuickHull {
         return num;
     }
 
-    private static final void hullSet(final Point p1, final Point p2, final ArrayList<Point> set, final List<Point> hull) {
+    private static void hullSet(final Point p1, final Point p2, final ArrayList<Point> set, final List<Point> hull) {
         int insertPosition = hull.indexOf(p2);
         int size = set.size();
 
@@ -105,7 +105,7 @@ public class QuickHull {
         hullSet(P, p2, leftSetPB, hull);
     }
 
-    private static final double pointLocation(final Point p1, final Point p2, final Point p3) {
+    private static double pointLocation(final Point p1, final Point p2, final Point p3) {
         double cp1 = (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x);
         if (cp1 > 0) {
             return 1;

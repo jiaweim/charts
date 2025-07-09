@@ -1,9 +1,6 @@
 package fx.chart.util;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
 
 /**
  * Utilities for data time
@@ -13,6 +10,24 @@ import java.time.ZoneOffset;
  * @since 07 Jul 2025, 12:23 PM
  */
 public final class TimeUtils {
+
+    public static Instant clamp(final Instant value, final Instant min, final Instant max) {
+        if (value.isBefore(min)) return min;
+        if (value.isAfter(max)) return max;
+        return value;
+    }
+
+    public static LocalDateTime clamp(final LocalDateTime value, final LocalDateTime min, final LocalDateTime max) {
+        if (value.isBefore(min)) return min;
+        if (value.isAfter(max)) return max;
+        return value;
+    }
+
+    public static LocalDate clamp(final LocalDate value, final LocalDate min, final LocalDate max) {
+        if (value.isBefore(min)) return min;
+        if (value.isAfter(max)) return max;
+        return value;
+    }
 
     /**
      * Convert seconds to date-time at system {@link ZoneId}

@@ -1,7 +1,5 @@
 package fx.chart.util.unit;
 
-import fx.chart.util.Helper;
-
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -162,12 +160,12 @@ public class Converter {
         return UNIT_DEFINITIONS;
     }
 
-    public static final String format(final double number, final int decimals) {
-        return format(number, Helper.clamp(0, 12, decimals), Locale.US);
+    public static String format(final double number, final int decimals) {
+        return format(number, Math.clamp(decimals, 0, 12), Locale.US);
     }
 
-    public static final String format(final double number, final int decimals, final Locale locale) {
-        String formatString = new StringBuilder("%.").append(Helper.clamp(0, 12, decimals)).append("f").toString();
+    public static String format(final double number, final int decimals, final Locale locale) {
+        String formatString = "%." + Math.clamp(decimals, 0, 12) + "f";
         double value;
         for (int i = ABBREVIATIONS.length - 1; i >= 0; i--) {
             value = Math.pow(1000, i + 1.0);

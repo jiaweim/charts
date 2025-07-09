@@ -1,14 +1,13 @@
 package fx.chart.toolboxfx.geom;
 
-import fx.chart.util.Helper;
 import fx.chart.event.Evt;
 import fx.chart.event.EvtObserver;
 import fx.chart.event.EvtType;
-import fx.chart.util.geo.GeoLocation;
-import fx.chart.util.geo.GeoLocationBuilder;
+import fx.chart.event.type.LocationChangeEvt;
 import fx.chart.toolboxfx.Constants;
 import fx.chart.toolboxfx.HelperFX;
-import fx.chart.event.type.LocationChangeEvt;
+import fx.chart.util.geo.GeoLocation;
+import fx.chart.util.geo.GeoLocationBuilder;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.event.EventHandler;
@@ -213,7 +212,7 @@ public class Location {
 
     public void setZoomLevel(final int level) {
         this.oldLocation = getCopy();
-        this.zoomLevel = Helper.clamp(0, 17, level);
+        this.zoomLevel = Math.clamp(level, 0, 17);
         fireLocationEvent(new LocationChangeEvt(Location.this, LocationChangeEvt.ZOOM_LEVEL_CHANGED, oldLocation, Location.this));
     }
 
