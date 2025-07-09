@@ -1,6 +1,5 @@
 package fx.chart.country.flag;
 
-import fx.chart.country.tools.Helper;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 
@@ -30,7 +29,7 @@ public class FlagIcon extends Region {
 
     public FlagIcon(final Flag flag, final double flagSize) {
         this.flag = flag;
-        this.flagSize = Helper.clamp(5, 1024, flagSize);
+        this.flagSize = Math.clamp(flagSize, 5, 1024);
         initGraphics();
         registerListeners();
     }
@@ -84,14 +83,14 @@ public class FlagIcon extends Region {
             throw new IllegalArgumentException("Flag cannot be null");
         }
         this.flag = flag;
-        flagSize = Helper.clamp(5, 1024, FLAG_SIZE);
+        flagSize = Math.clamp(FLAG_SIZE, 5, 1024);
         redraw();
     }
 
     public double getFlagSize() {return flagSize;}
 
     public void setFlagSize(final double flagSize) {
-        this.flagSize = Helper.clamp(5, 1024, flagSize);
+        this.flagSize = Math.clamp(flagSize, 5, 1024);
         redraw();
     }
 

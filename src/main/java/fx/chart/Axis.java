@@ -1469,14 +1469,19 @@ public class Axis extends Region {
         return minorTickMarksVisibleProperty;
     }
 
+    /**
+     * Whether all tick marks the same length?
+     *
+     * @return true if all tick marks the same length
+     */
     public boolean getSameTickMarkLength() {return null == sameTickMarkLengthProperty ? _sameTickMarkLength : sameTickMarkLengthProperty.get();}
 
-    public void setSameTickMarkLength(final boolean SAME_LENGTH) {
+    public void setSameTickMarkLength(final boolean sameLength) {
         if (null == sameTickMarkLengthProperty) {
-            _sameTickMarkLength = SAME_LENGTH;
+            _sameTickMarkLength = sameLength;
             redraw();
         } else {
-            sameTickMarkLengthProperty.set(SAME_LENGTH);
+            sameTickMarkLengthProperty.set(sameLength);
         }
     }
 
@@ -1654,7 +1659,7 @@ public class Axis extends Region {
 
     public ObjectProperty<TickLabelOrientation> tickLabelOrientationProperty() {
         if (null == tickLabelOrientationProperty) {
-            tickLabelOrientationProperty = new ObjectPropertyBase<TickLabelOrientation>(_tickLabelOrientation) {
+            tickLabelOrientationProperty = new ObjectPropertyBase<>(_tickLabelOrientation) {
                 @Override
                 protected void invalidated() {redraw();}
 

@@ -1,6 +1,5 @@
 package fx.chart.toolboxfx.geom;
 
-import fx.chart.util.Helper;
 import fx.chart.event.Evt;
 import fx.chart.event.EvtObserver;
 import fx.chart.event.EvtType;
@@ -14,7 +13,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static fx.chart.util.Constants.*;
 
-
 public class Bounds {
 
     private double x;
@@ -23,8 +21,6 @@ public class Bounds {
     private double height;
     private Map<EvtType, List<EvtObserver<BoundsEvt>>> observers;
 
-
-    // ******************** Constructors **************************************
     public Bounds() {
         this(0, 0, 0, 0);
     }
@@ -39,7 +35,6 @@ public class Bounds {
     }
 
 
-    // ******************** Methods *******************************************
     public double getX() {return x;}
 
     public void setX(final double x) {
@@ -65,14 +60,14 @@ public class Bounds {
     public double getWidth() {return width;}
 
     public void setWidth(final double width) {
-        this.width = Helper.clamp(0, Double.MAX_VALUE, width);
+        this.width = Math.clamp(width, 0, Double.MAX_VALUE);
         fireBoundsEvt(new BoundsEvt(Bounds.this, BoundsEvt.BOUNDS, Bounds.this));
     }
 
     public double getHeight() {return height;}
 
     public void setHeight(final double height) {
-        this.height = Helper.clamp(0, Double.MAX_VALUE, height);
+        this.height = Math.clamp(height, 0, Double.MAX_VALUE);
         fireBoundsEvt(new BoundsEvt(Bounds.this, BoundsEvt.BOUNDS, Bounds.this));
     }
 

@@ -1,6 +1,5 @@
 package fx.chart.toolboxfx;
 
-import fx.chart.util.Helper;
 import javafx.animation.Interpolator;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -293,7 +292,7 @@ public class ConicalGradient {
     private List<Stop> normalizeStops(final List<Stop> STOPS) { return normalizeStops(0, STOPS); }
     */
     private List<Stop> normalizeStops(final double offset, final List<Stop> stops) {
-        double offst = Helper.clamp(0.0, 1.0, offset);
+        double offst = Math.clamp(offset, 0.0, 1.0);
         List<Stop> stps;
         if (null == stops || stops.isEmpty()) {
             stps = new ArrayList<>();

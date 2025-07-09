@@ -1,18 +1,14 @@
 package fx.chart.toolboxfx;
 
+import fx.chart.toolboxfx.geom.*;
 import fx.chart.util.Helper;
 import fx.chart.util.Statistics;
-import fx.chart.toolboxfx.geom.*;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.Blend;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.ColorInput;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.GridPane;
@@ -28,16 +24,11 @@ import pdk.util.tuple.Tuple2;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import static fx.chart.util.Constants.EPSILON;
-import static fx.chart.util.Helper.clamp;
 import static fx.chart.util.Helper.round;
 
 
@@ -46,15 +37,15 @@ public class HelperFX {
     private HelperFX() {}
 
 
-    public static final double nearest(final double smaller, final double value, final double larger) {
+    public static double nearest(final double smaller, final double value, final double larger) {
         return (value - smaller) < (larger - value) ? smaller : larger;
     }
 
-    public static final double[] calcAutoScale(final double minValue, final double maxValue) {
+    public static double[] calcAutoScale(final double minValue, final double maxValue) {
         return calcAutoScale(minValue, maxValue, 10, 10);
     }
 
-    public static final double[] calcAutoScale(final double minValue, final double maxValue, final double maxNoOfMajorTicks, final double maxNoOfMinorTicks) {
+    public static double[] calcAutoScale(final double minValue, final double maxValue, final double maxNoOfMajorTicks, final double maxNoOfMinorTicks) {
         final double niceRange = (calcNiceNumber((maxValue - minValue), false));
         final double majorTickSpace = calcNiceNumber(niceRange / (maxNoOfMajorTicks - 1), true);
         final double niceMinValue = (Math.floor(minValue / majorTickSpace) * majorTickSpace);
@@ -73,10 +64,10 @@ public class HelperFX {
      * @param newMajorTickUnit  The distance between 2 major tick marks
      * @return The value snapped to the next tick mark defined by the given parameters
      */
-    public static final double snapToTicks(final double minValue, final double maxValue, final double value, final int newMinorTickCount, final double newMajorTickUnit) {
+    public static double snapToTicks(final double minValue, final double maxValue, final double value, final int newMinorTickCount, final double newMajorTickUnit) {
         double v = value;
 
-        final int minorTickCount = clamp(0, 10, newMinorTickCount);
+        final int minorTickCount = Math.clamp(newMinorTickCount, 0, 10);
         final double majorTickUnit = Double.compare(newMajorTickUnit, 0.0) <= 0 ? 0.25 : newMajorTickUnit;
         final double tickSpacing = minorTickCount == 0 ? majorTickUnit : majorTickUnit / (Math.max(minorTickCount, 0) + 1);
         final int prevTick = (int) ((v - minValue) / tickSpacing);
@@ -85,7 +76,7 @@ public class HelperFX {
 
         v = nearest(prevTickValue, v, nextTickValue);
 
-        return clamp(minValue, maxValue, v);
+        return Math.clamp(v, minValue, maxValue);
     }
 
     /**
@@ -97,7 +88,7 @@ public class HelperFX {
      * @param round whether to round the result or ceil
      * @return a "niceScaling" number to be used for the value range
      */
-    public static final double calcNiceNumber(final double range, final boolean round) {
+    public static double calcNiceNumber(final double range, final boolean round) {
         double niceFraction;
         final double exponent = Math.floor(Math.log10(range));   // exponent of range
         final double fraction = range / Math.pow(10, exponent);  // fractional part of range
@@ -126,11 +117,11 @@ public class HelperFX {
         return niceFraction * Math.pow(10, exponent);
     }
 
-    public static final List<Point> subdividePoints(final List<Point> points, final int subDevisions) {
+    public static List<Point> subdividePoints(final List<Point> points, final int subDevisions) {
         return Arrays.asList(subdividePoints(points.toArray(new Point[0]), subDevisions));
     }
 
-    public static final Point[] subdividePoints(final Point[] points, final int subDevisions) {
+    public static Point[] subdividePoints(final Point[] points, final int subDevisions) {
         if (null == points || points.length < 3) {
             throw new IllegalArgumentException("Points cannot be null and must have at least 3 entries");
         }
@@ -152,11 +143,7 @@ public class HelperFX {
         return subdividedPoints;
     }
 
-    public static final List<Point> subdividePointsRadial(final List<Point> points, final int subDevisions) {
-        return Arrays.asList(subdividePointsRadial(points.toArray(new Point[0]), subDevisions));
-    }
-
-    public static final Point[] subdividePointsRadial(final Point[] points, final int subDivisions) {
+    public static Point[] subdividePointsRadial(final Point[] points, final int subDivisions) {
         if (null == points || points.length < 3) {
             throw new IllegalArgumentException("Points cannot be null and must have at least 3 entries");
         }
@@ -178,11 +165,7 @@ public class HelperFX {
         return subdividedPoints;
     }
 
-    public static final List<Point> subdividePointsLinear(final List<Point> points, final int subDevisions) {
-        return Arrays.asList(subdividePointsLinear(points.toArray(new Point[0]), subDevisions));
-    }
-
-    public static final Point[] subdividePointsLinear(final Point[] points, final int subDivisions) {
+    public static Point[] subdividePointsLinear(final Point[] points, final int subDivisions) {
         if (null == points || points.length < 3) {
             throw new IllegalArgumentException("Points cannot be null and must have at least 3 entries");
         }
@@ -197,18 +180,14 @@ public class HelperFX {
         return subdividedPoints;
     }
 
-    public static final Point calcIntermediatePoint(final Point leftPoint, final Point rightPoint, final double intervalX) {
+    public static Point calcIntermediatePoint(final Point leftPoint, final Point rightPoint, final double intervalX) {
         double m = (rightPoint.getY() - leftPoint.getY()) / (rightPoint.getX() - leftPoint.getX());
         double x = intervalX;
         double y = m * x;
         return new Point(leftPoint.getX() + x, leftPoint.getY() + y);
     }
 
-    public static final Point calcIntersectionOfTwoLines(Point A, Point B, Point C, Point D) {
-        return calcIntersectionOfTwoLines(A.getX(), A.getY(), B.getX(), B.getY(), C.getX(), C.getY(), D.getX(), D.getY());
-    }
-
-    public static final Point calcIntersectionOfTwoLines(final double X1, final double Y1, final double X2, final double Y2,
+    public static Point calcIntersectionOfTwoLines(final double X1, final double Y1, final double X2, final double Y2,
             final double X3, final double Y3, final double X4, final double Y4) {
 
         // Line AB represented as a1x + b1y = c1
@@ -273,7 +252,7 @@ public class HelperFX {
         return subdividePoints(points, 16);
     }
 
-    public static final boolean isInRectangle(final double x, final double y,
+    public static boolean isInRectangle(final double x, final double y,
             final double minX, final double minY,
             final double maxX, final double maxY) {
         return (Double.compare(x, minX) >= 0 &&
@@ -282,20 +261,20 @@ public class HelperFX {
                 Double.compare(y, maxY) <= 0);
     }
 
-    public static final boolean isInCircle(final double x, final double y, final double centerX, final double centerY, final double radius) {
+    public static boolean isInCircle(final double x, final double y, final double centerX, final double centerY, final double radius) {
         double deltaX = centerX - x;
         double deltaY = centerY - y;
         return Math.sqrt(deltaX * deltaX + deltaY * deltaY) < radius;
     }
 
-    public static final boolean isInEllipse(final double x, final double y,
+    public static boolean isInEllipse(final double x, final double y,
             final double centerX, final double centerY,
             final double radiusX, final double radiusY) {
         return Double.compare(((((x - centerX) * (x - centerX)) / (radiusX * radiusX)) +
                 (((y - centerY) * (y - centerY)) / (radiusY * radiusY))), 1) <= 0.0;
     }
 
-    public static final boolean isInPolygon(final double x, final double y, final List<Point> pointsOfPolygon) {
+    public static boolean isInPolygon(final double x, final double y, final List<Point> pointsOfPolygon) {
         int noOfPointsInPolygon = pointsOfPolygon.size();
         double[] pointsX = new double[noOfPointsInPolygon];
         double[] pointsY = new double[noOfPointsInPolygon];
@@ -307,7 +286,7 @@ public class HelperFX {
         return isInPolygon(x, y, noOfPointsInPolygon, pointsX, pointsY);
     }
 
-    public static final boolean isInPolygon(final double x, final double y, final int noOfPointsInPolygon, final double[] pointsX, final double[] pointsY) {
+    public static boolean isInPolygon(final double x, final double y, final int noOfPointsInPolygon, final double[] pointsX, final double[] pointsY) {
         if (noOfPointsInPolygon != pointsX.length || noOfPointsInPolygon != pointsY.length) {
             return false;
         }
@@ -320,7 +299,7 @@ public class HelperFX {
         return inside;
     }
 
-    public static final <T extends Point> boolean isPointInPolygon(final T p, final List<T> points) {
+    public static <T extends Point> boolean isPointInPolygon(final T p, final List<T> points) {
         boolean inside = false;
         int noOfPoints = points.size();
         double x = p.getX();
@@ -335,11 +314,11 @@ public class HelperFX {
         return inside;
     }
 
-    public static final boolean isInSector(final double x, final double y, final double centerX, final double centerY, final double radius, final double startAngle, final double segmentAngle) {
+    public static boolean isInSector(final double x, final double y, final double centerX, final double centerY, final double radius, final double startAngle, final double segmentAngle) {
         return isInRingSegment(x, y, centerX, centerY, radius, 0, startAngle, segmentAngle);
     }
 
-    public static final boolean isInRingSegment(final double x, final double y,
+    public static boolean isInRingSegment(final double x, final double y,
             final double centerX, final double centerY,
             final double outerRadius, final double innerRadius,
             final double newStartAngle, final double segmentAngle) {
@@ -355,11 +334,11 @@ public class HelperFX {
                 Double.compare(pointAngle, endAngle) <= 0);
     }
 
-    public static final boolean isPointOnLine(final Point p, final Point p1, final Point p2) {
+    public static boolean isPointOnLine(final Point p, final Point p1, final Point p2) {
         return (distanceFromPointToLine(p, p1, p2) < EPSILON);
     }
 
-    public static final double distanceFromPointToLine(final Point p, final Point p1, final Point p2) {
+    public static double distanceFromPointToLine(final Point p, final Point p1, final Point p2) {
         double A = p.getX() - p1.getX();
         double B = p.getY() - p1.getY();
         double C = p2.getX() - p1.getX();
@@ -388,43 +367,43 @@ public class HelperFX {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    public static final <T extends Point> double squareDistance(final T p1, final T p2) {
+    public static <T extends Point> double squareDistance(final T p1, final T p2) {
         return squareDistance(p1.getX(), p1.getY(), p2.getX(), p2.getY());
     }
 
-    public static final double squareDistance(final double x1, final double y1, final double x2, final double y2) {
+    public static double squareDistance(final double x1, final double y1, final double x2, final double y2) {
         double deltaX = (x1 - x2);
         double deltaY = (y1 - y2);
         return (deltaX * deltaX) + (deltaY * deltaY);
     }
 
-    public static final double distance(final Point p1, final Point p2) {
+    public static double distance(final Point p1, final Point p2) {
         return distance(p1.x, p1.y, p2.x, p2.y);
     }
 
-    public static final double distance(final double p1X, final double p1Y, final double p2X, final double p2Y) {
+    public static double distance(final double p1X, final double p1Y, final double p2X, final double p2Y) {
         return Math.sqrt((p2X - p1X) * (p2X - p1X) + (p2Y - p1Y) * (p2Y - p1Y));
     }
 
-    public static final double euclideanDistance(final Point p1, final Point p2) {return euclideanDistance(p1.getX(), p1.getY(), p2.getX(), p2.getY());}
+    public static double euclideanDistance(final Point p1, final Point p2) {return euclideanDistance(p1.getX(), p1.getY(), p2.getX(), p2.getY());}
 
-    public static final double euclideanDistance(final double x1, final double y1, final double x2, final double y2) {
+    public static double euclideanDistance(final double x1, final double y1, final double x2, final double y2) {
         double deltaX = (x2 - x1);
         double deltaY = (y2 - y1);
         return (deltaX * deltaX) + (deltaY * deltaY);
     }
 
-    public static final Point pointOnLine(final double p1X, final double p1Y, final double p2X, final double p2Y, final double distanceToP2) {
+    public static Point pointOnLine(final double p1X, final double p1Y, final double p2X, final double p2Y, final double distanceToP2) {
         double distanceP1P2 = distance(p1X, p1Y, p2X, p2Y);
         double t = distanceToP2 / distanceP1P2;
         return new Point((1 - t) * p1X + t * p2X, (1 - t) * p1Y + t * p2Y);
     }
 
-    public static final int checkLineCircleCollision(final Point p1, final Point p2, final double centerX, final double centerY, final double radius) {
+    public static int checkLineCircleCollision(final Point p1, final Point p2, final double centerX, final double centerY, final double radius) {
         return checkLineCircleCollision(p1.x, p1.y, p2.x, p2.y, centerX, centerY, radius);
     }
 
-    public static final int checkLineCircleCollision(final double p1X, final double p1Y, final double p2X, final double p2Y, final double centerX, final double centerY, final double radius) {
+    public static int checkLineCircleCollision(final double p1X, final double p1Y, final double p2X, final double p2Y, final double centerX, final double centerY, final double radius) {
         double A = (p1Y - p2Y);
         double B = (p2X - p1X);
         double C = (p1X * p2Y - p2X * p1Y);
@@ -432,7 +411,7 @@ public class HelperFX {
         return checkCollision(A, B, C, centerX, centerY, radius);
     }
 
-    public static final int checkCollision(final double a, final double b, final double c, final double centerX, final double centerY, final double radius) {
+    public static int checkCollision(final double a, final double b, final double c, final double centerX, final double centerY, final double radius) {
         // Finding the distance of line from center.
         double dist = (Math.abs(a * centerX + b * centerY + c)) / Math.sqrt(a * a + b * b);
         dist = round(dist, 1);
@@ -445,7 +424,7 @@ public class HelperFX {
         }
     }
 
-    public static final int checkCircleCircleCollision(final Point center1, final double radius1, final Point center2, final double radius2) {
+    public static int checkCircleCircleCollision(final Point center1, final double radius1, final Point center2, final double radius2) {
         final double d = Math.sqrt((center1.getX() - center2.getX()) * (center1.getX() - center2.getX()) + (center1.getY() - center2.getY()) * (center1.getY() - center2.getY()));
         if (d <= radius1 - radius2) {
             return 1; // circle 2 inside of circle 1
@@ -547,23 +526,23 @@ public class HelperFX {
         return convexHull;
     }
 
-    public static final List<Point> createConvexHull(final List<Point> points) {
+    public static List<Point> createConvexHull(final List<Point> points) {
         return QuickHull.quickHull(points);
     }
 
-    public static final List<Point> createSmoothedConvexHull(final List<Point> points, final int subDivisions) {
+    public static List<Point> createSmoothedConvexHull(final List<Point> points, final int subDivisions) {
         List<Point> hullPolygon = createConvexHull(points);
         return subdividePoints(hullPolygon, subDivisions);
     }
 
-    private static final <T extends Point> double distance(final T p1, final T p2, final T p3) {
+    private static <T extends Point> double distance(final T p1, final T p2, final T p3) {
         double deltaX = p2.getX() - p1.getX();
         double deltaY = p2.getY() - p1.getY();
         double num = deltaX * (p1.getY() - p3.getY()) - deltaY * (p1.getX() - p3.getX());
         return Math.abs(num);
     }
 
-    private static final <T extends Point> void hullSet(final T p1, final T p2, final List<T> points, final List<T> hull) {
+    private static <T extends Point> void hullSet(final T p1, final T p2, final List<T> points, final List<T> hull) {
         int insertPosition = hull.indexOf(p2);
 
         if (points.isEmpty()) {
@@ -612,12 +591,12 @@ public class HelperFX {
         hullSet(point, p2, leftSetPB, hull);
     }
 
-    private static final <T extends Point> int pointLocation(final T p1, final T p2, final T p3) {
+    private static <T extends Point> int pointLocation(final T p1, final T p2, final T p3) {
         double cp1 = (p2.getX() - p1.getX()) * (p3.getY() - p1.getY()) - (p2.getY() - p1.getY()) * (p3.getX() - p1.getX());
         return cp1 > 0 ? 1 : Double.compare(cp1, 0) == 0 ? 0 : -1;
     }
 
-    public static final List<Point> reduceHull(final List<Point> points, final List<Point> hullPoints) {
+    public static List<Point> reduceHull(final List<Point> points, final List<Point> hullPoints) {
         int noOfAttempts = 0;
         //List<Point> pointsToCheck = removePointsOnConvexHull(points, hullPoints);
         List<Point> pointsToCheck = new ArrayList<>(points);
@@ -645,7 +624,7 @@ public class HelperFX {
         return hullPoints;
     }
 
-    public static final List<Point> removePointsOnConvexHull(final List<Point> points, final List<Point> convexHull) {
+    public static List<Point> removePointsOnConvexHull(final List<Point> points, final List<Point> convexHull) {
         List<Point> pointsNotOnHullCurve = new ArrayList<>(points);
         List<Point> pointsToRemove = new ArrayList<>();
         int pointsInPolygon = convexHull.size();
@@ -662,7 +641,7 @@ public class HelperFX {
         return pointsNotOnHullCurve;
     }
 
-    public static final int noOfDiagonalEdges(final List<Point> polygonPoints) {
+    public static int noOfDiagonalEdges(final List<Point> polygonPoints) {
         int noOfDiagonalEdges = 0;
         int pointsInPolygon = polygonPoints.size();
         for (int i = 0; i < pointsInPolygon - 1; i++) {
@@ -680,9 +659,9 @@ public class HelperFX {
         return noOfDiagonalEdges;
     }
 
-    public static final boolean isHorizontal(final Point p1, final Point p2) {return Math.abs(p1.getY() - p2.getY()) < EPSILON;}
+    public static boolean isHorizontal(final Point p1, final Point p2) {return Math.abs(p1.getY() - p2.getY()) < EPSILON;}
 
-    public static final boolean isVertical(final Point p1, final Point p2) {return Math.abs(p1.getX() - p2.getX()) < EPSILON;}
+    public static boolean isVertical(final Point p1, final Point p2) {return Math.abs(p1.getX() - p2.getX()) < EPSILON;}
 
 
     /**
@@ -695,7 +674,7 @@ public class HelperFX {
      * @param hullCurvePoints points on hull curve
      * @return list of points that can be used to reduce the diagonals in a convex hull curve
      */
-    public static final List<Point> getPointsToCheck(final List<Point> points, final List<Point> hullCurvePoints) {
+    public static List<Point> getPointsToCheck(final List<Point> points, final List<Point> hullCurvePoints) {
         List<Point[]> diagonals = new ArrayList<>();
         int pointsInPolygon = hullCurvePoints.size();
         for (int i = 0; i < pointsInPolygon - 1; i++) {
@@ -735,7 +714,7 @@ public class HelperFX {
      * @param points      list of points to add
      * @return list of points incl. the added ones
      */
-    public static final List<Point> addPointsOnCurve(final List<Point> curvePoints, final List<Point> points) {
+    public static List<Point> addPointsOnCurve(final List<Point> curvePoints, final List<Point> points) {
         List<Point> result = new ArrayList<>();
         List<Point> polygonPoints = new ArrayList<>(curvePoints);
         List<Point> pointsToCheck = new ArrayList<>(points);
@@ -838,7 +817,7 @@ public class HelperFX {
         return startEndPoints;
     }
 
-    public static final double[] getPointsXFromPoints(final List<Point> points) {
+    public static double[] getPointsXFromPoints(final List<Point> points) {
         int size = points.size();
         double[] pointsX = new double[size];
         for (int i = 0; i < size; i++) {
@@ -847,7 +826,7 @@ public class HelperFX {
         return pointsX;
     }
 
-    public static final double[] getPointsYFromPoints(final List<Point> points) {
+    public static double[] getPointsYFromPoints(final List<Point> points) {
         int size = points.size();
         double[] pointsY = new double[size];
         for (int i = 0; i < size; i++) {
@@ -856,7 +835,7 @@ public class HelperFX {
         return pointsY;
     }
 
-    public static final double[] getDoubleArrayFromPoints(final List<Point> points) {
+    public static double[] getDoubleArrayFromPoints(final List<Point> points) {
         int size = points.size();
         double[] pointsArray = new double[size * 2];
         int counter = 0;
@@ -868,7 +847,7 @@ public class HelperFX {
         return pointsArray;
     }
 
-    public static final void sortXY(final List<Point> points) {
+    public static void sortXY(final List<Point> points) {
         Collections.sort(points, Comparator.comparingDouble(Point::getX).thenComparingDouble(Point::getY));
     }
 
@@ -879,11 +858,11 @@ public class HelperFX {
      * @param points list of points to sort
      * @return list of points sorted by it's distance from each other
      */
-    public static final List<Point> sortByDistance(final List<Point> points) {
+    public static List<Point> sortByDistance(final List<Point> points) {
         return sortByDistance(points, true);
     }
 
-    public static final List<Point> sortByDistance(final List<Point> points, final boolean counterClockWise) {
+    public static List<Point> sortByDistance(final List<Point> points, final boolean counterClockWise) {
         if (points.isEmpty()) {
             return points;
         }
@@ -917,24 +896,24 @@ public class HelperFX {
         return smallestDistance._2();
     }
 
-    public static final String padLeft(final String text, final String filler, final int n) {
+    public static String padLeft(final String text, final String filler, final int n) {
         return String.format("%" + n + "s", text).replace(" ", filler);
     }
 
-    public static final String padRight(final String text, final String filler, final int n) {
+    public static String padRight(final String text, final String filler, final int n) {
         return String.format("%-" + n + "s", text).replace(" ", filler);
     }
 
-    public static final List<Character> splitStringInCharacters(final String text) {
+    public static List<Character> splitStringInCharacters(final String text) {
         return text.chars().mapToObj(c -> (char) c).collect(Collectors.toList());
     }
 
-    public static final List<Character> splitNumberInDigits(final double number) {
+    public static List<Character> splitNumberInDigits(final double number) {
         return splitStringInCharacters(Double.toString(number));
     }
 
 
-    public static final List<Point> removeDuplicatePoints(final List<Point> points, final double tolerance) {
+    public static List<Point> removeDuplicatePoints(final List<Point> points, final double tolerance) {
         final double tol = tolerance < 0 ? 0 : tolerance;
         final int size = points.size();
 
@@ -957,7 +936,7 @@ public class HelperFX {
         return reducedPoints;
     }
 
-    public static final List<Point> simplify(final List<Point> points, final double angleTolerance, final double minDistance) {
+    public static List<Point> simplify(final List<Point> points, final double angleTolerance, final double minDistance) {
         final double tolerance = angleTolerance < 0 ? 0.5 : angleTolerance / 2.0;
         final double distance = minDistance < 0 ? 1.0 : minDistance;
 
@@ -1008,7 +987,7 @@ public class HelperFX {
         return reducedPoints;
     }
 
-    private static final boolean removeP2(final Point p0, final Point p1, final Point p2, final Point p3, final double tolerance, final double distance) {
+    private static boolean removeP2(final Point p0, final Point p1, final Point p2, final Point p3, final double tolerance, final double distance) {
         double bearingP1P2 = bearing(p1.getX(), p1.getY(), p2.getX(), p2.getY());
         double bearingP1P3 = bearing(p1.getX(), p1.getY(), p3.getX(), p3.getY());
         double bearingP2P3 = bearing(p2.getX(), p2.getY(), p3.getX(), p3.getY());
@@ -1028,11 +1007,11 @@ public class HelperFX {
         return false;
     }
 
-    public static final double bearing(final Point p1, final Point p2) {
+    public static double bearing(final Point p1, final Point p2) {
         return bearing(p1.getX(), p1.getY(), p2.getX(), p2.getY());
     }
 
-    public static final double bearing(final double x1, final double y1, final double x2, final double y2) {
+    public static double bearing(final double x1, final double y1, final double x2, final double y2) {
         double bearing = Math.toDegrees(Math.atan2(y2 - y1, x2 - x1)) + 90;
         if (bearing < 0) {
             bearing += 360.0;
@@ -1040,7 +1019,7 @@ public class HelperFX {
         return bearing;
     }
 
-    public static final String getCardinalDirectionFromBearing(final double brng) {
+    public static String getCardinalDirectionFromBearing(final double brng) {
         double bearing = brng % 360.0;
         if (0 == bearing || 360 == bearing || (bearing > CardinalDirection.N.from && bearing < 360)) {
             return CardinalDirection.N.direction;
@@ -1061,11 +1040,11 @@ public class HelperFX {
     }
 
 
-    public static final double[] toHSL(final Color color) {
+    public static double[] toHSL(final Color color) {
         return rgbToHSL(color.getRed(), color.getGreen(), color.getBlue());
     }
 
-    public static final double[] rgbToHSL(final double red, final double green, final double blue) {
+    public static double[] rgbToHSL(final double red, final double green, final double blue) {
         //	Minimum and Maximum RGB values are used in the HSL calculations
         double min = Math.min(red, Math.min(green, blue));
         double max = Math.max(red, Math.max(green, blue));
@@ -1099,14 +1078,14 @@ public class HelperFX {
         return new double[]{hue, saturation, luminance};
     }
 
-    public static final Color hslToRGB(double hue, double saturation, double luminance) {
+    public static Color hslToRGB(double hue, double saturation, double luminance) {
         return hslToRGB(hue, saturation, luminance, 1);
     }
 
-    public static final Color hslToRGB(double hue, double saturation, double luminance, double opacity) {
-        saturation = clamp(0, 1, saturation);
-        luminance = clamp(0, 1, luminance);
-        opacity = clamp(0, 1, opacity);
+    public static Color hslToRGB(double hue, double saturation, double luminance, double opacity) {
+        saturation = Math.clamp(saturation, 0, 1);
+        luminance = Math.clamp(luminance, 0, 1);
+        opacity = Math.clamp(opacity, 0, 1);
 
         hue = hue % 360.0;
         hue /= 360;
@@ -1114,14 +1093,14 @@ public class HelperFX {
         double q = luminance < 0.5 ? luminance * (1 + saturation) : (luminance + saturation) - (saturation * luminance);
         double p = 2 * luminance - q;
 
-        double r = clamp(0, 1, hueToRGB(p, q, hue + (1.0 / 3.0)));
-        double g = clamp(0, 1, hueToRGB(p, q, hue));
-        double b = clamp(0, 1, hueToRGB(p, q, hue - (1.0 / 3.0)));
+        double r = Math.clamp(hueToRGB(p, q, hue + (1.0 / 3.0)), 0, 1);
+        double g = Math.clamp(hueToRGB(p, q, hue), 0, 1);
+        double b = Math.clamp(hueToRGB(p, q, hue - (1.0 / 3.0)), 0, 1);
 
         return Color.color(r, g, b, opacity);
     }
 
-    private static final double hueToRGB(double p, double q, double t) {
+    private static double hueToRGB(double p, double q, double t) {
         if (t < 0) t += 1;
         if (t > 1) t -= 1;
         if (6 * t < 1) {
@@ -1136,7 +1115,7 @@ public class HelperFX {
         return p;
     }
 
-    public static final String colorToRGB(final Color color) {
+    public static String colorToRGB(final Color color) {
         String hex = color.toString().replace("0x", "");
         String hexRed = hex.substring(0, 2).toUpperCase();
         String hexGreen = hex.substring(2, 4).toUpperCase();
@@ -1149,9 +1128,9 @@ public class HelperFX {
         return String.join("", "colorToRGB(", intRed, ", ", intGreen, ", ", intBlue, ")");
     }
 
-    public static final String colorToRGBA(final Color color) {return colorToRGBA(color, color.getOpacity());}
+    public static String colorToRGBA(final Color color) {return colorToRGBA(color, color.getOpacity());}
 
-    public static final String colorToRGBA(final Color color, final double alpha) {
+    public static String colorToRGBA(final Color color, final double alpha) {
         String hex = color.toString().replace("0x", "");
         String hexRed = hex.substring(0, 2).toUpperCase();
         String hexGreen = hex.substring(2, 4).toUpperCase();
@@ -1160,22 +1139,22 @@ public class HelperFX {
         String intRed = Integer.toString(Integer.parseInt(hexRed, 16));
         String intGreen = Integer.toString(Integer.parseInt(hexGreen, 16));
         String intBlue = Integer.toString(Integer.parseInt(hexBlue, 16));
-        String alph = String.format(Locale.US, "%.3f", clamp(0, 1, alpha));
+        String alph = String.format(Locale.US, "%.3f", Math.clamp(alpha, 0, 1));
 
         return String.join("", "colorToRGBA(", intRed, ", ", intGreen, ", ", intBlue, ",", alph, ")");
     }
 
-    public static final String colorToWeb(final Color color) {return color.toString().replace("0x", "#").substring(0, 7);}
+    public static String colorToWeb(final Color color) {return color.toString().replace("0x", "#").substring(0, 7);}
 
-    public static final String colorToCss(final Color color) {
+    public static String colorToCss(final Color color) {
         return color.toString().replace("0x", "#");
     }
 
-    public static final boolean isMonochrome(final Color color) {
+    public static boolean isMonochrome(final Color color) {
         return Double.compare(color.getRed(), color.getGreen()) == 0 && Double.compare(color.getGreen(), color.getBlue()) == 0;
     }
 
-    public static final double colorDistance(final Color color1, final Color color2) {
+    public static double colorDistance(final Color color1, final Color color2) {
         final double deltaR = (color2.getRed() - color1.getRed());
         final double deltaG = (color2.getGreen() - color1.getGreen());
         final double deltaB = (color2.getBlue() - color1.getBlue());
@@ -1183,15 +1162,15 @@ public class HelperFX {
         return Math.sqrt(deltaR * deltaR + deltaG * deltaG + deltaB * deltaB);
     }
 
-    public static final double[] colorToYUV(final Color color) {
+    public static double[] colorToYUV(final Color color) {
         final double weightFactorRed = 0.299;
         final double weightFactorGreen = 0.587;
         final double weightFactorBlue = 0.144;
         final double uMax = 0.436;
         final double vMax = 0.615;
-        double y = clamp(0, 1, weightFactorRed * color.getRed() + weightFactorGreen * color.getGreen() + weightFactorBlue * color.getBlue());
-        double u = clamp(-uMax, uMax, uMax * ((color.getBlue() - y) / (1 - weightFactorBlue)));
-        double v = clamp(-vMax, vMax, vMax * ((color.getRed() - y) / (1 - weightFactorRed)));
+        double y = Math.clamp(weightFactorRed * color.getRed() + weightFactorGreen * color.getGreen() + weightFactorBlue * color.getBlue(), 0, 1);
+        double u = Math.clamp(uMax * ((color.getBlue() - y) / (1 - weightFactorBlue)), -uMax, uMax);
+        double v = Math.clamp(vMax * ((color.getRed() - y) / (1 - weightFactorRed)), -vMax, vMax);
         return new double[]{y, u, v};
     }
 
@@ -1204,11 +1183,11 @@ public class HelperFX {
     }
 
     public static Color getColorWithOpacity(final Color color, final double opacity) {
-        return Color.color(color.getRed(), color.getGreen(), color.getBlue(), clamp(0.0, 1.0, opacity));
+        return Color.color(color.getRed(), color.getGreen(), color.getBlue(), Math.clamp(opacity, 0.0, 1.0));
     }
 
     public static List<Color> createColorPalette(final Color fromColor, final Color toColor, final int noOfColors) {
-        int steps = clamp(1, 12, noOfColors) - 1;
+        int steps = Math.clamp(noOfColors, 1, 12) - 1;
         double step = 1.0 / steps;
         double deltaRed = (toColor.getRed() - fromColor.getRed()) * step;
         double deltaGreen = (toColor.getGreen() - fromColor.getGreen()) * step;
@@ -1219,10 +1198,10 @@ public class HelperFX {
         Color currentColor = fromColor;
         palette.add(currentColor);
         for (int i = 0; i < steps; i++) {
-            double red = clamp(0d, 1d, (currentColor.getRed() + deltaRed));
-            double green = clamp(0d, 1d, (currentColor.getGreen() + deltaGreen));
-            double blue = clamp(0d, 1d, (currentColor.getBlue() + deltaBlue));
-            double opacity = clamp(0d, 1d, (currentColor.getOpacity() + deltaOpacity));
+            double red = Math.clamp((currentColor.getRed() + deltaRed), 0d, 1d);
+            double green = Math.clamp((currentColor.getGreen() + deltaGreen), 0d, 1d);
+            double blue = Math.clamp((currentColor.getBlue() + deltaBlue), 0d, 1d);
+            double opacity = Math.clamp((currentColor.getOpacity() + deltaOpacity), 0d, 1d);
             currentColor = Color.color(red, green, blue, opacity);
             palette.add(currentColor);
         }
@@ -1230,7 +1209,7 @@ public class HelperFX {
     }
 
     public static Color[] createColorVariations(final Color color, final int newNoOfColors) {
-        int noOfColors = clamp(1, 12, newNoOfColors);
+        int noOfColors = Math.clamp(newNoOfColors, 1, 12);
         double step = 0.8 / noOfColors;
         double hue = color.getHue();
         double brg = color.getBrightness();
@@ -1259,7 +1238,7 @@ public class HelperFX {
             stops.put(1.0, new Stop(1.0, stops.get(maxFraction).getColor()));
         }
 
-        final double position = clamp(0d, 1d, positionOfColor);
+        final double position = Math.clamp(positionOfColor, 0d, 1d);
         final Color color;
         if (stops.size() == 1) {
             final Map<Double, Color> ONE_ENTRY = (Map<Double, Color>) stops.entrySet().iterator().next();
@@ -1291,10 +1270,10 @@ public class HelperFX {
         final double deltaBlue = (upperBound.getColor().getBlue() - lowerBound.getColor().getBlue()) * pos;
         final double deltaOpacity = (upperBound.getColor().getOpacity() - lowerBound.getColor().getOpacity()) * pos;
 
-        double red = clamp(0, 1, (lowerBound.getColor().getRed() + deltaRed));
-        double green = clamp(0, 1, (lowerBound.getColor().getGreen() + deltaGreen));
-        double blue = clamp(0, 1, (lowerBound.getColor().getBlue() + deltaBlue));
-        double opacity = clamp(0, 1, (lowerBound.getColor().getOpacity() + deltaOpacity));
+        double red = Math.clamp((lowerBound.getColor().getRed() + deltaRed), 0, 1);
+        double green = Math.clamp((lowerBound.getColor().getGreen() + deltaGreen), 0, 1);
+        double blue = Math.clamp((lowerBound.getColor().getBlue() + deltaBlue), 0, 1);
+        double opacity = Math.clamp((lowerBound.getColor().getOpacity() + deltaOpacity), 0, 1);
 
         return Color.color(red, green, blue, opacity);
     }
@@ -1330,8 +1309,8 @@ public class HelperFX {
     }
 
     public static Color interpolateColor(final Color color1, final Color color2, final double fraction, final double targetOpacity) {
-        double frac = clamp(0, 1, fraction);
-        double targetOpct = targetOpacity < 0 ? targetOpacity : clamp(0, 1, fraction);
+        double frac = Math.clamp(fraction, 0, 1);
+        double targetOpct = targetOpacity < 0 ? targetOpacity : Math.clamp(fraction, 0, 1);
 
         final double RED1 = color1.getRed();
         final double GREEN1 = color1.getGreen();
@@ -1353,10 +1332,10 @@ public class HelperFX {
         double blue = BLUE1 + (DELTA_BLUE * frac);
         double opacity = targetOpct < 0 ? OPACITY1 + (DELTA_OPACITY * frac) : targetOpct;
 
-        red = clamp(0, 1, red);
-        green = clamp(0, 1, green);
-        blue = clamp(0, 1, blue);
-        opacity = clamp(0, 1, opacity);
+        red = Math.clamp(red, 0, 1);
+        green = Math.clamp(green, 0, 1);
+        blue = Math.clamp(blue, 0, 1);
+        opacity = Math.clamp(opacity, 0, 1);
 
         return Color.color(red, green, blue, opacity);
     }
@@ -1542,7 +1521,7 @@ public class HelperFX {
         return Tuple.of(firstControlPoints, secondControlPoints);
     }
 
-    private static final double[] getFirstControlPoints(double[] rhs) {
+    private static double[] getFirstControlPoints(double[] rhs) {
         int n = rhs.length;
         double[] x = new double[n]; // Solution vector.
         double[] tmp = new double[n]; // Temp workspace.
@@ -1561,7 +1540,7 @@ public class HelperFX {
         return x;
     }
 
-    public static final boolean isInPolygon(final double x, final double y, final Polygon polygon) {
+    public static boolean isInPolygon(final double x, final double y, final Polygon polygon) {
         List<Double> points = polygon.getPoints();
         int size = points.size();
         int noOfPointsInPolygon = size / 2;
@@ -1577,17 +1556,17 @@ public class HelperFX {
         return isInPolygon(x, y, noOfPointsInPolygon, pointsX, pointsY);
     }
 
-    public static final int getDegrees(final double decDeg) {return (int) decDeg;}
+    public static int getDegrees(final double decDeg) {return (int) decDeg;}
 
-    public static final int getMinutes(final double decDeg) {return (int) ((decDeg - getDegrees(decDeg)) * 60);}
+    public static int getMinutes(final double decDeg) {return (int) ((decDeg - getDegrees(decDeg)) * 60);}
 
-    public static final double getSeconds(final double decDeg) {return (((decDeg - getDegrees(decDeg)) * 60) - getMinutes(decDeg)) * 60;}
+    public static double getSeconds(final double decDeg) {return (((decDeg - getDegrees(decDeg)) * 60) - getMinutes(decDeg)) * 60;}
 
-    public static final double getDecimalDeg(final int degrees, final int minutes, final double seconds) {
+    public static double getDecimalDeg(final int degrees, final int minutes, final double seconds) {
         return (((seconds / 60) + minutes) / 60) + degrees;
     }
 
-    public static final Node getNodeByColRow(final int col, final int row, GridPane gridPane) {
+    public static Node getNodeByColRow(final int col, final int row, GridPane gridPane) {
         Node result = null;
         ObservableList<Node> childrens = gridPane.getChildren();
         for (Node node : childrens) {
@@ -1600,31 +1579,7 @@ public class HelperFX {
         return result;
     }
 
-    public static final ColorInput createColorMask(final Image sourceImage, final Color color) {return new ColorInput(0, 0, sourceImage.getWidth(), sourceImage.getHeight(), color);}
-
-    public static final Blend createColorBlend(final Image sourceImage, final Color color) {
-        final ColorInput mask = createColorMask(sourceImage, color);
-        final Blend blend = new Blend(BlendMode.MULTIPLY);
-        blend.setTopInput(mask);
-        return blend;
-    }
-
-    public static final WritableImage getRedChannel(final Image sourceImage) {return getColorChannel(sourceImage, Color.RED);}
-
-    public static final WritableImage getGreenChannel(final Image sourceImage) {return getColorChannel(sourceImage, Color.LIME);}
-
-    public static final WritableImage getBlueChannel(final Image sourceImage) {return getColorChannel(sourceImage, Color.BLUE);}
-
-    private static final WritableImage getColorChannel(final Image sourceImage, final Color color) {
-        final Node imageView = new ImageView(sourceImage);
-        final Blend blend = createColorBlend(sourceImage, color);
-        imageView.setEffect(blend);
-
-        final SnapshotParameters params = new SnapshotParameters();
-        return imageView.snapshot(params, null);
-    }
-
-    public static final Dimension getTextDimension(final String text, final Font font) {
+    public static Dimension getTextDimension(final String text, final Font font) {
         Text t = new Text(text);
         t.setFont(font);
         double textWidth = t.getBoundsInLocal().getWidth();
@@ -1633,27 +1588,7 @@ public class HelperFX {
         return new Dimension(textWidth, textHeight);
     }
 
-    public static final ZoneOffset getZoneOffset() {return getZoneOffset(ZoneId.systemDefault());}
-
-    public static final ZoneOffset getZoneOffset(final ZoneId zoneId) {return zoneId.getRules().getOffset(Instant.now());}
-
-    public static final long toMillis(final LocalDateTime dateTime, final ZoneOffset zoneOffset) {return toSeconds(dateTime, zoneOffset) * 1000;}
-
-    public static final long toSeconds(final LocalDateTime dateTime, final ZoneOffset zoneOffset) {return dateTime.toEpochSecond(zoneOffset);}
-
-    public static final double toNumericValue(final LocalDateTime date) {return toNumericValue(date, ZoneId.systemDefault());}
-
-    public static final double toNumericValue(final LocalDateTime date, final ZoneId zoneId) {return toSeconds(date, getZoneOffset(zoneId));}
-
-    public static final LocalDateTime toRealValue(final double value) {return secondsToLocalDateTime((long) value);}
-
-    public static final LocalDateTime toRealValue(final double value, final ZoneId zoneId) {return secondsToLocalDateTime((long) value, zoneId);}
-
-    public static final LocalDateTime secondsToLocalDateTime(final long seconds) {return LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), ZoneId.systemDefault());}
-
-    public static final LocalDateTime secondsToLocalDateTime(final long seconds, final ZoneId zoneId) {return LocalDateTime.ofInstant(Instant.ofEpochSecond(seconds), zoneId);}
-
-    public static final void saveAsPng(final Node node, final String fileName) {
+    public static void saveAsPng(final Node node, final String fileName) {
         SnapshotParameters parameters = new SnapshotParameters();
         parameters.setFill(Color.TRANSPARENT);
         final WritableImage snapshot = node.snapshot(parameters, null);
@@ -1667,11 +1602,11 @@ public class HelperFX {
         }
     }
 
-    public static final Image createNoiseImage(final double width, final double height, final Color darkColor, final Color brightColor, final double alphaVariationInPercent) {
+    public static Image createNoiseImage(final double width, final double height, final Color darkColor, final Color brightColor, final double alphaVariationInPercent) {
         if (Double.compare(width, 0) <= 0 || Double.compare(height, 0) <= 0) return null;
         int w = (int) width;
         int h = (int) height;
-        double alphaVariation = clamp(0.0, 100.0, alphaVariationInPercent);
+        double alphaVariation = Math.clamp(alphaVariationInPercent, 0.0, 100.0);
         final WritableImage image = new WritableImage(w, h);
         final PixelWriter pixelWriter = image.getPixelWriter();
         final double alphaStart = alphaVariation / 100 / 2;
@@ -1679,7 +1614,7 @@ public class HelperFX {
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 final Color noiseColor = Constants.RND.nextBoolean() ? brightColor : darkColor;
-                final double noiseAlpha = clamp(0.0, 1.0, alphaStart + Constants.RND.nextDouble() * variation);
+                final double noiseAlpha = Math.clamp(alphaStart + Constants.RND.nextDouble() * variation, 0.0, 1.0);
                 pixelWriter.setColor(x, y, Color.color(noiseColor.getRed(), noiseColor.getGreen(), noiseColor.getBlue(), noiseAlpha));
             }
         }

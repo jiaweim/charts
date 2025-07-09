@@ -28,39 +28,6 @@ public class Helper {
     private static final Map<String, Airport2> airports2 = new HashMap<>();
     private static final Map<Country, Long> populations = new HashMap<>();
 
-
-    public static int clamp(final int min, final int max, final int value) {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
-
-    public static long clamp(final long min, final long max, final long value) {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
-
-    public static float clamp(final float min, final float max, final float value) {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
-
-    /**
-     * clamp value to given range
-     *
-     * @param min   min bound
-     * @param max   max bound
-     * @param value value to clamp
-     * @return value after clamp
-     */
-    public static double clamp(final double min, final double max, final double value) {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
-    }
-
     public static OperatingSystem getOperatingSystem() {
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("win"))
@@ -414,9 +381,9 @@ public class Helper {
     }
 
     public static double[] getCubicBezierXYatT(final double startPointX, final double startPointY,
-                                               final double controlPoint1X, final double controlPoint1Y,
-                                               final double controlPoint2X, final double controlPoint2Y,
-                                               final double endPointX, final double endPointY, final double distance) {
+            final double controlPoint1X, final double controlPoint1Y,
+            final double controlPoint2X, final double controlPoint2Y,
+            final double endPointX, final double endPointY, final double distance) {
         final double x = cubicN(distance, startPointX, controlPoint1X, controlPoint2X, endPointX);
         final double y = cubicN(distance, startPointY, controlPoint1Y, controlPoint2Y, endPointY);
         return new double[]{x, y};

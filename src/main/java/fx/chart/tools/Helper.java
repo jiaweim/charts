@@ -69,6 +69,7 @@ public class Helper {
     public static final PMatrix ISOMETRIC = new PMatrix(Helper.angleToVector(120), Helper.angleToVector(-120), Helper.angleToVector(0), null, null);
 
     public enum Interval {
+
         DECADE(ChronoUnit.DECADES, 1, 311_040_000, 155_520_000, 31_104_000), // 10 years
         YEAR(ChronoUnit.YEARS, 1, 31_104_000, 15_552_000, 2_592_000),        // 360 days
         MONTH_6(ChronoUnit.MONTHS, 6, 15_552_000, 2_592_000, 2_592_000),     // 180 days
