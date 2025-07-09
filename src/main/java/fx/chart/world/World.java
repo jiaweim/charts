@@ -66,10 +66,9 @@ import static javafx.scene.input.MouseEvent.*;
 public class World extends Region {
     public enum Resolution {HI_RES, LO_RES}
 
-    ;
     private static final StyleablePropertyFactory<World> FACTORY = new StyleablePropertyFactory<>(Region.getClassCssMetaData());
-    private static final String HIRES_PROPERTIES = "eu/hansolo/fx/charts/world/hires.properties";
-    private static final String LORES_PROPERTIES = "eu/hansolo/fx/charts/world/lores.properties";
+    private static final String HIRES_PROPERTIES = "fx/chart/world/hires.properties";
+    private static final String LORES_PROPERTIES = "fx/chart/world/lores.properties";
     private static final double PREFERRED_WIDTH = 1009;
     private static final double PREFERRED_HEIGHT = 665;
     private static final double MINIMUM_WIDTH = 100;

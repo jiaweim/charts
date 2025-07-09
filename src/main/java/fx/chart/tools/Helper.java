@@ -6,8 +6,6 @@ import fx.chart.data.DataPoint;
 import fx.chart.data.XYChartItem;
 import fx.chart.toolboxfx.geom.*;
 import fx.chart.util.Constants;
-import fx.chart.util.TimeUtils;
-import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
@@ -17,11 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.effect.Blend;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.ColorInput;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -46,10 +39,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.Map.Entry;
@@ -113,24 +102,6 @@ public class Helper {
         public long getMediumTickSpace() {return MEDIUM_TICK_SPACE;}
 
         public long getMinorTickSpace() {return MINOR_TICK_SPACE;}
-    }
-
-    public static Instant clamp(final Instant MIN, final Instant MAX, final Instant VALUE) {
-        if (VALUE.isBefore(MIN)) return MIN;
-        if (VALUE.isAfter(MAX)) return MAX;
-        return VALUE;
-    }
-
-    public static LocalDateTime clamp(final LocalDateTime MIN, final LocalDateTime MAX, final LocalDateTime VALUE) {
-        if (VALUE.isBefore(MIN)) return MIN;
-        if (VALUE.isAfter(MAX)) return MAX;
-        return VALUE;
-    }
-
-    public static LocalDate clamp(final LocalDate MIN, final LocalDate MAX, final LocalDate VALUE) {
-        if (VALUE.isBefore(MIN)) return MIN;
-        if (VALUE.isAfter(MAX)) return MAX;
-        return VALUE;
     }
 
     public static double[] calcAutoScale(final double MIN_VALUE, final double MAX_VALUE) {
@@ -397,33 +368,7 @@ public class Helper {
         return maxEntry.getKey();
     }
 
-    public static List<Color> createColorPalette(final Color FROM_COLOR, final Color TO_COLOR, final int NO_OF_COLORS) {
-        int steps = Math.clamp(NO_OF_COLORS, 1, 50) - 1;
-        double step = 1.0 / steps;
-        double deltaRed = (TO_COLOR.getRed() - FROM_COLOR.getRed()) * step;
-        double deltaGreen = (TO_COLOR.getGreen() - FROM_COLOR.getGreen()) * step;
-        double deltaBlue = (TO_COLOR.getBlue() - FROM_COLOR.getBlue()) * step;
-        double deltaOpacity = (TO_COLOR.getOpacity() - FROM_COLOR.getOpacity()) * step;
-
-        List<Color> palette = new ArrayList<>(NO_OF_COLORS);
-        Color currentColor = FROM_COLOR;
-        palette.add(currentColor);
-        for (int i = 0; i < steps; i++) {
-            double red = Math.clamp((currentColor.getRed() + deltaRed), 0d, 1d);
-            double green = Math.clamp((currentColor.getGreen() + deltaGreen), 0d, 1d);
-            double blue = Math.clamp((currentColor.getBlue() + deltaBlue), 0d, 1d);
-            double opacity = Math.clamp((currentColor.getOpacity() + deltaOpacity), 0d, 1d);
-            currentColor = Color.color(red, green, blue, opacity);
-            palette.add(currentColor);
-        }
-        return palette;
-    }
-
-    public static final Color getComplementaryColor(final Color COLOR) {
-        return Color.hsb(COLOR.getHue() + 180, COLOR.getSaturation(), COLOR.getBrightness());
-    }
-
-    public static final Color[] getColorRangeMinMax(final Color COLOR, final int STEPS) {
+    public static Color[] getColorRangeMinMax(final Color COLOR, final int STEPS) {
         double hue = COLOR.getHue();
         double saturation = COLOR.getSaturation();
         double brightness = COLOR.getBrightness();
@@ -460,27 +405,7 @@ public class Helper {
         return new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
     }
 
-    public static double[] colorToYUV(final Color COLOR) {
-        final double WEIGHT_FACTOR_RED = 0.299;
-        final double WEIGHT_FACTOR_GREEN = 0.587;
-        final double WEIGHT_FACTOR_BLUE = 0.144;
-        final double U_MAX = 0.436;
-        final double V_MAX = 0.615;
-        double y = Math.clamp(WEIGHT_FACTOR_RED * COLOR.getRed() + WEIGHT_FACTOR_GREEN * COLOR.getGreen() + WEIGHT_FACTOR_BLUE * COLOR.getBlue(), 0, 1);
-        double u = Math.clamp(U_MAX * ((COLOR.getBlue() - y) / (1 - WEIGHT_FACTOR_BLUE)), -U_MAX, U_MAX);
-        double v = Math.clamp(V_MAX * ((COLOR.getRed() - y) / (1 - WEIGHT_FACTOR_RED)), -V_MAX, V_MAX);
-        return new double[]{y, u, v};
-    }
-
-    public static final boolean isBright(final Color COLOR) {return Double.compare(colorToYUV(COLOR)[0], 0.5) >= 0.0;}
-
-    public static final boolean isDark(final Color COLOR) {return colorToYUV(COLOR)[0] < 0.5;}
-
-    public static final Color getContrastColor(final Color COLOR) {
-        return COLOR.getBrightness() > 0.5 ? Color.BLACK : Color.WHITE;
-    }
-
-    public static final double adjustTextSize(final Text TEXT, final double MAX_WIDTH, final double FONT_SIZE) {
+    public static double adjustTextSize(final Text TEXT, final double MAX_WIDTH, final double FONT_SIZE) {
         final String FONT_NAME = TEXT.getFont().getName();
         double adjustableFontSize = FONT_SIZE;
 
@@ -618,28 +543,6 @@ public class Helper {
         CTX.closePath();
     }
 
-    public static final Color getColorAt(final LinearGradient GRADIENT, final double FRACTION) {
-        List<Stop> stops = GRADIENT.getStops();
-        double fraction = FRACTION < 0f ? 0f : (FRACTION > 1 ? 1 : FRACTION);
-        Stop lowerStop = new Stop(0.0, stops.get(0).getColor());
-        Stop upperStop = new Stop(1.0, stops.get(stops.size() - 1).getColor());
-
-        for (Stop stop : stops) {
-            double currentFraction = stop.getOffset();
-            if (Double.compare(currentFraction, fraction) == 0) {
-                return stop.getColor();
-            } else if (Double.compare(currentFraction, fraction) < 0) {
-                lowerStop = new Stop(currentFraction, stop.getColor());
-            } else {
-                upperStop = new Stop(currentFraction, stop.getColor());
-                break;
-            }
-        }
-
-        double interpolationFraction = (fraction - lowerStop.getOffset()) / (upperStop.getOffset() - lowerStop.getOffset());
-        return (Color) Interpolator.LINEAR.interpolate(lowerStop.getColor(), upperStop.getColor(), interpolationFraction);
-    }
-
     public static String shortenNumber(final double NUMBER, final int DECIMALS) {
         return shortenNumber(NUMBER, Math.clamp(DECIMALS, 0, 12), Locale.US);
     }
@@ -685,215 +588,9 @@ public class Helper {
         return new Point((P1.getX() + P2.getX()) / 2.0, (P1.getY() + P2.getY()) / 2.0);
     }
 
-    public static final double[] getMidPoint(final double X1, final double Y1, final double X2, final double Y2) {
+    public static double[] getMidPoint(final double X1, final double Y1, final double X2, final double Y2) {
         return new double[]{(X1 + X2) / 2.0, (Y1 + Y2) / 2.0};
     }
-
-    public static final double[] toHSL(final Color COLOR) {
-        return rgbToHSL(COLOR.getRed(), COLOR.getGreen(), COLOR.getBlue());
-    }
-
-    public static final double[] rgbToHSL(final double RED, final double GREEN, final double BLUE) {
-        //	Minimum and Maximum RGB values are used in the HSL calculations
-        double min = Math.min(RED, Math.min(GREEN, BLUE));
-        double max = Math.max(RED, Math.max(GREEN, BLUE));
-
-        //  Calculate the Hue
-        double hue = 0;
-
-        if (max == min) {
-            hue = 0;
-        } else if (max == RED) {
-            hue = ((60 * (GREEN - BLUE) / (max - min)) + 360) % 360;
-        } else if (max == GREEN) {
-            hue = (60 * (BLUE - RED) / (max - min)) + 120;
-        } else if (max == BLUE) {
-            hue = (60 * (RED - GREEN) / (max - min)) + 240;
-        }
-
-        //  Calculate the Luminance
-        double luminance = (max + min) / 2;
-
-        //  Calculate the Saturation
-        double saturation = 0;
-        if (Double.compare(max, min) == 0) {
-            saturation = 0;
-        } else if (luminance <= .5) {
-            saturation = (max - min) / (max + min);
-        } else {
-            saturation = (max - min) / (2 - max - min);
-        }
-
-        return new double[]{hue, saturation, luminance};
-    }
-
-    public static final Color hslToRGB(double hue, double saturation, double luminance) {
-        return hslToRGB(hue, saturation, luminance, 1);
-    }
-
-    public static Color hslToRGB(double hue, double saturation, double luminance, double opacity) {
-        saturation = Math.clamp(saturation, 0, 1);
-        luminance = Math.clamp(luminance, 0, 1);
-        opacity = Math.clamp(opacity, 0, 1);
-
-        hue = hue % 360.0;
-        hue /= 360;
-
-        double q = luminance < 0.5 ? luminance * (1 + saturation) : (luminance + saturation) - (saturation * luminance);
-        double p = 2 * luminance - q;
-
-        double r = Math.clamp(hueToRGB(p, q, hue + (1.0 / 3.0)), 0, 1);
-        double g = Math.clamp(hueToRGB(p, q, hue), 0, 1);
-        double b = Math.clamp(hueToRGB(p, q, hue - (1.0 / 3.0)), 0, 1);
-
-        return Color.color(r, g, b, opacity);
-    }
-
-    private static double hueToRGB(double p, double q, double t) {
-        if (t < 0) t += 1;
-        if (t > 1) t -= 1;
-        if (6 * t < 1) {
-            return p + ((q - p) * 6 * t);
-        }
-        if (2 * t < 1) {
-            return q;
-        }
-        if (3 * t < 2) {
-            return p + ((q - p) * 6 * ((2.0 / 3.0) - t));
-        }
-        return p;
-    }
-
-    public static Color hsbToRGB(final double hue, final double saturation, final double brightness) {
-        int r = 0, g = 0, b = 0;
-        if (saturation == 0) {
-            r = g = b = (int) (brightness * 255.0f + 0.5f);
-        } else {
-            double h = (hue - Math.floor(hue)) * 6.0;
-            double f = h - Math.floor(h);
-            double p = brightness * (1.0 - saturation);
-            double q = brightness * (1.0 - saturation * f);
-            double t = brightness * (1.0 - (saturation * (1.0 - f)));
-            switch ((int) h) {
-                case 0:
-                    r = (int) (brightness * 255.0 + 0.5);
-                    g = (int) (t * 255.0 + 0.5);
-                    b = (int) (p * 255.0 + 0.5);
-                    break;
-                case 1:
-                    r = (int) (q * 255.0 + 0.5);
-                    g = (int) (brightness * 255.0 + 0.5);
-                    b = (int) (p * 255.0 + 0.5);
-                    break;
-                case 2:
-                    r = (int) (p * 255.0 + 0.5);
-                    g = (int) (brightness * 255.0 + 0.5);
-                    b = (int) (t * 255.0 + 0.5);
-                    break;
-                case 3:
-                    r = (int) (p * 255.0 + 0.5);
-                    g = (int) (q * 255.0 + 0.5);
-                    b = (int) (brightness * 255.0 + 0.5);
-                    break;
-                case 4:
-                    r = (int) (t * 255.0 + 0.5);
-                    g = (int) (p * 255.0 + 0.5);
-                    b = (int) (brightness * 255.0 + 0.5);
-                    break;
-                case 5:
-                    r = (int) (brightness * 255.0 + 0.5);
-                    g = (int) (p * 255.0 + 0.5);
-                    b = (int) (q * 255.0 + 0.5);
-                    break;
-            }
-        }
-        return Color.rgb(r, g, b);
-    }
-
-    public static double[] colorToHSB(final Color color) {
-        int r = (int) (color.getRed() * 255.0);
-        int g = (int) (color.getGreen() * 255.0);
-        int b = (int) (color.getBlue() * 255.0);
-        double[] hsbValues = new double[3];
-        double hue;
-        double saturation;
-        double brightness;
-
-        int cmax = (r > g) ? r : g;
-        if (b > cmax) {
-            cmax = b;
-        }
-        int cmin = (r < g) ? r : g;
-        if (b < cmin) {
-            cmin = b;
-        }
-
-        brightness = ((double) cmax) / 255.0;
-        if (cmax != 0) {
-            saturation = ((float) (cmax - cmin)) / ((double) cmax);
-        } else {
-            saturation = 0;
-        }
-        if (saturation == 0) {
-            hue = 0;
-        } else {
-            double redc = ((double) (cmax - r)) / ((double) (cmax - cmin));
-            double greenc = ((double) (cmax - g)) / ((double) (cmax - cmin));
-            double bluec = ((double) (cmax - b)) / ((double) (cmax - cmin));
-            if (r == cmax) {
-                hue = bluec - greenc;
-            } else if (g == cmax) {
-                hue = 2.0 + redc - bluec;
-            } else {
-                hue = 4.0 + greenc - redc;
-            }
-            hue = hue / 6.0;
-            if (hue < 0) {
-                hue = hue + 1.0;
-            }
-        }
-        hsbValues[0] = hue;
-        hsbValues[1] = saturation;
-        hsbValues[2] = brightness;
-        return hsbValues;
-    }
-
-    /**
-     * convert javafx {@link Color} to rgb
-     *
-     * @param color {@link Color} instance
-     * @return
-     */
-    public static String colorToRGB(final Color color) {
-        String hex = color.toString().replace("0x", "");
-        String hexRed = hex.substring(0, 2).toUpperCase();
-        String hexGreen = hex.substring(2, 4).toUpperCase();
-        String hexBlue = hex.substring(4, 6).toUpperCase();
-
-        String intRed = Integer.toString(Integer.parseInt(hexRed, 16));
-        String intGreen = Integer.toString(Integer.parseInt(hexGreen, 16));
-        String intBlue = Integer.toString(Integer.parseInt(hexBlue, 16));
-
-        return String.join("", "colorToRGB(", intRed, ", ", intGreen, ", ", intBlue, ")");
-    }
-
-    public static String colorToRGBA(final Color COLOR) {return colorToRGBA(COLOR, COLOR.getOpacity());}
-
-    public static String colorToRGBA(final Color COLOR, final double ALPHA) {
-        String hex = COLOR.toString().replace("0x", "");
-        String hexRed = hex.substring(0, 2).toUpperCase();
-        String hexGreen = hex.substring(2, 4).toUpperCase();
-        String hexBlue = hex.substring(4, 6).toUpperCase();
-
-        String intRed = Integer.toString(Integer.parseInt(hexRed, 16));
-        String intGreen = Integer.toString(Integer.parseInt(hexGreen, 16));
-        String intBlue = Integer.toString(Integer.parseInt(hexBlue, 16));
-        String alpha = String.format(Locale.US, "%.3f", Math.clamp(ALPHA, 0, 1));
-
-        return String.join("", "colorToRGBA(", intRed, ", ", intGreen, ", ", intBlue, ",", alpha, ")");
-    }
-
-    public static String colorToWeb(final Color COLOR) {return COLOR.toString().replace("0x", "#").substring(0, 7);}
 
     public static List<DataPoint> createSmoothedHull(final List<DataPoint> POINTS, final int SUB_DIVISIONS) {
         List<DataPoint> hullPolygon = createHull(POINTS);
@@ -1064,28 +761,12 @@ public class Helper {
 
     public static <T> Predicate<T> not(Predicate<T> predicate) {return predicate.negate();}
 
-    public static LocalDateTime toRealValue(final double VALUE) {return TimeUtils.toDateTime((long) VALUE);}
-
-    public static LocalDateTime toRealValue(final double VALUE, final ZoneId ZONE_ID) {return TimeUtils.toDateTime((long) VALUE, ZONE_ID);}
-
-    public static String secondsToHHMMString(final long SECONDS) {
-        long[] hhmmss = secondsToHHMMSS(SECONDS);
-        return String.format("%02d:%02d:%02d", hhmmss[0], hhmmss[1], hhmmss[2]);
-    }
-
-    public static long[] secondsToHHMMSS(final long SECONDS) {
-        long seconds = SECONDS % 60;
-        long minutes = (SECONDS / 60) % 60;
-        long hours = (SECONDS / (60 * 60)) % 24;
-        return new long[]{hours, minutes, seconds};
-    }
-
-    public static final void enableNode(final Node NODE, final boolean ENABLE) {
+    public static void enableNode(final Node NODE, final boolean ENABLE) {
         NODE.setVisible(ENABLE);
         NODE.setManaged(ENABLE);
     }
 
-    public static final void orderChartItems(final List<ChartItem> ITEMS, final Order ORDER) {
+    public static void orderChartItems(final List<ChartItem> ITEMS, final Order ORDER) {
         if (Order.ASCENDING == ORDER) {
             Collections.sort(ITEMS, Comparator.comparingDouble(ChartItem::getValue));
         } else {
@@ -1093,7 +774,7 @@ public class Helper {
         }
     }
 
-    public static final void orderXYChartItemsByX(final List<XYChartItem> ITEMS, final Order ORDER) {
+    public static void orderXYChartItemsByX(final List<XYChartItem> ITEMS, final Order ORDER) {
         if (Order.ASCENDING == ORDER) {
             Collections.sort(ITEMS, Comparator.comparingDouble(XYChartItem::getX));
         } else {
@@ -1101,7 +782,7 @@ public class Helper {
         }
     }
 
-    public static final Dimension getTextDimension(final String TEXT, final Font FONT) {
+    public static Dimension getTextDimension(final String TEXT, final Font FONT) {
         Text text = new Text(TEXT);
         text.setFont(FONT);
         double textWidth = text.getBoundsInLocal().getWidth();
@@ -1111,11 +792,11 @@ public class Helper {
         return dim;
     }
 
-    public static final double bearing(final Point P1, final Point P2) {
+    public static double bearing(final Point P1, final Point P2) {
         return bearing(P1.getX(), P1.getY(), P2.getX(), P2.getY());
     }
 
-    public static final double bearing(final double X1, final double Y1, final double X2, final double Y2) {
+    public static double bearing(final double X1, final double Y1, final double X2, final double Y2) {
         double bearing = Math.toDegrees(Math.atan2(Y2 - Y1, X2 - X1)) + 90;
         if (bearing < 0) {
             bearing += 360.0;
@@ -1131,13 +812,13 @@ public class Helper {
      * @param DISTANCE        in % (0-1)
      * @return
      */
-    public static final Point getCubicBezierXYatT(final Point START_POINT, final Point CONTROL_POINT_1, final Point CONTROL_POINT_2, final Point END_POINT, final double DISTANCE) {
+    public static Point getCubicBezierXYatT(final Point START_POINT, final Point CONTROL_POINT_1, final Point CONTROL_POINT_2, final Point END_POINT, final double DISTANCE) {
         final double x = cubicN(DISTANCE, START_POINT.getX(), CONTROL_POINT_1.getX(), CONTROL_POINT_2.getX(), END_POINT.getX());
         final double y = cubicN(DISTANCE, START_POINT.getY(), CONTROL_POINT_1.getY(), CONTROL_POINT_2.getY(), END_POINT.getY());
         return new Point(x, y);
     }
 
-    public static final double[] getCubicBezierXYatT(final double START_POINT_X, final double START_POINT_Y,
+    public static double[] getCubicBezierXYatT(final double START_POINT_X, final double START_POINT_Y,
             final double CONTROL_POINT_1_X, final double CONTROL_POINT_1_Y,
             final double CONTROL_POINT_2_X, final double CONTROL_POINT_2_Y,
             final double END_POINT_X, final double END_POINT_Y, final double DISTANCE) {
@@ -1167,33 +848,7 @@ public class Helper {
         CTX.restore();
     }
 
-    public static final ColorInput createColorMask(final Image sourceImage, final Color color) {return new ColorInput(0, 0, sourceImage.getWidth(), sourceImage.getHeight(), color);}
-
-    public static final Blend createColorBlend(final Image sourceImage, final Color color) {
-        final ColorInput mask = createColorMask(sourceImage, color);
-        final Blend blend = new Blend(BlendMode.MULTIPLY);
-        blend.setTopInput(mask);
-        return blend;
-    }
-
-    public static final WritableImage getRedChannel(final Image sourceImage) {return getColorChannel(sourceImage, Color.RED);}
-
-    public static final WritableImage getGreenChannel(final Image sourceImage) {return getColorChannel(sourceImage, Color.LIME);}
-
-    public static final WritableImage getBlueChannel(final Image sourceImage) {return getColorChannel(sourceImage, Color.BLUE);}
-
-    private static final WritableImage getColorChannel(final Image sourceImage, final Color color) {
-        final Node imageView = new ImageView(sourceImage);
-        final Blend blend = createColorBlend(sourceImage, color);
-        imageView.setEffect(blend);
-
-        final SnapshotParameters params = new SnapshotParameters();
-        final WritableImage result = imageView.snapshot(params, null);
-        return result;
-    }
-
-
-    public static final String readTextFile(final String filename) {
+    public static String readTextFile(final String filename) {
         if (null == filename || !new File(filename).exists()) {
             throw new IllegalArgumentException("File: " + filename + " not found or null");
         }
@@ -1205,7 +860,7 @@ public class Helper {
         }
     }
 
-    public static final void saveTextFileToUserFolder(final String filename, final String text) {
+    public static void saveTextFileToUserFolder(final String filename, final String text) {
         if (null == text || text.isEmpty()) {
             return;
         }
@@ -1229,11 +884,11 @@ public class Helper {
             1_000_000_000_000_000L, "P",
             1_000_000_000_000_000_000L, "E"));
 
-    public static final String shortenNumber(final long value) {
+    public static String shortenNumber(final long value) {
         return shortenNumber(value, Locale.US);
     }
 
-    public static final String shortenNumber(final long value, final Locale locale) {
+    public static String shortenNumber(final long value, final Locale locale) {
         //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
         if (value == Long.MIN_VALUE) {
             return shortenNumber(Long.MIN_VALUE + 1, locale);
@@ -1257,13 +912,13 @@ public class Helper {
     }
 
 
-    public static final P2d angleToVector(final double deg) {return angleToVector(deg, 1.0);}
+    public static P2d angleToVector(final double deg) {return angleToVector(deg, 1.0);}
 
-    public static final P2d angleToVector(final double deg, final double len) {
+    public static P2d angleToVector(final double deg, final double len) {
         return new P2d(Math.cos(Math.toRadians(deg - 90)) * len, Math.sin(Math.toRadians(deg - 90)) * len);
     }
 
-    public static final boolean isFileReadable(final String filename) {
+    public static boolean isFileReadable(final String filename) {
         if (null == filename || filename.isEmpty()) {
             return false;
         }
@@ -1286,7 +941,7 @@ public class Helper {
         }
     }
 
-    public static final <T, E> Set<T> getKeysByValue(final Map<T, E> map, final E value) {
+    public static <T, E> Set<T> getKeysByValue(final Map<T, E> map, final E value) {
         return map.entrySet()
                 .stream()
                 .filter(entry -> Objects.equals(entry.getValue(), value))
@@ -1304,7 +959,7 @@ public class Helper {
      * @param filename The path and name of the file e.g. /Users/hansolo/Desktop/sankeyplot.png
      * @return true if the image was successfully saved
      */
-    public static final boolean renderToImage(final Node node, final int width, final int height, final String filename) {
+    public static boolean renderToImage(final Node node, final int width, final int height, final String filename) {
         final int w;
         final int h;
         if (width < 0) {
@@ -1366,7 +1021,7 @@ public class Helper {
      * @param height The height of the final image in pixels (if &lt; 0 then 400 and if &gt; 4096 then 4096)
      * @return a buffered image of the given node with the given dimensions
      */
-    public static final BufferedImage renderToImage(final Node node, final int width, final int height) {
+    public static BufferedImage renderToImage(final Node node, final int width, final int height) {
         final int w;
         final int h;
         if (width < 0) {
@@ -1407,7 +1062,7 @@ public class Helper {
         }
     }
 
-    public static final void initFXPlatform() {
+    public static void initFXPlatform() {
         Platform.startup(() -> {
         });
     }

@@ -1,6 +1,7 @@
 package fx.chart;
 
 import fx.chart.PixelMatrix.PixelShape;
+import fx.chart.color.ColorUtils;
 import fx.chart.data.MatrixItem;
 import fx.chart.heatmap.ColorMapping;
 import fx.chart.heatmap.Mapping;
@@ -365,7 +366,7 @@ public class MatrixPane<T extends MatrixItem> extends Region implements ChartAre
             maxZ = Math.max(maxZ, Z);
             rangeZ = maxZ - minZ;
 
-            Color color = Helper.getColorAt(matrixGradient, Z / rangeZ);
+            Color color = ColorUtils.getColorAt(matrixGradient, Z / rangeZ);
             matrix.setPixel(X, Y, color);
         }
     }
@@ -426,13 +427,12 @@ public class MatrixPane<T extends MatrixItem> extends Region implements ChartAre
         rangeZ = maxZ - minZ;
 
         SERIES.getItems().forEach(data -> {
-            Color color = Helper.getColorAt(matrixGradient, data.getZ() / rangeZ);
+            Color color = ColorUtils.getColorAt(matrixGradient, data.getZ() / rangeZ);
             matrix.setPixel(data.getX(), data.getY(), color);
         });
     }
 
 
-    // ******************** Resizing ******************************************
     private void resize() {
         width = getWidth() - getInsets().getLeft() - getInsets().getRight();
         height = getHeight() - getInsets().getTop() - getInsets().getBottom();

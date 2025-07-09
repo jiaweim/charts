@@ -1,6 +1,5 @@
 package fx.chart.color;
 
-import fx.chart.tools.Helper;
 import javafx.scene.paint.Color;
 
 public enum FlatUIColors implements Colors {
@@ -134,11 +133,11 @@ public enum FlatUIColors implements Colors {
     public Color get() {return COLOR;}
 
     @Override
-    public String rgb() {return Helper.colorToRGB(COLOR);}
+    public String rgb() {return ColorUtils.colorToRGB(COLOR);}
 
     @Override
-    public String rgba(final double OPACITY) {return Helper.colorToRGBA(COLOR, OPACITY);}
+    public String rgba(final double OPACITY) {return ColorUtils.colorToRGBA(COLOR, OPACITY);}
 
     @Override
-    public String web() {return Helper.colorToWeb(COLOR);}
+    public String web() {return ColorUtils.colorToWeb(COLOR);}
 }

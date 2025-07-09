@@ -1,11 +1,11 @@
 package fx.chart.world;
 
-import fx.chart.toolboxfx.geom.Location;
 import fx.chart.data.MapConnection;
 import fx.chart.data.WeightedMapPoints;
 import fx.chart.heatmap.ColorMapping;
 import fx.chart.heatmap.Mapping;
 import fx.chart.heatmap.OpacityDistribution;
+import fx.chart.toolboxfx.geom.Location;
 import fx.chart.tools.MapPoint;
 import fx.chart.tools.MapPointSize;
 import fx.chart.world.World.Resolution;
@@ -28,13 +28,9 @@ public class WorldBuilder<B extends WorldBuilder<B>> {
     private HashMap<String, Property> properties = new HashMap<>();
     private Resolution resolution = Resolution.HI_RES;
 
-
-    // ******************** Constructors **************************************
     protected WorldBuilder() {}
 
-
-    // ******************** Methods *******************************************
-    public static final WorldBuilder create() {return new WorldBuilder();}
+    public static WorldBuilder create() {return new WorldBuilder();}
 
     public final B resolution(final Resolution RESOLUTION) {
         resolution = RESOLUTION;

@@ -15,7 +15,6 @@ public class CountryPath extends SVGPath {
     private Tooltip tooltip;
 
 
-    // ******************** Constructors **************************************
     public CountryPath() {
         this("", null);
     }
@@ -52,11 +51,10 @@ public class CountryPath extends SVGPath {
 
     @Override
     public String toString() {
-        return new StringBuilder("{\n").append("  name   :\"").append(name).append("\"\n")
-                .append("  locale :\"").append(locale).append("\"\n")
-                .append("  tooltip:\"").append(tooltip.getText()).append("\"\n")
-                .append("  content:\"").append(getContent()).append("\"\n")
-                .append("}\n")
-                .toString();
+        return "{\n" + "  name   :\"" + name + "\"\n" +
+                "  locale :\"" + locale + "\"\n" +
+                "  tooltip:\"" + tooltip.getText() + "\"\n" +
+                "  content:\"" + getContent() + "\"\n" +
+                "}\n";
     }
 }
