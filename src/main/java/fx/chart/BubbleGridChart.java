@@ -1,11 +1,12 @@
 package fx.chart;
 
+import fx.chart.color.ColorUtils;
 import fx.chart.data.BubbleGridChartItem;
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvt;
 import fx.chart.event.EvtObserver;
-import fx.chart.toolboxfx.FontMetrix;
 import fx.chart.font.Fonts;
+import fx.chart.toolboxfx.FontMetrix;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import fx.chart.tools.Order;
@@ -857,7 +858,7 @@ public class BubbleGridChart extends Region {
                     final double diameter = radius * 2.0;
                     Color fill = useXCategoryFill ? xItem.getFill() : yItem.getFill();
                     if (getUseGradientFill()) {
-                        fill = Helper.getColorAt(gradient, bgci.getValue() / (maxValue - minValue));
+                        fill = ColorUtils.getColorAt(gradient, bgci.getValue() / (maxValue - minValue));
                     }
 
                     bubbles.add(new Bubble(cellCenterX, cellCenterY, radius, bgci));
@@ -868,7 +869,7 @@ public class BubbleGridChart extends Region {
                         ctx.setFont(dataFont);
                         ctx.setTextAlign(TextAlignment.CENTER);
                         if (isAutoBubbleTextColor()) {
-                            ctx.setFill(Helper.isDark(fill) ? Color.WHITE : Color.BLACK);
+                            ctx.setFill(ColorUtils.isDark(fill) ? Color.WHITE : Color.BLACK);
                         } else {
                             ctx.setFill(getTextColor());
                         }

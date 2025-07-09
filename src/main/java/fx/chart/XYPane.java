@@ -1,5 +1,6 @@
 package fx.chart;
 
+import fx.chart.color.ColorUtils;
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYItem;
 import fx.chart.event.*;
@@ -1212,7 +1213,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 positiveBaseColor = Color.BLUE;
                 negativeBaseColor = Color.RED;
             } else {
-                negativeBaseColor = Helper.getComplementaryColor(positiveBaseColor);
+                negativeBaseColor = ColorUtils.getComplementaryColor(positiveBaseColor);
             }
         } else {
             positiveBaseColor = Color.BLUE;

@@ -1,5 +1,6 @@
 package fx.chart;
 
+import fx.chart.color.ColorUtils;
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvt;
 import fx.chart.event.EvtObserver;
@@ -1107,7 +1108,7 @@ public class StreamChart extends Region {
 
                 // Draw item text
                 if (isItemTextVisible() && item.getValue() > getItemTextThreshold()) {
-                    ctx.setFill(autoTextColor ? Helper.isDark(item.getFill()) ? Color.WHITE : Color.BLACK : textColor);
+                    ctx.setFill(autoTextColor ? ColorUtils.isDark(item.getFill()) ? Color.WHITE : Color.BLACK : textColor);
                     itemFontMetrix.computeStringWidth(item.getName());
                     if (itemFontMetrix.computeStringWidth(item.getName()) < MAX_ITEM_WIDTH &&
                             itemFontMetrix.getLineHeight() < bounds.getHeight()) {

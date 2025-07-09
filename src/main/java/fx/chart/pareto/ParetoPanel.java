@@ -2,6 +2,7 @@ package fx.chart.pareto;
 
 import fx.chart.Axis;
 import fx.chart.Position;
+import fx.chart.color.ColorUtils;
 import fx.chart.font.Fonts;
 import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
@@ -468,7 +469,7 @@ public class ParetoPanel extends Region {
                         double subBarHeight = heightPerUnit * subBar.getValue();
                         ctx.save();
                         if (isUseCalculatedSubBarColors()) {
-                            subBarColor = Helper.isBright(barColor)
+                            subBarColor = ColorUtils.isBright(barColor)
                                     ? Color.hsb(subBarColor.getHue(),
                                     Math.clamp(subBarColor.getSaturation() * 1.75, 0, 1),
                                     Math.clamp(subBarColor.getBrightness() * 0.75, 0, 1))

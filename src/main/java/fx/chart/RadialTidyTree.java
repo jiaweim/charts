@@ -1,5 +1,6 @@
 package fx.chart;
 
+import fx.chart.color.ColorUtils;
 import fx.chart.data.ChartItem;
 import fx.chart.data.TreeNode;
 import fx.chart.event.ChartEvt;
@@ -608,8 +609,8 @@ public class RadialTidyTree<T extends ChartItem> extends Region {
         Color darkColor = getDarkTextColor();
         root.stream().forEach(node -> {
             T item = node.getItem();
-            boolean darkFillColor = Helper.isDark(item.getFill());
-            boolean darkTextColor = Helper.isDark(item.getTextFill());
+            boolean darkFillColor = ColorUtils.isDark(item.getFill());
+            boolean darkTextColor = ColorUtils.isDark(item.getTextFill());
             if (darkFillColor && darkTextColor) {
                 item.setTextFill(brightColor);
             }

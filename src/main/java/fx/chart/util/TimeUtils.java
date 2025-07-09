@@ -51,6 +51,30 @@ public final class TimeUtils {
     }
 
     /**
+     * convert seconds to HH:MM:SS format
+     *
+     * @param seconds seconds
+     * @return time in HH:MM:SS format
+     */
+    public static String secondsToHHMMString(final long seconds) {
+        long[] hhmmss = TimeUtils.secondsToHHMMSS(seconds);
+        return String.format("%02d:%02d:%02d", hhmmss[0], hhmmss[1], hhmmss[2]);
+    }
+
+    /**
+     * convert seconds to HHMMSS value
+     *
+     * @param seconds seconds
+     * @return long array with hh mm ss
+     */
+    public static long[] secondsToHHMMSS(final long seconds) {
+        long secs = seconds % 60;
+        long minutes = (seconds / 60) % 60;
+        long hours = (seconds / (60 * 60)) % 24;
+        return new long[]{hours, minutes, secs};
+    }
+
+    /**
      * Converts this date-time at system zoneid to the number of seconds from the epoch of 1970-01-01T00:00:00Z.
      *
      * @param dateTime {@link LocalDateTime}

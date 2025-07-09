@@ -1,5 +1,6 @@
 package fx.chart.areaheatmap;
 
+import fx.chart.color.ColorUtils;
 import fx.chart.data.DataPoint;
 import fx.chart.font.Fonts;
 import fx.chart.heatmap.ColorMapping;
@@ -435,7 +436,7 @@ public class AreaHeatMap extends Region {
         if (LEVELS) {
             tmp = Math.round(tmp * levels) / levels;
         }
-        return Helper.hslToRGB(tmp, 1, 0.5);
+        return ColorUtils.hslToRGB(tmp, 1, 0.5);
     }
 
     private Color getColorForValue(final double VALUE) {return getColorForValue(VALUE, getHeatMapOpacity());}

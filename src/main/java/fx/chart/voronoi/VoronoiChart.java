@@ -1,5 +1,6 @@
 package fx.chart.voronoi;
 
+import fx.chart.color.ColorUtils;
 import fx.chart.tools.Helper;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.BooleanProperty;
@@ -478,7 +479,7 @@ public class VoronoiChart extends Region {
         if (colorTable.containsKey(item)) {
             return colorTable.get(item);
         }
-        Color color = Helper.hsbToRGB(RND.nextDouble() * 360, 1.0, 1.0);
+        Color color = ColorUtils.hsbToRGB(RND.nextDouble() * 360, 1.0, 1.0);
         colorTable.put(item, color);
         return color;
     }

@@ -1,10 +1,11 @@
 package fx.chart;
 
+import fx.chart.color.ColorUtils;
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvt;
-import fx.chart.event.SelectionEvt;
 import fx.chart.event.EvtObserver;
 import fx.chart.event.EvtType;
+import fx.chart.event.SelectionEvt;
 import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
@@ -855,7 +856,7 @@ public class CoxcombChart extends Region {
                 if (getUseChartItemTextFill()) {
                     ctx.setFill(item.getTextFill());
                 } else if (isAutoColor) {
-                    ctx.setFill(Helper.isDark(item.getFill()) ? Color.WHITE : Color.BLACK);
+                    ctx.setFill(ColorUtils.isDark(item.getFill()) ? Color.WHITE : Color.BLACK);
                 } else {
                     ctx.setFill(textColor);
                 }

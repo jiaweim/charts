@@ -2533,7 +2533,7 @@ public class Axis extends Region {
                             if (TickLabelFormat.NUMBER == tickLabelFormat) {
                                 tickLabelString = Orientation.HORIZONTAL == orientation ? formatNumber(locale, (minValue - i)) : formatNumber(locale, maxValue - counter + minValue);
                             } else {
-                                tickLabelString = Orientation.HORIZONTAL == orientation ? Helper.secondsToHHMMString(TimeUtils.toSeconds(Helper.toRealValue(minValue - i), TimeUtils.getZoneOffset())) : formatNumber(locale, maxValue - counter + minValue);
+                                tickLabelString = Orientation.HORIZONTAL == orientation ? TimeUtils.secondsToHHMMString(TimeUtils.toSeconds(TimeUtils.toDateTime((long) (minValue - i)), TimeUtils.getZoneOffset())) : formatNumber(locale, maxValue - counter + minValue);
                             }
                         } else if (AxisType.TEXT == axisType) {
                             if (tickLabelCounter < noOfCategories) {
@@ -2583,7 +2583,7 @@ public class Axis extends Region {
                         if (TickLabelFormat.NUMBER == getTickLabelFormat()) {
                             tickLabelString = Orientation.HORIZONTAL == orientation ? formatNumber(locale, (minValue - i)) : formatNumber(locale, maxValue - counter + minValue);
                         } else {
-                            tickLabelString = Orientation.HORIZONTAL == orientation ? Helper.secondsToHHMMString(TimeUtils.toSeconds(Helper.toRealValue(minValue - i), TimeUtils.getZoneOffset())) : formatNumber(locale, maxValue - counter + minValue);
+                            tickLabelString = Orientation.HORIZONTAL == orientation ? TimeUtils.secondsToHHMMString(TimeUtils.toSeconds(TimeUtils.toDateTime((long) (minValue - i)), TimeUtils.getZoneOffset())) : formatNumber(locale, maxValue - counter + minValue);
                         }
                         drawTickLabel(isOnlyFirstAndLastTickLabelVisible, isZero, isMinValue, isMaxValue, fullRange, zeroColor, tickLabelColor, textPointX, textPointY, maxTextWidth, tickLabelString, orientation);
                     }
