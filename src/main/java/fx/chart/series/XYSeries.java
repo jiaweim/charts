@@ -50,22 +50,22 @@ public class XYSeries<T extends XYItem> extends Series<T> {
         /**
          * set the series data
          *
-         * @param items list of data
+         * @param ITEMS list of data
          * @return this
          */
-        public Builder<T> items(T... items) {
-            Collections.addAll(itemList_, items);
+        public Builder<T> items(T... ITEMS) {
+            Collections.addAll(itemList_, ITEMS);
             return this;
         }
 
         /**
          * set the series data
          *
-         * @param items list of data
+         * @param ITEMS list of data
          * @return this
          */
-        public Builder<T> items(List<T> items) {
-            itemList_.addAll(items);
+        public Builder<T> items(List<T> ITEMS) {
+            itemList_.addAll(ITEMS);
             return this;
         }
 
@@ -81,7 +81,6 @@ public class XYSeries<T extends XYItem> extends Series<T> {
         }
 
         /**
-         *
          * @param paint
          * @return
          */
@@ -230,6 +229,13 @@ public class XYSeries<T extends XYItem> extends Series<T> {
 
     @Override
     public ObservableList<T> getItems() {return items_;}
+
+    /**
+     * @return true if this series contains no data
+     */
+    public boolean isEmpty() {
+        return items_.isEmpty();
+    }
 
     /**
      * Return the minimum x value of the series

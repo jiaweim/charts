@@ -77,13 +77,13 @@ public class XYChart<T extends XYItem> extends Region {
     private boolean hasCenterXAxis;
     private boolean hasBottomXAxis;
 
-    private String _title;
+    private String title_;
     private StringProperty titleProperty;
 
-    private String _subTitle;
+    private String subTitle_;
     private StringProperty subTitleProperty;
 
-    private Color _titleColor;
+    private Color titleColor_;
     private ObjectProperty<Color> titleColorProperty;
 
     private Color subTitleColor_;
@@ -129,15 +129,14 @@ public class XYChart<T extends XYItem> extends Region {
         axisObserver_ = evt -> adjustChartRange();
         updateObserver_ = evt -> drawMarkerCanvas();
         markers_ = new ArrayList<>();
-        _title = "";
-        _subTitle = "";
+        title_ = "";
+        subTitle_ = "";
         xyPanes.forEach(xyPane -> xyPane.addChartEvtObserver(ChartEvt.UPDATE, updateObserver_));
         checkReferenceZero();
         initGraphics();
         registerListeners();
     }
 
-    // ******************** Initialization ************************************
     private void initGraphics() {
         if (Double.compare(getPrefWidth(), 0.0) <= 0 || Double.compare(getPrefHeight(), 0.0) <= 0 || Double.compare(getWidth(), 0.0) <= 0 ||
                 Double.compare(getHeight(), 0.0) <= 0) {
@@ -247,11 +246,11 @@ public class XYChart<T extends XYItem> extends Region {
         xyPanes_.forEach(xyPane -> xyPane.dispose());
     }
 
-    public String getTitle() {return null == titleProperty ? _title : titleProperty.get();}
+    public String getTitle() {return null == titleProperty ? title_ : titleProperty.get();}
 
     public void setTitle(final String TITLE) {
         if (null == titleProperty) {
-            _title = TITLE;
+            title_ = TITLE;
             refresh();
         } else {
             titleProperty.set(TITLE);
@@ -260,7 +259,7 @@ public class XYChart<T extends XYItem> extends Region {
 
     public StringProperty titleProperty() {
         if (titleProperty == null) {
-            titleProperty = new StringPropertyBase(_title) {
+            titleProperty = new StringPropertyBase(title_) {
                 @Override
                 protected void invalidated() {refresh();}
 
@@ -270,16 +269,16 @@ public class XYChart<T extends XYItem> extends Region {
                 @Override
                 public String getName() {return "title";}
             };
-            _title = null;
+            title_ = null;
         }
         return titleProperty;
     }
 
-    public String getSubTitle() {return null == subTitleProperty ? _subTitle : subTitleProperty.get();}
+    public String getSubTitle() {return null == subTitleProperty ? subTitle_ : subTitleProperty.get();}
 
     public void setSubTitle(final String SUB_TITLE) {
         if (null == subTitleProperty) {
-            _subTitle = SUB_TITLE;
+            subTitle_ = SUB_TITLE;
             xyPanes_.forEach(xyPane -> xyPane.redraw());
         } else {
             subTitleProperty.set(SUB_TITLE);
@@ -288,7 +287,7 @@ public class XYChart<T extends XYItem> extends Region {
 
     public StringProperty subTitleProperty() {
         if (null == subTitleProperty) {
-            subTitleProperty = new StringPropertyBase(_subTitle) {
+            subTitleProperty = new StringPropertyBase(subTitle_) {
                 @Override
                 protected void invalidated() {xyPanes_.forEach(xyPane -> xyPane.redraw());}
 
@@ -298,16 +297,16 @@ public class XYChart<T extends XYItem> extends Region {
                 @Override
                 public String getName() {return "subTitle";}
             };
-            _subTitle = null;
+            subTitle_ = null;
         }
         return subTitleProperty;
     }
 
-    public Color getTitleColor() {return null == titleColorProperty ? _titleColor : titleColorProperty.get();}
+    public Color getTitleColor() {return null == titleColorProperty ? titleColor_ : titleColorProperty.get();}
 
     public void setTitleColor(final Color TITLE_COLOR) {
         if (null == titleColorProperty) {
-            _titleColor = TITLE_COLOR;
+            titleColor_ = TITLE_COLOR;
             refresh();
         } else {
             titleColorProperty.set(TITLE_COLOR);
@@ -316,7 +315,7 @@ public class XYChart<T extends XYItem> extends Region {
 
     public ObjectProperty<Color> titleColorProperty() {
         if (null == titleColorProperty) {
-            titleColorProperty = new ObjectPropertyBase<Color>(_titleColor) {
+            titleColorProperty = new ObjectPropertyBase<Color>(titleColor_) {
                 @Override
                 protected void invalidated() {refresh();}
 
@@ -326,7 +325,7 @@ public class XYChart<T extends XYItem> extends Region {
                 @Override
                 public String getName() {return "titleColor";}
             };
-            _titleColor = null;
+            titleColor_ = null;
         }
         return titleColorProperty;
     }
