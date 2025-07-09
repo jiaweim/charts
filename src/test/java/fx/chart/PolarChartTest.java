@@ -19,6 +19,7 @@ import java.util.Random;
 
 
 public class PolarChartTest extends Application {
+
     private static final Random RND = new Random();
     private static final long UPDATE_INTERVAL = 2_000_000_000l;
     private XYSeries<XYChartItem> xySeries1;

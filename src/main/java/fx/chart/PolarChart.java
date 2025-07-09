@@ -13,40 +13,41 @@ import java.awt.image.BufferedImage;
 
 
 public class PolarChart<T extends XYItem> extends Region {
+
     private static final double PREFERRED_WIDTH = 400;
     private static final double PREFERRED_HEIGHT = 400;
     private static final double MINIMUM_WIDTH = 50;
     private static final double MINIMUM_HEIGHT = 50;
     private static final double MAXIMUM_WIDTH = 4096;
     private static final double MAXIMUM_HEIGHT = 4096;
-    private double size;
-    private double width;
-    private double height;
-    private XYPane<T> xyPane;
-    private String _title;
-    private StringProperty title;
-    private String _subTitle;
-    private StringProperty subTitle;
-    private AnchorPane pane;
 
+    private double size_;
+    private double width_;
+    private double height_;
+    private XYPane<T> xyPane_;
+    private String title_;
+    private StringProperty titleProperty;
+    private String subTitle_;
+    private StringProperty subTitleProperty;
+    /**
+     * the root pane to hold {@link XYPane}
+     */
+    private AnchorPane pane_;
 
-    // ******************** Constructors **************************************
     public PolarChart(final XYPane<T> XY_PANE) {
-        if (null == XY_PANE) {
+        if (XY_PANE == null) {
             throw new IllegalArgumentException("XYPane has not to be null");
         }
         if (!XY_PANE.containsPolarChart()) {
             throw new IllegalArgumentException("No Polar chart in XYPane");
         }
-        xyPane = XY_PANE;
-        width = PREFERRED_WIDTH;
-        height = PREFERRED_HEIGHT;
+        xyPane_ = XY_PANE;
+        width_ = PREFERRED_WIDTH;
+        height_ = PREFERRED_HEIGHT;
         initGraphics();
         registerListeners();
     }
 
-
-    // ******************** Initialization ************************************
     private void initGraphics() {
         if (Double.compare(getPrefWidth(), 0.0) <= 0 || Double.compare(getPrefHeight(), 0.0) <= 0 || Double.compare(getWidth(), 0.0) <= 0 ||
                 Double.compare(getHeight(), 0.0) <= 0) {
@@ -57,9 +58,9 @@ public class PolarChart<T extends XYItem> extends Region {
             }
         }
 
-        pane = new AnchorPane(xyPane);
+        pane_ = new AnchorPane(xyPane_);
 
-        getChildren().setAll(pane);
+        getChildren().setAll(pane_);
     }
 
     private void registerListeners() {
@@ -67,8 +68,6 @@ public class PolarChart<T extends XYItem> extends Region {
         heightProperty().addListener(o -> resize());
     }
 
-
-    // ******************** Methods *******************************************
     @Override
     protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
 
@@ -90,22 +89,24 @@ public class PolarChart<T extends XYItem> extends Region {
     @Override
     public ObservableList<Node> getChildren() {return super.getChildren();}
 
-    public String getTitle() {return null == title ? _title : title.get();}
+    public String getTitle() {
+        return titleProperty == null ? title_ : titleProperty.get();
+    }
 
     public void setTitle(final String TITLE) {
-        if (null == title) {
-            _title = TITLE;
-            xyPane.redraw();
+        if (titleProperty == null) {
+            title_ = TITLE;
+            xyPane_.redraw();
         } else {
-            title.set(TITLE);
+            titleProperty.set(TITLE);
         }
     }
 
     public StringProperty titleProperty() {
-        if (null == title) {
-            title = new StringPropertyBase(_title) {
+        if (null == titleProperty) {
+            titleProperty = new StringPropertyBase(title_) {
                 @Override
-                protected void invalidated() {xyPane.redraw();}
+                protected void invalidated() {xyPane_.redraw();}
 
                 @Override
                 public Object getBean() {return PolarChart.this;}
@@ -113,27 +114,27 @@ public class PolarChart<T extends XYItem> extends Region {
                 @Override
                 public String getName() {return "title";}
             };
-            _title = null;
+            title_ = null;
         }
-        return title;
+        return titleProperty;
     }
 
-    public String getSubTitle() {return null == subTitle ? _subTitle : subTitle.get();}
+    public String getSubTitle() {return null == subTitleProperty ? subTitle_ : subTitleProperty.get();}
 
     public void setSubTitle(final String SUB_TITLE) {
-        if (null == subTitle) {
-            _subTitle = SUB_TITLE;
-            xyPane.redraw();
+        if (null == subTitleProperty) {
+            subTitle_ = SUB_TITLE;
+            xyPane_.redraw();
         } else {
-            subTitle.set(SUB_TITLE);
+            subTitleProperty.set(SUB_TITLE);
         }
     }
 
     public StringProperty subTitleProperty() {
-        if (null == subTitle) {
-            subTitle = new StringPropertyBase(_subTitle) {
+        if (null == subTitleProperty) {
+            subTitleProperty = new StringPropertyBase(subTitle_) {
                 @Override
-                protected void invalidated() {xyPane.redraw();}
+                protected void invalidated() {xyPane_.redraw();}
 
                 @Override
                 public Object getBean() {return PolarChart.this;}
@@ -141,9 +142,9 @@ public class PolarChart<T extends XYItem> extends Region {
                 @Override
                 public String getName() {return "subTitle";}
             };
-            _subTitle = null;
+            subTitle_ = null;
         }
-        return subTitle;
+        return subTitleProperty;
     }
 
     /**
@@ -169,23 +170,21 @@ public class PolarChart<T extends XYItem> extends Region {
         return Helper.renderToImage(PolarChart.this, width, height);
     }
 
-    public XYPane<T> getXYPane() {return xyPane;}
+    public XYPane<T> getXYPane() {return xyPane_;}
 
-    public void refresh() {xyPane.redraw();}
+    public void refresh() {xyPane_.redraw();}
 
-
-    // ******************** Resizing ******************************************
     private void resize() {
-        width = getWidth() - getInsets().getLeft() - getInsets().getRight();
-        height = getHeight() - getInsets().getTop() - getInsets().getBottom();
-        size = width < height ? width : height;
+        width_ = getWidth() - getInsets().getLeft() - getInsets().getRight();
+        height_ = getHeight() - getInsets().getTop() - getInsets().getBottom();
+        size_ = Math.min(width_, height_);
 
-        if (width > 0 && height > 0) {
-            pane.setMaxSize(size, size);
-            pane.setPrefSize(size, size);
-            pane.relocate((getWidth() - size) * 0.5, (getHeight() - size) * 0.5);
-            xyPane.setMaxSize(size, size);
-            xyPane.setPrefSize(size, size);
+        if (width_ > 0 && height_ > 0) {
+            pane_.setMaxSize(size_, size_);
+            pane_.setPrefSize(size_, size_);
+            pane_.relocate((getWidth() - size_) * 0.5, (getHeight() - size_) * 0.5);
+            xyPane_.setMaxSize(size_, size_);
+            xyPane_.setPrefSize(size_, size_);
         }
     }
 }

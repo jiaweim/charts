@@ -49,6 +49,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
+
     private static final double MINIMUM_WIDTH = 0;
     private static final double MINIMUM_HEIGHT = 0;
     private static final double MAXIMUM_WIDTH = 4096;
@@ -67,12 +68,18 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     private ObjectProperty<Paint> chartBackgroundProperty;
 
     private ObservableList<XYSeries<T>> listOfSeries;
-    private Canvas canvas;
-    private GraphicsContext ctx;
-    private Canvas cursorCanvas;
-    private GraphicsContext cursorCtx;
-    private double cursorX;
-    private double cursorY;
+    private Canvas canvas_;
+    private GraphicsContext gc_;
+
+    private Canvas cursorCanvas_;
+    private GraphicsContext cursorGC_;
+
+    /**
+     * cursor position
+     */
+    private double cursorX_;
+    private double cursorY_;
+
     private double scaleX;
     private double scaleY;
     private double symbolSize;
@@ -120,17 +127,19 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     private BooleanProperty stdDeviationVisibleProperty;
     private double _averageStrokeWidth;
     private DoubleProperty averageStrokeWidthProperty;
-    private boolean _crossHairVisible;
+
+    private boolean crossHairVisible_;
     private BooleanProperty crossHairVisibleProperty;
-    private Color _crossHairColor;
+
+    private Color crossHairColor_;
     private ObjectProperty<Color> crossHairColorProperty;
 
-    private ObservableList<XYPaneOverlay> overlays;
-    private TooltipPopup popup;
-    private SeriesEventListener seriesListener;
-    private final EventHandler<MouseEvent> mouseHandler;
-    private final List<CursorEventListener> cursorEventListeners;
-    private final Map<EvtType, List<EvtObserver<ChartEvt>>> observers = new ConcurrentHashMap<>();
+    private ObservableList<XYPaneOverlay> overlays_;
+    private TooltipPopup popup_;
+    private SeriesEventListener seriesListener_;
+    private final EventHandler<MouseEvent> mouseHandler_;
+    private final List<CursorEventListener> cursorEventListeners_;
+    private final Map<EvtType, List<EvtObserver<ChartEvt>>> observers_ = new ConcurrentHashMap<>();
 
     public XYPane(final List<XYSeries<T>> SERIES) {
         this(Color.TRANSPARENT, 1, SERIES.toArray(new XYSeries[0]));
@@ -139,23 +148,23 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     /**
      * Create a XYPane containing a list of {@link XYSeries}
      *
-     * @param xySeries {@link XYSeries} array
+     * @param SERIES {@link XYSeries} array
      */
     @SafeVarargs
-    public XYPane(final XYSeries<T>... xySeries) {
-        this(Color.TRANSPARENT, 1, xySeries);
+    public XYPane(final XYSeries<T>... SERIES) {
+        this(Color.TRANSPARENT, 1, SERIES);
     }
 
     public XYPane(final int BANDS, final XYSeries<T>... SERIES) {
         this(Color.TRANSPARENT, BANDS, SERIES);
     }
 
-    public XYPane(final Paint background, final int BANDS, final XYSeries<T>... SERIES) {
+    public XYPane(final Paint BACKGROUND, final int BANDS, final XYSeries<T>... SERIES) {
         getStylesheets().add(XYPane.class.getResource("chart.css").toExternalForm());
         aspectRatio = PREFERRED_HEIGHT / PREFERRED_WIDTH;
-        cursorEventListeners = new CopyOnWriteArrayList<>();
+        cursorEventListeners_ = new CopyOnWriteArrayList<>();
         keepAspect = false;
-        chartBackground_ = background;
+        chartBackground_ = BACKGROUND;
         listOfSeries = FXCollections.observableArrayList(SERIES);
         scaleX = 1;
         scaleY = 1;
@@ -178,39 +187,37 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         _envelopeVisible = false;
         _stdDeviationVisible = true;
         _averageStrokeWidth = 1;
-        _crossHairVisible = false;
-        _crossHairColor = Color.GRAY;
-        overlays = FXCollections.observableArrayList();
-        cursorX = -1;
-        cursorY = -1;
-        popup = new TooltipPopup(2000);
-        seriesListener = e -> redraw();
-        mouseHandler = e -> {
-            cursorX = e.getX();
-            cursorY = e.getY();
+        crossHairVisible_ = false;
+        crossHairColor_ = Color.GRAY;
+        overlays_ = FXCollections.observableArrayList();
+        cursorX_ = -1;
+        cursorY_ = -1;
+        popup_ = new TooltipPopup(2000);
+        seriesListener_ = e -> redraw();
+        mouseHandler_ = e -> {
+            cursorX_ = e.getX();
+            cursorY_ = e.getY();
             drawCursor();
             for (XYSeries<T> series : listOfSeries) {
                 double radius = series.getSymbolSize() * 0.5;
                 for (T item : series.getItems()) {
                     Point2D pointInScene = localToScene(new Point2D((item.getX() - getLowerBoundX()) * scaleX, height - (item.getY() - getLowerBoundY()) * scaleY));
-                    if (Helper.isInCircle(e.getSceneX(), e.getSceneY(), pointInScene.getX(), pointInScene.getY(), radius) && !item.getTooltipText().isEmpty() && !popup.getText().equals(item.getTooltipText())) {
-                        popup.setX(e.getScreenX());
-                        popup.setY(e.getScreenY() - popup.getHeight());
-                        popup.setText(item.getTooltipText());
-                        popup.animatedShow(getScene().getWindow());
+                    if (Helper.isInCircle(e.getSceneX(), e.getSceneY(), pointInScene.getX(), pointInScene.getY(), radius) && !item.getTooltipText().isEmpty() && !popup_.getText().equals(item.getTooltipText())) {
+                        popup_.setX(e.getScreenX());
+                        popup_.setY(e.getScreenY() - popup_.getHeight());
+                        popup_.setText(item.getTooltipText());
+                        popup_.animatedShow(getScene().getWindow());
                         break;
                     }
                 }
             }
         };
-        popup.setOnHiding(e -> popup.setText(""));
+        popup_.setOnHiding(e -> popup_.setText(""));
 
         initGraphics();
         registerListeners();
     }
 
-
-    // ******************** Initialization ************************************
     private void initGraphics() {
         if (Double.compare(getPrefWidth(), 0.0) <= 0 || Double.compare(getPrefHeight(), 0.0) <= 0 || Double.compare(getWidth(), 0.0) <= 0 ||
                 Double.compare(getHeight(), 0.0) <= 0) {
@@ -223,15 +230,16 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
         getStyleClass().setAll("chart", "xy-chart");
 
-        canvas = new Canvas(PREFERRED_WIDTH, PREFERRED_HEIGHT);
-        ctx = canvas.getGraphicsContext2D();
+        canvas_ = new Canvas(PREFERRED_WIDTH, PREFERRED_HEIGHT);
+        gc_ = canvas_.getGraphicsContext2D();
 
-        cursorCanvas = new Canvas(PREFERRED_WIDTH, PREFERRED_HEIGHT);
-        cursorCanvas.setMouseTransparent(true);
-        Helper.enableNode(cursorCanvas, true);
-        cursorCtx = cursorCanvas.getGraphicsContext2D();
+        cursorCanvas_ = new Canvas(PREFERRED_WIDTH, PREFERRED_HEIGHT);
+        cursorCanvas_.setMouseTransparent(true);
 
-        getChildren().setAll(canvas, cursorCanvas);
+        Helper.enableNode(cursorCanvas_, true);
+        cursorGC_ = cursorCanvas_.getGraphicsContext2D();
+
+        getChildren().setAll(canvas_, cursorCanvas_);
     }
 
     private void registerListeners() {
@@ -240,9 +248,9 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         listOfSeries.addListener((ListChangeListener<XYSeries<T>>) c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(series -> series.setOnSeriesEvent(seriesListener));
+                    c.getAddedSubList().forEach(series -> series.setOnSeriesEvent(seriesListener_));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(series -> series.removeSeriesEventListener(seriesListener));
+                    c.getRemoved().forEach(series -> series.removeSeriesEventListener(seriesListener_));
                 }
             }
             redraw();
@@ -252,54 +260,52 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 series.setOnSeriesEvent(seriesEvent -> redraw());
             }
         });
-        overlays.addListener((ListChangeListener<? super XYPaneOverlay>) c -> {
+        overlays_.addListener((ListChangeListener<? super XYPaneOverlay>) c -> {
             redraw();
         });
-        canvas.addEventHandler(MouseEvent.MOUSE_MOVED, mouseHandler);
+        canvas_.addEventHandler(MouseEvent.MOUSE_MOVED, mouseHandler_);
     }
 
-
-    // ******************** Methods *******************************************
     @Override
-    protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
+    protected double computeMinWidth(final double height) {return MINIMUM_WIDTH;}
 
     @Override
-    protected double computeMinHeight(final double WIDTH) {return MINIMUM_HEIGHT;}
+    protected double computeMinHeight(final double width) {return MINIMUM_HEIGHT;}
 
     @Override
-    protected double computePrefWidth(final double HEIGHT) {return super.computePrefWidth(HEIGHT);}
+    protected double computePrefWidth(final double height) {return super.computePrefWidth(height);}
 
     @Override
-    protected double computePrefHeight(final double WIDTH) {return super.computePrefHeight(WIDTH);}
+    protected double computePrefHeight(final double width) {return super.computePrefHeight(width);}
 
     @Override
-    protected double computeMaxWidth(final double HEIGHT) {return MAXIMUM_WIDTH;}
+    protected double computeMaxWidth(final double height) {return MAXIMUM_WIDTH;}
 
     @Override
-    protected double computeMaxHeight(final double WIDTH) {return MAXIMUM_HEIGHT;}
+    protected double computeMaxHeight(final double width) {return MAXIMUM_HEIGHT;}
 
     @Override
     public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public void dispose() {
-        canvas.removeEventHandler(MouseEvent.MOUSE_MOVED, mouseHandler);
+        canvas_.removeEventHandler(MouseEvent.MOUSE_MOVED, mouseHandler_);
         removeAllCursorEventListeners();
     }
 
     public Paint getChartBackground() {return null == chartBackgroundProperty ? chartBackground_ : chartBackgroundProperty.get();}
 
-    public void setChartBackground(final Paint PAINT) {
-        if (null == chartBackgroundProperty) {
-            chartBackground_ = PAINT;
+    public void setChartBackground(final Paint paint) {
+        if (chartBackgroundProperty == null) {
+            chartBackground_ = paint;
             redraw();
         } else {
-            chartBackgroundProperty.set(PAINT);
+            chartBackgroundProperty.set(paint);
         }
     }
 
     public ObjectProperty<Paint> chartBackgroundProperty() {
         if (null == chartBackgroundProperty) {
-            chartBackgroundProperty = new ObjectPropertyBase<Paint>(chartBackground_) {
+            chartBackgroundProperty = new ObjectPropertyBase<>(chartBackground_) {
                 @Override
                 protected void invalidated() {redraw();}
 
@@ -316,12 +322,19 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
     public int getNoOfBands() {return noOfBands;}
 
-    public void setNoOfBands(final int BANDS) {
-        noOfBands = Math.clamp(BANDS, 1, 5);
+    public void setNoOfBands(final int bands) {
+        noOfBands = Math.clamp(bands, 1, 5);
         redraw();
     }
 
-    public double getLowerBoundX() {return lowerBoundXProperty == null ? lowerBoundX_ : lowerBoundXProperty.get();}
+    /**
+     * lower bound of x-values
+     *
+     * @return lower bound
+     */
+    public double getLowerBoundX() {
+        return lowerBoundXProperty == null ? lowerBoundX_ : lowerBoundXProperty.get();
+    }
 
     public void setLowerBoundX(final double value) {
         if (null == lowerBoundXProperty) {
@@ -436,6 +449,11 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         redraw();
     }
 
+    /**
+     * Return the pixel range of the x
+     *
+     * @return range of x
+     */
     public double getRangeX() {return getUpperBoundX() - getLowerBoundX();}
 
     public double getRangeY() {return getUpperBoundY() - getLowerBoundY();}
@@ -788,12 +806,12 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     /**
      * @return Whether to display crosshair under the cursor
      */
-    public boolean isCrossHairVisible() {return null == crossHairVisibleProperty ? _crossHairVisible : crossHairVisibleProperty.get();}
+    public boolean isCrossHairVisible() {return crossHairVisibleProperty == null ? crossHairVisible_ : crossHairVisibleProperty.get();}
 
     public void setCrossHairVisible(final boolean visible) {
         if (null == crossHairVisibleProperty) {
-            _crossHairVisible = visible;
-            Helper.enableNode(cursorCanvas, visible);
+            crossHairVisible_ = visible;
+            Helper.enableNode(cursorCanvas_, visible);
             drawCursor();
         } else {
             crossHairVisibleProperty.set(visible);
@@ -802,10 +820,10 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
     public BooleanProperty crossHairVisibleProperty() {
         if (null == crossHairVisibleProperty) {
-            crossHairVisibleProperty = new BooleanPropertyBase(_crossHairVisible) {
+            crossHairVisibleProperty = new BooleanPropertyBase(crossHairVisible_) {
                 @Override
                 protected void invalidated() {
-                    Helper.enableNode(cursorCanvas, get());
+                    Helper.enableNode(cursorCanvas_, get());
                     drawCursor();
                 }
 
@@ -819,11 +837,11 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         return crossHairVisibleProperty;
     }
 
-    public Color getCrossHairColor() {return null == crossHairColorProperty ? _crossHairColor : crossHairColorProperty.get();}
+    public Color getCrossHairColor() {return null == crossHairColorProperty ? crossHairColor_ : crossHairColorProperty.get();}
 
     public void setCrossHairColor(final Color COLOR) {
         if (null == crossHairColorProperty) {
-            _crossHairColor = COLOR;
+            crossHairColor_ = COLOR;
             drawCursor();
         } else {
             crossHairColorProperty.set(COLOR);
@@ -832,21 +850,21 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
     public ObjectProperty<Color> crossHairColorProperty() {
         if (null == crossHairColorProperty) {
-            crossHairColorProperty = new ObjectPropertyBase<>(_crossHairColor) {
+            crossHairColorProperty = new ObjectPropertyBase<>(crossHairColor_) {
                 @Override
                 public Object getBean() {return XYPane.this;}
 
                 @Override
                 public String getName() {return "crossHairColor";}
             };
-            _crossHairColor = null;
+            crossHairColor_ = null;
         }
         return crossHairColorProperty;
     }
 
-    public ObservableList<XYPaneOverlay> getOverlays() {return this.overlays;}
+    public ObservableList<XYPaneOverlay> getOverlays() {return this.overlays_;}
 
-    public void setOverlays(final List<XYPaneOverlay> overlays) {this.overlays.setAll(overlays);}
+    public void setOverlays(final List<XYPaneOverlay> overlays) {this.overlays_.setAll(overlays);}
 
     public boolean containsPolarChart() {
         for (XYSeries<T> series : listOfSeries) {
@@ -874,9 +892,9 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             return;
         }
 
-        ctx.clearRect(0, 0, width, height);
-        ctx.setFill(getChartBackground());
-        ctx.fillRect(0, 0, width, height);
+        gc_.clearRect(0, 0, width, height);
+        gc_.setFill(getChartBackground());
+        gc_.fillRect(0, 0, width, height);
 
         if (listOfSeries.size() == 2) {
             boolean deltaChart = false;
@@ -940,14 +958,14 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     }
 
     private void drawCursor() {
-        cursorCtx.clearRect(0, 0, width, height);
+        cursorGC_.clearRect(0, 0, width, height);
         if (isCrossHairVisible()) {
-            cursorCtx.setStroke(getCrossHairColor());
-            cursorCtx.strokeLine(0, cursorY, width, cursorY);
-            cursorCtx.strokeLine(cursorX, 0, cursorX, height);
+            cursorGC_.setStroke(getCrossHairColor());
+            cursorGC_.strokeLine(0, cursorY_, width, cursorY_);
+            cursorGC_.strokeLine(cursorX_, 0, cursorX_, height);
 
-            double x = cursorX / scaleX + getLowerBoundX();
-            double y = ((cursorY - height) / scaleY - getLowerBoundY()) * -1;
+            double x = cursorX_ / scaleX + getLowerBoundX();
+            double y = ((cursorY_ - height) / scaleY - getLowerBoundY()) * -1;
             fireCursorEvent(new CursorEvent(x, y));
         }
     }
@@ -959,7 +977,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
      * @param showPoints true if show symbol
      */
     private void drawLine(final XYSeries<T> series, final boolean showPoints) {
-        if (null == series || !series.isVisible() || series.getItems().isEmpty()) {
+        if (series == null || !series.isVisible() || series.getItems().isEmpty()) {
             return;
         }
         final double LOWER_BOUND_X = getLowerBoundX();
@@ -969,16 +987,16 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         double oldY = height - (items.get(0).getY() - LOWER_BOUND_Y) * scaleY;
         boolean wasEmpty = items.get(0).isEmptyItem();
 
-        ctx.setLineWidth(series.getStrokeWidth() > -1 ? series.getStrokeWidth() : size * 0.0025);
-        ctx.setStroke(series.getStroke());
-        ctx.setFill(Color.TRANSPARENT);
+        gc_.setLineWidth(series.getStrokeWidth() > -1 ? series.getStrokeWidth() : size * 0.0025);
+        gc_.setStroke(series.getStroke());
+        gc_.setFill(Color.TRANSPARENT);
 
         for (T item : series.getItems()) {
             double x = (item.getX() - LOWER_BOUND_X) * scaleX;
             double y = height - (item.getY() - LOWER_BOUND_Y) * scaleY;
             boolean isEmpty = item.isEmptyItem();
             if (!isEmpty && !wasEmpty) {
-                ctx.strokeLine(oldX, oldY, x, y);
+                gc_.strokeLine(oldX, oldY, x, y);
             }
             oldX = x;
             oldY = y;
@@ -990,24 +1008,24 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         }
     }
 
-    private void drawArea(final XYSeries<T> series, final boolean showPoints) {
-        if (series == null || !series.isVisible() || series.getItems().isEmpty()) {
+    private void drawArea(final XYSeries<T> SERIES, final boolean SHOW_POINTS) {
+        if (SERIES == null || !SERIES.isVisible() || SERIES.getItems().isEmpty()) {
             return;
         }
         final double lowerBoundX = getLowerBoundX();
         final double lowerBoundY = getLowerBoundY();
-        List<T> items = series.getItems();
+        List<T> items = SERIES.getItems();
         int noOfItems = items.size();
         double oldX = (items.get(0).getX() - lowerBoundX) * scaleX;
         double oldY = height - (items.get(0).getY() - lowerBoundY) * scaleY;
         boolean wasEmpty = items.get(0).isEmptyItem();
 
         // Fill Area
-        ctx.setLineWidth(series.getStrokeWidth() > -1 ? series.getStrokeWidth() : size * 0.0025);
-        ctx.setStroke(series.getStroke());
-        ctx.setFill(series.getFill());
-        ctx.beginPath();
-        ctx.moveTo(oldX, oldY);
+        gc_.setLineWidth(SERIES.getStrokeWidth() > -1 ? SERIES.getStrokeWidth() : size * 0.0025);
+        gc_.setStroke(SERIES.getStroke());
+        gc_.setFill(SERIES.getFill());
+        gc_.beginPath();
+        gc_.moveTo(oldX, oldY);
 
         for (int i = 1; i < noOfItems; i++) {
             T item = items.get(i);
@@ -1015,62 +1033,62 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             double y = height - (item.getY() - lowerBoundY) * scaleY;
             boolean isEmpty = item.isEmptyItem();
             if (isEmpty) {
-                ctx.lineTo(oldX, height - (lowerBoundY) * scaleY);
-                ctx.lineTo(x, height - (lowerBoundY) * scaleY);
+                gc_.lineTo(oldX, height - (lowerBoundY) * scaleY);
+                gc_.lineTo(x, height - (lowerBoundY) * scaleY);
             } else if (wasEmpty) {
-                ctx.lineTo(x, height - (lowerBoundY) * scaleY);
-                ctx.lineTo(x, y);
+                gc_.lineTo(x, height - (lowerBoundY) * scaleY);
+                gc_.lineTo(x, y);
             } else {
-                ctx.lineTo(x, y);
+                gc_.lineTo(x, y);
             }
             oldX = x;
             wasEmpty = isEmpty;
         }
-        ctx.lineTo(oldX, height);
-        ctx.lineTo((items.get(0).getX() - lowerBoundX) * scaleX, height);
-        ctx.closePath();
-        ctx.fill();
+        gc_.lineTo(oldX, height);
+        gc_.lineTo((items.get(0).getX() - lowerBoundX) * scaleX, height);
+        gc_.closePath();
+        gc_.fill();
 
         // Draw Line
         oldX = (items.get(0).getX() - lowerBoundX) * scaleX;
         oldY = height - (items.get(0).getY() - lowerBoundY) * scaleY;
-        for (T item : series.getItems()) {
+        for (T item : SERIES.getItems()) {
             double x = (item.getX() - lowerBoundX) * scaleX;
             double y = height - (item.getY() - lowerBoundY) * scaleY;
             boolean isEmpty = item.isEmptyItem();
             if (!isEmpty && !wasEmpty) {
-                ctx.strokeLine(oldX, oldY, x, y);
+                gc_.strokeLine(oldX, oldY, x, y);
             }
             oldX = x;
             oldY = y;
             wasEmpty = isEmpty;
         }
 
-        if (showPoints) {
-            drawSymbols(series);
+        if (SHOW_POINTS) {
+            drawSymbols(SERIES);
         }
     }
 
-    private void drawScatter(final XYSeries<T> SERIES) {
-        if (null == SERIES || !SERIES.isVisible() || SERIES.getItems().isEmpty()) {
+    private void drawScatter(final XYSeries<T> series) {
+        if (series == null || !series.isVisible() || series.getItems().isEmpty()) {
             return;
         }
-        final double LOWER_BOUND_X = getLowerBoundX();
-        final double LOWER_BOUND_Y = getLowerBoundY();
-        ctx.setStroke(Color.TRANSPARENT);
-        ctx.setFill(Color.TRANSPARENT);
+        final double lowerBoundX = getLowerBoundX();
+        final double lowerBoundY = getLowerBoundY();
+        gc_.setStroke(Color.TRANSPARENT);
+        gc_.setFill(Color.TRANSPARENT);
 
-        Symbol seriesSymbol = SERIES.getSymbol();
-        Paint symbolFill = SERIES.getSymbolFill();
-        Paint symbolStroke = SERIES.getSymbolStroke();
-        double size = SERIES.getSymbolSize() > -1 ? SERIES.getSymbolSize() : symbolSize;
+        Symbol seriesSymbol = series.getSymbol();
+        Paint symbolFill = series.getSymbolFill();
+        Paint symbolStroke = series.getSymbolStroke();
+        double size = series.getSymbolSize() > -1 ? series.getSymbolSize() : symbolSize;
 
-        for (T item : SERIES.getItems()) {
-            double x = (item.getX() - LOWER_BOUND_X) * scaleX;
-            double y = height - (item.getY() - LOWER_BOUND_Y) * scaleY;
+        for (T item : series.getItems()) {
+            double x = (item.getX() - lowerBoundX) * scaleX;
+            double y = height - (item.getY() - lowerBoundY) * scaleY;
 
             Symbol itemSymbol = item.getSymbol();
-            if (Symbol.NONE == itemSymbol) {
+            if (itemSymbol == Symbol.NONE) {
                 drawSymbol(x, y, symbolFill, symbolStroke, seriesSymbol, size);
             } else {
                 drawSymbol(x, y, item.getFill(), item.getStroke(), itemSymbol, size);
@@ -1082,8 +1100,8 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         if (null == SERIES || !SERIES.isVisible() || SERIES.getItems().isEmpty()) {
             return;
         }
-        ctx.setStroke(Color.TRANSPARENT);
-        ctx.setFill(Color.TRANSPARENT);
+        gc_.setStroke(Color.TRANSPARENT);
+        gc_.setFill(Color.TRANSPARENT);
 
         Symbol seriesSymbol = SERIES.getSymbol();
         Paint symbolFill = SERIES.getSymbolFill();
@@ -1113,24 +1131,24 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         final double LOWER_BOUND_X = getLowerBoundX();
         final double LOWER_BOUND_Y = getLowerBoundY();
 
-        ctx.setLineWidth(SERIES.getStrokeWidth() > -1 ? SERIES.getStrokeWidth() : size * 0.0025);
-        ctx.setStroke(SERIES.getStroke());
-        ctx.setFill(Color.TRANSPARENT);
+        gc_.setLineWidth(SERIES.getStrokeWidth() > -1 ? SERIES.getStrokeWidth() : size * 0.0025);
+        gc_.setStroke(SERIES.getStroke());
+        gc_.setFill(Color.TRANSPARENT);
 
         List<Point> points = new ArrayList<>(SERIES.getItems().size());
         SERIES.getItems().forEach(item -> points.add(new Point(item.getX(), item.getY(), item.isEmptyItem())));
 
         Point[] interpolatedPoints = Helper.subdividePoints(points.toArray(new Point[0]), SUB_DIVISIONS);
 
-        ctx.beginPath();
+        gc_.beginPath();
         for (Point p : interpolatedPoints) {
             if (p.isEmpty()) {
-                ctx.moveTo((p.getX() - LOWER_BOUND_X) * scaleX, height - (p.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.moveTo((p.getX() - LOWER_BOUND_X) * scaleX, height - (p.getY() - LOWER_BOUND_Y) * scaleY);
             } else {
-                ctx.lineTo((p.getX() - LOWER_BOUND_X) * scaleX, height - (p.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.lineTo((p.getX() - LOWER_BOUND_X) * scaleX, height - (p.getY() - LOWER_BOUND_Y) * scaleY);
             }
         }
-        ctx.stroke();
+        gc_.stroke();
 
         if (SHOW_POINTS) {
             drawSymbols(SERIES);
@@ -1148,50 +1166,50 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         double oldY = height - (items.get(0).getY() - LOWER_BOUND_Y) * scaleY;
         boolean wasEmpty = items.get(0).isEmptyItem();
 
-        ctx.setLineWidth(SERIES.getStrokeWidth() > -1 ? SERIES.getStrokeWidth() : size * 0.0025);
-        ctx.setStroke(SERIES.getStroke());
-        ctx.setFill(SERIES.getFill());
+        gc_.setLineWidth(SERIES.getStrokeWidth() > -1 ? SERIES.getStrokeWidth() : size * 0.0025);
+        gc_.setStroke(SERIES.getStroke());
+        gc_.setFill(SERIES.getFill());
 
         List<Point> points = new ArrayList<>(items.size());
         items.forEach(item -> points.add(new Point(item.getX(), item.getY(), item.isEmptyItem())));
 
         Point[] interpolatedPoints = Helper.subdividePoints(points.toArray(new Point[0]), SUB_DIVISIONS);
 
-        ctx.beginPath();
-        ctx.moveTo(oldX, oldY);
+        gc_.beginPath();
+        gc_.moveTo(oldX, oldY);
         for (Point p : interpolatedPoints) {
             double x = (p.getX() - LOWER_BOUND_X) * scaleX;
             double y = height - (p.getY() - LOWER_BOUND_Y) * scaleY;
             boolean isEmpty = p.isEmpty();
 
             if (isEmpty) {
-                ctx.lineTo(oldX, height - (LOWER_BOUND_Y) * scaleY);
-                ctx.lineTo(x, height - (LOWER_BOUND_Y) * scaleY);
+                gc_.lineTo(oldX, height - (LOWER_BOUND_Y) * scaleY);
+                gc_.lineTo(x, height - (LOWER_BOUND_Y) * scaleY);
             } else if (wasEmpty) {
-                ctx.lineTo(x, height - (LOWER_BOUND_Y) * scaleY);
-                ctx.lineTo(x, y);
+                gc_.lineTo(x, height - (LOWER_BOUND_Y) * scaleY);
+                gc_.lineTo(x, y);
             } else {
-                ctx.lineTo(x, y);
+                gc_.lineTo(x, y);
             }
 
             oldX = x;
             wasEmpty = isEmpty;
         }
 
-        ctx.lineTo(oldX, height);
-        ctx.lineTo((items.get(0).getX() - LOWER_BOUND_X) * scaleX, height);
-        ctx.closePath();
-        ctx.fill();
+        gc_.lineTo(oldX, height);
+        gc_.lineTo((items.get(0).getX() - LOWER_BOUND_X) * scaleX, height);
+        gc_.closePath();
+        gc_.fill();
 
-        ctx.beginPath();
+        gc_.beginPath();
         for (Point p : interpolatedPoints) {
             if (p.isEmpty()) {
-                ctx.moveTo((p.getX() - LOWER_BOUND_X) * scaleX, height - (p.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.moveTo((p.getX() - LOWER_BOUND_X) * scaleX, height - (p.getY() - LOWER_BOUND_Y) * scaleY);
             } else {
-                ctx.lineTo((p.getX() - LOWER_BOUND_X) * scaleX, height - (p.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.lineTo((p.getX() - LOWER_BOUND_X) * scaleX, height - (p.getY() - LOWER_BOUND_Y) * scaleY);
             }
         }
-        ctx.stroke();
+        gc_.stroke();
 
         if (SHOW_POINTS) {
             drawSymbols(SERIES);
@@ -1281,33 +1299,33 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         double oldX = (items.get(0).getX() - LOWER_BOUND_X) * scaleX;
         double oldY = height - (items.get(0).getY() - LOWER_BOUND_Y) * scaleY;
 
-        ctx.setLineWidth(SERIES.getStrokeWidth() > -1 ? SERIES.getStrokeWidth() : size * 0.0025);
-        ctx.setStroke(SERIES.getStroke());
-        ctx.setFill(SERIES.getFill());
+        gc_.setLineWidth(SERIES.getStrokeWidth() > -1 ? SERIES.getStrokeWidth() : size * 0.0025);
+        gc_.setStroke(SERIES.getStroke());
+        gc_.setFill(SERIES.getFill());
 
         List<Point> points = new ArrayList<>(items.size());
         items.forEach(item -> points.add(new Point(item.getX(), item.getY())));
 
         Point[] interpolatedPoints = Helper.subdividePoints(points.toArray(new Point[0]), SUB_DIVISIONS);
 
-        ctx.beginPath();
-        ctx.moveTo(oldX, oldY);
+        gc_.beginPath();
+        gc_.moveTo(oldX, oldY);
         for (Point p : interpolatedPoints) {
             double x = (p.getX() - LOWER_BOUND_X) * scaleX;
-            ctx.lineTo(x, height - (p.getY() - LOWER_BOUND_Y) * scaleY);
+            gc_.lineTo(x, height - (p.getY() - LOWER_BOUND_Y) * scaleY);
             oldX = x;
         }
 
-        ctx.lineTo(oldX, height);
-        ctx.lineTo((items.get(0).getX() - LOWER_BOUND_X) * scaleX, height);
-        ctx.closePath();
-        ctx.fill();
+        gc_.lineTo(oldX, height);
+        gc_.lineTo((items.get(0).getX() - LOWER_BOUND_X) * scaleX, height);
+        gc_.closePath();
+        gc_.fill();
 
-        ctx.beginPath();
+        gc_.beginPath();
         for (Point p : interpolatedPoints) {
-            ctx.lineTo((p.getX() - LOWER_BOUND_X) * scaleX, height - (p.getY() - LOWER_BOUND_Y) * scaleY);
+            gc_.lineTo((p.getX() - LOWER_BOUND_X) * scaleX, height - (p.getY() - LOWER_BOUND_Y) * scaleY);
         }
-        ctx.stroke();
+        gc_.stroke();
     }
 
     private void drawLineDelta(final XYSeries<T> series1, final XYSeries<T> series2) {
@@ -1337,19 +1355,19 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         Paint series2Fill = series2.getFill();
 
         // Start path
-        ctx.setLineWidth(size * 0.0025);
-        ctx.beginPath();
+        gc_.setLineWidth(size * 0.0025);
+        gc_.beginPath();
         switch (currentSeries) {
             case 1:
-                ctx.moveTo((series1Item0.getX() - LOWER_BOUND_X) * scaleX, height - (series1Item0.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.moveTo((series1Item0.getX() - LOWER_BOUND_X) * scaleX, height - (series1Item0.getY() - LOWER_BOUND_Y) * scaleY);
                 lastPointForClose.set(series2Item0.getX(), series2Item0.getY());
                 break;
             case 2:
-                ctx.moveTo((series2Item0.getX() - LOWER_BOUND_X) * scaleX, height - (series2Item0.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.moveTo((series2Item0.getX() - LOWER_BOUND_X) * scaleX, height - (series2Item0.getY() - LOWER_BOUND_Y) * scaleY);
                 lastPointForClose.set(series1Item0.getX(), series1Item0.getY());
                 break;
             default:
-                ctx.moveTo((series1Item0.getX() - LOWER_BOUND_X) * scaleX, height - (series1Item0.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.moveTo((series1Item0.getX() - LOWER_BOUND_X) * scaleX, height - (series1Item0.getY() - LOWER_BOUND_Y) * scaleY);
                 lastPointForClose.set(series2Item0.getX(), series2Item0.getY());
                 break;
         }
@@ -1367,21 +1385,21 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 // Lines crossed Line1 is now below lower Line2
                 Point intersectionPoint = Helper.calcIntersectionOfTwoLines(lastXyData1.getX(), lastXyData1.getY(), xyData1.getX(), xyData1.getY(),
                         lastXyData2.getX(), lastXyData2.getY(), xyData2.getX(), xyData2.getY());
-                ctx.lineTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.lineTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
 
                 Collections.reverse(cachedItems);
                 for (T item : cachedItems) {
-                    ctx.lineTo((item.getX() - LOWER_BOUND_X) * scaleX, height - (item.getY() - LOWER_BOUND_Y) * scaleY);
+                    gc_.lineTo((item.getX() - LOWER_BOUND_X) * scaleX, height - (item.getY() - LOWER_BOUND_Y) * scaleY);
                 }
-                ctx.lineTo((lastPointForClose.getX() - LOWER_BOUND_X) * scaleX, height - (lastPointForClose.getY() - LOWER_BOUND_Y) * scaleY);
-                ctx.closePath();
-                ctx.setFill(series1Fill);
-                ctx.fill();
+                gc_.lineTo((lastPointForClose.getX() - LOWER_BOUND_X) * scaleX, height - (lastPointForClose.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.closePath();
+                gc_.setFill(series1Fill);
+                gc_.fill();
                 cachedItems.clear();
 
-                ctx.beginPath();
-                ctx.moveTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
-                ctx.lineTo((xyData2.getX() - LOWER_BOUND_X) * scaleX, height - (xyData2.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.beginPath();
+                gc_.moveTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.lineTo((xyData2.getX() - LOWER_BOUND_X) * scaleX, height - (xyData2.getY() - LOWER_BOUND_Y) * scaleY);
                 currentSeries = 2;
                 cachedItems.add(xyData1);
                 lastPointForClose.set(intersectionPoint.getX(), intersectionPoint.getY());
@@ -1389,21 +1407,21 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 // Lines crossed and Line1 is now above Line2
                 Point intersectionPoint = Helper.calcIntersectionOfTwoLines(lastXyData1.getX(), lastXyData1.getY(), xyData1.getX(), xyData1.getY(),
                         lastXyData2.getX(), lastXyData2.getY(), xyData2.getX(), xyData2.getY());
-                ctx.lineTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.lineTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
 
                 Collections.reverse(cachedItems);
                 for (T item : cachedItems) {
-                    ctx.lineTo((item.getX() - LOWER_BOUND_X) * scaleX, height - (item.getY() - LOWER_BOUND_Y) * scaleY);
+                    gc_.lineTo((item.getX() - LOWER_BOUND_X) * scaleX, height - (item.getY() - LOWER_BOUND_Y) * scaleY);
                 }
-                ctx.lineTo((lastPointForClose.getX() - LOWER_BOUND_X) * scaleX, height - (lastPointForClose.getY() - LOWER_BOUND_Y) * scaleY);
-                ctx.closePath();
-                ctx.setFill(series2Fill);
-                ctx.fill();
+                gc_.lineTo((lastPointForClose.getX() - LOWER_BOUND_X) * scaleX, height - (lastPointForClose.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.closePath();
+                gc_.setFill(series2Fill);
+                gc_.fill();
                 cachedItems.clear();
 
-                ctx.beginPath();
-                ctx.moveTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
-                ctx.lineTo((xyData1.getX() - LOWER_BOUND_X) * scaleX, height - (xyData1.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.beginPath();
+                gc_.moveTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.lineTo((xyData1.getX() - LOWER_BOUND_X) * scaleX, height - (xyData1.getY() - LOWER_BOUND_Y) * scaleY);
                 currentSeries = 1;
                 cachedItems.add(xyData2);
                 lastPointForClose.set(intersectionPoint.getX(), intersectionPoint.getY());
@@ -1411,39 +1429,39 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 // Lines did not cross
                 switch (currentSeries) {
                     case 1:
-                        ctx.lineTo((xyData1.getX() - LOWER_BOUND_X) * scaleX, height - (xyData1.getY() - LOWER_BOUND_Y) * scaleY);
+                        gc_.lineTo((xyData1.getX() - LOWER_BOUND_X) * scaleX, height - (xyData1.getY() - LOWER_BOUND_Y) * scaleY);
                         cachedItems.add(xyData2);
                         break;
                     case 2:
-                        ctx.lineTo((xyData2.getX() - LOWER_BOUND_X) * scaleX, height - (xyData2.getY() - LOWER_BOUND_Y) * scaleY);
+                        gc_.lineTo((xyData2.getX() - LOWER_BOUND_X) * scaleX, height - (xyData2.getY() - LOWER_BOUND_Y) * scaleY);
                         cachedItems.add(xyData1);
                         break;
                 }
             }
 
-            ctx.setLineWidth(series1.getStrokeWidth() > -1 ? series1.getStrokeWidth() : size * 0.0025);
-            ctx.setStroke(series1Stroke);
-            ctx.strokeLine((lastXyData1.getX() - LOWER_BOUND_X) * scaleX, height - (lastXyData1.getY() - LOWER_BOUND_Y) * scaleY, (xyData1.getX() - LOWER_BOUND_X) * scaleX, height - (xyData1.getY() - LOWER_BOUND_Y) * scaleY);
+            gc_.setLineWidth(series1.getStrokeWidth() > -1 ? series1.getStrokeWidth() : size * 0.0025);
+            gc_.setStroke(series1Stroke);
+            gc_.strokeLine((lastXyData1.getX() - LOWER_BOUND_X) * scaleX, height - (lastXyData1.getY() - LOWER_BOUND_Y) * scaleY, (xyData1.getX() - LOWER_BOUND_X) * scaleX, height - (xyData1.getY() - LOWER_BOUND_Y) * scaleY);
 
-            ctx.setLineWidth(series2.getStrokeWidth() > -1 ? series2.getStrokeWidth() : size * 0.0025);
-            ctx.setStroke(series2Stroke);
-            ctx.strokeLine((lastXyData2.getX() - LOWER_BOUND_X) * scaleX, height - (lastXyData2.getY() - LOWER_BOUND_Y) * scaleY, (xyData2.getX() - LOWER_BOUND_X) * scaleX, height - (xyData2.getY() - LOWER_BOUND_Y) * scaleY);
+            gc_.setLineWidth(series2.getStrokeWidth() > -1 ? series2.getStrokeWidth() : size * 0.0025);
+            gc_.setStroke(series2Stroke);
+            gc_.strokeLine((lastXyData2.getX() - LOWER_BOUND_X) * scaleX, height - (lastXyData2.getY() - LOWER_BOUND_Y) * scaleY, (xyData2.getX() - LOWER_BOUND_X) * scaleX, height - (xyData2.getY() - LOWER_BOUND_Y) * scaleY);
         }
         Collections.reverse(cachedItems);
         for (T item : cachedItems) {
-            ctx.lineTo((item.getX() - LOWER_BOUND_X) * scaleX, height - (item.getY() - LOWER_BOUND_Y) * scaleY);
+            gc_.lineTo((item.getX() - LOWER_BOUND_X) * scaleX, height - (item.getY() - LOWER_BOUND_Y) * scaleY);
         }
-        ctx.lineTo((lastPointForClose.getX() - LOWER_BOUND_X) * scaleX, height - (lastPointForClose.getY() - LOWER_BOUND_Y) * scaleY);
-        ctx.closePath();
+        gc_.lineTo((lastPointForClose.getX() - LOWER_BOUND_X) * scaleX, height - (lastPointForClose.getY() - LOWER_BOUND_Y) * scaleY);
+        gc_.closePath();
         switch (currentSeries) {
             case 1:
-                ctx.setFill(series1Fill);
+                gc_.setFill(series1Fill);
                 break;
             case 2:
-                ctx.setFill(series2Fill);
+                gc_.setFill(series2Fill);
                 break;
         }
-        ctx.fill();
+        gc_.fill();
         cachedItems.clear();
 
 
@@ -1490,19 +1508,19 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         Paint series2Fill = SERIES_2.getFill();
 
         // Start path
-        ctx.setLineWidth(size * 0.0025);
-        ctx.beginPath();
+        gc_.setLineWidth(size * 0.0025);
+        gc_.beginPath();
         switch (currentSeries) {
             case 1:
-                ctx.moveTo((interpolatedPoints1[0].getX() - LOWER_BOUND_X) * scaleX, height - (interpolatedPoints1[0].getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.moveTo((interpolatedPoints1[0].getX() - LOWER_BOUND_X) * scaleX, height - (interpolatedPoints1[0].getY() - LOWER_BOUND_Y) * scaleY);
                 lastPointForClose.set(interpolatedPoints2[0].getX(), interpolatedPoints2[0].getY());
                 break;
             case 2:
-                ctx.moveTo((interpolatedPoints2[0].getX() - LOWER_BOUND_X) * scaleX, height - (interpolatedPoints2[0].getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.moveTo((interpolatedPoints2[0].getX() - LOWER_BOUND_X) * scaleX, height - (interpolatedPoints2[0].getY() - LOWER_BOUND_Y) * scaleY);
                 lastPointForClose.set(interpolatedPoints1[0].getX(), interpolatedPoints1[0].getY());
                 break;
             default:
-                ctx.moveTo((interpolatedPoints1[0].getX() - LOWER_BOUND_X) * scaleX, height - (interpolatedPoints1[0].getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.moveTo((interpolatedPoints1[0].getX() - LOWER_BOUND_X) * scaleX, height - (interpolatedPoints1[0].getY() - LOWER_BOUND_Y) * scaleY);
                 lastPointForClose.set(interpolatedPoints2[0].getX(), interpolatedPoints2[0].getY());
                 break;
         }
@@ -1518,21 +1536,21 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 // Lines crossed Line1 is now below lower Line2
                 Point intersectionPoint = Helper.calcIntersectionOfTwoLines(lastXyData1.getX(), lastXyData1.getY(), xyData1.getX(), xyData1.getY(),
                         lastXyData2.getX(), lastXyData2.getY(), xyData2.getX(), xyData2.getY());
-                ctx.lineTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.lineTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
 
                 Collections.reverse(cachedItems);
                 for (Point item : cachedItems) {
-                    ctx.lineTo((item.getX() - LOWER_BOUND_X) * scaleX, height - (item.getY() - LOWER_BOUND_Y) * scaleY);
+                    gc_.lineTo((item.getX() - LOWER_BOUND_X) * scaleX, height - (item.getY() - LOWER_BOUND_Y) * scaleY);
                 }
-                ctx.lineTo((lastPointForClose.getX() - LOWER_BOUND_X) * scaleX, height - (lastPointForClose.getY() - LOWER_BOUND_Y) * scaleY);
-                ctx.closePath();
-                ctx.setFill(series1Fill);
-                ctx.fill();
+                gc_.lineTo((lastPointForClose.getX() - LOWER_BOUND_X) * scaleX, height - (lastPointForClose.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.closePath();
+                gc_.setFill(series1Fill);
+                gc_.fill();
                 cachedItems.clear();
 
-                ctx.beginPath();
-                ctx.moveTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
-                ctx.lineTo((xyData2.getX() - LOWER_BOUND_X) * scaleX, height - (xyData2.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.beginPath();
+                gc_.moveTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.lineTo((xyData2.getX() - LOWER_BOUND_X) * scaleX, height - (xyData2.getY() - LOWER_BOUND_Y) * scaleY);
                 currentSeries = 2;
                 cachedItems.add(xyData1);
                 lastPointForClose.set(intersectionPoint.getX(), intersectionPoint.getY());
@@ -1540,21 +1558,21 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 // Lines crossed and Line1 is now above Line2
                 Point intersectionPoint = Helper.calcIntersectionOfTwoLines(lastXyData1.getX(), lastXyData1.getY(), xyData1.getX(), xyData1.getY(),
                         lastXyData2.getX(), lastXyData2.getY(), xyData2.getX(), xyData2.getY());
-                ctx.lineTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.lineTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
 
                 Collections.reverse(cachedItems);
                 for (Point item : cachedItems) {
-                    ctx.lineTo((item.getX() - LOWER_BOUND_X) * scaleX, height - (item.getY() - LOWER_BOUND_Y) * scaleY);
+                    gc_.lineTo((item.getX() - LOWER_BOUND_X) * scaleX, height - (item.getY() - LOWER_BOUND_Y) * scaleY);
                 }
-                ctx.lineTo((lastPointForClose.getX() - LOWER_BOUND_X) * scaleX, height - (lastPointForClose.getY() - LOWER_BOUND_Y) * scaleY);
-                ctx.closePath();
-                ctx.setFill(series2Fill);
-                ctx.fill();
+                gc_.lineTo((lastPointForClose.getX() - LOWER_BOUND_X) * scaleX, height - (lastPointForClose.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.closePath();
+                gc_.setFill(series2Fill);
+                gc_.fill();
                 cachedItems.clear();
 
-                ctx.beginPath();
-                ctx.moveTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
-                ctx.lineTo((xyData1.getX() - LOWER_BOUND_X) * scaleX, height - (xyData1.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.beginPath();
+                gc_.moveTo((intersectionPoint.getX() - LOWER_BOUND_X) * scaleX, height - (intersectionPoint.getY() - LOWER_BOUND_Y) * scaleY);
+                gc_.lineTo((xyData1.getX() - LOWER_BOUND_X) * scaleX, height - (xyData1.getY() - LOWER_BOUND_Y) * scaleY);
                 currentSeries = 1;
                 cachedItems.add(xyData2);
                 lastPointForClose.set(intersectionPoint.getX(), intersectionPoint.getY());
@@ -1562,39 +1580,39 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 // Lines did not cross
                 switch (currentSeries) {
                     case 1:
-                        ctx.lineTo((xyData1.getX() - LOWER_BOUND_X) * scaleX, height - (xyData1.getY() - LOWER_BOUND_Y) * scaleY);
+                        gc_.lineTo((xyData1.getX() - LOWER_BOUND_X) * scaleX, height - (xyData1.getY() - LOWER_BOUND_Y) * scaleY);
                         cachedItems.add(xyData2);
                         break;
                     case 2:
-                        ctx.lineTo((xyData2.getX() - LOWER_BOUND_X) * scaleX, height - (xyData2.getY() - LOWER_BOUND_Y) * scaleY);
+                        gc_.lineTo((xyData2.getX() - LOWER_BOUND_X) * scaleX, height - (xyData2.getY() - LOWER_BOUND_Y) * scaleY);
                         cachedItems.add(xyData1);
                         break;
                 }
             }
 
-            ctx.setLineWidth(SERIES_1.getStrokeWidth() > -1 ? SERIES_1.getStrokeWidth() : size * 0.0025);
-            ctx.setStroke(series1Stroke);
-            ctx.strokeLine((lastXyData1.getX() - LOWER_BOUND_X) * scaleX, height - (lastXyData1.getY() - LOWER_BOUND_Y) * scaleY, (xyData1.getX() - LOWER_BOUND_X) * scaleX, height - (xyData1.getY() - LOWER_BOUND_Y) * scaleY);
+            gc_.setLineWidth(SERIES_1.getStrokeWidth() > -1 ? SERIES_1.getStrokeWidth() : size * 0.0025);
+            gc_.setStroke(series1Stroke);
+            gc_.strokeLine((lastXyData1.getX() - LOWER_BOUND_X) * scaleX, height - (lastXyData1.getY() - LOWER_BOUND_Y) * scaleY, (xyData1.getX() - LOWER_BOUND_X) * scaleX, height - (xyData1.getY() - LOWER_BOUND_Y) * scaleY);
 
-            ctx.setLineWidth(SERIES_2.getStrokeWidth() > -1 ? SERIES_2.getStrokeWidth() : size * 0.0025);
-            ctx.setStroke(series2Stroke);
-            ctx.strokeLine((lastXyData2.getX() - LOWER_BOUND_X) * scaleX, height - (lastXyData2.getY() - LOWER_BOUND_Y) * scaleY, (xyData2.getX() - LOWER_BOUND_X) * scaleX, height - (xyData2.getY() - LOWER_BOUND_Y) * scaleY);
+            gc_.setLineWidth(SERIES_2.getStrokeWidth() > -1 ? SERIES_2.getStrokeWidth() : size * 0.0025);
+            gc_.setStroke(series2Stroke);
+            gc_.strokeLine((lastXyData2.getX() - LOWER_BOUND_X) * scaleX, height - (lastXyData2.getY() - LOWER_BOUND_Y) * scaleY, (xyData2.getX() - LOWER_BOUND_X) * scaleX, height - (xyData2.getY() - LOWER_BOUND_Y) * scaleY);
         }
         Collections.reverse(cachedItems);
         for (Point item : cachedItems) {
-            ctx.lineTo((item.getX() - LOWER_BOUND_X) * scaleX, height - (item.getY() - LOWER_BOUND_Y) * scaleY);
+            gc_.lineTo((item.getX() - LOWER_BOUND_X) * scaleX, height - (item.getY() - LOWER_BOUND_Y) * scaleY);
         }
-        ctx.lineTo((lastPointForClose.getX() - LOWER_BOUND_X) * scaleX, height - (lastPointForClose.getY() - LOWER_BOUND_Y) * scaleY);
-        ctx.closePath();
+        gc_.lineTo((lastPointForClose.getX() - LOWER_BOUND_X) * scaleX, height - (lastPointForClose.getY() - LOWER_BOUND_Y) * scaleY);
+        gc_.closePath();
         switch (currentSeries) {
             case 1:
-                ctx.setFill(series1Fill);
+                gc_.setFill(series1Fill);
                 break;
             case 2:
-                ctx.setFill(series2Fill);
+                gc_.setFill(series2Fill);
                 break;
         }
-        ctx.fill();
+        gc_.fill();
         cachedItems.clear();
 
 
@@ -1623,14 +1641,14 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         drawPolarOverlay(getPolarTickStep().get());
 
         // draw the chart data
-        ctx.save();
+        gc_.save();
         if (SERIES.getFill() instanceof RadialGradient) {
-            ctx.setFill(new RadialGradient(0, 0, size * 0.5, size * 0.5, size * 0.45, false, CycleMethod.NO_CYCLE, ((RadialGradient) SERIES.getFill()).getStops()));
+            gc_.setFill(new RadialGradient(0, 0, size * 0.5, size * 0.5, size * 0.45, false, CycleMethod.NO_CYCLE, ((RadialGradient) SERIES.getFill()).getStops()));
         } else {
-            ctx.setFill(SERIES.getFill());
+            gc_.setFill(SERIES.getFill());
         }
-        ctx.setLineWidth(SERIES.getStrokeWidth() > -1 ? SERIES.getStrokeWidth() : size * 0.0025);
-        ctx.setStroke(SERIES.getStroke());
+        gc_.setLineWidth(SERIES.getStrokeWidth() > -1 ? SERIES.getStrokeWidth() : size * 0.0025);
+        gc_.setStroke(SERIES.getStroke());
 
         double radAngle = Math.toRadians(180);
         Point[] points = new Point[NO_OF_ITEMS + 1];
@@ -1655,29 +1673,29 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         if (SMOOTH_POLAR == SERIES.getChartType()) {
             //Use the subdividePointsRadial method if wrapping required.
             Point[] interpolatedPoints = SERIES.isWithWrapping() ? Helper.subdividePointsRadial(points, 16) : Helper.subdividePoints(points, 16);
-            ctx.beginPath();
-            ctx.moveTo(interpolatedPoints[0].getX(), interpolatedPoints[0].getY());
+            gc_.beginPath();
+            gc_.moveTo(interpolatedPoints[0].getX(), interpolatedPoints[0].getY());
             for (int i = 0; i < interpolatedPoints.length - 1; i++) {
                 Point point = interpolatedPoints[i];
-                ctx.lineTo(point.getX(), point.getY());
+                gc_.lineTo(point.getX(), point.getY());
             }
-            ctx.lineTo(interpolatedPoints[interpolatedPoints.length - 1].getX(), interpolatedPoints[interpolatedPoints.length - 1].getY());
-            ctx.closePath();
+            gc_.lineTo(interpolatedPoints[interpolatedPoints.length - 1].getX(), interpolatedPoints[interpolatedPoints.length - 1].getY());
+            gc_.closePath();
         } else {
-            ctx.beginPath();
-            ctx.moveTo(points[0].getX(), points[0].getY());
+            gc_.beginPath();
+            gc_.moveTo(points[0].getX(), points[0].getY());
             for (int i = 0; i < points.length - 1; i++) {
                 Point point = points[i];
-                ctx.lineTo(point.getX(), point.getY());
+                gc_.lineTo(point.getX(), point.getY());
             }
-            ctx.lineTo(points[points.length - 1].getX(), points[points.length - 1].getY());
-            ctx.closePath();
+            gc_.lineTo(points[points.length - 1].getX(), points[points.length - 1].getY());
+            gc_.closePath();
         }
 
-        ctx.fill();
-        ctx.stroke();
+        gc_.fill();
+        gc_.stroke();
 
-        ctx.restore();
+        gc_.restore();
 
         if (SHOW_POINTS) {
             Symbol seriesSymbol = SERIES.getSymbol();
@@ -1707,73 +1725,73 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         final double NO_OF_SECTORS = 360.0 / ANGLE_STEP;
 
         // draw concentric rings
-        ctx.setLineWidth(1);
-        ctx.setStroke(Color.GRAY);
+        gc_.setLineWidth(1);
+        gc_.setStroke(Color.GRAY);
         double ringStepSize = size / 20.0;
         double pos = 0.5 * (size - CIRCLE_SIZE);
         double ringSize = CIRCLE_SIZE;
         for (int i = 0; i < 11; i++) {
-            ctx.strokeOval(pos, pos, ringSize, ringSize);
+            gc_.strokeOval(pos, pos, ringSize, ringSize);
             pos += ringStepSize;
             ringSize -= 2 * ringStepSize;
         }
 
         // draw star lines
-        ctx.save();
+        gc_.save();
         for (int i = 0; i < NO_OF_SECTORS; i++) {
-            ctx.strokeLine(CENTER_X, 0.05 * size, CENTER_X, 0.5 * size);
-            Helper.rotateCtx(ctx, CENTER_X, CENTER_Y, ANGLE_STEP);
+            gc_.strokeLine(CENTER_X, 0.05 * size, CENTER_X, 0.5 * size);
+            Helper.rotateCtx(gc_, CENTER_X, CENTER_Y, ANGLE_STEP);
         }
-        ctx.restore();
+        gc_.restore();
 
         // draw threshold line
         if (isThresholdYVisible()) {
             double r = ((getThresholdY() - MIN_VALUE) / DATA_RANGE);
-            ctx.setLineWidth(Math.clamp(size * 0.005, 1d, 3d));
-            ctx.setStroke(getThresholdYColor());
-            ctx.strokeOval(0.5 * size - OFFSET - r * RANGE, 0.5 * size - OFFSET - r * RANGE,
+            gc_.setLineWidth(Math.clamp(size * 0.005, 1d, 3d));
+            gc_.setStroke(getThresholdYColor());
+            gc_.strokeOval(0.5 * size - OFFSET - r * RANGE, 0.5 * size - OFFSET - r * RANGE,
                     2 * (r * RANGE + OFFSET), 2 * (r * RANGE + OFFSET));
         }
 
-        ctx.setTextAlign(TextAlignment.CENTER);
-        ctx.setTextBaseline(VPos.CENTER);
-        ctx.setFill(Color.BLACK);
+        gc_.setTextAlign(TextAlignment.CENTER);
+        gc_.setTextBaseline(VPos.CENTER);
+        gc_.setFill(Color.BLACK);
 
         // draw min and max Text
         Font font = Fonts.latoRegular(0.025 * size);
         String minValueText = String.format(Locale.US, "%.0f", getLowerBoundY());
         String maxValueText = String.format(Locale.US, "%.0f", getUpperBoundY());
-        ctx.save();
-        ctx.setFont(font);
-        Helper.drawTextWithBackground(ctx, minValueText, font, Color.WHITE, Color.BLACK, CENTER_X, CENTER_Y - size * 0.018);
-        Helper.drawTextWithBackground(ctx, maxValueText, font, Color.WHITE, Color.BLACK, CENTER_X, CENTER_Y - CIRCLE_SIZE * 0.48);
-        ctx.restore();
+        gc_.save();
+        gc_.setFont(font);
+        Helper.drawTextWithBackground(gc_, minValueText, font, Color.WHITE, Color.BLACK, CENTER_X, CENTER_Y - size * 0.018);
+        Helper.drawTextWithBackground(gc_, maxValueText, font, Color.WHITE, Color.BLACK, CENTER_X, CENTER_Y - CIRCLE_SIZE * 0.48);
+        gc_.restore();
 
         // draw axis text
-        ctx.save();
-        ctx.setFont(Fonts.latoRegular(0.04 * size));
+        gc_.save();
+        gc_.setFont(Fonts.latoRegular(0.04 * size));
         for (int i = 0; i < NO_OF_SECTORS; i++) {
-            ctx.fillText(String.format(Locale.US, "%.0f", i * ANGLE_STEP), CENTER_X, size * 0.02);
-            Helper.rotateCtx(ctx, CENTER_X, CENTER_Y, ANGLE_STEP);
+            gc_.fillText(String.format(Locale.US, "%.0f", i * ANGLE_STEP), CENTER_X, size * 0.02);
+            Helper.rotateCtx(gc_, CENTER_X, CENTER_Y, ANGLE_STEP);
         }
-        ctx.restore();
+        gc_.restore();
     }
 
     private void drawPath(final Map<Integer, List<Point>> MAP_OF_BANDS, final double BAND_WIDTH, final List<Color> COLORS) {
         double oldX = 0;
         for (int band = 0; band < getNoOfBands(); band++) {
-            ctx.beginPath();
+            gc_.beginPath();
             for (Point p : MAP_OF_BANDS.get(band)) {
                 double x = p.getX() * scaleX;
                 double y = height - (p.getY() * scaleY);
-                ctx.lineTo(x, y + (band * BAND_WIDTH) * scaleY);
+                gc_.lineTo(x, y + (band * BAND_WIDTH) * scaleY);
                 oldX = x;
             }
-            ctx.lineTo(oldX, height);
-            ctx.lineTo(0, height);
-            ctx.closePath();
-            ctx.setFill(COLORS.get(band));
-            ctx.fill();
+            gc_.lineTo(oldX, height);
+            gc_.lineTo(0, height);
+            gc_.closePath();
+            gc_.setFill(COLORS.get(band));
+            gc_.fill();
         }
     }
 
@@ -1797,16 +1815,16 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         double oldY = height - (predictionItems.get(0).getY() - LOWER_BOUND_Y) * scaleY;
         boolean wasEmpty = predictionItems.get(0).isEmptyItem();
 
-        ctx.setLineWidth(prediction.getPredictionSeries().getStrokeWidth() > -1 ? prediction.getPredictionSeries().getStrokeWidth() : size * 0.0025);
-        ctx.setStroke(prediction.getPredictionSeries().getStroke());
-        ctx.setFill(Color.TRANSPARENT);
+        gc_.setLineWidth(prediction.getPredictionSeries().getStrokeWidth() > -1 ? prediction.getPredictionSeries().getStrokeWidth() : size * 0.0025);
+        gc_.setStroke(prediction.getPredictionSeries().getStroke());
+        gc_.setFill(Color.TRANSPARENT);
 
         for (XYItem item : predictionItems) {
             double x = (item.getX() - LOWER_BOUND_X) * scaleX;
             double y = height - (item.getY() - LOWER_BOUND_Y) * scaleY;
             boolean isEmpty = item.isEmptyItem();
             if (!isEmpty && !wasEmpty) {
-                ctx.strokeLine(oldX, oldY, x, y);
+                gc_.strokeLine(oldX, oldY, x, y);
             }
             oldX = x;
             oldY = y;
@@ -1814,38 +1832,38 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         }
 
         // Quantile 50
-        ctx.setLineWidth(prediction.getQuantile50Series().getStrokeWidth());
-        ctx.setStroke(prediction.getQuantile50Series().getStroke());
-        ctx.setFill(prediction.getQuantile50Series().getFill());
+        gc_.setLineWidth(prediction.getQuantile50Series().getStrokeWidth());
+        gc_.setStroke(prediction.getQuantile50Series().getStroke());
+        gc_.setFill(prediction.getQuantile50Series().getFill());
 
         List<Point> quantile50Points = prediction.getQuantile50Points();
-        ctx.beginPath();
-        ctx.moveTo((quantile50Points.get(0).getX() - LOWER_BOUND_X) * scaleX, height - (quantile50Points.get(0).getY() - LOWER_BOUND_Y) * scaleY);
+        gc_.beginPath();
+        gc_.moveTo((quantile50Points.get(0).getX() - LOWER_BOUND_X) * scaleX, height - (quantile50Points.get(0).getY() - LOWER_BOUND_Y) * scaleY);
         for (int i = 1; i < quantile50Points.size(); i++) {
             Point p = quantile50Points.get(i);
             double x = (p.x - LOWER_BOUND_X) * scaleX;
             double y = height - (p.y - LOWER_BOUND_Y) * scaleY;
-            ctx.lineTo(x, y);
+            gc_.lineTo(x, y);
         }
-        ctx.closePath();
-        ctx.fill();
+        gc_.closePath();
+        gc_.fill();
 
         // Quantile 90
-        ctx.setLineWidth(prediction.getQuantile90Series().getStrokeWidth());
-        ctx.setStroke(prediction.getQuantile90Series().getStroke());
-        ctx.setFill(prediction.getQuantile90Series().getFill());
+        gc_.setLineWidth(prediction.getQuantile90Series().getStrokeWidth());
+        gc_.setStroke(prediction.getQuantile90Series().getStroke());
+        gc_.setFill(prediction.getQuantile90Series().getFill());
 
         List<Point> quantile90Points = prediction.getQuantile90Points();
-        ctx.beginPath();
-        ctx.moveTo((quantile90Points.get(0).getX() - LOWER_BOUND_X) * scaleX, height - (quantile90Points.get(0).getY() - LOWER_BOUND_Y) * scaleY);
+        gc_.beginPath();
+        gc_.moveTo((quantile90Points.get(0).getX() - LOWER_BOUND_X) * scaleX, height - (quantile90Points.get(0).getY() - LOWER_BOUND_Y) * scaleY);
         for (int i = 1; i < quantile90Points.size(); i++) {
             Point p = quantile90Points.get(i);
             double x = (p.x - LOWER_BOUND_X) * scaleX;
             double y = height - (p.y - LOWER_BOUND_Y) * scaleY;
-            ctx.lineTo(x, y);
+            gc_.lineTo(x, y);
         }
-        ctx.closePath();
-        ctx.fill();
+        gc_.closePath();
+        gc_.fill();
     }
 
     private void drawMultiTimeSeries(final List<XYSeries<T>> LIST_OF_SERIES) {
@@ -1893,27 +1911,27 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         double startY = height - (maxItems.get(0).getY() - LOWER_BOUND_Y) * scaleY;
 
         if (isEnvelopeVisible()) {
-            ctx.setFill(getEnvelopeFill());
-            ctx.setStroke(getEnvelopeStroke());
-            ctx.setLineWidth(0.5);
-            ctx.beginPath();
-            ctx.moveTo(startX, startY);
+            gc_.setFill(getEnvelopeFill());
+            gc_.setStroke(getEnvelopeStroke());
+            gc_.setLineWidth(0.5);
+            gc_.beginPath();
+            gc_.moveTo(startX, startY);
             for (int i = 1; i < maxItems.size(); i++) {
                 XYItem item = maxItems.get(i);
                 double x = (item.getX() - LOWER_BOUND_X) * scaleX;
                 double y = height - (item.getY() - LOWER_BOUND_Y) * scaleY;
-                ctx.lineTo(x, y);
+                gc_.lineTo(x, y);
             }
             for (int i = minItems.size() - 1; i >= 0; i--) {
                 XYItem item = minItems.get(i);
                 double x = (item.getX() - LOWER_BOUND_X) * scaleX;
                 double y = height - (item.getY() - LOWER_BOUND_Y) * scaleY;
-                ctx.lineTo(x, y);
+                gc_.lineTo(x, y);
             }
-            ctx.lineTo(startX, startY);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
+            gc_.lineTo(startX, startY);
+            gc_.closePath();
+            gc_.fill();
+            gc_.stroke();
         }
 
         for (XYSeries<T> SERIES : LIST_OF_SERIES) {
@@ -1930,46 +1948,46 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
         if (isStdDeviationVisible()) {
             // Std. Deviation area
-            ctx.setFill(getStdDeviationFill());
-            ctx.setStroke(getStdDeviationStroke());
-            ctx.setLineWidth(0.5);
-            ctx.beginPath();
+            gc_.setFill(getStdDeviationFill());
+            gc_.setStroke(getStdDeviationStroke());
+            gc_.setLineWidth(0.5);
+            gc_.beginPath();
             startX = (stdDevItems.get(0).getX() - LOWER_BOUND_X) * scaleX;
             startY = height - (avgItems.get(0).getY() - stdDevItems.get(0).getY() * 0.5 - LOWER_BOUND_Y) * scaleY;
-            ctx.moveTo(startX, startY);
+            gc_.moveTo(startX, startY);
             for (int i = 0; i < stdDevItems.size(); i++) {
                 XYItem stdItem = stdDevItems.get(i);
                 XYItem avgItem = avgItems.get(i);
                 double x = (avgItem.getX() - LOWER_BOUND_X) * scaleX;
                 double y = height - (avgItem.getY() - stdItem.getY() * 0.5 - LOWER_BOUND_Y) * scaleY;
-                ctx.lineTo(x, y);
+                gc_.lineTo(x, y);
             }
             for (int i = stdDevItems.size() - 1; i >= 0; i--) {
                 XYItem stdItem = stdDevItems.get(i);
                 XYItem avgItem = avgItems.get(i);
                 double x = (avgItem.getX() - LOWER_BOUND_X) * scaleX;
                 double y = height - (avgItem.getY() + stdItem.getY() * 0.5 - LOWER_BOUND_Y) * scaleY;
-                ctx.lineTo(x, y);
+                gc_.lineTo(x, y);
             }
-            ctx.lineTo(startX, startY);
-            ctx.fill();
-            ctx.stroke();
+            gc_.lineTo(startX, startY);
+            gc_.fill();
+            gc_.stroke();
         }
 
         // Average
-        ctx.setLineWidth(getAverageStrokeWidth());
-        ctx.setStroke(getAverageStroke());
-        ctx.beginPath();
+        gc_.setLineWidth(getAverageStrokeWidth());
+        gc_.setStroke(getAverageStroke());
+        gc_.beginPath();
         oldX = (avgItems.get(0).getX() - LOWER_BOUND_X) * scaleX;
         oldY = height - (avgItems.get(0).getY() - LOWER_BOUND_Y) * scaleY;
-        ctx.moveTo(oldX, oldY);
+        gc_.moveTo(oldX, oldY);
         for (int i = 1; i < avgItems.size(); i++) {
             XYItem item = avgItems.get(i);
             double x = (item.getX() - LOWER_BOUND_X) * scaleX;
             double y = height - (item.getY() - LOWER_BOUND_Y) * scaleY;
-            ctx.lineTo(x, y);
+            gc_.lineTo(x, y);
         }
-        ctx.stroke();
+        gc_.stroke();
     }
 
     private void drawSmoothedMultiTimeSeries(final List<XYSeries<T>> LIST_OF_SERIES) {
@@ -2030,27 +2048,27 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             double startX = (maxInterpolatedPoints[0].getX() - LOWER_BOUND_X) * scaleX;
             double startY = height - (maxInterpolatedPoints[0].getY() - LOWER_BOUND_Y) * scaleY;
 
-            ctx.setFill(getEnvelopeFill());
-            ctx.setStroke(getEnvelopeStroke());
-            ctx.setLineWidth(0.5);
-            ctx.beginPath();
-            ctx.moveTo(startX, startY);
+            gc_.setFill(getEnvelopeFill());
+            gc_.setStroke(getEnvelopeStroke());
+            gc_.setLineWidth(0.5);
+            gc_.beginPath();
+            gc_.moveTo(startX, startY);
             for (int i = 1; i < maxInterpolatedPoints.length; i++) {
                 Point point = maxInterpolatedPoints[i];
                 double x = (point.getX() - LOWER_BOUND_X) * scaleX;
                 double y = height - (point.getY() - LOWER_BOUND_Y) * scaleY;
-                ctx.lineTo(x, y);
+                gc_.lineTo(x, y);
             }
             for (int i = minInterpolatedPoints.length - 1; i >= 0; i--) {
                 Point point = minInterpolatedPoints[i];
                 double x = (point.getX() - LOWER_BOUND_X) * scaleX;
                 double y = height - (point.getY() - LOWER_BOUND_Y) * scaleY;
-                ctx.lineTo(x, y);
+                gc_.lineTo(x, y);
             }
-            ctx.lineTo(startX, startY);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
+            gc_.lineTo(startX, startY);
+            gc_.closePath();
+            gc_.fill();
+            gc_.stroke();
         }
 
         for (XYSeries<T> SERIES : LIST_OF_SERIES) {
@@ -2071,46 +2089,46 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             Point[] stdDevInterpolatedPoints = Helper.subdividePoints(stdDevItemsPoints.toArray(new Point[0]), SUB_DIVISIONS);
 
             // Std. Deviation area
-            ctx.setFill(getStdDeviationFill());
-            ctx.setStroke(getStdDeviationStroke());
-            ctx.setLineWidth(0.5);
-            ctx.beginPath();
+            gc_.setFill(getStdDeviationFill());
+            gc_.setStroke(getStdDeviationStroke());
+            gc_.setLineWidth(0.5);
+            gc_.beginPath();
             double startX = (stdDevInterpolatedPoints[0].getX() - LOWER_BOUND_X) * scaleX;
             double startY = height - (avgInterpolatedPoints[0].getY() - stdDevInterpolatedPoints[0].getY() * 0.5 - LOWER_BOUND_Y) * scaleY;
-            ctx.moveTo(startX, startY);
+            gc_.moveTo(startX, startY);
             for (int i = 0; i < stdDevInterpolatedPoints.length; i++) {
                 Point stdPoint = stdDevInterpolatedPoints[i];
                 Point avgPoint = avgInterpolatedPoints[i];
                 double x = (avgPoint.getX() - LOWER_BOUND_X) * scaleX;
                 double y = height - (avgPoint.getY() - stdPoint.getY() * 0.5 - LOWER_BOUND_Y) * scaleY;
-                ctx.lineTo(x, y);
+                gc_.lineTo(x, y);
             }
             for (int i = stdDevInterpolatedPoints.length - 1; i >= 0; i--) {
                 Point stdPoint = stdDevInterpolatedPoints[i];
                 Point avgPoint = avgInterpolatedPoints[i];
                 double x = (avgPoint.getX() - LOWER_BOUND_X) * scaleX;
                 double y = height - (avgPoint.getY() + stdPoint.getY() * 0.5 - LOWER_BOUND_Y) * scaleY;
-                ctx.lineTo(x, y);
+                gc_.lineTo(x, y);
             }
-            ctx.lineTo(startX, startY);
-            ctx.fill();
-            ctx.stroke();
+            gc_.lineTo(startX, startY);
+            gc_.fill();
+            gc_.stroke();
         }
 
         // Average
-        ctx.setLineWidth(getAverageStrokeWidth());
-        ctx.setStroke(getAverageStroke());
-        ctx.beginPath();
+        gc_.setLineWidth(getAverageStrokeWidth());
+        gc_.setStroke(getAverageStroke());
+        gc_.beginPath();
         oldX = (avgInterpolatedPoints[0].getX() - LOWER_BOUND_X) * scaleX;
         oldY = height - (avgItems.get(0).getY() - LOWER_BOUND_Y) * scaleY;
-        ctx.moveTo(oldX, oldY);
+        gc_.moveTo(oldX, oldY);
         for (int i = 1; i < avgInterpolatedPoints.length; i++) {
             Point point = avgInterpolatedPoints[i];
             double x = (point.getX() - LOWER_BOUND_X) * scaleX;
             double y = height - (point.getY() - LOWER_BOUND_Y) * scaleY;
-            ctx.lineTo(x, y);
+            gc_.lineTo(x, y);
         }
-        ctx.stroke();
+        gc_.stroke();
     }
 
     private List<Point>[] splitIntoAboveAndBelow(final List<Point> POINTS) {
@@ -2233,7 +2251,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     }
 
     /**
-     * draw a symbol
+     * draw a symbol of a point
      *
      * @param x          center x coordinate of the symbol
      * @param y          center y coordinate of the symbol
@@ -2245,109 +2263,107 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     private void drawSymbol(final double x, final double y, final Paint fill, final Paint stroke,
             final Symbol symbol, final double symbolSize) {
         double halfSymbolSize = symbolSize * 0.5;
-        ctx.save();
+        gc_.save();
         switch (symbol) {
             case NONE:
                 break;
             case SQUARE:
-                ctx.setStroke(stroke);
-                ctx.setFill(fill);
-                ctx.fillRect(x - halfSymbolSize, y - halfSymbolSize, symbolSize, symbolSize);
-                ctx.strokeRect(x - halfSymbolSize, y - halfSymbolSize, symbolSize, symbolSize);
+                gc_.setStroke(stroke);
+                gc_.setFill(fill);
+                gc_.fillRect(x - halfSymbolSize, y - halfSymbolSize, symbolSize, symbolSize);
+                gc_.strokeRect(x - halfSymbolSize, y - halfSymbolSize, symbolSize, symbolSize);
                 break;
             case TRIANGLE:
-                ctx.setStroke(stroke);
-                ctx.setFill(fill);
-                ctx.beginPath();
-                ctx.moveTo(x, y - halfSymbolSize);
-                ctx.lineTo(x + halfSymbolSize, y + halfSymbolSize);
-                ctx.lineTo(x - halfSymbolSize, y + halfSymbolSize);
-                ctx.lineTo(x, y - halfSymbolSize);
-                ctx.closePath();
-                ctx.fill();
-                ctx.stroke();
+                gc_.setStroke(stroke);
+                gc_.setFill(fill);
+                gc_.beginPath();
+                gc_.moveTo(x, y - halfSymbolSize);
+                gc_.lineTo(x + halfSymbolSize, y + halfSymbolSize);
+                gc_.lineTo(x - halfSymbolSize, y + halfSymbolSize);
+                gc_.lineTo(x, y - halfSymbolSize);
+                gc_.closePath();
+                gc_.fill();
+                gc_.stroke();
                 break;
             case STAR:
-                ctx.setStroke(stroke);
-                ctx.setFill(null);
-                ctx.strokeLine(x - halfSymbolSize, y, x + halfSymbolSize, y);
-                ctx.strokeLine(x, y - halfSymbolSize, x, y + halfSymbolSize);
-                ctx.strokeLine(x - halfSymbolSize, y - halfSymbolSize, x + halfSymbolSize, y + halfSymbolSize);
-                ctx.strokeLine(x + halfSymbolSize, y - halfSymbolSize, x - halfSymbolSize, y + halfSymbolSize);
+                gc_.setStroke(stroke);
+                gc_.setFill(null);
+                gc_.strokeLine(x - halfSymbolSize, y, x + halfSymbolSize, y);
+                gc_.strokeLine(x, y - halfSymbolSize, x, y + halfSymbolSize);
+                gc_.strokeLine(x - halfSymbolSize, y - halfSymbolSize, x + halfSymbolSize, y + halfSymbolSize);
+                gc_.strokeLine(x + halfSymbolSize, y - halfSymbolSize, x - halfSymbolSize, y + halfSymbolSize);
                 break;
             case CROSS:
-                ctx.setStroke(stroke);
-                ctx.setFill(null);
-                ctx.strokeLine(x - halfSymbolSize, y, x + halfSymbolSize, y);
-                ctx.strokeLine(x, y - halfSymbolSize, x, y + halfSymbolSize);
+                gc_.setStroke(stroke);
+                gc_.setFill(null);
+                gc_.strokeLine(x - halfSymbolSize, y, x + halfSymbolSize, y);
+                gc_.strokeLine(x, y - halfSymbolSize, x, y + halfSymbolSize);
                 break;
+            case PEAK:
+                gc_.setStroke(stroke);
+                gc_.setFill(null);
+
             case CIRCLE:
             default:
-                ctx.setStroke(stroke);
-                ctx.setFill(fill);
-                ctx.fillOval(x - halfSymbolSize, y - halfSymbolSize, symbolSize, symbolSize);
-                ctx.strokeOval(x - halfSymbolSize, y - halfSymbolSize, symbolSize, symbolSize);
+                gc_.setStroke(stroke);
+                gc_.setFill(fill);
+                gc_.fillOval(x - halfSymbolSize, y - halfSymbolSize, symbolSize, symbolSize);
+                gc_.strokeOval(x - halfSymbolSize, y - halfSymbolSize, symbolSize, symbolSize);
                 break;
         }
-        ctx.restore();
+        gc_.restore();
     }
 
-
-    // ******************** Event Handling ************************************
-    public void addCursorEventListener(final CursorEventListener LISTENER) {
-        if (cursorEventListeners.contains(LISTENER)) {
+    public void addCursorEventListener(final CursorEventListener listener) {
+        if (cursorEventListeners_.contains(listener)) {
             return;
         }
-        cursorEventListeners.add(LISTENER);
+        cursorEventListeners_.add(listener);
     }
 
-    public void removeCursorEventListener(final CursorEventListener LISTENER) {
-        if (cursorEventListeners.contains(LISTENER)) {
-            cursorEventListeners.remove(LISTENER);
-        }
+    public void removeCursorEventListener(final CursorEventListener listener) {
+        cursorEventListeners_.remove(listener);
     }
 
-    public void removeAllCursorEventListeners() {cursorEventListeners.clear();}
+    public void removeAllCursorEventListeners() {cursorEventListeners_.clear();}
 
     public void fireCursorEvent(final CursorEvent EVT) {
-        cursorEventListeners.forEach(listener -> listener.handleCursorEvent(EVT));
+        cursorEventListeners_.forEach(listener -> listener.handleCursorEvent(EVT));
     }
 
 
     public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
+        if (!observers_.containsKey(type)) {
+            observers_.put(type, new CopyOnWriteArrayList<>());
         }
-        if (observers.get(type).contains(observer)) {
+        if (observers_.get(type).contains(observer)) {
             return;
         }
-        observers.get(type).add(observer);
+        observers_.get(type).add(observer);
     }
 
     public void removeChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
-        if (observers.containsKey(type)) {
-            if (observers.get(type).contains(observer)) {
-                observers.get(type).remove(observer);
+        if (observers_.containsKey(type)) {
+            if (observers_.get(type).contains(observer)) {
+                observers_.get(type).remove(observer);
             }
         }
     }
 
-    public void removeAllChartEvtObservers() {observers.clear();}
+    public void removeAllChartEvtObservers() {observers_.clear();}
 
     public void fireChartEvt(final ChartEvt evt) {
         final EvtType type = evt.getEvtType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvt.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvt.ANY)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
+        observers_.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvt.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
+        if (observers_.containsKey(type) && !type.equals(ChartEvt.ANY)) {
+            observers_.get(type).forEach(observer -> observer.handle(evt));
         }
     }
 
-
-    // ******************** Resizing ******************************************
     private void resize() {
         width = getWidth(); // - getInsets().getLeft() - getInsets().getRight();
         height = getHeight(); // - getInsets().getTop() - getInsets().getBottom();
-        size = width < height ? width : height;
+        size = Math.min(width, height);
 
         if (keepAspect) {
             if (aspectRatio * width > height) {
@@ -2358,13 +2374,13 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         }
 
         if (width > 0 && height > 0) {
-            canvas.setWidth(width);
-            canvas.setHeight(height);
-            canvas.relocate((getWidth() - width) * 0.5, (getHeight() - height) * 0.5);
+            canvas_.setWidth(width);
+            canvas_.setHeight(height);
+            canvas_.relocate((getWidth() - width) * 0.5, (getHeight() - height) * 0.5);
 
-            cursorCanvas.setWidth(width);
-            cursorCanvas.setHeight(height);
-            cursorCanvas.relocate((getWidth() - width) * 0.5, (getHeight() - height) * 0.5);
+            cursorCanvas_.setWidth(width);
+            cursorCanvas_.setHeight(height);
+            cursorCanvas_.relocate((getWidth() - width) * 0.5, (getHeight() - height) * 0.5);
 
             symbolSize = Math.clamp(size * 0.016, MIN_SYMBOL_SIZE, MAX_SYMBOL_SIZE);
 

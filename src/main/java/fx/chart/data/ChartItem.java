@@ -31,14 +31,16 @@ public class ChartItem implements Item, Comparable<ChartItem> {
     protected final ChartEvt SELECTED_EVENT = new ChartEvt(ChartItem.this, ChartEvt.SELECTED);
 
     protected Map<EvtType, List<EvtObserver<ChartEvt>>> observers = new ConcurrentHashMap<>();
-    private int _index;
-    private IntegerProperty index;
-    private String _name;
-    private StringProperty name;
-    private String _unit;
-    private StringProperty unit;
-    private String _description;
-    private StringProperty description;
+
+    private int index_;
+    private IntegerProperty indexProperty;
+
+    private String name_;
+    private StringProperty nameProperty;
+    private String unit_;
+    private StringProperty unitProperty;
+    private String description_;
+    private StringProperty descriptionProperty;
     private Category _category;
     private ObjectProperty<Category> category;
     private double _value;
@@ -191,10 +193,10 @@ public class ChartItem implements Item, Comparable<ChartItem> {
     }
 
     public ChartItem(final String NAME, final double VALUE, final Color FILL, final Color STROKE, final Color TEXT_FILL, final Instant TIMESTAMP, final boolean ANIMATED, final long ANIMATION_DURATION, final boolean IS_EMPTY, final Metadata METADATA) {
-        _index = -1;
-        _name = NAME;
-        _unit = "";
-        _description = "";
+        index_ = -1;
+        name_ = NAME;
+        unit_ = "";
+        description_ = "";
         _category = null;
         _value = VALUE;
         oldValue = 0;
@@ -231,19 +233,19 @@ public class ChartItem implements Item, Comparable<ChartItem> {
 
 
     // ******************** Methods *******************************************
-    public int getIndex() {return null == index ? _index : index.get();}
+    public int getIndex() {return null == indexProperty ? index_ : indexProperty.get();}
 
     public void setIndex(final int index) {
-        if (null == this.index) {
-            _index = index;
+        if (null == this.indexProperty) {
+            index_ = index;
         } else {
-            this.index.set(index);
+            this.indexProperty.set(index);
         }
     }
 
     public IntegerProperty indexProperty() {
-        if (null == index) {
-            index = new IntegerPropertyBase(_index) {
+        if (null == indexProperty) {
+            indexProperty = new IntegerPropertyBase(index_) {
                 @Override
                 protected void invalidated() {}
 
@@ -254,24 +256,24 @@ public class ChartItem implements Item, Comparable<ChartItem> {
                 public String getName() {return "index";}
             };
         }
-        return index;
+        return indexProperty;
     }
 
     @Override
-    public String getName() {return null == name ? _name : name.get();}
+    public String getName() {return null == nameProperty ? name_ : nameProperty.get();}
 
     public void setName(final String NAME) {
-        if (null == name) {
-            _name = NAME;
+        if (null == nameProperty) {
+            name_ = NAME;
             fireChartEvt(UPDATE_EVENT);
         } else {
-            name.set(NAME);
+            nameProperty.set(NAME);
         }
     }
 
     public StringProperty nameProperty() {
-        if (null == name) {
-            name = new StringPropertyBase(_name) {
+        if (null == nameProperty) {
+            nameProperty = new StringPropertyBase(name_) {
                 @Override
                 protected void invalidated() {fireChartEvt(UPDATE_EVENT);}
 
@@ -281,25 +283,25 @@ public class ChartItem implements Item, Comparable<ChartItem> {
                 @Override
                 public String getName() {return "name";}
             };
-            _name = null;
+            name_ = null;
         }
-        return name;
+        return nameProperty;
     }
 
-    public String getUnit() {return null == unit ? _unit : unit.get();}
+    public String getUnit() {return null == unitProperty ? unit_ : unitProperty.get();}
 
     public void setUnit(final String UNIT) {
-        if (null == unit) {
-            _unit = UNIT;
+        if (null == unitProperty) {
+            unit_ = UNIT;
             fireChartEvt(UPDATE_EVENT);
         } else {
-            unit.set(UNIT);
+            unitProperty.set(UNIT);
         }
     }
 
     public StringProperty unitProperty() {
-        if (null == unit) {
-            unit = new StringPropertyBase(_unit) {
+        if (null == unitProperty) {
+            unitProperty = new StringPropertyBase(unit_) {
                 @Override
                 protected void invalidated() {fireChartEvt(UPDATE_EVENT);}
 
@@ -309,25 +311,25 @@ public class ChartItem implements Item, Comparable<ChartItem> {
                 @Override
                 public String getName() {return "unit";}
             };
-            _unit = null;
+            unit_ = null;
         }
-        return unit;
+        return unitProperty;
     }
 
-    public String getDescription() {return null == description ? _description : description.get();}
+    public String getDescription() {return null == descriptionProperty ? description_ : descriptionProperty.get();}
 
     public void setDescription(final String DESCRIPTION) {
-        if (null == description) {
-            _description = DESCRIPTION;
+        if (null == descriptionProperty) {
+            description_ = DESCRIPTION;
             fireChartEvt(UPDATE_EVENT);
         } else {
-            description.set(DESCRIPTION);
+            descriptionProperty.set(DESCRIPTION);
         }
     }
 
     public StringProperty descriptionProperty() {
-        if (null == description) {
-            description = new StringPropertyBase(_description) {
+        if (null == descriptionProperty) {
+            descriptionProperty = new StringPropertyBase(description_) {
                 @Override
                 protected void invalidated() {fireChartEvt(UPDATE_EVENT);}
 
@@ -337,9 +339,9 @@ public class ChartItem implements Item, Comparable<ChartItem> {
                 @Override
                 public String getName() {return "description";}
             };
-            _description = null;
+            description_ = null;
         }
-        return description;
+        return descriptionProperty;
     }
 
     public Category getCategory() {return null == category ? _category : category.get();}
@@ -776,7 +778,7 @@ public class ChartItem implements Item, Comparable<ChartItem> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(_index, index, _name, name, _unit, unit, _description, description, _category, category, _value, value, oldValue, _fill, fill, _stroke, stroke, _textFill, textFill, _timestamp, timestamp, _symbol, symbol,
+        return Objects.hash(index_, indexProperty, name_, nameProperty, unit_, unitProperty, description_, descriptionProperty, _category, category, _value, value, oldValue, _fill, fill, _stroke, stroke, _textFill, textFill, _timestamp, timestamp, _symbol, symbol,
                 _animated, animated, _x, x, _y, y, _isEmpty, isEmpty, _selected, selected, _metadata, metadata, animationDuration, currentValue);
     }
 

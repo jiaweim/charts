@@ -14,5 +14,6 @@ public enum Symbol {
     SQUARE,
     TRIANGLE,
     STAR,
-    CROSS
+    CROSS,
+    PEAK
 }
