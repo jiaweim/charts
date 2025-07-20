@@ -4,8 +4,6 @@ import fx.chart.data.Item;
 import fx.chart.data.TreeNode;
 import fx.chart.event.type.ChangeEvt;
 
-import static fx.chart.util.Constants.*;
-
 
 public class TreeNodeEvt<T extends Item> extends ChangeEvt {
 
@@ -18,8 +16,6 @@ public class TreeNodeEvt<T extends Item> extends ChangeEvt {
     private final T item;
     private final EvtType<? extends TreeNodeEvt> type;
 
-
-    // ******************** Constructors **************************************
     public TreeNodeEvt(final TreeNode<T> src, final T item) {
         this(src, TreeNodeEvt.NODE_SELECTED, item);
     }
@@ -30,8 +26,6 @@ public class TreeNodeEvt<T extends Item> extends ChangeEvt {
         this.type = type;
     }
 
-
-    // ******************** Methods *******************************************
     public T getItem() {return item;}
 
     @Override
@@ -41,8 +35,6 @@ public class TreeNodeEvt<T extends Item> extends ChangeEvt {
 
     @Override
     public String toString() {
-        return new StringBuilder().append(CURLY_BRACKET_OPEN)
-                .append(QUOTES).append("item").append(QUOTES).append(COLON).append(QUOTES).append(item.getName()).append(QUOTES)
-                .append(CURLY_BRACKET_CLOSE).toString();
+        return "{\"item\":\"" + item.getName() + "\"}";
     }
 }

@@ -8,7 +8,7 @@ import fx.chart.event.EvtObserver;
 import fx.chart.event.TreeNodeEvt;
 import fx.chart.font.Fonts;
 import fx.chart.geometry.Circle;
-import fx.chart.toolboxfx.FontMetrix;
+import fx.chart.font.FontMetrix;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import fx.chart.tools.TextOrientation;

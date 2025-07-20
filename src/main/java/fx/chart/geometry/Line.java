@@ -1,6 +1,6 @@
 package fx.chart.geometry;
 
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 import fx.chart.geometry.transform.BaseTransform;
 
 import java.util.Objects;

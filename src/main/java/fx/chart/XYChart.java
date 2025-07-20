@@ -4,7 +4,7 @@ import fx.chart.data.XYItem;
 import fx.chart.event.ChartEvt;
 import fx.chart.event.EvtObserver;
 import fx.chart.font.Fonts;
-import fx.chart.toolboxfx.geom.Bounds;
+import fx.chart.util.Bounds;
 import fx.chart.tools.Helper;
 import fx.chart.tools.Marker;
 import javafx.beans.DefaultProperty;

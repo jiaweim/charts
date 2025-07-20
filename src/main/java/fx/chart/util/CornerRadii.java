@@ -1,15 +1,12 @@
-package fx.chart.toolboxfx.geom;
-
-import static fx.chart.util.Constants.*;
+package fx.chart.util;
 
 public class CornerRadii {
+
     private double topLeft;
     private double topRight;
     private double bottomRight;
     private double bottomLeft;
 
-
-    // ******************** Constructors **************************************
     public CornerRadii() {
         this(0, 0, 0, 0);
     }
@@ -44,12 +41,9 @@ public class CornerRadii {
 
     @Override
     public String toString() {
-        return new StringBuilder().append(CURLY_BRACKET_OPEN)
-                .append(QUOTES).append("topLeft").append(QUOTES).append(COLON).append(getTopLeft()).append(COMMA)
-                .append(QUOTES).append("topRight").append(QUOTES).append(COLON).append(getTopRight()).append(COMMA)
-                .append(QUOTES).append("bottomRight").append(QUOTES).append(COLON).append(getBottomRight()).append(COMMA)
-                .append(QUOTES).append("bottomLeft").append(QUOTES).append(COLON).append(getBottomLeft())
-                .append(CURLY_BRACKET_CLOSE)
-                .toString();
+        return "{\"topLeft\":" + getTopLeft()
+                + ",\"topRight\":" + getTopRight()
+                + ",\"bottomRight\":" + getBottomRight()
+                + ",\"bottomLeft\":" + getBottomLeft() + "}";
     }
 }

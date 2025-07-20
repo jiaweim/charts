@@ -1,8 +1,5 @@
-package fx.chart.toolboxfx;
+package fx.chart.util;
 
-import fx.chart.toolboxfx.geom.*;
-import fx.chart.util.Helper;
-import fx.chart.util.Statistics;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
@@ -36,6 +33,7 @@ public class HelperFX {
 
     private HelperFX() {}
 
+    public static final Random RND = new Random();
 
     public static double nearest(final double smaller, final double value, final double larger) {
         return (value - smaller) < (larger - value) ? smaller : larger;
@@ -117,54 +115,6 @@ public class HelperFX {
         return niceFraction * Math.pow(10, exponent);
     }
 
-    public static List<Point> subdividePoints(final List<Point> points, final int subDevisions) {
-        return Arrays.asList(subdividePoints(points.toArray(new Point[0]), subDevisions));
-    }
-
-    public static Point[] subdividePoints(final Point[] points, final int subDevisions) {
-        if (null == points || points.length < 3) {
-            throw new IllegalArgumentException("Points cannot be null and must have at least 3 entries");
-        }
-        final int noOfPoints = points.length;
-        final Point[] subdividedPoints = new Point[((noOfPoints - 1) * subDevisions) + 1];
-        final double increments = 1.0 / (double) subDevisions;
-        for (int i = 0; i < noOfPoints - 1; i++) {
-            Point p0 = i == 0 ? points[i] : points[i - 1];
-            Point p1 = points[i];
-            Point p2 = points[i + 1];
-            Point p3 = (i + 2 == noOfPoints) ? points[i + 1] : points[i + 2];
-
-            CatmullRom crs = new CatmullRom(p0, p1, p2, p3);
-
-            for (int j = 0; j <= subDevisions; j++) {
-                subdividedPoints[(i * subDevisions) + j] = crs.q(j * increments);
-            }
-        }
-        return subdividedPoints;
-    }
-
-    public static Point[] subdividePointsRadial(final Point[] points, final int subDivisions) {
-        if (null == points || points.length < 3) {
-            throw new IllegalArgumentException("Points cannot be null and must have at least 3 entries");
-        }
-        final int noOfPoints = points.length;
-        final Point[] subdividedPoints = new Point[((noOfPoints - 1) * subDivisions) + 1];
-        final double increments = 1.0 / (double) subDivisions;
-        for (int i = 0; i < noOfPoints - 1; i++) {
-            Point p0 = i == 0 ? points[noOfPoints - 2] : points[i - 1];
-            Point p1 = points[i];
-            Point p2 = points[i + 1];
-            Point p3 = (i == (noOfPoints - 2)) ? points[1] : points[i + 2];
-
-            CatmullRom<Point> crs = new CatmullRom<>(p0, p1, p2, p3);
-
-            for (int j = 0; j <= subDivisions; j++) {
-                subdividedPoints[(i * subDivisions) + j] = crs.q(j * increments);
-            }
-        }
-        return subdividedPoints;
-    }
-
     public static Point[] subdividePointsLinear(final Point[] points, final int subDivisions) {
         if (null == points || points.length < 3) {
             throw new IllegalArgumentException("Points cannot be null and must have at least 3 entries");
@@ -224,32 +174,6 @@ public class HelperFX {
         double m = (y2 - y1) / (x2 - x1);
         double interSectionX = (intersectionY - y1) / m;
         return new double[]{x1 + interSectionX, intersectionY};
-    }
-
-    public static Point[] smoothSparkLine(final List<Double> dataList, final double minValue, final double maxValue, final fx.chart.toolboxfx.geom.Rectangle graphBounds, final int noOfDatapoints) {
-        int size = dataList.size();
-        Point[] points = new Point[size];
-
-        double low = Statistics.getMin(dataList);
-        double high = Statistics.getMax(dataList);
-        if (Helper.equals(low, high)) {
-            low = minValue;
-            high = maxValue;
-        }
-        double range = high - low;
-
-        double minX = graphBounds.getX();
-        double maxX = minX + graphBounds.getWidth();
-        double minY = graphBounds.getY();
-        double maxY = minY + graphBounds.getHeight();
-        double stepX = graphBounds.getWidth() / (noOfDatapoints - 1);
-        double stepY = graphBounds.getHeight() / range;
-
-        for (int i = 0; i < size; i++) {
-            points[i] = new Point(minX + i * stepX, maxY - Math.abs(low - dataList.get(i)) * stepY);
-        }
-
-        return subdividePoints(points, 16);
     }
 
     public static boolean isInRectangle(final double x, final double y,
@@ -526,15 +450,6 @@ public class HelperFX {
         return convexHull;
     }
 
-    public static List<Point> createConvexHull(final List<Point> points) {
-        return QuickHull.quickHull(points);
-    }
-
-    public static List<Point> createSmoothedConvexHull(final List<Point> points, final int subDivisions) {
-        List<Point> hullPolygon = createConvexHull(points);
-        return subdividePoints(hullPolygon, subDivisions);
-    }
-
     private static <T extends Point> double distance(final T p1, final T p2, final T p3) {
         double deltaX = p2.getX() - p1.getX();
         double deltaY = p2.getY() - p1.getY();
@@ -740,83 +655,6 @@ public class HelperFX {
         return result;
     }
 
-    /**
-     * Curve points should be ordered counterclockwise along the curve
-     *
-     * @param curvePoints points that define the curve sorted counterclockwise
-     * @param width       width of the box that will be checked for next point
-     * @param height      height of the box that will be checked for next point
-     * @param points      points to check
-     * @return list of point pairs that define the start and end points of gaps
-     */
-    public static List<Point> findGaps(final List<Point> curvePoints, final double width, final double height, final List<Point> points) {
-        List<Point> startEndPoints = new ArrayList<>();
-        List<Point> pointsToCheck = new ArrayList<>(points);
-        int noOfPointsOnPolygon = curvePoints.size();
-        for (int i = 0; i < noOfPointsOnPolygon - 1; i++) {
-            Point p1 = curvePoints.get(i);
-            Point p2 = curvePoints.get(i + 1);
-            Position pos = Position.UNDEFINED;
-            if (isHorizontal(p1, p2)) {
-                if (p1.getX() < p2.getX()) {
-                    pos = Position.BOTTOM;
-                } else if (p1.getX() > p2.getX()) {
-                    pos = Position.TOP;
-                }
-            } else if (isVertical(p1, p2)) {
-                if (p1.getY() < p2.getY()) {
-                    pos = Position.LEFT;
-                } else if (p1.getY() > p2.getY()) {
-                    pos = Position.RIGHT;
-                }
-            }
-
-            switch (pos) {
-                case TOP:
-                    if (!isInRectangle(p2.getX(), p2.getY(), p1.getX() - width, p1.getY() - height, p1.getX(), p1.getY())) {
-                        startEndPoints.add(p1);
-                        startEndPoints.add(p2);
-                        double dX = Math.abs(p1.getX() - p2.getX());
-                        // Search for next point in vertical direction
-                        for (Point p : pointsToCheck) {
-                            if (isInRectangle(p.getX(), p.getY(), p1.getX() - width / 2, p1.getY() - height, p1.getX(), p1.getY()) && isVertical(p, p1)) {
-                                //System.out.println("Find next vertical point in gap");
-                            }
-                        }
-                    }
-                    break;
-                case LEFT:
-                    if (!isInRectangle(p2.getX(), p2.getY(), p1.getX(), p1.getY(), p1.getX() + width, p1.getY() + height)) {
-                        startEndPoints.add(p1);
-                        startEndPoints.add(p2);
-                        double dY = Math.abs(p1.getY() - p2.getY());
-                    }
-                    break;
-                case BOTTOM:
-                    if (!isInRectangle(p2.getX(), p2.getY(), p1.getX(), p1.getY() - height, p1.getX() + width, p1.getY())) {
-                        startEndPoints.add(p1);
-                        startEndPoints.add(p2);
-                        double dX = Math.abs(p1.getX() - p2.getX());
-                        // Search for next point in vertical direction
-                        for (Point p : pointsToCheck) {
-                            if (isInRectangle(p.getX(), p.getY(), p1.getX() - width / 2, p1.getY() - height, p1.getX() + width, p1.getY()) && isVertical(p, p1)) {
-                                //System.out.println("Find next vertical point in gap");
-                            }
-                        }
-                    }
-                    break;
-                case RIGHT:
-                    if (!isInRectangle(p2.getX(), p2.getY(), p1.getX() - width, p1.getY() - height, p1.getX(), p1.getY())) {
-                        startEndPoints.add(p1);
-                        startEndPoints.add(p2);
-                        double dY = Math.abs(p1.getY() - p2.getY());
-                    }
-                    break;
-            }
-        }
-        return startEndPoints;
-    }
-
     public static double[] getPointsXFromPoints(final List<Point> points) {
         int size = points.size();
         double[] pointsX = new double[size];
@@ -1017,31 +855,6 @@ public class HelperFX {
             bearing += 360.0;
         }
         return bearing;
-    }
-
-    public static String getCardinalDirectionFromBearing(final double brng) {
-        double bearing = brng % 360.0;
-        if (0 == bearing || 360 == bearing || (bearing > CardinalDirection.N.from && bearing < 360)) {
-            return CardinalDirection.N.direction;
-        } else if (90 == bearing) {
-            return CardinalDirection.E.direction;
-        } else if (180 == bearing) {
-            return CardinalDirection.S.direction;
-        } else if (270 == bearing) {
-            return CardinalDirection.W.direction;
-        } else {
-            for (CardinalDirection cardinalDirection : CardinalDirection.values()) {
-                if (bearing >= cardinalDirection.from && bearing <= cardinalDirection.to) {
-                    return cardinalDirection.direction;
-                }
-            }
-        }
-        return "";
-    }
-
-
-    public static double[] toHSL(final Color color) {
-        return rgbToHSL(color.getRed(), color.getGreen(), color.getBlue());
     }
 
     public static double[] rgbToHSL(final double red, final double green, final double blue) {
@@ -1350,32 +1163,6 @@ public class HelperFX {
         node.setScaleY(targetHeight / node.getLayoutBounds().getHeight());
     }
 
-    public static Point[] smoothSparkLine(final List<Double> dataList, final double minValue, final double maxValue, final javafx.scene.shape.Rectangle graphBounds, final int noOfDatapoints) {
-        int size = dataList.size();
-        Point[] points = new Point[size];
-
-        double low = Statistics.getMin(dataList);
-        double high = Statistics.getMax(dataList);
-        if (Helper.equals(low, high)) {
-            low = minValue;
-            high = maxValue;
-        }
-        double range = high - low;
-
-        double minX = graphBounds.getX();
-        //double maxX  = minX + graphBounds.getWidth();
-        double minY = graphBounds.getY();
-        double maxY = minY + graphBounds.getHeight();
-        double stepX = graphBounds.getWidth() / (noOfDatapoints - 1);
-        double stepY = graphBounds.getHeight() / range;
-
-        for (int i = 0; i < size; i++) {
-            points[i] = new Point(minX + i * stepX, maxY - Math.abs(low - dataList.get(i)) * stepY);
-        }
-
-        return subdividePoints(points, 16);
-    }
-
     public static void drawRoundedRect(final GraphicsContext ctx, final Bounds bounds, final CornerRadii radii) {
         double x = bounds.getX();
         double y = bounds.getY();
@@ -1613,8 +1400,8 @@ public class HelperFX {
         final double variation = alphaVariation / 100;
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
-                final Color noiseColor = Constants.RND.nextBoolean() ? brightColor : darkColor;
-                final double noiseAlpha = Math.clamp(alphaStart + Constants.RND.nextDouble() * variation, 0.0, 1.0);
+                final Color noiseColor = RND.nextBoolean() ? brightColor : darkColor;
+                final double noiseAlpha = Math.clamp(alphaStart + RND.nextDouble() * variation, 0.0, 1.0);
                 pixelWriter.setColor(x, y, Color.color(noiseColor.getRed(), noiseColor.getGreen(), noiseColor.getBlue(), noiseAlpha));
             }
         }

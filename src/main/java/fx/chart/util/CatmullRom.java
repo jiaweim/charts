@@ -1,4 +1,4 @@
-package fx.chart.toolboxfx.geom;
+package fx.chart.util;
 
 public class CatmullRom<T extends Point> {
 
@@ -28,11 +28,11 @@ public class CatmullRom<T extends Point> {
 
 
     class CatmullRomSpline {
+
         private double p0;
         private double p1;
         private double p2;
         private double p3;
-
 
         protected CatmullRomSpline(final double P0, final double P1, final double P2, final double P3) {
             p0 = P0;

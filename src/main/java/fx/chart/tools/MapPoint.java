@@ -21,7 +21,7 @@ import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.StringPropertyBase;
 import javafx.scene.paint.Color;
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 
 
 public class MapPoint extends Point {

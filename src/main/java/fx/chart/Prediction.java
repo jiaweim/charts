@@ -2,7 +2,7 @@ package fx.chart;
 
 import fx.chart.data.TYChartItem;
 import fx.chart.series.XYSeries;
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 import fx.chart.tools.OverlayType;
 
 import java.time.LocalDateTime;

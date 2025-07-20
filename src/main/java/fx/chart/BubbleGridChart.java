@@ -6,7 +6,7 @@ import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvt;
 import fx.chart.event.EvtObserver;
 import fx.chart.font.Fonts;
-import fx.chart.toolboxfx.FontMetrix;
+import fx.chart.font.FontMetrix;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import fx.chart.tools.Order;

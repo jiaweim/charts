@@ -1,4 +1,4 @@
-package fx.chart.toolboxfx;
+package fx.chart.font;
 
 import javafx.geometry.Bounds;
 import javafx.scene.text.Font;

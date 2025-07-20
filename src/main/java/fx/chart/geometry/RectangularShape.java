@@ -1,7 +1,7 @@
 package fx.chart.geometry;
 
 import fx.chart.geometry.transform.BaseTransform;
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 
 public abstract class RectangularShape extends Shape {
 

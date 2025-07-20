@@ -4,7 +4,7 @@ import fx.chart.Axis;
 import fx.chart.Position;
 import fx.chart.color.ColorUtils;
 import fx.chart.font.Fonts;
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 import fx.chart.tools.Helper;
 import javafx.beans.property.*;
 import javafx.collections.ObservableList;

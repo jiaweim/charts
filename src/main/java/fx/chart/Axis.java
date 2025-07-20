@@ -3,7 +3,7 @@ package fx.chart;
 import fx.chart.event.ChartEvt;
 import fx.chart.event.EvtObserver;
 import fx.chart.event.EvtType;
-import fx.chart.toolboxfx.geom.Bounds;
+import fx.chart.util.Bounds;
 import fx.chart.tools.Helper;
 import fx.chart.tools.Helper.Interval;
 import fx.chart.tools.TickLabelFormat;

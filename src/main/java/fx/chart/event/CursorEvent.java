@@ -1,6 +1,6 @@
 package fx.chart.event;
 
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 
 public class CursorEvent {
 

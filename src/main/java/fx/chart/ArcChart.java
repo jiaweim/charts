@@ -8,7 +8,7 @@ import fx.chart.event.EvtObserver;
 import fx.chart.font.Fonts;
 import fx.chart.geometry.Circle;
 import fx.chart.geometry.Path;
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 import fx.chart.tools.Helper;
 import javafx.application.Platform;
 import javafx.beans.DefaultProperty;

@@ -1,8 +1,10 @@
 package fx.chart.event;
 
+import org.jspecify.annotations.NonNull;
+
 import java.util.Objects;
 
-import static fx.chart.util.Constants.*;
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -20,7 +22,11 @@ public final class EvtType<T extends Evt> {
     private final EvtType<? super T> superType;
     private final String name;
 
-
+    /**
+     * Create a {@link EvtType} of given super type and null name
+     *
+     * @param superType super type
+     */
     public EvtType(final EvtType<? super T> superType) {
         this(superType, null);
     }
@@ -29,22 +35,38 @@ public final class EvtType<T extends Evt> {
         this(ROOT, name);
     }
 
-    public EvtType(final EvtType<? super T> superType, final String name) {
-        if (null == superType) {
-            throw new NullPointerException("Event super type must not be null (EvtType.name: " + name + ")");
-        }
+    /**
+     * Create a {@link EvtType}
+     *
+     * @param superType super type
+     * @param name      event name
+     */
+    public EvtType(@NonNull final EvtType<? super T> superType, final String name) {
+        requireNonNull(superType, "Event super type must not be null (EvtType.name: " + name + ")");
+
         this.superType = superType;
         this.name = name;
     }
 
-    EvtType(final String name, final EvtType<? super T> superType) {
+    /**
+     * inner constructor to allow null super type
+     *
+     * @param name      event type name
+     * @param superType super type
+     */
+    private EvtType(final String name, final EvtType<? super T> superType) {
         this.superType = superType;
         this.name = name;
     }
 
-
+    /**
+     * @return super type of this {@link EvtType}
+     */
     public EvtType<? super T> getSuperType() {return superType;}
 
+    /**
+     * @return name of this {@link EvtType}
+     */
     public String getName() {return name;}
 
     @Override
@@ -66,11 +88,9 @@ public final class EvtType<T extends Evt> {
 
     @Override
     public String toString() {
-        return (null != name) ? CURLY_BRACKET_OPEN +
-                QUOTES + "class" + QUOTES + COLON + QUOTES + getClass().getName() + QUOTES + COMMA +
-                QUOTES + "name" + QUOTES + COLON + QUOTES + getName() + QUOTES + COMMA +
-                QUOTES + "supertype" + QUOTES + COLON + QUOTES + getSuperType().name + QUOTES +
-                CURLY_BRACKET_CLOSE :
+        return (name != null) ? "{\"class\":\"" + getClass().getName()
+                + "\",\"name\":\"" + getName()
+                + "\",\"supertype\":\"" + getSuperType().name + "\"}" :
                 super.toString();
     }
 }

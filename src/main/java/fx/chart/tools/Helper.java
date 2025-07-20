@@ -4,8 +4,7 @@ import fx.chart.TickLabelOrientation;
 import fx.chart.data.ChartItem;
 import fx.chart.data.DataPoint;
 import fx.chart.data.XYChartItem;
-import fx.chart.toolboxfx.geom.*;
-import fx.chart.util.Constants;
+import fx.chart.util.*;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
@@ -196,12 +195,7 @@ public class Helper {
         }
     }
 
-    public static final List<Point> subdividePoints(final List<Point> POINTS, final int SUB_DIVISIONS) {
-        Point[] points = POINTS.toArray(new Point[0]);
-        return Arrays.asList(subdividePoints(points, SUB_DIVISIONS));
-    }
-
-    public static final Point[] subdividePointsRadial(final Point[] POINTS, final int SUB_DIVISIONS) {
+    public static Point[] subdividePointsRadial(final Point[] POINTS, final int SUB_DIVISIONS) {
         if (null == POINTS || POINTS.length < 3) {
             throw new IllegalArgumentException("points cannot be null and must at least contain 3 items");
         }
@@ -223,7 +217,7 @@ public class Helper {
         return subdividedPoints;
     }
 
-    public static final Point[] subdividePoints(final Point[] POINTS, final int SUB_DIVISIONS) {
+    public static Point[] subdividePoints(final Point[] POINTS, final int SUB_DIVISIONS) {
         if (null == POINTS || POINTS.length < 3) {
             throw new IllegalArgumentException("points cannot be null and must at least contain 3 items");
         }
