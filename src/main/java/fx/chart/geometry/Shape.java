@@ -2,7 +2,7 @@ package fx.chart.geometry;
 
 import fx.chart.geometry.tools.IllegalPathStateException;
 import fx.chart.geometry.transform.BaseTransform;
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 
 /**
  * Abstract class for all shapes

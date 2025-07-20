@@ -13,8 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static fx.chart.util.Constants.COLON;
-
 
 public enum KLAParser {
 
@@ -112,9 +110,9 @@ public enum KLAParser {
                                 .append(FILE_TIMESTAMP_MATCHER.group(4))
                                 .append(Constants.SPACE)
                                 .append(FILE_TIMESTAMP_MATCHER.group(5))
-                                .append(COLON)
+                                .append(':')
                                 .append(FILE_TIMESTAMP_MATCHER.group(6))
-                                .append(COLON)
+                                .append(':')
                                 .append(FILE_TIMESTAMP_MATCHER.group(7))
                                 .toString();
                         kla.setFileTimestamp(LocalDateTime.parse(fileTimestamp, DTF));
@@ -157,9 +155,9 @@ public enum KLAParser {
                                 .append(RESULT_TIMESTAMP_MATCHER.group(4))
                                 .append(Constants.SPACE)
                                 .append(RESULT_TIMESTAMP_MATCHER.group(5))
-                                .append(COLON)
+                                .append(':')
                                 .append(RESULT_TIMESTAMP_MATCHER.group(6))
-                                .append(COLON)
+                                .append(':')
                                 .append(RESULT_TIMESTAMP_MATCHER.group(7))
                                 .toString();
                         kla.setResultTimestamp(LocalDateTime.parse(resultTimestamp, DTF));
@@ -199,9 +197,9 @@ public enum KLAParser {
                                 .append(SETUP_ID_MATCHER.group(5))
                                 .append(Constants.SPACE)
                                 .append(SETUP_ID_MATCHER.group(6))
-                                .append(COLON)
+                                .append(':')
                                 .append(SETUP_ID_MATCHER.group(7))
-                                .append(COLON)
+                                .append(':')
                                 .append(SETUP_ID_MATCHER.group(8))
                                 .toString();
                         kla.setSetupIdName(setupIdName);

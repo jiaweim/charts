@@ -1,6 +1,4 @@
-package fx.chart.toolboxfx.geom;
-
-import static fx.chart.util.Constants.*;
+package fx.chart.util;
 
 public class Dimension {
     private int hash;
@@ -44,8 +42,7 @@ public class Dimension {
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (obj instanceof Dimension) {
-            Dimension other = (Dimension) obj;
+        if (obj instanceof Dimension other) {
             return getWidth() == other.getWidth() && getHeight() == other.getHeight();
         } else return false;
     }
@@ -63,10 +60,7 @@ public class Dimension {
 
     @Override
     public String toString() {
-        return new StringBuilder().append(CURLY_BRACKET_OPEN)
-                .append(QUOTES).append("w").append(QUOTES).append(COLON).append(getWidth()).append(COMMA)
-                .append(QUOTES).append("h").append(QUOTES).append(COLON).append(getHeight())
-                .append(CURLY_BRACKET_CLOSE)
-                .toString();
+        return "{\"w\":" + getWidth()
+                + ",\"h\":" + getHeight() + "}";
     }
 }

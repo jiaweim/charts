@@ -5,19 +5,12 @@ import java.lang.management.*;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.*;
-import java.time.temporal.ChronoField;
-import java.time.temporal.WeekFields;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.zip.CRC32;
-import java.util.zip.Checksum;
 
 import static fx.chart.util.Constants.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -57,79 +50,79 @@ public class Helper {
                                 HeapInfo heapInfo, List<RootInfo> rootInfos, OperatingSystem operatingSystem,
                                 OperatingSystemInfo operatingSystemInfo, OperatingMode operatingMode, JvmInfo jvmInfo) {
         public String toBeautifiedString() {
-            StringBuilder msgBuilder = new StringBuilder().append(CURLY_BRACKET_OPEN).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("architecture").append(QUOTES_COLON).append(QUOTES).append(architecture.name()).append(QUOTES).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("logical_cores").append(QUOTES_COLON).append(logicalCores).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("physical_cores").append(QUOTES_COLON).append(physicalCores).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("total_memory").append(QUOTES_COLON).append(memInfo.totalMemory()).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("free_memory").append(QUOTES_COLON).append(memInfo.freeMemory()).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("max_memory").append(QUOTES_COLON).append(memInfo.maxMemory()).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("heap_max").append(QUOTES_COLON).append(heapInfo.heapMemoryUsage.getMax()).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("heap_committed").append(QUOTES_COLON).append(heapInfo.heapMemoryUsage.getCommitted()).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("heap_used").append(QUOTES_COLON).append(heapInfo.heapMemoryUsage.getUsed()).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("non_heap_max").append(QUOTES_COLON).append(heapInfo.noneHeapMemoryUsage.getMax()).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("non_heap_committed").append(QUOTES_COLON).append(heapInfo.noneHeapMemoryUsage.getCommitted()).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("non_heap_used").append(QUOTES_COLON).append(heapInfo.noneHeapMemoryUsage.getUsed()).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("root_infos").append(QUOTES_COLON).append(SQUARE_BRACKET_OPEN).append(NEW_LINE);
+            StringBuilder msgBuilder = new StringBuilder().append('{').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("architecture").append(QUOTES_COLON).append(QUOTES).append(architecture.name()).append(QUOTES).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("logical_cores").append(QUOTES_COLON).append(logicalCores).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("physical_cores").append(QUOTES_COLON).append(physicalCores).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("total_memory").append(QUOTES_COLON).append(memInfo.totalMemory()).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("free_memory").append(QUOTES_COLON).append(memInfo.freeMemory()).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("max_memory").append(QUOTES_COLON).append(memInfo.maxMemory()).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("heap_max").append(QUOTES_COLON).append(heapInfo.heapMemoryUsage.getMax()).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("heap_committed").append(QUOTES_COLON).append(heapInfo.heapMemoryUsage.getCommitted()).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("heap_used").append(QUOTES_COLON).append(heapInfo.heapMemoryUsage.getUsed()).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("non_heap_max").append(QUOTES_COLON).append(heapInfo.noneHeapMemoryUsage.getMax()).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("non_heap_committed").append(QUOTES_COLON).append(heapInfo.noneHeapMemoryUsage.getCommitted()).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("non_heap_used").append(QUOTES_COLON).append(heapInfo.noneHeapMemoryUsage.getUsed()).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("root_infos").append(QUOTES_COLON).append('[').append(NEW_LINE);
             rootInfos.forEach(rootInfo ->
-                    msgBuilder.append(INDENT).append(INDENT).append(CURLY_BRACKET_OPEN).append(NEW_LINE)
-                            .append(INDENT).append(INDENT).append(INDENT).append(QUOTES).append("absolute_path").append(QUOTES_COLON).append(QUOTES).append(rootInfo.absolutePath()).append(QUOTES).append(COMMA).append(NEW_LINE)
-                            .append(INDENT).append(INDENT).append(INDENT).append(QUOTES).append("total_space").append(QUOTES_COLON).append(rootInfo.totalSpace()).append(COMMA).append(NEW_LINE)
-                            .append(INDENT).append(INDENT).append(INDENT).append(QUOTES).append("free_space").append(QUOTES_COLON).append(rootInfo.freeSpace()).append(COMMA).append(NEW_LINE)
+                    msgBuilder.append(INDENT).append(INDENT).append('{').append(NEW_LINE)
+                            .append(INDENT).append(INDENT).append(INDENT).append(QUOTES).append("absolute_path").append(QUOTES_COLON).append(QUOTES).append(rootInfo.absolutePath()).append(QUOTES).append(',').append(NEW_LINE)
+                            .append(INDENT).append(INDENT).append(INDENT).append(QUOTES).append("total_space").append(QUOTES_COLON).append(rootInfo.totalSpace()).append(',').append(NEW_LINE)
+                            .append(INDENT).append(INDENT).append(INDENT).append(QUOTES).append("free_space").append(QUOTES_COLON).append(rootInfo.freeSpace()).append(',').append(NEW_LINE)
                             .append(INDENT).append(INDENT).append(INDENT).append(QUOTES).append("usable_space").append(QUOTES_COLON).append(rootInfo.usableSpace()).append(NEW_LINE)
-                            .append(INDENT).append(INDENT).append(CURLY_BRACKET_CLOSE).append(COMMA).append(NEW_LINE));
+                            .append(INDENT).append(INDENT).append('}').append(',').append(NEW_LINE));
             msgBuilder.setLength(msgBuilder.length() - 2);
-            msgBuilder.append(NEW_LINE).append(INDENT).append(SQUARE_BRACKET_CLOSE).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("operating_system").append(QUOTES_COLON).append(QUOTES).append(operatingSystem.name()).append(QUOTES).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("operating_system_name").append(QUOTES_COLON).append(QUOTES).append(operatingSystemInfo.operatingSystemName).append(QUOTES).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("operating_system_version").append(QUOTES_COLON).append(QUOTES).append(operatingSystemInfo.operatingSystemVersion()).append(QUOTES).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("operating_mode").append(QUOTES_COLON).append(QUOTES).append(operatingMode.name()).append(QUOTES).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("vm_name").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.vmName()).append(QUOTES).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("vm_vendor").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.vmVendor()).append(QUOTES).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("vm_version").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.vmVersion()).append(QUOTES).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("spec_name").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.specName()).append(QUOTES).append(COMMA).append(NEW_LINE)
-                    .append(INDENT).append(QUOTES).append("spec_vendor").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.specVendor()).append(QUOTES).append(COMMA).append(NEW_LINE)
+            msgBuilder.append(NEW_LINE).append(INDENT).append(']').append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("operating_system").append(QUOTES_COLON).append(QUOTES).append(operatingSystem.name()).append(QUOTES).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("operating_system_name").append(QUOTES_COLON).append(QUOTES).append(operatingSystemInfo.operatingSystemName).append(QUOTES).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("operating_system_version").append(QUOTES_COLON).append(QUOTES).append(operatingSystemInfo.operatingSystemVersion()).append(QUOTES).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("operating_mode").append(QUOTES_COLON).append(QUOTES).append(operatingMode.name()).append(QUOTES).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("vm_name").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.vmName()).append(QUOTES).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("vm_vendor").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.vmVendor()).append(QUOTES).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("vm_version").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.vmVersion()).append(QUOTES).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("spec_name").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.specName()).append(QUOTES).append(',').append(NEW_LINE)
+                    .append(INDENT).append(QUOTES).append("spec_vendor").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.specVendor()).append(QUOTES).append(',').append(NEW_LINE)
                     .append(INDENT).append(QUOTES).append("spec_version").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.specVersion()).append(QUOTES).append(NEW_LINE)
-                    .append(CURLY_BRACKET_CLOSE);
+                    .append('}');
             return msgBuilder.toString();
         }
 
         @Override
         public String toString() {
-            StringBuilder msgBuilder = new StringBuilder().append(CURLY_BRACKET_OPEN)
-                    .append(QUOTES).append("architecture").append(QUOTES_COLON).append(QUOTES).append(architecture.name()).append(QUOTES).append(COMMA)
-                    .append(QUOTES).append("logical_cores").append(QUOTES_COLON).append(logicalCores).append(COMMA)
-                    .append(QUOTES).append("physical_cores").append(QUOTES_COLON).append(physicalCores).append(COMMA)
-                    .append(QUOTES).append("total_memory").append(QUOTES_COLON).append(memInfo.totalMemory()).append(COMMA)
-                    .append(QUOTES).append("free_memory").append(QUOTES_COLON).append(memInfo.freeMemory()).append(COMMA)
-                    .append(QUOTES).append("max_memory").append(QUOTES_COLON).append(memInfo.maxMemory()).append(COMMA)
-                    .append(QUOTES).append("heap_max").append(QUOTES_COLON).append(heapInfo.heapMemoryUsage.getMax()).append(COMMA)
-                    .append(QUOTES).append("heap_committed").append(QUOTES_COLON).append(heapInfo.heapMemoryUsage.getCommitted()).append(COMMA)
-                    .append(QUOTES).append("heap_used").append(QUOTES_COLON).append(heapInfo.heapMemoryUsage.getUsed()).append(COMMA)
-                    .append(QUOTES).append("non_heap_max").append(QUOTES_COLON).append(heapInfo.noneHeapMemoryUsage.getMax()).append(COMMA)
-                    .append(QUOTES).append("non_heap_committed").append(QUOTES_COLON).append(heapInfo.noneHeapMemoryUsage.getCommitted()).append(COMMA)
-                    .append(QUOTES).append("non_heap_used").append(QUOTES_COLON).append(heapInfo.noneHeapMemoryUsage.getUsed()).append(COMMA)
-                    .append(QUOTES).append("root_infos").append(QUOTES_COLON).append(SQUARE_BRACKET_OPEN);
+            StringBuilder msgBuilder = new StringBuilder().append('{')
+                    .append(QUOTES).append("architecture").append(QUOTES_COLON).append(QUOTES).append(architecture.name()).append(QUOTES).append(',')
+                    .append(QUOTES).append("logical_cores").append(QUOTES_COLON).append(logicalCores).append(',')
+                    .append(QUOTES).append("physical_cores").append(QUOTES_COLON).append(physicalCores).append(',')
+                    .append(QUOTES).append("total_memory").append(QUOTES_COLON).append(memInfo.totalMemory()).append(',')
+                    .append(QUOTES).append("free_memory").append(QUOTES_COLON).append(memInfo.freeMemory()).append(',')
+                    .append(QUOTES).append("max_memory").append(QUOTES_COLON).append(memInfo.maxMemory()).append(',')
+                    .append(QUOTES).append("heap_max").append(QUOTES_COLON).append(heapInfo.heapMemoryUsage.getMax()).append(',')
+                    .append(QUOTES).append("heap_committed").append(QUOTES_COLON).append(heapInfo.heapMemoryUsage.getCommitted()).append(',')
+                    .append(QUOTES).append("heap_used").append(QUOTES_COLON).append(heapInfo.heapMemoryUsage.getUsed()).append(',')
+                    .append(QUOTES).append("non_heap_max").append(QUOTES_COLON).append(heapInfo.noneHeapMemoryUsage.getMax()).append(',')
+                    .append(QUOTES).append("non_heap_committed").append(QUOTES_COLON).append(heapInfo.noneHeapMemoryUsage.getCommitted()).append(',')
+                    .append(QUOTES).append("non_heap_used").append(QUOTES_COLON).append(heapInfo.noneHeapMemoryUsage.getUsed()).append(',')
+                    .append(QUOTES).append("root_infos").append(QUOTES_COLON).append('[');
             rootInfos.forEach(rootInfo ->
-                    msgBuilder.append(CURLY_BRACKET_OPEN)
-                            .append(QUOTES).append("absolute_path").append(QUOTES_COLON).append(QUOTES).append(rootInfo.absolutePath()).append(QUOTES).append(COMMA)
-                            .append(QUOTES).append("total_space").append(QUOTES_COLON).append(rootInfo.totalSpace()).append(COMMA)
-                            .append(QUOTES).append("free_space").append(QUOTES_COLON).append(rootInfo.freeSpace()).append(COMMA)
+                    msgBuilder.append('{')
+                            .append(QUOTES).append("absolute_path").append(QUOTES_COLON).append(QUOTES).append(rootInfo.absolutePath()).append(QUOTES).append(',')
+                            .append(QUOTES).append("total_space").append(QUOTES_COLON).append(rootInfo.totalSpace()).append(',')
+                            .append(QUOTES).append("free_space").append(QUOTES_COLON).append(rootInfo.freeSpace()).append(',')
                             .append(QUOTES).append("usable_space").append(QUOTES_COLON).append(rootInfo.usableSpace())
-                            .append(CURLY_BRACKET_CLOSE).append(COMMA));
+                            .append('}').append(','));
             msgBuilder.setLength(msgBuilder.length() - 1);
-            msgBuilder.append(SQUARE_BRACKET_CLOSE).append(COMMA)
-                    .append(QUOTES).append("operating_system").append(QUOTES_COLON).append(QUOTES).append(operatingSystem.name()).append(QUOTES).append(COMMA)
-                    .append(QUOTES).append("operating_system_name").append(QUOTES_COLON).append(QUOTES).append(operatingSystemInfo.operatingSystemName).append(QUOTES).append(COMMA)
-                    .append(QUOTES).append("operating_system_version").append(QUOTES_COLON).append(QUOTES).append(operatingSystemInfo.operatingSystemVersion()).append(QUOTES).append(COMMA)
-                    .append(QUOTES).append("operating_mode").append(QUOTES_COLON).append(QUOTES).append(operatingMode.name()).append(QUOTES).append(COMMA)
-                    .append(QUOTES).append("vm_name").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.vmName()).append(QUOTES).append(COMMA)
-                    .append(QUOTES).append("vm_vendor").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.vmVendor()).append(QUOTES).append(COMMA)
-                    .append(QUOTES).append("vm_version").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.vmVersion()).append(QUOTES).append(COMMA)
-                    .append(QUOTES).append("spec_name").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.specName()).append(QUOTES).append(COMMA)
-                    .append(QUOTES).append("spec_vendor").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.specVendor()).append(QUOTES).append(COMMA)
+            msgBuilder.append(']').append(',')
+                    .append(QUOTES).append("operating_system").append(QUOTES_COLON).append(QUOTES).append(operatingSystem.name()).append(QUOTES).append(',')
+                    .append(QUOTES).append("operating_system_name").append(QUOTES_COLON).append(QUOTES).append(operatingSystemInfo.operatingSystemName).append(QUOTES).append(',')
+                    .append(QUOTES).append("operating_system_version").append(QUOTES_COLON).append(QUOTES).append(operatingSystemInfo.operatingSystemVersion()).append(QUOTES).append(',')
+                    .append(QUOTES).append("operating_mode").append(QUOTES_COLON).append(QUOTES).append(operatingMode.name()).append(QUOTES).append(',')
+                    .append(QUOTES).append("vm_name").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.vmName()).append(QUOTES).append(',')
+                    .append(QUOTES).append("vm_vendor").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.vmVendor()).append(QUOTES).append(',')
+                    .append(QUOTES).append("vm_version").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.vmVersion()).append(QUOTES).append(',')
+                    .append(QUOTES).append("spec_name").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.specName()).append(QUOTES).append(',')
+                    .append(QUOTES).append("spec_vendor").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.specVendor()).append(QUOTES).append(',')
                     .append(QUOTES).append("spec_version").append(QUOTES_COLON).append(QUOTES).append(jvmInfo.specVersion()).append(QUOTES)
-                    .append(CURLY_BRACKET_CLOSE);
+                    .append('}');
             return msgBuilder.toString();
         }
     }
@@ -141,69 +134,7 @@ public class Helper {
 
     public static boolean equals(final double a, final double b) {return a == b || Math.abs(a - b) < EPSILON;}
 
-    public static int getDegrees(final double decDeg) {return (int) decDeg;}
-
-    public static final int getMinutes(final double decDeg) {return (int) ((decDeg - getDegrees(decDeg)) * 60);}
-
-    public static final double getSeconds(final double decDeg) {return (((decDeg - getDegrees(decDeg)) * 60) - getMinutes(decDeg)) * 60;}
-
-    public static final double getDecimalDeg(final int degrees, final int minutes, final double seconds) {
-        return (((seconds / 60) + minutes) / 60) + degrees;
-    }
-
-    public static final <T> Predicate<T> not(Predicate<T> predicate) {return predicate.negate();}
-
-    // Get last n elements from stream
-    public static <T> Collector<T, ?, List<T>> lastN(int n) {
-        return Collector.<T, Deque<T>, List<T>>of(ArrayDeque::new, (acc, t) -> {
-            if (acc.size() == n)
-                acc.pollFirst();
-            acc.add(t);
-        }, (acc1, acc2) -> {
-            while (acc2.size() < n && !acc1.isEmpty()) {
-                acc2.addFirst(acc1.pollLast());
-            }
-            return acc2;
-        }, ArrayList::new);
-    }
-
-    public static LocalDate getFirstDayOfWeek(final int year, final int weekNumber, final Locale locale) {
-        return LocalDate
-                .of(year, 2, 1)
-                .with(WeekFields.of(locale).getFirstDayOfWeek())
-                .with(WeekFields.of(locale).weekOfWeekBasedYear(), weekNumber);
-    }
-
-    public static long getEpochSecondsOfFirstDayOfWeek(final int year, final int weekNumber, final Locale locale) {
-        return getFirstDayOfWeek(year, weekNumber, locale).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
-    }
-
-    public static LocalDate getLastDayOfWeek(final int year, final int weekNumber, final Locale locale) {
-        return getFirstDayOfWeek(year, weekNumber, locale).plusDays(6);
-    }
-
-    public static long getEpochSecondsOfLastDayOfWeek(final int year, final int weekNumber, final Locale locale) {
-        return getLastDayOfWeek(year, weekNumber, locale).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
-    }
-
-    public static int getWeekOfYear(final ZonedDateTime zonedDateTime) {return getWeekOfYear(zonedDateTime.toInstant(), zonedDateTime.getZone());}
-
-    public static int getWeekOfYeear(final Instant instant) {return getWeekOfYear(instant, ZoneId.systemDefault());}
-
-    public static int getWeekOfYear(final Instant instant, final ZoneId zoneId) {return getWeekOfYear(LocalDate.ofInstant(instant, zoneId));}
-
-    public static int getWeekOfYear(final LocalDateTime dateTime) {return getWeekOfYear(dateTime.toLocalDate());}
-
-    public static int getWeekOfYear(final LocalDate date) {return date.get(ChronoField.ALIGNED_WEEK_OF_YEAR);}
-
-    public static int getWeekOfYear(final long epochSeconds) {return getWeekOfYear(epochSeconds, ZoneId.systemDefault());}
-
-    public static int getWeekOfYear(final long epochSeconds, final ZoneId zoneId) {
-        if (epochSeconds < 0) {
-            throw new IllegalArgumentException("Epochseconds cannot be smaller than 0");
-        }
-        return LocalDate.ofInstant(Instant.ofEpochSecond(epochSeconds), zoneId).get(ChronoField.ALIGNED_WEEK_OF_YEAR);
-    }
+    public static <T> Predicate<T> not(Predicate<T> predicate) {return predicate.negate();}
 
     private static final NavigableMap<Long, String> SUFFIXES = new TreeMap<>(Map.of(1_000L, "k",
             1_000_000L, "M",
@@ -212,34 +143,7 @@ public class Helper {
             1_000_000_000_000_000L, "P",
             1_000_000_000_000_000_000L, "E"));
 
-    public static final String shortenNumber(final long value) {
-        return shortenNumber(value, Locale.US);
-    }
-
-    public static final String shortenNumber(final long value, final Locale locale) {
-        //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
-        if (value == Long.MIN_VALUE) {
-            return shortenNumber(Long.MIN_VALUE + 1, locale);
-        }
-        if (value < 0) {
-            return "-" + shortenNumber(-value, locale);
-        }
-        if (value < 1000) {
-            return Long.toString(value);
-        }
-
-        final Entry<Long, String> entry = SUFFIXES.floorEntry(value);
-        final Long divideBy = entry.getKey();
-        final String suffix = entry.getValue();
-        final long truncated = value / (divideBy / 10);
-        final boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
-        final java.text.NumberFormat formatter = java.text.NumberFormat.getNumberInstance(locale);
-        formatter.setMinimumFractionDigits(1);
-        formatter.setMaximumFractionDigits(1);
-        return hasDecimal ? formatter.format(truncated / 10d) + suffix : (truncated / 10) + suffix;
-    }
-
-    public static final String secondsToHHMMSSString(final long seconds) {
+    public static String secondsToHHMMSSString(final long seconds) {
         final long[] hhmmss = secondsToHHMMSS(seconds);
         return String.format("%02d:%02d:%02d", hhmmss[0], hhmmss[1], hhmmss[2]);
     }
@@ -288,18 +192,11 @@ public class Helper {
         }
     }
 
-    public static final long[] secondsToDDHHMM(final long seconds) {
+    public static long[] secondsToDDHHMM(final long seconds) {
         final long minutes = (seconds / 60) % 60;
         final long hours = (seconds / 3_600) % 24;
         final long days = (seconds / 86_400);
         return new long[]{days, hours, minutes};
-    }
-
-    public static final long getCRC32Checksum(final byte[] bytes) {
-        Checksum crc32 = new CRC32();
-
-        crc32.update(bytes, 0, bytes.length);
-        return crc32.getValue();
     }
 
     public static String getMD5(final String text) {return bytesToHex(getMD5Bytes(text.getBytes(UTF_8)));}
@@ -319,7 +216,7 @@ public class Helper {
         return md.digest(bytes);
     }
 
-    public static final String getMD5ForFile(final File file) throws Exception {
+    public static String getMD5ForFile(final File file) throws Exception {
         final MessageDigest md = MessageDigest.getInstance("MD5");
         final InputStream fis = new FileInputStream(file);
         try {
@@ -338,13 +235,13 @@ public class Helper {
         return getMD5(bytesToHex(byteData));
     }
 
-    public static final String getSHA1(final String text) {return bytesToHex(getSHA1Bytes(text.getBytes(UTF_8)));}
+    public static String getSHA1(final String text) {return bytesToHex(getSHA1Bytes(text.getBytes(UTF_8)));}
 
-    public static final String getSHA1(final byte[] bytes) {
+    public static String getSHA1(final byte[] bytes) {
         return bytesToHex(getSHA1Bytes(bytes));
     }
 
-    public static final byte[] getSHA1Bytes(final byte[] bytes) {
+    public static byte[] getSHA1Bytes(final byte[] bytes) {
         final MessageDigest md;
         try {
             md = MessageDigest.getInstance("SHA-1");
@@ -355,7 +252,7 @@ public class Helper {
         return md.digest(bytes);
     }
 
-    public static final String getSHA1ForFile(final File file) throws Exception {
+    public static String getSHA1ForFile(final File file) throws Exception {
         final MessageDigest md = MessageDigest.getInstance("SHA-1");
         final InputStream fis = new FileInputStream(file);
         try {
@@ -374,13 +271,13 @@ public class Helper {
         return getSHA1(bytesToHex(byteData));
     }
 
-    public static final String getSHA256(final String text) {return bytesToHex(getSHA256Bytes(text.getBytes(UTF_8)));}
+    public static String getSHA256(final String text) {return bytesToHex(getSHA256Bytes(text.getBytes(UTF_8)));}
 
-    public static final String getSHA256(final byte[] bytes) {
+    public static String getSHA256(final byte[] bytes) {
         return bytesToHex(getSHA256Bytes(bytes));
     }
 
-    public static final byte[] getSHA256Bytes(final byte[] bytes) {
+    public static byte[] getSHA256Bytes(final byte[] bytes) {
         final MessageDigest md;
         try {
             md = MessageDigest.getInstance("SHA-256");
@@ -391,7 +288,7 @@ public class Helper {
         return md.digest(bytes);
     }
 
-    public static final String getSHA256ForFile(final File file) throws Exception {
+    public static String getSHA256ForFile(final File file) throws Exception {
         final MessageDigest md = MessageDigest.getInstance("SHA-256");
         final InputStream fis = new FileInputStream(file);
         try {
@@ -410,13 +307,13 @@ public class Helper {
         return getSHA256(bytesToHex(byteData));
     }
 
-    public static final String getSHA3_256(final String text) {return bytesToHex(getSHA3_256Bytes(text.getBytes(UTF_8)));}
+    public static String getSHA3_256(final String text) {return bytesToHex(getSHA3_256Bytes(text.getBytes(UTF_8)));}
 
-    public static final String getSHA3_256(final byte[] bytes) {
+    public static String getSHA3_256(final byte[] bytes) {
         return bytesToHex(getSHA3_256Bytes(bytes));
     }
 
-    public static final byte[] getSHA3_256Bytes(final byte[] bytes) {
+    public static byte[] getSHA3_256Bytes(final byte[] bytes) {
         final MessageDigest md;
         try {
             md = MessageDigest.getInstance("SHA3-256");
@@ -427,7 +324,7 @@ public class Helper {
         return md.digest(bytes);
     }
 
-    public static final String getSHA3_256ForFile(final File file) throws Exception {
+    public static String getSHA3_256ForFile(final File file) throws Exception {
         final MessageDigest md = MessageDigest.getInstance("SHA3-256");
         final InputStream fis = new FileInputStream(file);
         try {
@@ -446,7 +343,7 @@ public class Helper {
         return getSHA3_256(bytesToHex(byteData));
     }
 
-    public static final String bytesToHex(final byte[] bytes) {
+    public static String bytesToHex(final byte[] bytes) {
         final StringBuilder builder = new StringBuilder();
         for (byte b : bytes) {
             builder.append(String.format("%02x", b));
@@ -454,19 +351,7 @@ public class Helper {
         return builder.toString();
     }
 
-    public static final Optional<String> nonEmpty(final String text) {
-        return (null == text || text.length() == 0) ? Optional.empty() : Optional.ofNullable(text);
-    }
-
-    public static final String padLeft(final String input, final char ch, final int length) {
-        return String.format("%" + length + "s", input).replace(' ', ch);
-    }
-
-    public static final String padRight(final String input, final char ch, final int length) {
-        return String.format("%" + (-length) + "s", input).replace(' ', ch);
-    }
-
-    public static final int getPhysicalCores() {
+    public static int getPhysicalCores() {
         //final OperatingSystemInfo osInfo = getOperatingSystemInfo();
         //return osInfo.availableProcessors();
         final OperatingSystem operatingSystem = getOperatingSystem();
@@ -481,33 +366,33 @@ public class Helper {
         return null == noOfPhysicalCores ? -1 : noOfPhysicalCores;
     }
 
-    public static final int getLogicalCores() {
+    public static int getLogicalCores() {
         final Runtime runtime = Runtime.getRuntime();
         return runtime.availableProcessors();
     }
 
-    public static final long getTotalMemory() {
+    public static long getTotalMemory() {
         final Runtime runtime = Runtime.getRuntime();
         return runtime.totalMemory();
     }
 
-    public static final long getMaxMemory() {
+    public static long getMaxMemory() {
         final Runtime runtime = Runtime.getRuntime();
         return runtime.maxMemory();
     }
 
-    public static final long getFreeMemory() {
+    public static long getFreeMemory() {
         final Runtime runtime = Runtime.getRuntime();
         return runtime.freeMemory();
     }
 
-    public static final Architecture getArchitecture() {
+    public static Architecture getArchitecture() {
         OperatingSystemInfo osInfo = getOperatingSystemInfo();
         Architecture arch = Architecture.fromText(osInfo.arc());
         return Architecture.NOT_FOUND == arch ? getArchitecture(getOperatingSystem()) : arch;
     }
 
-    public static final Architecture getArchitecture(final OperatingSystem operatingSystem) {
+    public static Architecture getArchitecture(final OperatingSystem operatingSystem) {
         // Try to get architecture via process
         try {
             final ProcessBuilder processBuilder = OperatingSystem.WINDOWS == operatingSystem ? new ProcessBuilder(WIN_DETECT_ARCH_CMDS) : new ProcessBuilder(UX_DETECT_ARCH_CMDS);
@@ -565,7 +450,7 @@ public class Helper {
         return Architecture.NOT_FOUND;
     }
 
-    public static final OperatingSystem getOperatingSystem() {
+    public static OperatingSystem getOperatingSystem() {
         String os = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         if (os.contains("win")) {
             return OperatingSystem.WINDOWS;
@@ -596,9 +481,9 @@ public class Helper {
         }
     }
 
-    public static final OperatingMode getOperatingMode() {return getOperatingMode(getOperatingSystem());}
+    public static OperatingMode getOperatingMode() {return getOperatingMode(getOperatingSystem());}
 
-    public static final OperatingMode getOperatingMode(final OperatingSystem operatingSystem) {
+    public static OperatingMode getOperatingMode(final OperatingSystem operatingSystem) {
         try {
             final ProcessBuilder processBuilder = OperatingSystem.WINDOWS == operatingSystem ? new ProcessBuilder(WIN_DETECT_ARCH_CMDS) : new ProcessBuilder(UX_DETECT_ARCH_CMDS);
             final Process process = processBuilder.start();
@@ -634,7 +519,7 @@ public class Helper {
         }
     }
 
-    public static final OperatingSystemInfo getOperatingSystemInfo() {
+    public static OperatingSystemInfo getOperatingSystemInfo() {
         final OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
         final String arc = operatingSystemMXBean.getArch();
         final int availableProcessors = operatingSystemMXBean.getAvailableProcessors();
@@ -644,7 +529,7 @@ public class Helper {
         return new OperatingSystemInfo(arc, availableProcessors, operatingSystemName, operatingSystemVersion, systemLoadAverage);
     }
 
-    public static final JvmInfo getJvmInfo() {
+    public static JvmInfo getJvmInfo() {
         final RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         final String vmName = runtimeMXBean.getVmName();
         final String vmVendor = runtimeMXBean.getVmVendor();
@@ -655,13 +540,13 @@ public class Helper {
         return new JvmInfo(vmName, vmVendor, vmVersion, specName, specVendor, specVersion);
     }
 
-    public static final CompilationInfo getCompilationInfo() {
+    public static CompilationInfo getCompilationInfo() {
         final CompilationMXBean compilationMXBean = ManagementFactory.getCompilationMXBean();
         final long totalCompilationtime = compilationMXBean.getTotalCompilationTime();
         return new CompilationInfo(totalCompilationtime);
     }
 
-    public static final ClassLoadingInfo getClassLoadingInfo() {
+    public static ClassLoadingInfo getClassLoadingInfo() {
         final ClassLoadingMXBean classLoadingMXBean = ManagementFactory.getClassLoadingMXBean();
         final long totalLoadedClassCount = classLoadingMXBean.getTotalLoadedClassCount();
         final int loadedClassCount = classLoadingMXBean.getLoadedClassCount();
@@ -669,18 +554,18 @@ public class Helper {
         return new ClassLoadingInfo(totalLoadedClassCount, loadedClassCount, unloadedClassCount);
     }
 
-    public static final HeapInfo getHeapInfo() {
+    public static HeapInfo getHeapInfo() {
         final MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
         final MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
         final MemoryUsage nonHeapMemoryUsage = memoryMXBean.getNonHeapMemoryUsage();
         return new HeapInfo(heapMemoryUsage, nonHeapMemoryUsage);
     }
 
-    public static final MemInfo getMemInfo() {
+    public static MemInfo getMemInfo() {
         return new MemInfo(getTotalMemory(), getFreeMemory(), getMaxMemory());
     }
 
-    public static final List<RootInfo> getRootInfos() {
+    public static List<RootInfo> getRootInfos() {
         final List<RootInfo> rootInfos = new ArrayList<>();
         final File[] roots = File.listRoots();
         for (File root : roots) {
@@ -693,7 +578,7 @@ public class Helper {
         return rootInfos;
     }
 
-    public static final SystemSummary getSystemSummary() {
+    public static SystemSummary getSystemSummary() {
         final List<RootInfo> rootInfos = getRootInfos();
         final OperatingSystemInfo osInfo = getOperatingSystemInfo();
         final JvmInfo jvmInfo = getJvmInfo();
@@ -707,7 +592,7 @@ public class Helper {
         return new SystemSummary(arc, logicalCores, physicalCores, memInfo, heapInfo, rootInfos, operatingSystem, osInfo, operatingMode, jvmInfo);
     }
 
-    public static final double similarity(final String text1, final String text2) {
+    public static double similarity(final String text1, final String text2) {
         String longer = text1;
         String shorter = text2;
         if (text1.length() < text2.length()) {
@@ -718,7 +603,7 @@ public class Helper {
         return longerLength == 0 ? 1.0 : (longerLength - editDistance(longer, shorter)) / (double) longerLength;
     }
 
-    private static final int editDistance(String text1, String text2) {
+    private static int editDistance(String text1, String text2) {
         text1 = text1.toLowerCase();
         text2 = text2.toLowerCase();
 

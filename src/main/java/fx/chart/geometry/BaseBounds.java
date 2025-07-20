@@ -1,7 +1,7 @@
 package fx.chart.geometry;
 
 
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 
 
 public abstract class BaseBounds {

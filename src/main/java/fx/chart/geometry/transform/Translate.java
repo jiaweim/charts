@@ -1,7 +1,7 @@
 package fx.chart.geometry.transform;
 
 
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 import fx.chart.geometry.BaseBounds;
 import fx.chart.geometry.Path;
 import fx.chart.geometry.Rectangle;

@@ -1,6 +1,6 @@
 package fx.chart.geometry.transform;
 
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 import fx.chart.geometry.tools.NonInvertibleTransformException;
 
 public class Affine extends AffineBase {

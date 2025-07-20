@@ -1,4 +1,4 @@
-package fx.chart.toolboxfx.geom;
+package fx.chart.util;
 
 import fx.chart.event.Evt;
 import fx.chart.event.EvtObserver;
@@ -11,8 +11,13 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static fx.chart.util.Constants.*;
-
+/**
+ * This class define bounds
+ *
+ * @author Jiawei Mao
+ * @version 1.0.0
+ * @since 20 Jul 2025, 5:56 PM
+ */
 public class Bounds {
 
     private double x;
@@ -132,8 +137,6 @@ public class Bounds {
         }
     }
 
-
-    // ******************** Misc **********************************************
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) return true;
@@ -153,12 +156,9 @@ public class Bounds {
 
     @Override
     public String toString() {
-        return new StringBuilder().append(CURLY_BRACKET_OPEN)
-                .append(QUOTES).append("x").append(QUOTES).append(COLON).append(getX()).append(COMMA)
-                .append(QUOTES).append("y").append(QUOTES).append(COLON).append(getY()).append(COMMA)
-                .append(QUOTES).append("w").append(QUOTES).append(COLON).append(getWidth()).append(COMMA)
-                .append(QUOTES).append("h").append(QUOTES).append(COLON).append(getHeight())
-                .append(CURLY_BRACKET_CLOSE)
-                .toString();
+        return "{\"x\":" + getX()
+                + ",\"y\":" + getY()
+                + ",\"w\":" + getWidth()
+                + ",\"h\":" + getHeight() + "}";
     }
 }

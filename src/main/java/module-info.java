@@ -14,8 +14,8 @@ module eu.hansolo.fx.charts {
     // 3rd party
     requires org.slf4j;
     requires pdk.util;
+    requires org.jspecify;
 
-    opens fx.chart.country to javafx.graphics;
     opens fx.chart.heatmap to javafx.graphics;
 
     exports fx.chart.geometry;
@@ -30,7 +30,6 @@ module eu.hansolo.fx.charts {
     exports fx.chart.pareto;
     exports fx.chart.series;
     exports fx.chart.tools;
-    exports fx.chart.world;
     exports fx.chart.voronoi;
     exports fx.chart.wafermap;
 

@@ -1,11 +1,6 @@
-package fx.chart.toolboxfx.geom;
-
-import fx.chart.util.Constants;
-import fx.chart.toolboxfx.HelperFX;
+package fx.chart.util;
 
 import java.util.List;
-
-import static fx.chart.util.Constants.*;
 
 
 public class Point implements Comparable<Point>, Cloneable {
@@ -231,9 +226,6 @@ public class Point implements Comparable<Point>, Cloneable {
 
     @Override
     public String toString() {
-        return new StringBuilder().append(CURLY_BRACKET_OPEN)
-                .append(QUOTES).append("x").append(QUOTES).append(COLON).append(x).append(COMMA)
-                .append(QUOTES).append("y").append(QUOTES).append(COLON).append(y)
-                .append(CURLY_BRACKET_CLOSE).toString();
+        return "{\"x\":" + x + ",\"y\":" + y + "}";
     }
 }

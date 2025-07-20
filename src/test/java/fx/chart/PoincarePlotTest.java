@@ -3,7 +3,7 @@ package fx.chart;
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYChartItemBuilder;
 import fx.chart.series.XYSeries;
-import fx.chart.toolboxfx.GradientLookup;
+import fx.chart.color.GradientLookup;
 import fx.chart.tools.Helper;
 import javafx.application.Application;
 import javafx.geometry.Insets;

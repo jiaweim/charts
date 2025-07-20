@@ -4,7 +4,7 @@ import fx.chart.geometry.BaseBounds;
 import fx.chart.geometry.Rectangle;
 import fx.chart.geometry.Shape;
 import fx.chart.geometry.tools.NonInvertibleTransformException;
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 
 
 public abstract class BaseTransform {

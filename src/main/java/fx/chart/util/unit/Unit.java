@@ -2,8 +2,6 @@ package fx.chart.util.unit;
 
 import java.math.BigDecimal;
 
-import static fx.chart.util.Constants.*;
-
 
 public class Unit {
 
@@ -52,7 +50,6 @@ public class Unit {
     }
 
 
-    // ******************** Methods *******************************************
     public final Category getCategory() {return category;}
 
     public final String getUnitShort() {return unitShort;}
@@ -77,12 +74,11 @@ public class Unit {
 
     @Override
     public final String toString() {
-        return new StringBuilder().append(CURLY_BRACKET_OPEN).append(category)
-                .append(QUOTES).append("unit_short").append(QUOTES).append(COLON).append(QUOTES).append(unitShort).append(QUOTES).append(COMMA)
-                .append(QUOTES).append("unit_name").append(QUOTES).append(COLON).append(QUOTES).append(unitName).append(QUOTES).append(COMMA)
-                .append(QUOTES).append("factor").append(QUOTES).append(COLON).append(factor).append(COMMA)
-                .append(QUOTES).append("offset").append(QUOTES).append(COLON).append(getOffset())
-                .append(CURLY_BRACKET_CLOSE)
-                .toString();
+        return "{" + category +
+                "\"unit_short\":\"" + unitShort
+                + "\",\"unit_name\":\"" + unitName
+                + "\",\"factor\":" + factor
+                + ",\"offset\":" + getOffset() +
+                "}";
     }
 }

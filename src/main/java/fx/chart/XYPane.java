@@ -7,10 +7,9 @@ import fx.chart.event.*;
 import fx.chart.font.Fonts;
 import fx.chart.series.Series;
 import fx.chart.series.XYSeries;
-import fx.chart.toolboxfx.geom.Point;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TooltipPopup;
-import fx.chart.util.Statistics;
+import fx.chart.util.Point;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -29,6 +28,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import pdk.util.math.MathUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -1899,8 +1899,8 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             }
             minItems.add(new XYChartItem(x, minYForX));
             maxItems.add(new XYChartItem(x, maxYForX));
-            avgItems.add(new XYChartItem(x, Statistics.getAverage(valuesForX)));
-            stdDevItems.add(new XYChartItem(x, Statistics.getStdDev(valuesForX)));
+            avgItems.add(new XYChartItem(x, MathUtils.mean(valuesForX)));
+            stdDevItems.add(new XYChartItem(x, MathUtils.standardDeviation(valuesForX)));
         }
 
         // Visualize data
@@ -2023,8 +2023,8 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             }
             minItems.add(new XYChartItem(x, minYForX));
             maxItems.add(new XYChartItem(x, maxYForX));
-            avgItems.add(new XYChartItem(x, Statistics.getAverage(valuesForX)));
-            stdDevItems.add(new XYChartItem(x, Statistics.getStdDev(valuesForX)));
+            avgItems.add(new XYChartItem(x, MathUtils.mean(valuesForX)));
+            stdDevItems.add(new XYChartItem(x, MathUtils.standardDeviation(valuesForX)));
         }
 
         List<Point> avgItemsPoints = new ArrayList<>(avgItems.size());

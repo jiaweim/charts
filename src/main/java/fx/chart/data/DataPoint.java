@@ -1,7 +1,7 @@
 package fx.chart.data;
 
 
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 
 
 public class DataPoint extends Point {

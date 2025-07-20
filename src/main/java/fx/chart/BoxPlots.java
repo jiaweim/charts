@@ -9,7 +9,6 @@ import fx.chart.series.ChartItemSeries;
 import fx.chart.tools.Helper;
 import fx.chart.tools.Order;
 import fx.chart.tools.TooltipPopup;
-import fx.chart.util.Statistics;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
@@ -21,6 +20,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
+import pdk.util.math.MathUtils;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -120,9 +120,9 @@ public class BoxPlots<T extends ChartItem> extends Region {
             seriesList.forEach(series -> {
                 final List<T> items = series.getItems();
                 final List<Double> values = items.stream().map(item -> item.getValue()).collect(Collectors.toList());
-                median = Statistics.getMedian(values);
-                q1 = Statistics.percentile(values, 25);
-                q3 = Statistics.percentile(values, 75);
+                median = MathUtils.percentile(values, 50);
+                q1 = MathUtils.percentile(values, 25);
+                q3 = MathUtils.percentile(values, 75);
                 iqr = q3 - q1;
                 iqrFraction = iqr * 1.5;
                 minValue = items.stream().min(Comparator.comparing(T::getValue)).get().getValue();

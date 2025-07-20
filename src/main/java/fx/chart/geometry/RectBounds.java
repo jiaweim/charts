@@ -1,11 +1,12 @@
 package fx.chart.geometry;
 
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 
 import java.util.Objects;
 
 
 public class RectBounds extends BaseBounds {
+
     private double minX;
     private double maxX;
     private double minY;

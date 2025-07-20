@@ -1,43 +1,36 @@
-/*
- * Copyright (c) 2017 by Gerrit Grunwald
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package fx.chart.geometry.tools;
 
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 
 import java.util.Arrays;
 
-
+/**
+ * @author Jiawei Mao
+ * @author Gerrit Grunwald
+ * @version 1.0.0
+ * @since 20 Jul 2025, 5:43 PM
+ */
 public abstract class AbstractSegment implements Segment {
-    
+
     static final double eps = 1 / (1L << 48);
     static final double tol = 4.0 * eps;
-    
+
     public static int solveLine(double a, double b, double[] roots) {
         if (a == 0) {
-            if (b != 0) { return 0; }
+            if (b != 0) {
+                return 0;
+            }
             roots[0] = 0;
             return 1;
         }
         roots[0] = -b / a;
         return 1;
     }
-    
+
     public static int solveQuad(double a, double b, double c, double[] roots) {
-        if (a == 0) { return solveLine(b, c, roots); }
+        if (a == 0) {
+            return solveLine(b, c, roots);
+        }
 
         double det = b * b - 4 * a * c;
 
@@ -46,7 +39,9 @@ public abstract class AbstractSegment implements Segment {
             return 1;
         }
 
-        if (det < 0) { return 0; }
+        if (det < 0) {
+            return 0;
+        }
 
         // Two real roots
         det = Math.sqrt(det);
@@ -55,18 +50,18 @@ public abstract class AbstractSegment implements Segment {
         roots[1] = w / (2 * a);
         return 2;
     }
-    
+
     public static double matchSign(double a, double b) {
         if (b < 0) return (a < 0) ? a : -a;
         return (a > 0) ? a : -a;
     }
-    
+
     public static int solveCubic(double a3, double a2, double a1, double a0, double[] roots) {
         double[] dRoots = {0, 0};
-        int      dCnt   = solveQuad(3 * a3, 2 * a2, a1, dRoots);
-        double[] yVals  = {0, 0, 0, 0};
-        double[] tVals  = {0, 0, 0, 0};
-        int      yCnt   = 0;
+        int dCnt = solveQuad(3 * a3, 2 * a2, a1, dRoots);
+        double[] yVals = {0, 0, 0, 0};
+        double[] tVals = {0, 0, 0, 0};
+        int yCnt = 0;
         yVals[yCnt] = a0;
         tVals[yCnt++] = 0;
         double r;
@@ -129,7 +124,7 @@ public abstract class AbstractSegment implements Segment {
             }
 
             double epsZero = tol * (y1 - y0);
-            int    cnt;
+            int cnt;
             for (cnt = 0; cnt < 20; cnt++) {
                 double dt = t1 - t0;
                 double dy = y1 - y0;
@@ -158,17 +153,17 @@ public abstract class AbstractSegment implements Segment {
         }
         return ret;
     }
-    
+
     protected abstract int findRoots(double y, double[] roots);
-    
+
     public Segment.SplitResults split(double y) {
-        double[] roots  = {0, 0, 0};
-        int      numSol = findRoots(y, roots);
+        double[] roots = {0, 0, 0};
+        int numSol = findRoots(y, roots);
         if (numSol == 0) return null; // No split
 
         Arrays.sort(roots, 0, numSol);
-        double[] segs        = new double[numSol + 2];
-        int      numSegments = 0;
+        double[] segs = new double[numSol + 2];
+        int numSegments = 0;
         segs[numSegments++] = 0;
         for (int i = 0; i < numSol; i++) {
             double r = roots[i];
@@ -182,10 +177,10 @@ public abstract class AbstractSegment implements Segment {
         // System.err.println("Y: " + y + "#Seg: " + numSegments +
         //                    " Seg: " + this);
 
-        Segment[] parts      = new Segment[numSegments];
-        double    pT         = 0.0;
-        int       pIdx       = 0;
-        boolean   firstAbove = false, prevAbove = false;
+        Segment[] parts = new Segment[numSegments];
+        double pT = 0.0;
+        int pIdx = 0;
+        boolean firstAbove = false, prevAbove = false;
         for (int i = 1; i < numSegments; i++) {
             // System.err.println("Segs: " + segs[i-1]+", "+segs[i]);
             parts[pIdx] = getSegment(segs[i - 1], segs[i]);
@@ -217,16 +212,18 @@ public abstract class AbstractSegment implements Segment {
         }
         int ai = 0, bi = 0;
         for (int i = 0; i < pIdx; i++) {
-            if (firstAbove) { above[ai++] = parts[i]; } else below[bi++] = parts[i];
+            if (firstAbove) {
+                above[ai++] = parts[i];
+            } else below[bi++] = parts[i];
             firstAbove = !firstAbove;
         }
         return new SplitResults(below, above);
     }
-    
+
     public Segment splitBefore(double t) {
         return getSegment(0.0, t);
     }
-    
+
     public Segment splitAfter(double t) {
         return getSegment(t, 1.0);
     }

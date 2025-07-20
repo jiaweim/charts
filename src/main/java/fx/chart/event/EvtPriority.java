@@ -1,7 +1,5 @@
 package fx.chart.event;
 
-import static fx.chart.util.Constants.*;
-
 /**
  * Define the priority of event
  *
@@ -24,9 +22,6 @@ public enum EvtPriority {
 
     @Override
     public String toString() {
-        return CURLY_BRACKET_OPEN +
-                QUOTES + "class" + QUOTES + COLON + QUOTES + getClass().getName() + QUOTES + COMMA +
-                QUOTES + "value" + QUOTES + COLON + QUOTES + getValue() +
-                CURLY_BRACKET_CLOSE;
+        return "{\"class\":\"" + getClass().getName() + "\",\"value\":\"" + getValue() + "\"}";
     }
 }

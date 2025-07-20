@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static fx.chart.util.Constants.*;
-
 
 public class Converter {
     public static final String[] ABBREVIATIONS = {"k", "M", "G", "T", "P", "E", "Z", "Y"};
@@ -179,9 +177,6 @@ public class Converter {
 
     @Override
     public String toString() {
-        return new StringBuilder().append(CURLY_BRACKET_OPEN)
-                .append(QUOTES).append("category").append(QUOTES).append(COLON).append(QUOTES).append(getCategory()).append(QUOTES)
-                .append(CURLY_BRACKET_CLOSE)
-                .toString();
+        return "{\"category\":" + getCategory() + "}";
     }
 }

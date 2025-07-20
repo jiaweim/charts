@@ -5,7 +5,7 @@ import fx.chart.heatmap.ColorMapping;
 import fx.chart.heatmap.HeatMap;
 import fx.chart.heatmap.HeatMapBuilder;
 import fx.chart.heatmap.OpacityDistribution;
-import fx.chart.toolboxfx.geom.Point;
+import fx.chart.util.Point;
 import fx.chart.tools.Helper;
 import javafx.beans.DefaultProperty;
 import javafx.beans.binding.Bindings;

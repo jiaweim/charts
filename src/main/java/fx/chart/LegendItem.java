@@ -1,8 +1,8 @@
 package fx.chart;
 
 import fx.chart.font.Fonts;
-import fx.chart.toolboxfx.HelperFX;
-import fx.chart.toolboxfx.geom.Dimension;
+import fx.chart.util.HelperFX;
+import fx.chart.util.Dimension;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;

@@ -3,8 +3,6 @@ package fx.chart.event;
 import java.util.EventObject;
 import java.util.Objects;
 
-import static fx.chart.util.Constants.*;
-
 /**
  * The root class from which all event state objects shall be derived.
  * <p>
@@ -71,11 +69,9 @@ public class Evt extends EventObject implements Comparable<Evt> {
 
     @Override
     public String toString() {
-        return CURLY_BRACKET_OPEN +
-                QUOTES + "class" + QUOTES + COLON + QUOTES + getClass().getName() + QUOTES + COMMA +
-                QUOTES + "type" + QUOTES + COLON + QUOTES + getEvtType().getClass().getName() + QUOTES + COMMA +
-                QUOTES + "priority" + QUOTES + COLON + getPriority().getValue() + COMMA +
-                QUOTES + "source" + QUOTES + COLON + QUOTES + (null == getSource() ? "null" : getSource().getClass().getName()) + QUOTES +
-                CURLY_BRACKET_CLOSE;
+        return "{\"class\":\"" + getClass().getName() + "\"," +
+                "\"type\":\"" + getEvtType().getClass().getName()
+                + "\",\"priority\":" + getPriority().getValue() + ",\"source\":\"" +
+                (getSource() == null ? "null" : getSource().getClass().getName()) + "\"}";
     }
 }

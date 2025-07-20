@@ -2,7 +2,7 @@ package fx.chart.event.type;
 
 import fx.chart.event.EvtPriority;
 import fx.chart.event.EvtType;
-import fx.chart.toolboxfx.geom.Bounds;
+import fx.chart.util.Bounds;
 
 import java.util.Objects;
 
