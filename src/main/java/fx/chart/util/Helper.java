@@ -1,8 +1,5 @@
 package fx.chart.util;
 
-import fx.chart.util.geo.CardinalDirection;
-import fx.chart.util.geo.GeoLocation;
-
 import java.io.*;
 import java.lang.management.*;
 import java.nio.charset.Charset;
@@ -708,51 +705,6 @@ public class Helper {
         final int logicalCores = getLogicalCores();
         final int physicalCores = getPhysicalCores();
         return new SystemSummary(arc, logicalCores, physicalCores, memInfo, heapInfo, rootInfos, operatingSystem, osInfo, operatingMode, jvmInfo);
-    }
-
-    public static final double calcDistanceInMeter(final GeoLocation location1, final GeoLocation location2) {
-        return calcDistanceInMeter(location1.getLatitude(), location1.getLongitude(), location2.getLatitude(), location2.getLongitude());
-    }
-
-    public static final double calcDistanceInMeter(final double latitude1, final double longitude1, final double latitude2, final double longitude2) {
-        final double lat1Radians = Math.toRadians(latitude1);
-        final double lat2Radians = Math.toRadians(latitude2);
-        final double deltaLatRadians = Math.toRadians(latitude2 - latitude1);
-        final double deltaLonRadians = Math.toRadians(longitude2 - longitude1);
-
-        final double a = Math.sin(deltaLatRadians * 0.5) * Math.sin(deltaLatRadians * 0.5) + Math.cos(lat1Radians) * Math.cos(lat2Radians) * Math.sin(deltaLonRadians * 0.5) * Math.sin(deltaLonRadians * 0.5);
-        final double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        final double distance = Constants.EARTH_RADIUS * c;
-        return distance;
-    }
-
-    public static final double calcBearingInDegree(final GeoLocation location1, final GeoLocation location2) {
-        return calcBearingInDegree(location1.getLatitude(), location1.getLongitude(), location2.getLatitude(), location2.getLongitude());
-    }
-
-    public static final double calcBearingInDegree(final double latitude1, final double longitude1, final double latitude2, final double longitude2) {
-        final double lat1 = Math.toRadians(latitude1);
-        final double lon1 = Math.toRadians(longitude1);
-        final double lat2 = Math.toRadians(latitude2);
-        final double lon2 = Math.toRadians(longitude2);
-        final double deltaPhi = Math.log(Math.tan(lat2 * 0.5 + Math.PI * 0.25) / Math.tan(lat1 * 0.5 + Math.PI * 0.25));
-        double deltaLon = lon2 - lon1;
-        if (Math.abs(deltaLon) > Math.PI) {
-            deltaLon = deltaLon > 0 ? -(2.0 * Math.PI - deltaLon) : (2.0 * Math.PI + deltaLon);
-        }
-        final double bearing = (Math.toDegrees(Math.atan2(deltaLon, deltaPhi)) + 360.0) % 360.0;
-        return bearing;
-    }
-
-    public static final CardinalDirection getCardinalDirectionFromBearing(final double brng) {
-        double bearing = brng % 360.0;
-        for (CardinalDirection cardinalDirection : CardinalDirection.getValues()) {
-            if (Double.compare(bearing, cardinalDirection.from) >= 0 && Double.compare(bearing, cardinalDirection.to) < 0) {
-                return cardinalDirection;
-            }
-        }
-        return CardinalDirection.NOT_FOUND;
     }
 
     public static final double similarity(final String text1, final String text2) {

@@ -1,9 +1,6 @@
 package fx.chart.util;
 
-import fx.chart.event.type.GeoLocationChangeEvt;
 import fx.chart.util.Helper.SystemSummary;
-import fx.chart.util.geo.GeoLocation;
-import fx.chart.util.geo.GeoLocationBuilder;
 import fx.chart.util.time.DateTimes;
 import fx.chart.util.time.Dates;
 import fx.chart.util.time.Times;
@@ -12,7 +9,6 @@ import fx.chart.util.unit.Converter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
-import java.util.Locale;
 
 import static fx.chart.util.unit.Category.*;
 import static fx.chart.util.unit.UnitDefinition.*;
@@ -30,8 +26,6 @@ public class Demo {
         dateTimesDemo();
 
         helperDemo();
-
-        geoDemo();
     }
 
     private void converterDemo() {
@@ -115,29 +109,6 @@ public class Demo {
         System.out.println("\n-------------------- helper demo --------------------");
         SystemSummary systemSummary = Helper.getSystemSummary();
         System.out.println(systemSummary.toBeautifiedString());
-    }
-
-    private void geoDemo() {
-        System.out.println("\n-------------------- geo demo --------------------");
-        GeoLocation home = GeoLocationBuilder.create()
-                .name("Home")
-                .latitude(51.912781150242054)
-                .longitude(7.633729751419756)
-                .altitude(66)
-                .build();
-
-        GeoLocation azul = GeoLocationBuilder.create()
-                .name("Azul")
-                .latitude(37.40668261833162)
-                .longitude(-122.01573123930172)
-                .altitude(20)
-                .build();
-
-
-        home.addGeoLocationObserver(GeoLocationChangeEvt.NAME_CHANGED, e -> System.out.println("Name changed from: " + e.getOldGeoLocation().getName() + " to " + e.getGeoLocation().getName()));
-
-        System.out.println("Distance from Home to Azul: " + String.format(Locale.US, "%.2f km", (home.getDistanceTo(azul) / 1000)));
-        home.setName("Home of Han Solo");
     }
 
     public static void main(String[] args) {
