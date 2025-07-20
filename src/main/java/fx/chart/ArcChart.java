@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 @DefaultProperty("children")
 public class ArcChart extends Region {
+
     private static final double PREFERRED_WIDTH = 500;
     private static final double PREFERRED_HEIGHT = 500;
     private static final double MINIMUM_WIDTH = 50;
@@ -42,13 +43,14 @@ public class ArcChart extends Region {
     private static final double DEFAULT_SEGMENT_GAP = 4;
     private static final double DEFAULT_CONNECTION_OPACITY = 0.65;
     private static final Color DEFAULT_SELECTION_COLOR = Color.rgb(128, 0, 0, 0.25);
+
     private double size;
     private double width;
     private double height;
     private Canvas canvas;
     private GraphicsContext ctx;
     private Color _tickMarkColor;
-    private ObjectProperty<Color> tickMarkColor;
+    private ObjectProperty<Color> tickMarkColorProperty;
     private Color _textColor;
     private ObjectProperty<Color> textColor;
     private int _decimals;
@@ -222,20 +224,20 @@ public class ArcChart extends Region {
         items.removeListener(itemListListener);
     }
 
-    public Color getTickMarkColor() {return null == tickMarkColor ? _tickMarkColor : tickMarkColor.get();}
+    public Color getTickMarkColor() {return null == tickMarkColorProperty ? _tickMarkColor : tickMarkColorProperty.get();}
 
     public void setTickMarkColor(final Color COLOR) {
-        if (null == tickMarkColor) {
+        if (null == tickMarkColorProperty) {
             _tickMarkColor = COLOR;
             redraw();
         } else {
-            tickMarkColor.set(COLOR);
+            tickMarkColorProperty.set(COLOR);
         }
     }
 
     public ObjectProperty<Color> tickMarkColorProperty() {
-        if (null == tickMarkColor) {
-            tickMarkColor = new ObjectPropertyBase<Color>(_tickMarkColor) {
+        if (null == tickMarkColorProperty) {
+            tickMarkColorProperty = new ObjectPropertyBase<Color>(_tickMarkColor) {
                 @Override
                 protected void invalidated() {redraw();}
 
@@ -247,7 +249,7 @@ public class ArcChart extends Region {
             };
             _tickMarkColor = null;
         }
-        return tickMarkColor;
+        return tickMarkColorProperty;
     }
 
     public Color getTextColor() {return null == textColor ? _textColor : textColor.get();}
