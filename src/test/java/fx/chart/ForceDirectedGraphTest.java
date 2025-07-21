@@ -26,12 +26,10 @@ import java.util.HashMap;
  */
 public class ForceDirectedGraphTest extends Application {
 
-    private GraphPanel graph;
     private PresentationPanel presentationPanel;
 
     @Override
     public void init() {
-        graph = new GraphPanel();
         presentationPanel = new PresentationPanel();
     }
 
@@ -358,7 +356,6 @@ public class ForceDirectedGraphTest extends Application {
             colorsheme = new HashMap<>();
         }
 
-
         public void generateGraphWithMinimalInformation() {
             setColorshemeToMinimum();
             nodes.clear();
@@ -549,7 +546,6 @@ public class ForceDirectedGraphTest extends Application {
             while (currentNode1 == currentNode2) {
                 currentNode2 = (int) (Math.random() * amountOfNodes);
             }
-
 
             edges.add(new GraphEdge(nodes.get(currentNode1), nodes.get(currentNode2), new HashMap<>()));
 

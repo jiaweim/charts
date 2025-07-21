@@ -12,26 +12,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * Represents a Node in a Force Directed Graph, containing double and string values
- * authors: Michael L\u00E4uchli, MLaeuchli (github)
- * Stefan Mettler, orizion (github)
+ *
+ * @author Jiawei Mao
+ * @author Michael L\u00E4uchli
+ * @author MLaeuchli
+ * @author Stefan Mettler
+ * @author orizion
+ * @version 1.0.0
+ * @since 21 Jul 2025, 8:59 AM
  */
 public class GraphNode extends ChartItem {
 
-    private ObjectProperty<Point2D> disp;
-    private ObjectProperty<Point2D> position;
+    private final ObjectProperty<Point2D> disp;
+    private final ObjectProperty<Point2D> positionProperty;
+
     private HashMap<String, Double> numericAttributes;
     private HashMap<String, String> stringAttributes;
+
     private ArrayList<GraphNode> connectedNodes;
     /**
      * defines which attribute will be assigned to the value field
      */
     private String SIZE_KEY;
-    private boolean _selected;
-    private BooleanProperty selected;
-
+    private boolean selected_;
+    private BooleanProperty selectedProperty;
 
     /*
      * Default Key (addDefault), to assure that a VALUE is set.
@@ -46,20 +52,22 @@ public class GraphNode extends ChartItem {
 
     public GraphNode(final Point2D POSITION, final String NAME, final Color COLOR, final Map<String, Double> NUMERIC_ATTRIBUTES, final Map<String, String> STRING_ATTRIBUTES) {
         super(NAME, 1, COLOR);
-        position = new SimpleObjectProperty<>(POSITION);
+        positionProperty = new SimpleObjectProperty<>(POSITION);
         disp = new SimpleObjectProperty<>(new Point2D(0, 0));
-        numericAttributes = new HashMap(NUMERIC_ATTRIBUTES);
-        stringAttributes = new HashMap(STRING_ATTRIBUTES);
+        numericAttributes = new HashMap<>(NUMERIC_ATTRIBUTES);
+        stringAttributes = new HashMap<>(STRING_ATTRIBUTES);
         connectedNodes = new ArrayList<>();
-        _selected = false;
+        selected_ = false;
         setFill(COLOR);
         setStroke(Color.WHITE);
         addDefault();
     }
 
     /**
-     * @param numericAttributes
-     * @param stringAttributes
+     * Create a {@link GraphNode}
+     *
+     * @param numericAttributes attributes
+     * @param stringAttributes  attributes
      */
     public GraphNode(Map<String, Double> numericAttributes, Map<String, String> stringAttributes) {
         this(Point2D.ZERO, "", Color.BLUE, numericAttributes, stringAttributes);
@@ -71,8 +79,8 @@ public class GraphNode extends ChartItem {
 
 
     public boolean containedIn(double x, double y, double nodeScaleFactor, double generalScaleFactor, double minRadius) {
-        double x0 = x - position.get().getX();
-        double y0 = y - position.get().getY();
+        double x0 = x - positionProperty.get().getX();
+        double y0 = y - positionProperty.get().getY();
         return (Math.sqrt(Math.pow(x0, 2) + Math.pow(y0, 2)) < (getRadius() * nodeScaleFactor + minRadius) * generalScaleFactor);
     }
 
@@ -83,7 +91,6 @@ public class GraphNode extends ChartItem {
      */
     public double getRadius() {
         return getValue();
-
     }
 
     private void addDefault() {
@@ -146,30 +153,30 @@ public class GraphNode extends ChartItem {
     }
 
     public Point2D getPosition() {
-        return position.get();
+        return positionProperty.get();
     }
 
     public void setPosition(Point2D position) {
-        this.position.set(position);
+        this.positionProperty.set(position);
     }
 
     public ObjectProperty<Point2D> positionProperty() {
-        return position;
+        return positionProperty;
     }
 
-    public boolean isSelected() {return null == selected ? _selected : selected.get();}
+    public boolean isSelected() {return null == selectedProperty ? selected_ : selectedProperty.get();}
 
     public void setSelected(final boolean SELECTED) {
-        if (null == selected) {
-            _selected = SELECTED;
+        if (null == selectedProperty) {
+            selected_ = SELECTED;
         } else {
-            selected.set(SELECTED);
+            selectedProperty.set(SELECTED);
         }
     }
 
     public BooleanProperty selectedProperty() {
-        if (null == selected) {
-            selected = new BooleanPropertyBase(_selected) {
+        if (null == selectedProperty) {
+            selectedProperty = new BooleanPropertyBase(selected_) {
                 @Override
                 protected void invalidated() {}
 
@@ -180,7 +187,7 @@ public class GraphNode extends ChartItem {
                 public String getName() {return "selected";}
             };
         }
-        return selected;
+        return selectedProperty;
     }
 
     public ArrayList<GraphNode> getConnectedNodes() {
