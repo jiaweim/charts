@@ -18,10 +18,24 @@ import javafx.scene.paint.Color;
 
 import java.util.function.Consumer;
 
-
 /**
- * authors: Michael L\u00E4uchli, MLaeuchli (github)
- * Stefan Mettler, orizion (github)
+ * Force-directed graph drawing algorithms are a class of algorithms for drawing
+ * graphs in an aesthetically-pleasing way. Their purpose is to position the nodes
+ * of a graph in two-dimensional or three-dimensional space so that all the edges
+ * are of more or less equal length and there are as few crossing edges as possible,
+ * by assigning forces among the set of edges and the set of nodes, based on their
+ * relative positions, and then using these forces either to simulate the motion of
+ * the edges and nodes or to minimize their energy.
+ * <p>
+ * https://en.wikipedia.org/wiki/Force-directed_graph_drawing
+ *
+ * @author Jiawei Mao
+ * @author Michael L\u00E4uchli
+ * @author MLaeuchli (github)
+ * @author Stefan Mettler
+ * @author orizion (github)
+ * @version 1.0.0
+ * @since 21 Jul 2025, 9:07 AM
  */
 @DefaultProperty("children")
 public class GraphPanel extends Region {
@@ -91,7 +105,6 @@ public class GraphPanel extends Region {
     private GraphCalculator graphCalculator;
 
 
-    // ******************** Constructors **************************************
     public GraphPanel() {
         this(new NodeEdgeModel());
     }
@@ -101,8 +114,6 @@ public class GraphPanel extends Region {
         init();
     }
 
-
-    // ******************** Initialization ************************************
     private void init() {
         width = PREFERRED_WIDTH;
         height = PREFERRED_HEIGHT;
