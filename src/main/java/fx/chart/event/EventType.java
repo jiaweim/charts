@@ -15,33 +15,35 @@ import static java.util.Objects.requireNonNull;
  * @version 1.0.0
  * @since 25 Jun 2025, 10:46 AM
  */
-public final class EvtType<T extends Evt> {
+public final class EventType<T extends FxEvent> {
+    /**
+     * The root event type
+     */
+    public static final EventType<FxEvent> ROOT = new EventType<>("EVENT", null);
 
-    public static final EvtType<Evt> ROOT = new EvtType<>("EVENT", null);
-
-    private final EvtType<? super T> superType;
+    private final EventType<? super T> superType;
     private final String name;
 
     /**
-     * Create a {@link EvtType} of given super type and null name
+     * Create a {@link EventType} of given super type and null name
      *
      * @param superType super type
      */
-    public EvtType(final EvtType<? super T> superType) {
+    public EventType(final EventType<? super T> superType) {
         this(superType, null);
     }
 
-    public EvtType(final String name) {
+    public EventType(final String name) {
         this(ROOT, name);
     }
 
     /**
-     * Create a {@link EvtType}
+     * Create a {@link EventType}
      *
      * @param superType super type
      * @param name      event name
      */
-    public EvtType(@NonNull final EvtType<? super T> superType, final String name) {
+    public EventType(@NonNull final EventType<? super T> superType, final String name) {
         requireNonNull(superType, "Event super type must not be null (EvtType.name: " + name + ")");
 
         this.superType = superType;
@@ -54,18 +56,18 @@ public final class EvtType<T extends Evt> {
      * @param name      event type name
      * @param superType super type
      */
-    private EvtType(final String name, final EvtType<? super T> superType) {
+    private EventType(final String name, final EventType<? super T> superType) {
         this.superType = superType;
         this.name = name;
     }
 
     /**
-     * @return super type of this {@link EvtType}
+     * @return super type of this {@link EventType}
      */
-    public EvtType<? super T> getSuperType() {return superType;}
+    public EventType<? super T> getSuperType() {return superType;}
 
     /**
-     * @return name of this {@link EvtType}
+     * @return name of this {@link EventType}
      */
     public String getName() {return name;}
 
@@ -77,7 +79,7 @@ public final class EvtType<T extends Evt> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        EvtType<?> evtType = (EvtType<?>) o;
+        EventType<?> evtType = (EventType<?>) o;
         return superType.equals(evtType.superType) && name.equals(evtType.name);
     }
 

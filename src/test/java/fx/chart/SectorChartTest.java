@@ -2,7 +2,7 @@ package fx.chart;
 
 import fx.chart.data.ChartItem;
 import fx.chart.data.ChartItemBuilder;
-import fx.chart.event.ChartEvt;
+import fx.chart.event.ChartEvent;
 import fx.chart.series.ChartItemSeries;
 import fx.chart.series.ChartItemSeriesBuilder;
 import javafx.animation.AnimationTimer;
@@ -95,7 +95,7 @@ public class SectorChartTest extends Application {
     }
 
     private void registerListener() {
-        chart.addChartEvtObserver(ChartEvt.ITEM_SELECTED, e -> {
+        chart.addChartEvtObserver(ChartEvent.ITEM_SELECTED, e -> {
             if (e.getSource() instanceof ChartItem chartItem) {
                 System.out.println(chartItem.getName() + ": " + chartItem.getValue());
             }

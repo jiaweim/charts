@@ -3,7 +3,7 @@ package fx.chart.tools;
 import fx.chart.data.BubbleGridChartItem;
 import fx.chart.data.ChartItem;
 import fx.chart.data.Item;
-import fx.chart.event.SelectionEvt;
+import fx.chart.event.SelectionEvent;
 import fx.chart.font.Fonts;
 import fx.chart.series.ChartItemSeries;
 import javafx.animation.FadeTransition;
@@ -303,7 +303,7 @@ public class InfoPopup extends Popup {
         return unit;
     }
 
-    public void update(final SelectionEvt EVENT) {
+    public void update(final SelectionEvent EVENT) {
         ChartItemSeries series = EVENT.getSeries();
         ChartItem item = EVENT.getItem();
         if (null == series && null == item) {

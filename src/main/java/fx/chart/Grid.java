@@ -1,7 +1,7 @@
 package fx.chart;
 
 import fx.chart.color.ColorUtils;
-import fx.chart.event.ChartEvt;
+import fx.chart.event.ChartEvent;
 import fx.chart.tools.Helper;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
@@ -133,8 +133,8 @@ public class Grid extends Region {
     private void registerListeners() {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
-        xAxis.addChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, e -> drawGrid());
-        yAxis.addChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, e -> drawGrid());
+        xAxis.addChartEventListener(ChartEvent.AXIS_RANGE_CHANGED, e -> drawGrid());
+        yAxis.addChartEventListener(ChartEvent.AXIS_RANGE_CHANGED, e -> drawGrid());
     }
 
 

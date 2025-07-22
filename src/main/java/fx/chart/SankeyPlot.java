@@ -3,8 +3,8 @@ package fx.chart;
 import fx.chart.color.ColorUtils;
 import fx.chart.data.Connection;
 import fx.chart.data.PlotItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
 import fx.chart.font.Fonts;
 import fx.chart.geometry.Path;
 import fx.chart.geometry.Rectangle;
@@ -64,7 +64,7 @@ public class SankeyPlot extends Region {
     private Canvas canvas;
     private GraphicsContext ctx;
     private ObservableList<PlotItem> items;
-    private EvtObserver<ChartEvt> itemObserver;
+    private ChartEventListener<ChartEvent> itemObserver;
     private ListChangeListener<PlotItem> itemListListener;
     private Map<Integer, List<PlotItemData>> itemsPerLevel;
     private int minLevel;
@@ -124,9 +124,9 @@ public class SankeyPlot extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvt.ANY, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ANY, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvt.ANY, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
                 }
             }
             prepareData();
@@ -194,7 +194,7 @@ public class SankeyPlot extends Region {
             paths.forEach((path, tooltipText) -> {
                 if (path.contains(eventX, eventY)) {
                     PlotItem[] items = connectionMap.get(path);
-                    items[0].fireChartEvt(new ChartEvt(items[0], items[1], ChartEvt.ITEM_SELECTED, e));
+                    items[0].fireChartEvt(new ChartEvent(items[0], items[1], ChartEvent.ITEM_SELECTED, e));
                     selectedConnection = new SankeyPlotConnection(items[0], items[1], items[0].getOutgoingValueTo(items[1]), getSelectionColor(), path);
                     selectedItems.add(items[1]);
                     Integer startLevel = items[1].getLevel() + 1;
@@ -214,7 +214,7 @@ public class SankeyPlot extends Region {
                 items.forEach(plotItemData -> {
                     if (plotItemData.getBounds().contains(eventX, eventY)) {
                         selectedPlotItemData = plotItemData;
-                        selectedPlotItemData.getPlotItem().fireChartEvt(new ChartEvt(selectedPlotItemData.getPlotItem(), ChartEvt.ITEM_SELECTED, e));
+                        selectedPlotItemData.getPlotItem().fireChartEvt(new ChartEvent(selectedPlotItemData.getPlotItem(), ChartEvent.ITEM_SELECTED, e));
                     }
                 });
             });

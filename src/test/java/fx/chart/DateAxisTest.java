@@ -90,8 +90,8 @@ public class DateAxisTest extends Application {
         Collections.sort(items);
 
         Platform.runLater(() -> {
-            xAxis.setStart(start);
-            xAxis.setEnd(end);
+            xAxis.startTime(start);
+            xAxis.endTime(end);
             xAxis.resize();
             yAxis.setMaxValue(maxNoOfDownloadsPerDay);
             yAxis.resize();

@@ -3,9 +3,9 @@ package fx.chart.data;
 import fx.chart.Cluster;
 import fx.chart.Position;
 import fx.chart.Symbol;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
 import fx.chart.font.Fonts;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
@@ -15,13 +15,20 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * @author Jiawei Mao
+ * @author Gerrit Grunwald
+ * @version 1.0.0
+ * @since 22 Jul 2025, 10:23 AM
+ */
 public class PlotItem implements Item, Comparable<PlotItem> {
 
-    private final ChartEvt ITEM_EVENT = new ChartEvt(PlotItem.this, ChartEvt.ITEM_UPDATE);
-    private String _name;
-    private StringProperty name;
-    private double _value;
-    private DoubleProperty value;
+    private final ChartEvent ITEM_EVENT = new ChartEvent(PlotItem.this, ChartEvent.ITEM_UPDATE);
+
+    private String name_;
+    private StringProperty nameProperty;
+    private double value_;
+    private DoubleProperty valueProperty;
     private String _description;
     private StringProperty description;
     private Color _fill;
@@ -42,12 +49,10 @@ public class PlotItem implements Item, Comparable<PlotItem> {
     private ObjectProperty<Position> verticalTextPosition;
     private Map<PlotItem, Double> outgoing;
     private Map<PlotItem, Double> incoming;
-    private Map<EvtType, List<EvtObserver<ChartEvt>>> observers;
+    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private int level;
     private Cluster cluster;
 
-
-    // ******************** Constructors **************************************
     public PlotItem() {
         this("", 0, "", Color.RED, -1, false);
     }
@@ -109,8 +114,8 @@ public class PlotItem implements Item, Comparable<PlotItem> {
     }
 
     public PlotItem(final String NAME, final double VALUE, final String DESCRIPTION, final Color FILL, final int LEVEL, final boolean IS_EMPTY) {
-        _name = NAME;
-        _value = VALUE;
+        name_ = NAME;
+        value_ = VALUE;
         _description = DESCRIPTION;
         _fill = FILL;
         _stroke = Color.TRANSPARENT;
@@ -129,20 +134,20 @@ public class PlotItem implements Item, Comparable<PlotItem> {
 
 
     // ******************** Methods *******************************************
-    public String getName() {return null == name ? _name : name.get();}
+    public String getName() {return null == nameProperty ? name_ : nameProperty.get();}
 
     public void setName(final String NAME) {
-        if (null == name) {
-            _name = NAME;
+        if (null == nameProperty) {
+            name_ = NAME;
             fireChartEvt(ITEM_EVENT);
         } else {
-            name.set(NAME);
+            nameProperty.set(NAME);
         }
     }
 
     public StringProperty nameProperty() {
-        if (null == name) {
-            name = new StringPropertyBase(_name) {
+        if (null == nameProperty) {
+            nameProperty = new StringPropertyBase(name_) {
                 @Override
                 protected void invalidated() {fireChartEvt(ITEM_EVENT);}
 
@@ -152,25 +157,25 @@ public class PlotItem implements Item, Comparable<PlotItem> {
                 @Override
                 public String getName() {return "name";}
             };
-            _name = null;
+            name_ = null;
         }
-        return name;
+        return nameProperty;
     }
 
-    public double getValue() {return null == value ? _value : value.get();}
+    public double getValue() {return null == valueProperty ? value_ : valueProperty.get();}
 
     public void setValue(final double VALUE) {
-        if (null == value) {
-            _value = VALUE;
+        if (null == valueProperty) {
+            value_ = VALUE;
             fireChartEvt(ITEM_EVENT);
         } else {
-            value.set(VALUE);
+            valueProperty.set(VALUE);
         }
     }
 
     public DoubleProperty valueProperty() {
-        if (null == value) {
-            value = new DoublePropertyBase(_value) {
+        if (null == valueProperty) {
+            valueProperty = new DoublePropertyBase(value_) {
                 @Override
                 protected void invalidated() {fireChartEvt(ITEM_EVENT);}
 
@@ -181,7 +186,7 @@ public class PlotItem implements Item, Comparable<PlotItem> {
                 public String getName() {return "value";}
             };
         }
-        return value;
+        return valueProperty;
     }
 
     public String getDescription() {return null == description ? _description : description.get();}
@@ -614,7 +619,7 @@ public class PlotItem implements Item, Comparable<PlotItem> {
     }
 
 
-    public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());
         }
@@ -624,7 +629,7 @@ public class PlotItem implements Item, Comparable<PlotItem> {
         observers.get(type).add(observer);
     }
 
-    public void removeChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (observers.containsKey(type)) {
             if (observers.get(type).contains(observer)) {
                 observers.get(type).remove(observer);
@@ -634,10 +639,10 @@ public class PlotItem implements Item, Comparable<PlotItem> {
 
     public void removeAllChartEvtObservers() {observers.clear();}
 
-    public void fireChartEvt(final ChartEvt evt) {
-        final EvtType type = evt.getEvtType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvt.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvt.ANY)) {
+    public void fireChartEvt(final ChartEvent evt) {
+        final EventType type = evt.getEventType();
+        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
+        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
             observers.get(type).forEach(observer -> observer.handle(evt));
         }
     }

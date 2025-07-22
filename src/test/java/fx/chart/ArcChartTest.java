@@ -1,11 +1,11 @@
 package fx.chart;
 
-import fx.chart.event.Evt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
+import fx.chart.event.FxEvent;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
 import fx.chart.data.Connection;
 import fx.chart.data.PlotItem;
-import fx.chart.event.ChartEvt;
+import fx.chart.event.ChartEvent;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -96,7 +96,7 @@ public class ArcChartTest extends Application {
 
         // Register listeners to click on connections and items
         items.forEach(item -> {
-            item.addChartEvtObserver(ChartEvt.ITEM_SELECTED, e -> {
+            item.addChartEvtObserver(ChartEvent.ITEM_SELECTED, e -> {
                 PlotItem i = (PlotItem) e.getSource();
                 System.out.println("Selected: " + i.getName());
             });
@@ -115,16 +115,16 @@ public class ArcChartTest extends Application {
                 .weightConnections(true)
                 .build();
 
-        EvtObserver<ChartEvt> connectionObserver = e -> {
-            EvtType<? extends Evt> type = e.getEvtType();
-            if (type.equals(ChartEvt.CONNECTION_SELECTED_TO) || type.equals(ChartEvt.CONNECTION_SELECTED_FROM) || type.equals(ChartEvt.CONNECTION_SELECTED)) {
+        ChartEventListener<ChartEvent> connectionObserver = e -> {
+            EventType<? extends FxEvent> type = e.getEventType();
+            if (type.equals(ChartEvent.CONNECTION_SELECTED_TO) || type.equals(ChartEvent.CONNECTION_SELECTED_FROM) || type.equals(ChartEvent.CONNECTION_SELECTED)) {
                 if (e.getSource() instanceof Connection) {
                     Connection connection = (Connection) e.getSource();
                     System.out.println("From: " + connection.getOutgoingItem().getName() + " -> to: " + connection.getIncomingItem().getName() + " -> Value: " + connection.getValue());
                 }
             }
         };
-        arcChart.getConnections().forEach(connection -> connection.addChartEvtObserver(ChartEvt.ANY, connectionObserver));
+        arcChart.getConnections().forEach(connection -> connection.addChartEvtObserver(ChartEvent.ANY, connectionObserver));
 
         /* Custom connection colors
         if (null != arcChart.getConnection(australia, japan)) {

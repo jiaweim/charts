@@ -1,7 +1,7 @@
 package fx.chart.event.type;
 
-import fx.chart.event.EvtPriority;
-import fx.chart.event.EvtType;
+import fx.chart.event.EventPriority;
+import fx.chart.event.EventType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,25 +10,26 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 
-public class MapChangeEvt<K, V> extends ChangeEvt {
-    public static final EvtType<MapChangeEvt> ANY = new EvtType<>(ChangeEvt.ANY, "ANY");
-    public static final EvtType<MapChangeEvt> MODIFIED = new EvtType<>(MapChangeEvt.ANY, "MODIFIED");
-    public static final EvtType<MapChangeEvt> ADDED = new EvtType<>(MapChangeEvt.ANY, "ADDED");
-    public static final EvtType<MapChangeEvt> REMOVED = new EvtType<>(MapChangeEvt.ANY, "REMOVED");
+public class MapChangeEvent<K, V> extends ChangeEvent {
+
+    public static final EventType<MapChangeEvent> ANY = new EventType<>(ChangeEvent.ANY, "ANY");
+    public static final EventType<MapChangeEvent> MODIFIED = new EventType<>(MapChangeEvent.ANY, "MODIFIED");
+    public static final EventType<MapChangeEvent> ADDED = new EventType<>(MapChangeEvent.ANY, "ADDED");
+    public static final EventType<MapChangeEvent> REMOVED = new EventType<>(MapChangeEvent.ANY, "REMOVED");
 
     private final List<Entry<K, V>> addedEntries;
     private final List<Entry<K, V>> modifiedEntries;
     private final List<Entry<K, V>> removedEntries;
 
 
-    public MapChangeEvt(final Map<K, V> src, final EvtType<MapChangeEvt> evtType, final List<Entry<K, V>> addedEntries, final List<Entry<K, V>> modifiedEntries, final List<Entry<K, V>> removedEntries) {
+    public MapChangeEvent(final Map<K, V> src, final EventType<MapChangeEvent> evtType, final List<Entry<K, V>> addedEntries, final List<Entry<K, V>> modifiedEntries, final List<Entry<K, V>> removedEntries) {
         super(src, evtType);
         this.addedEntries = null == addedEntries ? List.of() : new ArrayList<>(addedEntries);
         this.modifiedEntries = null == modifiedEntries ? List.of() : new ArrayList<>(modifiedEntries);
         this.removedEntries = null == removedEntries ? List.of() : new ArrayList<>(removedEntries);
     }
 
-    public MapChangeEvt(final Map<K, V> src, final EvtType<? extends MapChangeEvt<K, V>> evtType, final EvtPriority priority, final List<Entry<K, V>> addedEntries, final List<Entry<K, V>> modifiedEntries, final List<Entry<K, V>> removedEntries) {
+    public MapChangeEvent(final Map<K, V> src, final EventType<? extends MapChangeEvent<K, V>> evtType, final EventPriority priority, final List<Entry<K, V>> addedEntries, final List<Entry<K, V>> modifiedEntries, final List<Entry<K, V>> removedEntries) {
         super(src, evtType, priority);
         this.addedEntries = null == addedEntries ? List.of() : new ArrayList<>(addedEntries);
         this.modifiedEntries = null == modifiedEntries ? List.of() : new ArrayList<>(modifiedEntries);
@@ -38,7 +39,7 @@ public class MapChangeEvt<K, V> extends ChangeEvt {
 
     // ******************** Methods *******************************************
     @Override
-    public EvtType<? extends MapChangeEvt<K, V>> getEvtType() {return (EvtType<? extends MapChangeEvt<K, V>>) super.getEvtType();}
+    public EventType<? extends MapChangeEvent<K, V>> getEventType() {return (EventType<? extends MapChangeEvent<K, V>>) super.getEventType();}
 
     public List<Entry<K, V>> getAddedEntries() {return addedEntries;}
 
@@ -57,7 +58,7 @@ public class MapChangeEvt<K, V> extends ChangeEvt {
         if (!super.equals(o)) {
             return false;
         }
-        MapChangeEvt<?, ?> that = (MapChangeEvt<?, ?>) o;
+        MapChangeEvent<?, ?> that = (MapChangeEvent<?, ?>) o;
         return Objects.equals(addedEntries, that.addedEntries) && Objects.equals(modifiedEntries, that.modifiedEntries) && Objects.equals(removedEntries, that.removedEntries);
     }
 

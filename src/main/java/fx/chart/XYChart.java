@@ -1,12 +1,12 @@
 package fx.chart;
 
 import fx.chart.data.XYItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
 import fx.chart.font.Fonts;
-import fx.chart.util.Bounds;
 import fx.chart.tools.Helper;
 import fx.chart.tools.Marker;
+import fx.chart.util.Bounds;
 import javafx.beans.DefaultProperty;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -89,10 +89,13 @@ public class XYChart<T extends XYItem> extends Region {
     private Color subTitleColor_;
     private ObjectProperty<Color> subTitleColorProperty;
 
+    /**
+     * pane to hold all rendering elements
+     */
     private AnchorPane pane_;
     private BooleanBinding showing_;
-    private final EvtObserver<ChartEvt> axisObserver_;
-    private final EvtObserver<ChartEvt> updateObserver_;
+    private final ChartEventListener<ChartEvent> axisListener_;
+    private final ChartEventListener<ChartEvent> updateListener_;
     private final List<Marker> markers_;
 
     /**
@@ -126,13 +129,14 @@ public class XYChart<T extends XYItem> extends Region {
         grid_ = grid;
         width = PREFERRED_WIDTH;
         height = PREFERRED_HEIGHT;
-        axisObserver_ = evt -> adjustChartRange();
-        updateObserver_ = evt -> drawMarkerCanvas();
+        axisListener_ = evt -> adjustChartRange();
+        updateListener_ = evt -> drawMarkerCanvas();
         markers_ = new ArrayList<>();
         title_ = "";
         subTitle_ = "";
-        xyPanes.forEach(xyPane -> xyPane.addChartEvtObserver(ChartEvt.UPDATE, updateObserver_));
+        xyPanes.forEach(xyPane -> xyPane.addChartEvtObserver(ChartEvent.UPDATE, updateListener_));
         checkReferenceZero();
+
         initGraphics();
         registerListeners();
     }
@@ -178,9 +182,9 @@ public class XYChart<T extends XYItem> extends Region {
         heightProperty().addListener(o -> resize());
         xyPanes_.addListener((ListChangeListener<XYPane<T>>) c -> {
             if (c.wasAdded()) {
-                c.getAddedSubList().forEach(xyPane -> xyPane.addChartEvtObserver(ChartEvt.UPDATE, updateObserver_));
+                c.getAddedSubList().forEach(xyPane -> xyPane.addChartEvtObserver(ChartEvent.UPDATE, updateListener_));
             } else if (c.wasRemoved()) {
-                c.getRemoved().forEach(xyPane -> xyPane.removeChartEvtObserver(ChartEvt.UPDATE, updateObserver_));
+                c.getRemoved().forEach(xyPane -> xyPane.removeChartEvtObserver(ChartEvent.UPDATE, updateListener_));
             }
             if (xyPanes_.size() > 1) {
                 xyPanes_.forEach(xyPane -> xyPane.setChartBackground(Color.TRANSPARENT));
@@ -211,13 +215,13 @@ public class XYChart<T extends XYItem> extends Region {
         axes_.addListener((ListChangeListener<Axis>) c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(axis -> axis.addChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, axisObserver_));
+                    c.getAddedSubList().forEach(axis -> axis.addChartEventListener(ChartEvent.AXIS_RANGE_CHANGED, axisListener_));
                 } else if (c.wasRemoved()) {
-                    c.getAddedSubList().forEach(axis -> axis.removeChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, axisObserver_));
+                    c.getAddedSubList().forEach(axis -> axis.removeChartEvtObserver(ChartEvent.AXIS_RANGE_CHANGED, axisListener_));
                 }
             }
         });
-        axes_.forEach(axis -> axis.addChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, axisObserver_));
+        axes_.forEach(axis -> axis.addChartEventListener(ChartEvent.AXIS_RANGE_CHANGED, axisListener_));
     }
 
     @Override
@@ -242,7 +246,7 @@ public class XYChart<T extends XYItem> extends Region {
     public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public void dispose() {
-        axes_.forEach(axis -> axis.removeChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, axisObserver_));
+        axes_.forEach(axis -> axis.removeChartEvtObserver(ChartEvent.AXIS_RANGE_CHANGED, axisListener_));
         xyPanes_.forEach(xyPane -> xyPane.dispose());
     }
 

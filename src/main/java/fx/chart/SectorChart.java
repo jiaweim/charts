@@ -1,9 +1,9 @@
 package fx.chart;
 
 import fx.chart.data.ChartItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
 import fx.chart.font.Fonts;
 import fx.chart.series.ChartItemSeries;
 import fx.chart.tools.Helper;
@@ -71,12 +71,12 @@ public class SectorChart extends Region {
     private BooleanProperty radialBarChartMode;
     private Color _gridColor;
     private ObjectProperty<Color> gridColor;
-    private Map<EvtType, List<EvtObserver<ChartEvt>>> observers;
+    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private InfoPopup popup;
     private InvalidationListener resizeListener;
     private ListChangeListener<ChartItemSeries<ChartItem>> seriesListener;
     private ListChangeListener<ChartItem> itemListListener;
-    private EvtObserver<ChartEvt> itemObserver;
+    private ChartEventListener<ChartEvent> itemObserver;
     private EventHandler<MouseEvent> mouseHandler;
 
     private record Sector(double centerX, double centerY, double radius, double startAngle, double segmentAngle) {}
@@ -108,12 +108,12 @@ public class SectorChart extends Region {
             while (c.next()) {
                 if (c.wasAdded()) {
                     c.getAddedSubList().forEach(series -> {
-                        series.getItems().forEach(item -> item.addChartEvtObserver(ChartEvt.ANY, itemObserver));
+                        series.getItems().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, itemObserver));
                         series.getItems().addListener(itemListListener);
                     });
                 } else if (c.wasRemoved()) {
                     c.getRemoved().forEach(series -> {
-                        series.getItems().forEach(item -> item.removeChartEvtObserver(ChartEvt.ANY, itemObserver));
+                        series.getItems().forEach(item -> item.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
                         series.getItems().removeListener(itemListListener);
                     });
                 }
@@ -124,9 +124,9 @@ public class SectorChart extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(item -> item.addChartEvtObserver(ChartEvt.ANY, itemObserver));
+                    c.getAddedSubList().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(item -> item.removeChartEvtObserver(ChartEvt.ANY, itemObserver));
+                    c.getRemoved().forEach(item -> item.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
                 }
             }
         };
@@ -136,7 +136,7 @@ public class SectorChart extends Region {
                     sectorMap.entrySet().parallelStream().filter(entry -> Helper.isInSector(e.getX(), e.getY(), centerX, centerY, entry.getKey().radius, entry.getKey().startAngle, entry.getKey().segmentAngle)).findFirst();
             if (e.isSecondaryButtonDown()) {
                 if (optionalSector.isPresent()) {
-                    fireChartEvt(new ChartEvt(optionalSector.get().getValue(), ChartEvt.ITEM_SELECTED));
+                    fireChartEvt(new ChartEvent(optionalSector.get().getValue(), ChartEvent.ITEM_SELECTED));
                 }
             } else {
                 if (optionalSector.isPresent()) {
@@ -159,7 +159,7 @@ public class SectorChart extends Region {
             }
         } else {
             allSeries.forEach(series -> {
-                series.getItems().forEach(item -> item.addChartEvtObserver(ChartEvt.ANY, itemObserver));
+                series.getItems().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, itemObserver));
                 series.getItems().addListener(itemListListener);
             });
         }
@@ -230,7 +230,7 @@ public class SectorChart extends Region {
         heightProperty().removeListener(resizeListener);
         allSeries.removeListener(seriesListener);
         allSeries.forEach(series -> {
-            series.getItems().forEach(item -> item.removeChartEvtObserver(ChartEvt.ANY, itemObserver));
+            series.getItems().forEach(item -> item.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
             series.getItems().removeListener(itemListListener);
         });
         canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, mouseHandler);
@@ -597,7 +597,7 @@ public class SectorChart extends Region {
 
 
     // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());
         }
@@ -607,7 +607,7 @@ public class SectorChart extends Region {
         observers.get(type).add(observer);
     }
 
-    public void removeChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (observers.containsKey(type)) {
             if (observers.get(type).contains(observer)) {
                 observers.get(type).remove(observer);
@@ -617,10 +617,10 @@ public class SectorChart extends Region {
 
     public void removeAllChartEvtObservers() {observers.clear();}
 
-    public void fireChartEvt(final ChartEvt evt) {
-        final EvtType type = evt.getEvtType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvt.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvt.ANY)) {
+    public void fireChartEvt(final ChartEvent evt) {
+        final EventType type = evt.getEventType();
+        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
+        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
             observers.get(type).forEach(observer -> observer.handle(evt));
         }
     }

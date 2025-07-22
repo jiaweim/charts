@@ -2,7 +2,7 @@ package fx.chart;
 
 import fx.chart.data.ChartItem;
 import fx.chart.data.DataObject;
-import fx.chart.event.ChartEvt;
+import fx.chart.event.ChartEvent;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -49,7 +49,7 @@ public class ParallelCoordinatesChartTest extends Application {
                 .selectionRectColor(Color.CRIMSON)
                 .build();
 
-        chart.addChartEvtObserver(ChartEvt.SELECTED, e -> chart.getSelectedObjects().forEach(item -> System.out.println(item.getName())));
+        chart.addChartEvtObserver(ChartEvent.SELECTED, e -> chart.getSelectedObjects().forEach(item -> System.out.println(item.getName())));
     }
 
     @Override

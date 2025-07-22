@@ -3,9 +3,9 @@ package fx.chart;
 import fx.chart.color.ColorUtils;
 import fx.chart.data.ChartItem;
 import fx.chart.data.DataObject;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
 import fx.chart.font.Fonts;
 import fx.chart.util.Bounds;
 import fx.chart.tools.Helper;
@@ -16,7 +16,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -49,7 +48,7 @@ public class ParallelCoordinatesChart extends Region {
     private static final double AXIS_WIDTH = 10;
     private static final double MAJOR_TICK_LENGTH = 6;
     private static final double MEDIUM_TICK_LENGTH = 4;
-    private final ChartEvt SELECTION_EVENT = new ChartEvt(ParallelCoordinatesChart.this, ChartEvt.SELECTED);
+    private final ChartEvent SELECTION_EVENT = new ChartEvent(ParallelCoordinatesChart.this, ChartEvent.SELECTED);
     private double size;
     private double width;
     private double height;
@@ -92,13 +91,13 @@ public class ParallelCoordinatesChart extends Region {
     private ArrayList<String> categories;
     private Map<String, List<DataObject>> categoryObjectMap;
     private Map<Key, ChartItem> categoryObjectItemMap;
-    private EvtObserver<ChartEvt> itemObserver;
+    private ChartEventListener<ChartEvent> itemObserver;
     private ListChangeListener<DataObject> objectListListener;
     private EventHandler<MouseEvent> mouseHandler;
     private Rectangle rect;
     private Text dragText;
     private boolean wasDragged;
-    private Map<EvtType, List<EvtObserver<ChartEvt>>> observers;
+    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
 
 
     public ParallelCoordinatesChart() {
@@ -123,9 +122,9 @@ public class ParallelCoordinatesChart extends Region {
         objectListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedObject -> addedObject.getProperties().values().forEach(item -> item.addChartEvtObserver(ChartEvt.ITEM_UPDATE, itemObserver)));
+                    c.getAddedSubList().forEach(addedObject -> addedObject.getProperties().values().forEach(item -> item.addChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver)));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedObject -> removedObject.getProperties().values().forEach(item -> item.removeChartEvtObserver(ChartEvt.ITEM_UPDATE, itemObserver)));
+                    c.getRemoved().forEach(removedObject -> removedObject.getProperties().values().forEach(item -> item.removeChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver)));
                 }
             }
             prepareData();
@@ -216,7 +215,7 @@ public class ParallelCoordinatesChart extends Region {
     public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public void dispose() {
-        items.forEach(object -> object.getProperties().values().forEach(item -> item.removeChartEvtObserver(ChartEvt.ITEM_UPDATE, itemObserver)));
+        items.forEach(object -> object.getProperties().values().forEach(item -> item.removeChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver)));
         axisCanvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, mouseHandler);
         axisCanvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, mouseHandler);
         axisCanvas.removeEventHandler(MouseEvent.MOUSE_RELEASED, mouseHandler);
@@ -707,7 +706,7 @@ public class ParallelCoordinatesChart extends Region {
     }
 
     private void handleMouseEvent(final MouseEvent EVT) {
-        final EventType<? extends MouseEvent> TYPE = EVT.getEventType();
+        final javafx.event.EventType<? extends MouseEvent> TYPE = EVT.getEventType();
         final double X = EVT.getX();
         final double Y = EVT.getY();
 
@@ -781,7 +780,7 @@ public class ParallelCoordinatesChart extends Region {
 
 
     // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());
         }
@@ -791,7 +790,7 @@ public class ParallelCoordinatesChart extends Region {
         observers.get(type).add(observer);
     }
 
-    public void removeChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (observers.containsKey(type)) {
             if (observers.get(type).contains(observer)) {
                 observers.get(type).remove(observer);
@@ -801,10 +800,10 @@ public class ParallelCoordinatesChart extends Region {
 
     public void removeAllChartEvtObservers() {observers.clear();}
 
-    public void fireChartEvt(final ChartEvt evt) {
-        final EvtType type = evt.getEvtType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvt.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvt.ANY)) {
+    public void fireChartEvt(final ChartEvent evt) {
+        final EventType type = evt.getEventType();
+        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
+        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
             observers.get(type).forEach(observer -> observer.handle(evt));
         }
     }

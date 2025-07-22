@@ -45,7 +45,6 @@ public class NormalDistributionDemo1 extends Application {
                 .titleFontSize(12)
                 .build();
 
-//        Axis left = Axis.left(0, 0.5, true, axisWidth);
         Axis bottom = Axis.bottom(-5.0, 5.0, true, axisWidth);
 
         XYPane pane = new XYPane(series);
@@ -54,8 +53,6 @@ public class NormalDistributionDemo1 extends Application {
 
         Grid grid = new Grid(left, bottom);
         grid.setGridLineDashes(2.0, 2.0);
-//        grid.setMajorHGridLinesVisible(false);
-//        grid.setMajorVGridLinesVisible(false);
 
         grid.setMinorHGridLinesVisible(false);
         grid.setMediumHGridLinesVisible(false);

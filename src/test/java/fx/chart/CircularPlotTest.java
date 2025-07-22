@@ -2,10 +2,10 @@ package fx.chart;
 
 import fx.chart.data.Connection;
 import fx.chart.data.PlotItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.Evt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.FxEvent;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -75,9 +75,9 @@ public class CircularPlotTest extends Application {
 
         // Register listeners to click on connections and items
         items.forEach(item -> {
-            item.addChartEvtObserver(ChartEvt.ANY, e -> {
-                EvtType<? extends Evt> type = e.getEvtType();
-                if (ChartEvt.ITEM_SELECTED.equals(type)) {
+            item.addChartEvtObserver(ChartEvent.ANY, e -> {
+                EventType<? extends FxEvent> type = e.getEventType();
+                if (ChartEvent.ITEM_SELECTED.equals(type)) {
                     System.out.println("Selected: " + ((PlotItem) e.getSource()).getName());
                 }
             });
@@ -92,14 +92,14 @@ public class CircularPlotTest extends Application {
                 .minorTickMarksVisible(false)
                 .build();
 
-        EvtObserver<ChartEvt> connectionObserver = e -> {
-            EvtType<? extends Evt> type = e.getEvtType();
-            if (type.equals(ChartEvt.CONNECTION_SELECTED)) {
+        ChartEventListener<ChartEvent> connectionObserver = e -> {
+            EventType<? extends FxEvent> type = e.getEventType();
+            if (type.equals(ChartEvent.CONNECTION_SELECTED)) {
                 Connection connection = (Connection) e.getSource();
                 System.out.println("From: " + connection.getOutgoingItem().getName() + " -> to: " + connection.getIncomingItem().getName() + " -> Value: " + connection.getValue());
             }
         };
-        circluarPlot.getConnections().forEach(connection -> connection.addChartEvtObserver(ChartEvt.ANY, connectionObserver));
+        circluarPlot.getConnections().forEach(connection -> connection.addChartEvtObserver(ChartEvent.ANY, connectionObserver));
 
         if (null != circluarPlot.getConnection(australia, japan)) {
             circluarPlot.getConnection(australia, japan).setFill(Color.BLUE);

@@ -2,8 +2,8 @@ package fx.chart;
 
 import fx.chart.color.MaterialDesignColors;
 import fx.chart.data.CandleChartItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
 import fx.chart.geometry.Rectangle;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TooltipPopup;
@@ -46,7 +46,7 @@ public class CandleChart extends Region {
     private Canvas canvas;
     private GraphicsContext ctx;
     private ObservableList<CandleChartItem> items;
-    private EvtObserver<ChartEvt> itemObserver;
+    private ChartEventListener<ChartEvent> itemObserver;
     private ListChangeListener<CandleChartItem> itemListListener;
     private int _decimals;
     private IntegerProperty decimals;
@@ -90,9 +90,9 @@ public class CandleChart extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvt.ITEM_UPDATE, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvt.ITEM_UPDATE, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
                 }
             }
             minValue = items.stream().min(Comparator.comparing(CandleChartItem::getLow)).get().getLow();

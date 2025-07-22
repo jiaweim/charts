@@ -3,9 +3,9 @@ package fx.chart;
 import fx.chart.color.ColorUtils;
 import fx.chart.data.ChartItem;
 import fx.chart.data.TreeNode;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.TreeNodeEvt;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.TreeNodeEvent;
 import fx.chart.font.Fonts;
 import fx.chart.geometry.Circle;
 import fx.chart.font.FontMetrix;
@@ -82,7 +82,7 @@ public class RadialTidyTree<T extends ChartItem> extends Region {
     private InvalidationListener sizeListener;
     private Map<Circle, T> circleMap;
     private InfoPopup popup;
-    private final EvtObserver<TreeNodeEvt<T>> treeNodeEvtObserver;
+    private final ChartEventListener<TreeNodeEvent<T>> treeNodeEvtObserver;
 
 
     // ******************** Constructors **************************************
@@ -111,7 +111,7 @@ public class RadialTidyTree<T extends ChartItem> extends Region {
         circleMap = new HashMap<>();
         popup = new InfoPopup();
         treeNodeEvtObserver = evt -> {
-            if (evt.getEvtType().equals(TreeNodeEvt.NODE_SELECTED)) {
+            if (evt.getEventType().equals(TreeNodeEvent.NODE_SELECTED)) {
                 redraw();
             }
         };
@@ -146,7 +146,7 @@ public class RadialTidyTree<T extends ChartItem> extends Region {
     private void registerListeners() {
         widthProperty().addListener(sizeListener);
         heightProperty().addListener(sizeListener);
-        tree.addTreeNodeEvtObserver(TreeNodeEvt.NODE_SELECTED, treeNodeEvtObserver);
+        tree.addTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
 
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
             Optional<Entry<Circle, T>> optionalEntry = circleMap.entrySet().stream().filter(entry -> entry.getKey().contains(e.getX(), e.getY())).findFirst();
@@ -156,7 +156,7 @@ public class RadialTidyTree<T extends ChartItem> extends Region {
                 popup.setY(e.getScreenY() - popup.getHeight());
                 popup.update(item);
                 popup.animatedShow(getScene().getWindow());
-                item.fireChartEvt(new ChartEvt(item, ChartEvt.ITEM_SELECTED));
+                item.fireChartEvt(new ChartEvent(item, ChartEvent.ITEM_SELECTED));
             }
         });
     }
@@ -570,10 +570,10 @@ public class RadialTidyTree<T extends ChartItem> extends Region {
      */
     public void setTree(final TreeNode<T> TREE) {
         if (null != tree) {
-            tree.removeTreeNodeEvtObserver(TreeNodeEvt.NODE_SELECTED, treeNodeEvtObserver);
+            tree.removeTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
         }
         tree = TREE;
-        tree.addTreeNodeEvtObserver(TreeNodeEvt.NODE_SELECTED, treeNodeEvtObserver);
+        tree.addTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
         if (isAutoTextColor()) {
             adjustTextColors();
         }

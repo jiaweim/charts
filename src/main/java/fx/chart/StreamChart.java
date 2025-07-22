@@ -2,8 +2,8 @@ package fx.chart;
 
 import fx.chart.color.ColorUtils;
 import fx.chart.data.ChartItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
 import fx.chart.font.Fonts;
 import fx.chart.geometry.Path;
 import fx.chart.font.FontMetrix;
@@ -98,7 +98,7 @@ public class StreamChart extends Region {
     private Map<LocalDate, List<ChartItem>> chartItems;
     private Map<Integer, List<ChartItemData>> itemsPerCategory;
     private Map<Integer, Double> sumsPerCategory;
-    private EvtObserver<ChartEvt> itemObserver;
+    private ChartEventListener<ChartEvent> itemObserver;
     private ListChangeListener<ChartItem> itemListListener;
     private double scaleY;
     private Color _textColor;
@@ -166,9 +166,9 @@ public class StreamChart extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvt.ITEM_UPDATE, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvt.ITEM_UPDATE, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
                 }
             }
             groupBy(getCategory());
@@ -251,7 +251,7 @@ public class StreamChart extends Region {
                 double eventX = e.getX();
                 double eventY = e.getY();
                 if (path.contains(eventX, eventY)) {
-                    chartItem.fireChartEvt(new ChartEvt(chartItem, ChartEvt.ITEM_SELECTED, e));
+                    chartItem.fireChartEvt(new ChartEvent(chartItem, ChartEvent.ITEM_SELECTED, e));
                     selectedPaths.addAll(bezierPaths.entrySet()
                             .parallelStream()
                             .filter(entry -> entry.getValue().getName().equals(chartItem.getName()))

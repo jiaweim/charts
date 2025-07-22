@@ -91,7 +91,6 @@ public class Helper {
             this.MINOR_TICK_SPACE = MINOR_TICK_SPACE;
         }
 
-
         public ChronoUnit getInterval() {return INTERVAL;}
 
         public int getAmount() {return AMOUNT;}
@@ -117,6 +116,13 @@ public class Helper {
         return new double[]{minorTickSpace, majorTickSpace, niceMinValue, niceMaxValue};
     }
 
+    /**
+     * Get a nice range to display from a given range
+     *
+     * @param RANGE axis range
+     * @param ROUND whether to round the value
+     * @return range after processing😀
+     */
     public static double calcNiceNumber(final double RANGE, final boolean ROUND) {
         double niceFraction;
         double exponent = Math.floor(Math.log10(RANGE));   // exponent of range
@@ -146,13 +152,13 @@ public class Helper {
         return niceFraction * Math.pow(10, exponent);
     }
 
-    public static final void rotateCtx(final GraphicsContext CTX, final double X, final double Y, final double ANGLE) {
+    public static void rotateCtx(final GraphicsContext CTX, final double X, final double Y, final double ANGLE) {
         CTX.translate(X, Y);
         CTX.rotate(ANGLE);
         CTX.translate(-X, -Y);
     }
 
-    public static final void rotateContextForText(final GraphicsContext CTX, final double START_ANGLE, final double ANGLE, final TickLabelOrientation ORIENTATION) {
+    public static void rotateContextForText(final GraphicsContext CTX, final double START_ANGLE, final double ANGLE, final TickLabelOrientation ORIENTATION) {
         switch (ORIENTATION) {
             case ORTHOGONAL:
                 if ((360 - START_ANGLE - ANGLE) % 360 > 90 && (360 - START_ANGLE - ANGLE) % 360 < 270) {

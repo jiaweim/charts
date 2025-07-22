@@ -3,8 +3,8 @@ package fx.chart;
 import fx.chart.color.ColorUtils;
 import fx.chart.data.BubbleGridChartItem;
 import fx.chart.data.ChartItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
 import fx.chart.font.Fonts;
 import fx.chart.font.FontMetrix;
 import fx.chart.tools.Helper;
@@ -57,7 +57,7 @@ public class BubbleGridChart extends Region {
     private double sumOfValues;
     private double minValue;
     private double maxValue;
-    private EvtObserver<ChartEvt> itemObserver;
+    private ChartEventListener<ChartEvent> itemObserver;
     private ListChangeListener<BubbleGridChartItem> itemListListener;
     private InfoPopup popup;
     private Paint _chartBackground;
@@ -132,9 +132,9 @@ public class BubbleGridChart extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvt.ANY, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ANY, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvt.ANY, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
                 }
             }
 
@@ -186,7 +186,7 @@ public class BubbleGridChart extends Region {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
         items.addListener(itemListListener);
-        items.forEach(item -> item.addChartEvtObserver(ChartEvt.ANY, itemObserver));
+        items.forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, itemObserver));
         canvas.setOnMouseClicked(e -> bubbles.forEach(bubble -> {
             if (Helper.isInCircle(e.getX(), e.getY(), bubble.x, bubble.y, bubble.r)) {
                 popup.setX(e.getScreenX());
@@ -226,7 +226,7 @@ public class BubbleGridChart extends Region {
     public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public void dispose() {
-        items.forEach(item -> item.removeChartEvtObserver(ChartEvt.ANY, itemObserver));
+        items.forEach(item -> item.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
         items.removeListener(itemListListener);
     }
 

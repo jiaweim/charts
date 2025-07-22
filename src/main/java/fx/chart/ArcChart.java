@@ -3,8 +3,8 @@ package fx.chart;
 import fx.chart.color.ColorUtils;
 import fx.chart.data.Connection;
 import fx.chart.data.PlotItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
 import fx.chart.font.Fonts;
 import fx.chart.geometry.Circle;
 import fx.chart.geometry.Path;
@@ -76,7 +76,7 @@ public class ArcChart extends Region {
     private boolean _weightDots;
     private BooleanProperty weightDots;
     private ObservableList<PlotItem> items;
-    private EvtObserver<ChartEvt> itemObserver;
+    private ChartEventListener<ChartEvent> itemObserver;
     private ListChangeListener<PlotItem> itemListListener;
     private Map<Circle, PlotItem> itemPaths;
     private Map<Path, Connection> paths;
@@ -106,9 +106,9 @@ public class ArcChart extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvt.ANY, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ANY, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvt.ANY, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
                 }
             }
             validateData();
@@ -178,7 +178,7 @@ public class ArcChart extends Region {
                 double eventY = e.getY();
                 if (itemPath.contains(eventX, eventY)) {
                     Platform.runLater(() -> {
-                        plotItem.fireChartEvt(new ChartEvt(plotItem, ChartEvt.ITEM_SELECTED, e));
+                        plotItem.fireChartEvt(new ChartEvent(plotItem, ChartEvent.ITEM_SELECTED, e));
                         selectedItem = plotItem;
                         redraw();
                     });
@@ -220,7 +220,7 @@ public class ArcChart extends Region {
     public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public void dispose() {
-        items.forEach(item -> item.removeChartEvtObserver(ChartEvt.ANY, itemObserver));
+        items.forEach(item -> item.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
         items.removeListener(itemListListener);
     }
 

@@ -2,8 +2,8 @@ package fx.chart;
 
 import fx.chart.color.MaterialDesignColors;
 import fx.chart.data.ChartItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
 import fx.chart.series.ChartItemSeries;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TooltipPopup;
@@ -48,7 +48,7 @@ public class BoxPlot<T extends ChartItem> extends Region {
     private Canvas canvas;
     private GraphicsContext ctx;
     private ObservableList<T> items;
-    private EvtObserver<ChartEvt> itemObserver;
+    private ChartEventListener<ChartEvent> itemObserver;
     private ListChangeListener<T> itemListListener;
     private int _decimals;
     private IntegerProperty decimals;
@@ -112,9 +112,9 @@ public class BoxPlot<T extends ChartItem> extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvt.ITEM_UPDATE, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvt.ITEM_UPDATE, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
                 }
             }
             final List<Double> values = items.stream().map(item -> item.getValue()).collect(Collectors.toList());
@@ -637,7 +637,7 @@ public class BoxPlot<T extends ChartItem> extends Region {
             _yAxis = yAxis;
             _yAxis.setMinValue(min);
             _yAxis.setMaxValue(max);
-            _yAxis.addChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, e -> redraw());
+            _yAxis.addChartEventListener(ChartEvent.AXIS_RANGE_CHANGED, e -> redraw());
             redraw();
         } else {
             this.yAxis.set(yAxis);
@@ -651,7 +651,7 @@ public class BoxPlot<T extends ChartItem> extends Region {
                 protected void invalidated() {
                     _yAxis.setMinValue(min);
                     _yAxis.setMaxValue(max);
-                    _yAxis.addChartEvtObserver(ChartEvt.AXIS_RANGE_CHANGED, e -> redraw());
+                    _yAxis.addChartEventListener(ChartEvent.AXIS_RANGE_CHANGED, e -> redraw());
                     redraw();
                 }
 
@@ -666,7 +666,7 @@ public class BoxPlot<T extends ChartItem> extends Region {
     }
 
     public void resetYAxis() {
-        getYAxis().removeAllChartEvtObservers();
+        getYAxis().removeAllChartEventListeners();
         _yAxis = null;
         yAxis = null;
         min = Math.min(minValue, minimum);

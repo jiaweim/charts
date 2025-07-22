@@ -3,8 +3,8 @@ package fx.chart;
 import fx.chart.color.ColorUtils;
 import fx.chart.data.Connection;
 import fx.chart.data.PlotItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
 import fx.chart.font.Fonts;
 import fx.chart.geometry.Path;
 import fx.chart.util.Point;
@@ -89,7 +89,7 @@ public class CircularPlot extends Region {
     private Locale _locale;
     private ObjectProperty<Locale> locale;
     private ObservableList<PlotItem> items;
-    private EvtObserver<ChartEvt> itemObserver;
+    private ChartEventListener<ChartEvent> itemObserver;
     private ListChangeListener<PlotItem> itemListListener;
     private Map<Path, PlotItem> itemPaths;
     private Map<Path, Connection> paths;
@@ -118,9 +118,9 @@ public class CircularPlot extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvt.ANY, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ANY, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvt.ANY, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
                 }
             }
             validateData();
@@ -185,7 +185,7 @@ public class CircularPlot extends Region {
 
                             // ConectionEvent with original mouseEvent attached for further information (isCtrlDown ...)
                             // and plot for redraw plot after connection has been selected and properties may have changed
-                            connection.fireChartEvt(new ChartEvt(connection, ChartEvt.CONNECTION_SELECTED, e));
+                            connection.fireChartEvt(new ChartEvent(connection, ChartEvent.CONNECTION_SELECTED, e));
                         });
                     }
                 }
@@ -195,7 +195,7 @@ public class CircularPlot extends Region {
                 double eventY = e.getY();
                 if (itemPath.contains(eventX, eventY)) {
                     // ItemEvent with original mouseEvent attached for further information (isCtrlDown ...)
-                    Platform.runLater(() -> plotItem.fireChartEvt(new ChartEvt(plotItem, ChartEvt.ITEM_SELECTED, e)));
+                    Platform.runLater(() -> plotItem.fireChartEvt(new ChartEvent(plotItem, ChartEvent.ITEM_SELECTED, e)));
                 }
             });
         });
@@ -230,7 +230,7 @@ public class CircularPlot extends Region {
     public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public void dispose() {
-        items.forEach(item -> item.removeChartEvtObserver(ChartEvt.ANY, itemObserver));
+        items.forEach(item -> item.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
         items.removeListener(itemListListener);
     }
 
