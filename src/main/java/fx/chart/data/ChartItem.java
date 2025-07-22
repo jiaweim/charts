@@ -2,9 +2,9 @@ package fx.chart.data;
 
 import fx.chart.Category;
 import fx.chart.Symbol;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -26,11 +26,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ChartItem implements Item, Comparable<ChartItem> {
 
-    protected final ChartEvt UPDATE_EVENT = new ChartEvt(ChartItem.this, ChartEvt.ITEM_UPDATE);
-    protected final ChartEvt FINISHED_EVENT = new ChartEvt(ChartItem.this, ChartEvt.FINISHED);
-    protected final ChartEvt SELECTED_EVENT = new ChartEvt(ChartItem.this, ChartEvt.SELECTED);
+    protected final ChartEvent UPDATE_EVENT = new ChartEvent(ChartItem.this, ChartEvent.ITEM_UPDATE);
+    protected final ChartEvent FINISHED_EVENT = new ChartEvent(ChartItem.this, ChartEvent.FINISHED);
+    protected final ChartEvent SELECTED_EVENT = new ChartEvent(ChartItem.this, ChartEvent.SELECTED);
 
-    protected Map<EvtType, List<EvtObserver<ChartEvt>>> observers = new ConcurrentHashMap<>();
+    protected Map<EventType, List<ChartEventListener<ChartEvent>>> observers = new ConcurrentHashMap<>();
 
     private int index_;
     private IntegerProperty indexProperty;
@@ -802,7 +802,7 @@ public class ChartItem implements Item, Comparable<ChartItem> {
     }
 
 
-    public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());
         }
@@ -812,7 +812,7 @@ public class ChartItem implements Item, Comparable<ChartItem> {
         observers.get(type).add(observer);
     }
 
-    public void removeChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (observers.containsKey(type)) {
             if (observers.get(type).contains(observer)) {
                 observers.get(type).remove(observer);
@@ -822,10 +822,10 @@ public class ChartItem implements Item, Comparable<ChartItem> {
 
     public void removeAllChartEvtObservers() {observers.clear();}
 
-    public void fireChartEvt(final ChartEvt evt) {
-        final EvtType type = evt.getEvtType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvt.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvt.ANY)) {
+    public void fireChartEvt(final ChartEvent evt) {
+        final EventType type = evt.getEventType();
+        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
+        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
             observers.get(type).forEach(observer -> observer.handle(evt));
         }
     }

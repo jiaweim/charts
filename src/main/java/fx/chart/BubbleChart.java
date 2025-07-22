@@ -1,9 +1,9 @@
 package fx.chart;
 
 import fx.chart.data.ChartItem;
-import fx.chart.event.ChartEvt;
+import fx.chart.event.ChartEvent;
 import fx.chart.geometry.Circle;
-import fx.chart.event.EvtObserver;
+import fx.chart.event.ChartEventListener;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TooltipPopup;
 import javafx.animation.AnimationTimer;
@@ -45,7 +45,7 @@ public class BubbleChart<T extends ChartItem> extends Region {
     private ObjectProperty<Color> backgroundColor;
     private TooltipPopup popup;
     private ObservableList<T> items;
-    private EvtObserver<ChartEvt> itemObserver;
+    private ChartEventListener<ChartEvent> itemObserver;
     private ListChangeListener<T> itemListListener;
     private List<BubbleNode> nodes;
     private double max;
@@ -64,9 +64,9 @@ public class BubbleChart<T extends ChartItem> extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvt.ITEM_UPDATE, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvt.ITEM_UPDATE, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
                 }
             }
             max = items.stream().max(Comparator.comparingDouble(ChartItem::getValue)).get().getValue();

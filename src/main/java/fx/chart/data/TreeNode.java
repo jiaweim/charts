@@ -1,9 +1,9 @@
 package fx.chart.data;
 
 
-import fx.chart.event.TreeNodeEvt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
+import fx.chart.event.TreeNodeEvent;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -26,7 +26,7 @@ public class TreeNode<T extends Item> {
     private double x;
     private double y;
     private final ObservableList<TreeNode<T>> children;
-    private Map<EvtType, List<EvtObserver<TreeNodeEvt<T>>>> observers;
+    private Map<EventType, List<ChartEventListener<TreeNodeEvent<T>>>> observers;
 
 
     // ******************** Constructors **************************************
@@ -61,7 +61,7 @@ public class TreeNode<T extends Item> {
                             TreeNode::removeAllTreeNodeEvtObservers);
                 }
             }
-            getTreeRoot().fireTreeNodeEvt(new TreeNodeEvt<>(TreeNode.this, TreeNodeEvt.CHILDREN_CHANGED, item));
+            getTreeRoot().fireTreeNodeEvt(new TreeNodeEvent<>(TreeNode.this, TreeNodeEvent.CHILDREN_CHANGED, item));
         });
     }
 
@@ -76,7 +76,7 @@ public class TreeNode<T extends Item> {
         myRoot = null;
         treeRoot = null;
         depth = -1;
-        getTreeRoot().fireTreeNodeEvt(new TreeNodeEvt<>(TreeNode.this, TreeNodeEvt.PARENT_REMOVED, item));
+        getTreeRoot().fireTreeNodeEvt(new TreeNodeEvent<>(TreeNode.this, TreeNodeEvent.PARENT_REMOVED, item));
     }
 
     public boolean isParent() {return !children.isEmpty();}
@@ -91,7 +91,7 @@ public class TreeNode<T extends Item> {
         myRoot = null;
         treeRoot = null;
         depth = -1;
-        getTreeRoot().fireTreeNodeEvt(new TreeNodeEvt<>(TreeNode.this, TreeNodeEvt.PARENT_SET, item));
+        getTreeRoot().fireTreeNodeEvt(new TreeNodeEvent<>(TreeNode.this, TreeNodeEvent.PARENT_SET, item));
     }
 
     public T getItem() {return item;}
@@ -242,7 +242,7 @@ public class TreeNode<T extends Item> {
 
 
     // ******************** Event handling ************************************
-    public void addTreeNodeEvtObserver(final EvtType type, final EvtObserver<TreeNodeEvt<T>> observer) {
+    public void addTreeNodeEvtObserver(final EventType type, final ChartEventListener<TreeNodeEvent<T>> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());
         }
@@ -252,7 +252,7 @@ public class TreeNode<T extends Item> {
         observers.get(type).add(observer);
     }
 
-    public void removeTreeNodeEvtObserver(final EvtType type, final EvtObserver<TreeNodeEvt<T>> observer) {
+    public void removeTreeNodeEvtObserver(final EventType type, final ChartEventListener<TreeNodeEvent<T>> observer) {
         if (observers.containsKey(type)) {
             if (observers.get(type).contains(observer)) {
                 observers.get(type).remove(observer);
@@ -262,10 +262,10 @@ public class TreeNode<T extends Item> {
 
     public void removeAllTreeNodeEvtObservers() {observers.clear();}
 
-    public void fireTreeNodeEvt(final TreeNodeEvt<T> evt) {
-        final EvtType type = evt.getEvtType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(TreeNodeEvt.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(TreeNodeEvt.ANY)) {
+    public void fireTreeNodeEvt(final TreeNodeEvent<T> evt) {
+        final EventType type = evt.getEventType();
+        observers.entrySet().stream().filter(entry -> entry.getKey().equals(TreeNodeEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
+        if (observers.containsKey(type) && !type.equals(TreeNodeEvent.ANY)) {
             observers.get(type).forEach(observer -> observer.handle(evt));
         }
     }

@@ -1,11 +1,11 @@
 package fx.chart;
 
 import fx.chart.data.ChartItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.SelectionEvt;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.SelectionEvent;
 import fx.chart.series.ChartItemSeries;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
 import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
@@ -61,7 +61,7 @@ public class NestedBarChart extends Region implements ChartArea {
     private Order _order;
     private ObjectProperty<Order> order;
     private EventHandler<MouseEvent> clickHandler;
-    private Map<EvtType, List<EvtObserver<ChartEvt>>> observers;
+    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private InfoPopup popup;
     private double spacer;
     private boolean _seriesTitleVisible;
@@ -127,8 +127,8 @@ public class NestedBarChart extends Region implements ChartArea {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, clickHandler);
-        addChartEvtObserver(SelectionEvt.ANY, e -> {
-            popup.update((SelectionEvt) e);
+        addChartEvtObserver(SelectionEvent.ANY, e -> {
+            popup.update((SelectionEvent) e);
             popup.animatedShow(getScene().getWindow());
         });
     }
@@ -359,14 +359,14 @@ public class NestedBarChart extends Region implements ChartArea {
             for (ChartItem item : s.getItems()) {
                 double innerBarHeight = item.getValue() * stepY;
                 if (Helper.isInRectangle(X, Y, minX, height - innerBarHeight, minX + innerBarWidth, height)) {
-                    fireChartEvt(new SelectionEvt(selectedSeries, item));
+                    fireChartEvt(new SelectionEvent(selectedSeries, item));
                     return;
                 }
                 minX += innerBarWidth;
             }
         }
         if (null != selectedSeries) {
-            fireChartEvt(new SelectionEvt(selectedSeries));
+            fireChartEvt(new SelectionEvent(selectedSeries));
         }
     }
 
@@ -403,7 +403,7 @@ public class NestedBarChart extends Region implements ChartArea {
 
 
     // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());
         }
@@ -413,7 +413,7 @@ public class NestedBarChart extends Region implements ChartArea {
         observers.get(type).add(observer);
     }
 
-    public void removeChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (observers.containsKey(type)) {
             if (observers.get(type).contains(observer)) {
                 observers.get(type).remove(observer);
@@ -423,10 +423,10 @@ public class NestedBarChart extends Region implements ChartArea {
 
     public void removeAllChartEvtObservers() {observers.clear();}
 
-    public void fireChartEvt(final ChartEvt evt) {
-        final EvtType type = evt.getEvtType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvt.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvt.ANY)) {
+    public void fireChartEvt(final ChartEvent evt) {
+        final EventType type = evt.getEventType();
+        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
+        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
             observers.get(type).forEach(observer -> observer.handle(evt));
         }
     }

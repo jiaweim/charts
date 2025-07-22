@@ -4,8 +4,8 @@ package fx.chart;
 import fx.chart.color.ColorUtils;
 import fx.chart.data.ChartItem;
 import fx.chart.data.TreeNode;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.TreeNodeEvt;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.TreeNodeEvent;
 import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TextOrientation;
@@ -79,7 +79,7 @@ public class SunburstChart<T extends ChartItem> extends Region {
     private int maxLevel;
     private Map<Integer, List<TreeNode<T>>> levelMap;
     private InvalidationListener sizeListener;
-    private final EvtObserver<TreeNodeEvt<T>> treeNodeEvtObserver;
+    private final ChartEventListener<TreeNodeEvent<T>> treeNodeEvtObserver;
 
 
     // ******************** Constructors **************************************
@@ -108,7 +108,7 @@ public class SunburstChart<T extends ChartItem> extends Region {
         levelMap = new HashMap<>(8);
         sizeListener = o -> resize();
         treeNodeEvtObserver = evt -> {
-            if (evt.getEvtType().equals(TreeNodeEvt.NODE_SELECTED)) {
+            if (evt.getEventType().equals(TreeNodeEvent.NODE_SELECTED)) {
                 redraw();
             }
         };
@@ -147,7 +147,7 @@ public class SunburstChart<T extends ChartItem> extends Region {
     private void registerListeners() {
         widthProperty().addListener(sizeListener);
         heightProperty().addListener(sizeListener);
-        tree.addTreeNodeEvtObserver(TreeNodeEvt.NODE_SELECTED, treeNodeEvtObserver);
+        tree.addTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
     }
 
 
@@ -181,7 +181,7 @@ public class SunburstChart<T extends ChartItem> extends Region {
     public void dispose() {
         widthProperty().removeListener(sizeListener);
         heightProperty().removeListener(sizeListener);
-        tree.removeTreeNodeEvtObserver(TreeNodeEvt.NODE_SELECTED, treeNodeEvtObserver);
+        tree.removeTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
     }
 
     /**
@@ -634,10 +634,10 @@ public class SunburstChart<T extends ChartItem> extends Region {
      */
     public void setTree(final TreeNode<T> TREE) {
         if (null != tree) {
-            tree.removeTreeNodeEvtObserver(TreeNodeEvt.NODE_SELECTED, treeNodeEvtObserver);
+            tree.removeTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
         }
         tree = TREE;
-        tree.addTreeNodeEvtObserver(TreeNodeEvt.NODE_SELECTED, treeNodeEvtObserver);
+        tree.addTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
         prepareData();
         if (isAutoTextColor()) {
             adjustTextColors();
@@ -875,7 +875,7 @@ public class SunburstChart<T extends ChartItem> extends Region {
         String tooltipText = new StringBuilder(NODE.getItem().getName()).append("\n").append(String.format(Locale.US, formatString, ((ChartItem) NODE.getItem()).getValue())).toString();
         Tooltip.install(path, new Tooltip(tooltipText));
 
-        path.setOnMousePressed(e -> NODE.getTreeRoot().fireTreeNodeEvt(new TreeNodeEvt(NODE, TreeNodeEvt.NODE_SELECTED, NODE.getItem())));
+        path.setOnMousePressed(e -> NODE.getTreeRoot().fireTreeNodeEvt(new TreeNodeEvent(NODE, TreeNodeEvent.NODE_SELECTED, NODE.getItem())));
 
         return path;
     }

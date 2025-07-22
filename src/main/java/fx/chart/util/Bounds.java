@@ -1,9 +1,9 @@
 package fx.chart.util;
 
-import fx.chart.event.Evt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
-import fx.chart.event.type.BoundsEvt;
+import fx.chart.event.FxEvent;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
+import fx.chart.event.type.BoundsEvent;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +24,7 @@ public class Bounds {
     private double y;
     private double width;
     private double height;
-    private Map<EvtType, List<EvtObserver<BoundsEvt>>> observers;
+    private Map<EventType, List<ChartEventListener<BoundsEvent>>> observers;
 
     public Bounds() {
         this(0, 0, 0, 0);
@@ -44,14 +44,14 @@ public class Bounds {
 
     public void setX(final double x) {
         this.x = x;
-        fireBoundsEvt(new BoundsEvt(Bounds.this, BoundsEvt.BOUNDS, Bounds.this));
+        fireBoundsEvt(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
     }
 
     public double getY() {return y;}
 
     public void setY(final double y) {
         this.y = y;
-        fireBoundsEvt(new BoundsEvt(Bounds.this, BoundsEvt.BOUNDS, Bounds.this));
+        fireBoundsEvt(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
     }
 
     public double getMinX() {return x;}
@@ -66,14 +66,14 @@ public class Bounds {
 
     public void setWidth(final double width) {
         this.width = Math.clamp(width, 0, Double.MAX_VALUE);
-        fireBoundsEvt(new BoundsEvt(Bounds.this, BoundsEvt.BOUNDS, Bounds.this));
+        fireBoundsEvt(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
     }
 
     public double getHeight() {return height;}
 
     public void setHeight(final double height) {
         this.height = Math.clamp(height, 0, Double.MAX_VALUE);
-        fireBoundsEvt(new BoundsEvt(Bounds.this, BoundsEvt.BOUNDS, Bounds.this));
+        fireBoundsEvt(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
     }
 
     public double getCenterX() {return x + width * 0.5;}
@@ -89,7 +89,7 @@ public class Bounds {
         this.y = y;
         this.width = width;
         this.height = height;
-        fireBoundsEvt(new BoundsEvt(Bounds.this, BoundsEvt.BOUNDS, Bounds.this));
+        fireBoundsEvt(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
     }
 
     public boolean contains(final double x, final double y) {
@@ -111,7 +111,7 @@ public class Bounds {
 
 
     // ******************** Event handling ************************************
-    public void addBoundsObserver(final EvtType<? extends Evt> type, final EvtObserver<BoundsEvt> observer) {
+    public void addBoundsObserver(final EventType<? extends FxEvent> type, final ChartEventListener<BoundsEvent> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());
         }
@@ -121,7 +121,7 @@ public class Bounds {
         observers.get(type).add(observer);
     }
 
-    public void removeBoundsObserver(final EvtType<? extends Evt> type, final EvtObserver<BoundsEvt> observer) {
+    public void removeBoundsObserver(final EventType<? extends FxEvent> type, final ChartEventListener<BoundsEvent> observer) {
         if (observers.containsKey(type) && observers.get(type).contains(observer)) {
             observers.get(type).remove(observer);
         }
@@ -129,9 +129,9 @@ public class Bounds {
 
     public void removeAllBoundsObservers() {observers.clear();}
 
-    public void fireBoundsEvt(final BoundsEvt evt) {
-        final EvtType type = evt.getEvtType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(BoundsEvt.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
+    public void fireBoundsEvt(final BoundsEvent evt) {
+        final EventType type = evt.getEventType();
+        observers.entrySet().stream().filter(entry -> entry.getKey().equals(BoundsEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
         if (observers.containsKey(type)) {
             observers.get(type).forEach(observer -> observer.handle(evt));
         }

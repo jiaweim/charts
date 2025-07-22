@@ -139,7 +139,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     private SeriesEventListener seriesListener_;
     private final EventHandler<MouseEvent> mouseHandler_;
     private final List<CursorEventListener> cursorEventListeners_;
-    private final Map<EvtType, List<EvtObserver<ChartEvt>>> observers_ = new ConcurrentHashMap<>();
+    private final Map<EventType, List<ChartEventListener<ChartEvent>>> observers_ = new ConcurrentHashMap<>();
 
     public XYPane(final List<XYSeries<T>> SERIES) {
         this(Color.TRANSPARENT, 1, SERIES.toArray(new XYSeries[0]));
@@ -884,7 +884,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     protected void redraw() {
         drawChart();
         drawCursor();
-        fireChartEvt(new ChartEvt(XYPane.this, ChartEvt.UPDATE));
+        fireChartEvt(new ChartEvent(XYPane.this, ChartEvent.UPDATE));
     }
 
     private void drawChart() {
@@ -2332,7 +2332,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     }
 
 
-    public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (!observers_.containsKey(type)) {
             observers_.put(type, new CopyOnWriteArrayList<>());
         }
@@ -2342,7 +2342,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         observers_.get(type).add(observer);
     }
 
-    public void removeChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (observers_.containsKey(type)) {
             if (observers_.get(type).contains(observer)) {
                 observers_.get(type).remove(observer);
@@ -2352,10 +2352,10 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
     public void removeAllChartEvtObservers() {observers_.clear();}
 
-    public void fireChartEvt(final ChartEvt evt) {
-        final EvtType type = evt.getEvtType();
-        observers_.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvt.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers_.containsKey(type) && !type.equals(ChartEvt.ANY)) {
+    public void fireChartEvt(final ChartEvent evt) {
+        final EventType type = evt.getEventType();
+        observers_.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
+        if (observers_.containsKey(type) && !type.equals(ChartEvent.ANY)) {
             observers_.get(type).forEach(observer -> observer.handle(evt));
         }
     }

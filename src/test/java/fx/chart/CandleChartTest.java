@@ -5,7 +5,7 @@ import fx.chart.data.CandleChartItem;
 import fx.chart.data.CandleChartItemBuilder;
 import fx.chart.data.ChartItem;
 import fx.chart.data.TYChartItem;
-import fx.chart.event.ChartEvt;
+import fx.chart.event.ChartEvent;
 import fx.chart.series.XYSeries;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -90,7 +90,7 @@ public class CandleChartTest extends Application {
         AnchorPane.setLeftAnchor(grid, INSET);
 
         for (ChartItem item : items) {
-            item.addChartEvtObserver(ChartEvt.ANY, e -> {
+            item.addChartEvtObserver(ChartEvent.ANY, e -> {
                 ChartItem chartItem = (ChartItem) e.getSource();
                 System.out.println(chartItem.getName() + ": " + chartItem.getValue());
             });

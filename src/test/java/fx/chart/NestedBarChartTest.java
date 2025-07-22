@@ -1,7 +1,7 @@
 package fx.chart;
 
 import fx.chart.data.ChartItem;
-import fx.chart.event.ChartEvt;
+import fx.chart.event.ChartEvent;
 import fx.chart.series.ChartItemSeries;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -45,7 +45,7 @@ public class NestedBarChartTest extends Application {
 
         chart = new NestedBarChart(q1, q2, q3, q4);
 
-        chart.addChartEvtObserver(ChartEvt.ANY, e -> System.out.println(e));
+        chart.addChartEvtObserver(ChartEvent.ANY, e -> System.out.println(e));
     }
 
     @Override

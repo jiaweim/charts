@@ -11,6 +11,12 @@ import java.util.EventListener;
  * @since 25 Jun 2025, 10:47 AM
  */
 @FunctionalInterface
-public interface EvtObserver<T extends Evt> extends EventListener {
+public interface ChartEventListener<T extends FxEvent> extends EventListener {
+
+    /**
+     * handle event
+     *
+     * @param event {@link FxEvent}
+     */
     void handle(T event);
 }

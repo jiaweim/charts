@@ -1,9 +1,9 @@
 package fx.chart.data;
 
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
 import fx.chart.Symbol;
-import fx.chart.event.ChartEvt;
+import fx.chart.event.ChartEvent;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 
@@ -15,8 +15,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class XYZChartItem implements XYZItem {
 
-    private final ChartEvt ITEM_EVENT = new ChartEvt(XYZChartItem.this, ChartEvt.ITEM_UPDATE);
-    private Map<EvtType, List<EvtObserver<ChartEvt>>> observers;
+    private final ChartEvent ITEM_EVENT = new ChartEvent(XYZChartItem.this, ChartEvent.ITEM_UPDATE);
+    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private double _x;
     private DoubleProperty x;
     private double _y;
@@ -330,7 +330,7 @@ public class XYZChartItem implements XYZItem {
 
 
     // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());
         }
@@ -340,7 +340,7 @@ public class XYZChartItem implements XYZItem {
         observers.get(type).add(observer);
     }
 
-    public void removeChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (observers.containsKey(type)) {
             if (observers.get(type).contains(observer)) {
                 observers.get(type).remove(observer);
@@ -350,10 +350,10 @@ public class XYZChartItem implements XYZItem {
 
     public void removeAllChartEvtObservers() {observers.clear();}
 
-    public void fireChartEvt(final ChartEvt evt) {
-        final EvtType type = evt.getEvtType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvt.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvt.ANY)) {
+    public void fireChartEvt(final ChartEvent evt) {
+        final EventType type = evt.getEventType();
+        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
+        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
             observers.get(type).forEach(observer -> observer.handle(evt));
         }
     }

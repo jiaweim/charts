@@ -3,7 +3,7 @@ package fx.chart;
 import fx.chart.SankeyPlot.StreamFillMode;
 import fx.chart.color.ColorUtils;
 import fx.chart.data.PlotItem;
-import fx.chart.event.ChartEvt;
+import fx.chart.event.ChartEvent;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.paint.Color;
@@ -150,8 +150,8 @@ public class OfflineRenderTest extends Application {
                 .useItemTextColor(true)
                 .autoAdjustVerticalTextPosition(true)
                 .build();
-        sankeyPlot.getItems().forEach(item -> item.addChartEvtObserver(ChartEvt.ANY, e -> {
-            if (ChartEvt.ITEM_SELECTED.equals(e.getEvtType())) {
+        sankeyPlot.getItems().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, e -> {
+            if (ChartEvent.ITEM_SELECTED.equals(e.getEventType())) {
                 PlotItem sourceItem = (PlotItem) e.getSource();
                 PlotItem targetItem = (PlotItem) e.getTarget();
                 if (null != sourceItem && null != targetItem) {

@@ -2,10 +2,10 @@ package fx.chart;
 
 import fx.chart.color.ColorUtils;
 import fx.chart.data.ChartItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
-import fx.chart.event.SelectionEvt;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
+import fx.chart.event.SelectionEvent;
 import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
@@ -16,7 +16,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -76,11 +75,11 @@ public class CoxcombChart extends Region {
     private BooleanProperty showItemName;
     private Color _selectedItemFill;
     private ObjectProperty<Color> selectedItemFill;
-    private EvtObserver<ChartEvt> itemObserver;
+    private ChartEventListener<ChartEvent> itemObserver;
     private ListChangeListener<ChartItem> itemListListener;
     private EventHandler<MouseEvent> mouseHandler;
-    private Map<EventType, EventHandler<MouseEvent>> mouseHandlers;
-    private Map<EvtType, List<EvtObserver<ChartEvt>>> observers;
+    private Map<javafx.event.EventType, EventHandler<MouseEvent>> mouseHandlers;
+    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private InfoPopup popup;
 
 
@@ -111,10 +110,10 @@ public class CoxcombChart extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvt.ANY, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ANY, itemObserver));
                     reorder(getOrder());
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvt.ANY, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
                     reorder(getOrder());
                 }
             }
@@ -158,12 +157,12 @@ public class CoxcombChart extends Region {
     private void registerListeners() {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
-        items.forEach(item -> item.addChartEvtObserver(ChartEvt.ANY, itemObserver));
+        items.forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, itemObserver));
         items.addListener(itemListListener);
         //canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseHandler);
-        addChartEvtObserver(SelectionEvt.ANY, e -> {
+        addChartEvtObserver(SelectionEvent.ANY, e -> {
             if (getShowPopup()) {
-                popup.update((SelectionEvt) e);
+                popup.update((SelectionEvent) e);
                 popup.animatedShow(getScene().getWindow());
             }
         });
@@ -198,7 +197,7 @@ public class CoxcombChart extends Region {
     public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public void dispose() {
-        items.forEach(item -> item.removeChartEvtObserver(ChartEvt.ANY, itemObserver));
+        items.forEach(item -> item.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
         items.removeListener(itemListListener);
         canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, mouseHandler);
     }
@@ -558,7 +557,7 @@ public class CoxcombChart extends Region {
 
             // Check if x,y are in segment
             if (Helper.isInRingSegment(X, Y, xy, xy, wh, wh, Math.abs(360 - startAngle), angle, barWidth)) {
-                fireChartEvt(new SelectionEvt(item));
+                fireChartEvt(new SelectionEvent(item));
                 return Optional.of(item);
             }
         }
@@ -609,7 +608,7 @@ public class CoxcombChart extends Region {
 
             // Check if x,y are in segment
             if (Helper.isInRingSegment(X, Y, xy, xy, wh, wh, Math.abs(360 - startAngle), angle, barWidth)) {
-                fireChartEvt(new SelectionEvt(item));
+                fireChartEvt(new SelectionEvent(item));
                 break;
             }
         }
@@ -695,7 +694,7 @@ public class CoxcombChart extends Region {
 
 
     // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());
         }
@@ -705,7 +704,7 @@ public class CoxcombChart extends Region {
         observers.get(type).add(observer);
     }
 
-    public void removeChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (observers.containsKey(type)) {
             if (observers.get(type).contains(observer)) {
                 observers.get(type).remove(observer);
@@ -715,10 +714,10 @@ public class CoxcombChart extends Region {
 
     public void removeAllChartEvtObservers() {observers.clear();}
 
-    public void fireChartEvt(final ChartEvt evt) {
-        final EvtType type = evt.getEvtType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvt.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvt.ANY)) {
+    public void fireChartEvt(final ChartEvent evt) {
+        final EventType type = evt.getEventType();
+        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
+        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
             observers.get(type).forEach(observer -> observer.handle(evt));
         }
     }

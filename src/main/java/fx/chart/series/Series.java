@@ -4,8 +4,8 @@ import fx.chart.ChartType;
 import fx.chart.Symbol;
 import fx.chart.data.Item;
 import fx.chart.data.XYChartItem;
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
 import fx.chart.event.SeriesEvent;
 import fx.chart.event.SeriesEventListener;
 import javafx.beans.property.*;
@@ -79,7 +79,7 @@ public abstract class Series<T extends Item> {
     protected ObservableList<T> items_;
     private final CopyOnWriteArrayList<SeriesEventListener> listeners_;
     private final ListChangeListener<T> itemListener_;
-    private final EvtObserver<ChartEvt> itemObserver_;
+    private final ChartEventListener<ChartEvent> itemObserver_;
 
     public Series() {
         this(null, ChartType.SCATTER, "", Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, Symbol.CIRCLE);
@@ -156,14 +156,14 @@ public abstract class Series<T extends Item> {
                     c.getAddedSubList().forEach(item -> {
                         if (item instanceof XYChartItem) {
                             XYChartItem xyChartItem = (XYChartItem) item;
-                            xyChartItem.addChartEvtObserver(ChartEvt.ANY, itemObserver_);
+                            xyChartItem.addChartEvtObserver(ChartEvent.ANY, itemObserver_);
                         }
                     });
                 } else if (c.wasRemoved()) {
                     c.getRemoved().forEach(item -> {
                         if (item instanceof XYChartItem) {
                             XYChartItem xyChartItem = (XYChartItem) item;
-                            xyChartItem.removeChartEvtObserver(ChartEvt.ANY, itemObserver_);
+                            xyChartItem.removeChartEvtObserver(ChartEvent.ANY, itemObserver_);
                         }
                     });
                 }

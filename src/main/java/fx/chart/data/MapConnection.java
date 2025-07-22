@@ -1,8 +1,8 @@
 package fx.chart.data;
 
-import fx.chart.event.ChartEvt;
-import fx.chart.event.EvtObserver;
-import fx.chart.event.EvtType;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
 import fx.chart.tools.MapPoint;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
@@ -15,9 +15,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MapConnection {
 
-    private final ChartEvt SELECTED_EVENT = new ChartEvt(MapConnection.this, ChartEvt.CONNECTION_SELECTED);
-    private final ChartEvt UPDATED_EVENT = new ChartEvt(MapConnection.this, ChartEvt.CONNECTION_UPDATE);
-    private Map<EvtType, List<EvtObserver<ChartEvt>>> observers;
+    private final ChartEvent SELECTED_EVENT = new ChartEvent(MapConnection.this, ChartEvent.CONNECTION_SELECTED);
+    private final ChartEvent UPDATED_EVENT = new ChartEvent(MapConnection.this, ChartEvent.CONNECTION_UPDATE);
+    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private MapPoint _incomingItem;
     private ObjectProperty<MapPoint> incomingItem;
     private MapPoint _outgoingItem;
@@ -314,7 +314,7 @@ public class MapConnection {
 
 
     // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());
         }
@@ -324,7 +324,7 @@ public class MapConnection {
         observers.get(type).add(observer);
     }
 
-    public void removeChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (observers.containsKey(type)) {
             if (observers.get(type).contains(observer)) {
                 observers.get(type).remove(observer);
@@ -334,10 +334,10 @@ public class MapConnection {
 
     public void removeAllChartEvtObservers() {observers.clear();}
 
-    public void fireChartEvt(final ChartEvt evt) {
-        final EvtType type = evt.getEvtType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvt.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvt.ANY)) {
+    public void fireChartEvt(final ChartEvent evt) {
+        final EventType type = evt.getEventType();
+        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
+        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
             observers.get(type).forEach(observer -> observer.handle(evt));
         }
     }

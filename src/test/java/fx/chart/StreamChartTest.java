@@ -5,8 +5,7 @@ import fx.chart.StreamChart.Type;
 import fx.chart.color.ColorUtils;
 import fx.chart.data.ChartItem;
 import fx.chart.data.ChartItemBuilder;
-import fx.chart.event.ChartEvt;
-import fx.chart.tools.Helper;
+import fx.chart.event.ChartEvent;
 import fx.chart.tools.Order;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -90,7 +89,7 @@ public class StreamChartTest extends Application {
         };
 
         for (ChartItem item : itemsStacked) {
-            item.addChartEvtObserver(ChartEvt.ANY, e -> {
+            item.addChartEvtObserver(ChartEvent.ANY, e -> {
                 ChartItem chartItem = (ChartItem) e.getSource();
                 System.out.println(chartItem.getName() + ": " + chartItem.getValue());
             });

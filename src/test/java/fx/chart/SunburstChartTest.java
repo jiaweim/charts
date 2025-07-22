@@ -2,7 +2,7 @@ package fx.chart;
 
 import fx.chart.data.ChartItem;
 import fx.chart.data.TreeNode;
-import fx.chart.event.TreeNodeEvt;
+import fx.chart.event.TreeNodeEvent;
 import fx.chart.tools.TextOrientation;
 import fx.chart.tools.VisibleData;
 import javafx.application.Application;
@@ -71,7 +71,7 @@ public class SunburstChartTest extends Application {
 
         TreeNode<ChartItem> week19 = new TreeNode<>(new ChartItem("Week 19", 0.3, PINK_2), may);
 
-        tree.addTreeNodeEvtObserver(TreeNodeEvt.NODE_SELECTED, evt -> {
+        tree.addTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, evt -> {
             TreeNode<ChartItem> segment = (TreeNode<ChartItem>) evt.getSource();
             System.out.println(segment.getItem().getName() + ": " + segment.getItem().getValue());
         });

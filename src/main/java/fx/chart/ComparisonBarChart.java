@@ -102,9 +102,9 @@ public class ComparisonBarChart extends Region {
     private Map<Category, Double> categoryValueMap;
     private Map<Rectangle, ChartItem> rectangleItemMap;
     private ListChangeListener<ChartItem> chartItemListener;
-    private EvtObserver<ChartEvt> observer;
+    private ChartEventListener<ChartEvent> observer;
     private EventHandler<MouseEvent> mouseHandler;
-    private Map<EvtType, List<EvtObserver<ChartEvt>>> observers;
+    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private InfoPopup popup;
 
 
@@ -145,17 +145,17 @@ public class ComparisonBarChart extends Region {
         categoryValueMap = new HashMap<>();
         rectangleItemMap = new HashMap<>();
         observer = evt -> {
-            EvtType<? extends Evt> type = evt.getEvtType();
-            if (type.equals(ChartEvt.ITEM_UPDATE) || type.equals(ChartEvt.FINISHED)) {
+            EventType<? extends FxEvent> type = evt.getEventType();
+            if (type.equals(ChartEvent.ITEM_UPDATE) || type.equals(ChartEvent.FINISHED)) {
                 drawChart();
             }
         };
         chartItemListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvt.ANY, observer));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ANY, observer));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvt.ANY, observer));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ANY, observer));
                 }
             }
             drawChart();
@@ -193,15 +193,15 @@ public class ComparisonBarChart extends Region {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
 
-        series1.getItems().forEach(item -> item.addChartEvtObserver(ChartEvt.ANY, observer));
-        series2.getItems().forEach(item -> item.addChartEvtObserver(ChartEvt.ANY, observer));
+        series1.getItems().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, observer));
+        series2.getItems().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, observer));
 
         series1.getItems().addListener(chartItemListener);
         series2.getItems().addListener(chartItemListener);
 
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseHandler);
-        addChartEvtObserver(SelectionEvt.ANY, e -> {
-            popup.update((SelectionEvt) e);
+        addChartEvtObserver(SelectionEvent.ANY, e -> {
+            popup.update((SelectionEvent) e);
             popup.animatedShow(getScene().getWindow());
         });
     }
@@ -822,9 +822,9 @@ public class ComparisonBarChart extends Region {
             popup.setY(evt.getScreenY() - popup.getHeight());
             ChartItem selectedItem = opt.get().getValue();
             if (series1.getItems().contains(selectedItem)) {
-                fireChartEvt(new SelectionEvt(series1, opt.get().getValue()));
+                fireChartEvt(new SelectionEvent(series1, opt.get().getValue()));
             } else {
-                fireChartEvt(new SelectionEvt(series2, opt.get().getValue()));
+                fireChartEvt(new SelectionEvent(series2, opt.get().getValue()));
             }
         }
     }
@@ -877,7 +877,7 @@ public class ComparisonBarChart extends Region {
 
 
     // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());
         }
@@ -887,7 +887,7 @@ public class ComparisonBarChart extends Region {
         observers.get(type).add(observer);
     }
 
-    public void removeChartEvtObserver(final EvtType type, final EvtObserver<ChartEvt> observer) {
+    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (observers.containsKey(type)) {
             if (observers.get(type).contains(observer)) {
                 observers.get(type).remove(observer);
@@ -897,10 +897,10 @@ public class ComparisonBarChart extends Region {
 
     public void removeAllChartEvtObservers() {observers.clear();}
 
-    public void fireChartEvt(final ChartEvt evt) {
-        final EvtType type = evt.getEvtType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvt.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvt.ANY)) {
+    public void fireChartEvt(final ChartEvent evt) {
+        final EventType type = evt.getEventType();
+        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
+        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
             observers.get(type).forEach(observer -> observer.handle(evt));
         }
     }
