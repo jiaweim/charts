@@ -2127,7 +2127,7 @@ public class Axis extends Region {
     private void calcAutoScale() {
         double maxNoOfMajorTicks = 10;
         double maxNoOfMinorTicks = 10;
-        double niceRange = Helper.calcNiceNumber((getMaxValue() - getMinValue()), false);
+        double niceRange = Helper.calcNiceNumber(getMaxValue() - getMinValue(), false);
         setMajorTickSpace(Helper.calcNiceNumber(niceRange / (maxNoOfMajorTicks - 1), true));
         setMinorTickSpace(Helper.calcNiceNumber(getMajorTickSpace() / (maxNoOfMinorTicks - 1), true));
         double niceMinValue = (Math.floor(getMinValue() / getMajorTickSpace()) * getMajorTickSpace());
@@ -2378,7 +2378,7 @@ public class Axis extends Region {
         double maxNoOfMajorTicks = 10;
         double maxNoOfMinorTicks = 10;
         if (isAutoScale()) {
-            double niceRange = (Helper.calcNiceNumber((getMaxValue() - getMinValue()), false));
+            double niceRange = Helper.calcNiceNumber((getMaxValue() - getMinValue()), false);
             setMajorTickSpace(Helper.calcNiceNumber(niceRange / (maxNoOfMajorTicks - 1), true));
             setMinorTickSpace(Helper.calcNiceNumber(getMajorTickSpace() / (maxNoOfMinorTicks - 1), true));
         } else {

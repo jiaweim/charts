@@ -19,5 +19,9 @@ class HelperTest {
         assertEquals(5000.0, Helper.calcNiceNumber(2001, false), 1E-10);
         assertEquals(5000.0, Helper.calcNiceNumber(5000, false), 1E-10);
         assertEquals(10000.0, Helper.calcNiceNumber(5001, false), 1E-10);
+
+        double range = 0.15;
+        int count = 10;
+        System.out.println(Helper.calcNiceNumber(range/(count-1), true));
     }
 }
