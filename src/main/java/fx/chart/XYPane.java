@@ -62,6 +62,9 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     private boolean keepAspect;
     private double size;
     private double width;
+    /**
+     * height of the pane
+     */
     private double height;
 
     private Paint chartBackground_;
@@ -79,8 +82,13 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
      */
     private double cursorX_;
     private double cursorY_;
-
+    /**
+     * how many pixels for unit x
+     */
     private double scaleX;
+    /**
+     * how many pixels for unit y
+     */
     private double scaleY;
     private double symbolSize;
     private int noOfBands;
@@ -89,17 +97,17 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     private DoubleProperty lowerBoundXProperty;
     private double upperBoundX_;
     private DoubleProperty upperBoundXProperty;
-    private double _lowerBoundY;
+    private double lowerBoundY_;
     private DoubleProperty lowerBoundYProperty;
-    private double _upperBoundY;
+    private double upperBoundY_;
     private DoubleProperty upperBoundYProperty;
 
     private boolean referenceZero;
 
-    private double _thresholdY;
+    private double thresholdY_;
     private DoubleProperty thresholdYProperty;
 
-    private boolean _thresholdYVisible;
+    private boolean thresholdYVisible_;
     private BooleanProperty thresholdYVisibleProperty;
 
     private Color _thresholdYColor;
@@ -172,11 +180,11 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         noOfBands = Math.clamp(BANDS, 1, 5);
         lowerBoundX_ = 0;
         upperBoundX_ = 100;
-        _lowerBoundY = 0;
-        _upperBoundY = 100;
+        lowerBoundY_ = 0;
+        upperBoundY_ = 100;
         referenceZero = true;
-        _thresholdY = 100;
-        _thresholdYVisible = false;
+        thresholdY_ = 100;
+        thresholdYVisible_ = false;
         _thresholdYColor = Color.RED;
         _polarTickStep = PolarTickStep.FOURTY_FIVE;
         _envelopeFill = Color.rgb(120, 120, 120, 0.2);
@@ -388,11 +396,11 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         return upperBoundXProperty;
     }
 
-    public double getLowerBoundY() {return null == lowerBoundYProperty ? _lowerBoundY : lowerBoundYProperty.get();}
+    public double getLowerBoundY() {return null == lowerBoundYProperty ? lowerBoundY_ : lowerBoundYProperty.get();}
 
     public void setLowerBoundY(final double VALUE) {
         if (null == lowerBoundYProperty) {
-            _lowerBoundY = VALUE;
+            lowerBoundY_ = VALUE;
             resize();
         } else {
             lowerBoundYProperty.set(VALUE);
@@ -401,7 +409,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
     public DoubleProperty lowerBoundYProperty() {
         if (null == lowerBoundYProperty) {
-            lowerBoundYProperty = new DoublePropertyBase(_lowerBoundY) {
+            lowerBoundYProperty = new DoublePropertyBase(lowerBoundY_) {
                 @Override
                 protected void invalidated() {resize();}
 
@@ -415,11 +423,11 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         return lowerBoundYProperty;
     }
 
-    public double getUpperBoundY() {return null == upperBoundYProperty ? _upperBoundY : upperBoundYProperty.get();}
+    public double getUpperBoundY() {return null == upperBoundYProperty ? upperBoundY_ : upperBoundYProperty.get();}
 
     public void setUpperBoundY(final double VALUE) {
         if (null == upperBoundYProperty) {
-            _upperBoundY = VALUE;
+            upperBoundY_ = VALUE;
             resize();
         } else {
             upperBoundYProperty.set(VALUE);
@@ -428,7 +436,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
     public DoubleProperty upperBoundYProperty() {
         if (null == upperBoundYProperty) {
-            upperBoundYProperty = new DoublePropertyBase(_upperBoundY) {
+            upperBoundYProperty = new DoublePropertyBase(upperBoundY_) {
                 @Override
                 protected void invalidated() {resize();}
 
@@ -472,11 +480,11 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
     public List<XYSeries<T>> getListOfSeries() {return listOfSeries;}
 
-    public double getThresholdY() {return null == thresholdYProperty ? _thresholdY : thresholdYProperty.get();}
+    public double getThresholdY() {return null == thresholdYProperty ? thresholdY_ : thresholdYProperty.get();}
 
     public void setThresholdY(final double THRESHOLD) {
         if (null == thresholdYProperty) {
-            _thresholdY = THRESHOLD;
+            thresholdY_ = THRESHOLD;
             redraw();
         } else {
             thresholdYProperty.set(THRESHOLD);
@@ -485,7 +493,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
     public DoubleProperty thresholdYProperty() {
         if (null == thresholdYProperty) {
-            thresholdYProperty = new DoublePropertyBase(_thresholdY) {
+            thresholdYProperty = new DoublePropertyBase(thresholdY_) {
                 @Override
                 protected void invalidated() {redraw();}
 
@@ -499,11 +507,11 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         return thresholdYProperty;
     }
 
-    public boolean isThresholdYVisible() {return null == thresholdYVisibleProperty ? _thresholdYVisible : thresholdYVisibleProperty.get();}
+    public boolean isThresholdYVisible() {return null == thresholdYVisibleProperty ? thresholdYVisible_ : thresholdYVisibleProperty.get();}
 
     public void setThresholdYVisible(final boolean VISIBLE) {
         if (null == thresholdYVisibleProperty) {
-            _thresholdYVisible = VISIBLE;
+            thresholdYVisible_ = VISIBLE;
             redraw();
         } else {
             thresholdYVisibleProperty.set(VISIBLE);
@@ -512,7 +520,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
     public BooleanProperty thresholdYVisibleProperty() {
         if (null == thresholdYVisibleProperty) {
-            thresholdYVisibleProperty = new BooleanPropertyBase(_thresholdYVisible) {
+            thresholdYVisibleProperty = new BooleanPropertyBase(thresholdYVisible_) {
                 @Override
                 protected void invalidated() {redraw();}
 
@@ -980,20 +988,26 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         if (series == null || !series.isVisible() || series.getItems().isEmpty()) {
             return;
         }
-        final double LOWER_BOUND_X = getLowerBoundX();
-        final double LOWER_BOUND_Y = getLowerBoundY();
+        final double minX = getLowerBoundX();
+        final double minY = getLowerBoundY();
         List<T> items = series.getItems();
-        double oldX = (items.get(0).getX() - LOWER_BOUND_X) * scaleX;
-        double oldY = height - (items.get(0).getY() - LOWER_BOUND_Y) * scaleY;
+        double oldX = (items.get(0).getX() - minX) * scaleX;
+        double oldY = height - (items.get(0).getY() - minY) * scaleY;
         boolean wasEmpty = items.get(0).isEmptyItem();
+
+        gc_.save();
 
         gc_.setLineWidth(series.getStrokeWidth() > -1 ? series.getStrokeWidth() : size * 0.0025);
         gc_.setStroke(series.getStroke());
         gc_.setFill(Color.TRANSPARENT);
+        double[] dashes = series.getLineDashes();
+        if (dashes != null) {
+            gc_.setLineDashes(dashes);
+        }
 
         for (T item : series.getItems()) {
-            double x = (item.getX() - LOWER_BOUND_X) * scaleX;
-            double y = height - (item.getY() - LOWER_BOUND_Y) * scaleY;
+            double x = (item.getX() - minX) * scaleX;
+            double y = height - (item.getY() - minY) * scaleY;
             boolean isEmpty = item.isEmptyItem();
             if (!isEmpty && !wasEmpty) {
                 gc_.strokeLine(oldX, oldY, x, y);
@@ -1006,6 +1020,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         if (showPoints) {
             drawSymbols(series);
         }
+        gc_.restore();
     }
 
     private void drawArea(final XYSeries<T> SERIES, final boolean SHOW_POINTS) {

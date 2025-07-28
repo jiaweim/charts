@@ -38,11 +38,14 @@ public abstract class Series<T extends Item> {
     protected Paint fill_;
     protected ObjectProperty<Paint> fillProperty;
 
-    protected Paint _stroke;
+    protected Paint stroke_;
     protected ObjectProperty<Paint> strokeProperty;
 
-    protected double _strokeWidth;
+    protected double strokeWidth_;
     protected DoubleProperty strokeWidthProperty;
+
+    protected double[] lineDashes_;
+    protected ObjectProperty<double[]> lineDashesProperty;
 
     protected Color textFill_;
     protected ObjectProperty<Color> textFillProperty;
@@ -122,14 +125,15 @@ public abstract class Series<T extends Item> {
     public Series(final List<T> items, final ChartType type, final String name, final Paint FILL, final Paint STROKE, final Color SYMBOL_FILL, final Color SYMBOL_STROKE, final Symbol SYMBOL) {
         name_ = name;
         fill_ = FILL;
-        _stroke = STROKE;
+        stroke_ = STROKE;
         textFill_ = Color.BLACK;
         _symbolFill = SYMBOL_FILL;
         _symbolStroke = SYMBOL_STROKE;
         _symbol = SYMBOL;
         symbolsVisible_ = true;
         _symbolSize = -1;
-        _strokeWidth = -1;
+        strokeWidth_ = -1;
+        lineDashes_ = null;
         visible_ = true;
         _animated = false;
         _animationDuration = 800;
@@ -244,11 +248,21 @@ public abstract class Series<T extends Item> {
         return fillProperty;
     }
 
-    public Paint getStroke() {return null == strokeProperty ? _stroke : strokeProperty.get();}
+    /**
+     * @return {@link Paint} for stroke
+     */
+    public Paint getStroke() {
+        return strokeProperty == null ? stroke_ : strokeProperty.get();
+    }
 
+    /**
+     * set the storke
+     *
+     * @param PAINT {@link Paint}
+     */
     public void setStroke(final Paint PAINT) {
-        if (null == strokeProperty) {
-            _stroke = PAINT;
+        if (strokeProperty == null) {
+            stroke_ = PAINT;
             refresh();
         } else {
             strokeProperty.set(PAINT);
@@ -257,7 +271,7 @@ public abstract class Series<T extends Item> {
 
     public ObjectProperty<Paint> strokeProperty() {
         if (null == strokeProperty) {
-            strokeProperty = new ObjectPropertyBase<Paint>(_stroke) {
+            strokeProperty = new ObjectPropertyBase<>(stroke_) {
                 @Override
                 protected void invalidated() {refresh();}
 
@@ -267,9 +281,53 @@ public abstract class Series<T extends Item> {
                 @Override
                 public String getName() {return "stroke";}
             };
-            _stroke = null;
+            stroke_ = null;
         }
         return strokeProperty;
+    }
+
+    /**
+     * @return dashes for stoke
+     */
+    public double[] getLineDashes() {
+        return lineDashesProperty == null ? lineDashes_ : lineDashesProperty.get();
+    }
+
+    /**
+     * set dashes property
+     *
+     * @param dashes dashes value
+     */
+    public void setLineDashes(double... dashes) {
+        if (lineDashesProperty == null) {
+            lineDashes_ = dashes;
+            refresh();
+        } else {
+            lineDashesProperty.set(dashes);
+        }
+    }
+
+    public ObjectProperty<double[]> lineDashesProperty() {
+        if (lineDashesProperty == null) {
+            lineDashesProperty = new ObjectPropertyBase<>(lineDashes_) {
+                @Override
+                protected void invalidated() {
+                    refresh();
+                }
+
+                @Override
+                public Object getBean() {
+                    return this;
+                }
+
+                @Override
+                public String getName() {
+                    return "dashes";
+                }
+            };
+            lineDashes_ = null;
+        }
+        return lineDashesProperty;
     }
 
     public Color getTextFill() {return null == textFillProperty ? textFill_ : textFillProperty.get();}
@@ -448,11 +506,23 @@ public abstract class Series<T extends Item> {
         return symbolSizeProperty;
     }
 
-    public double getStrokeWidth() {return null == strokeWidthProperty ? _strokeWidth : strokeWidthProperty.get();}
+    /**
+     * Return the strokeWidth, -1 means automatics
+     *
+     * @return stroke width
+     */
+    public double getStrokeWidth() {
+        return strokeWidthProperty == null ? strokeWidth_ : strokeWidthProperty.get();
+    }
 
+    /**
+     * set the stroke width
+     *
+     * @param WIDTH stroke width
+     */
     public void setStrokeWidth(final double WIDTH) {
-        if (null == strokeWidthProperty) {
-            _strokeWidth = Math.clamp(WIDTH, 1, 24);
+        if (strokeWidthProperty == null) {
+            strokeWidth_ = Math.clamp(WIDTH, 1, 24);
             fireSeriesEvent(UPDATE_EVENT);
         } else {
             strokeWidthProperty.set(WIDTH);
@@ -461,7 +531,7 @@ public abstract class Series<T extends Item> {
 
     public DoubleProperty strokeWidthProperty() {
         if (null == strokeWidthProperty) {
-            strokeWidthProperty = new DoublePropertyBase(_strokeWidth) {
+            strokeWidthProperty = new DoublePropertyBase(strokeWidth_) {
                 @Override
                 protected void invalidated() {
                     set(Math.clamp(get(), 1, 24));

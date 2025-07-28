@@ -22,6 +22,7 @@ module fx.charts {
     exports fx.chart.geometry.tools;
     exports fx.chart.geometry.transform;
     exports fx.chart;
+    exports fx.chart.sample;
     exports fx.chart.areaheatmap;
     exports fx.chart.color;
     exports fx.chart.data;

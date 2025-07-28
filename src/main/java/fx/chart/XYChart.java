@@ -593,7 +593,7 @@ public class XYChart<T extends XYItem> extends Region {
     private void adjustAxisAnchors() {
         xyPanes_.forEach(xyPane -> {
             axes_.forEach(axis -> {
-                if (Orientation.HORIZONTAL == axis.getOrientation()) {
+                if (axis.getOrientation() == Orientation.HORIZONTAL) {
                     AnchorPane.setLeftAnchor(axis, hasLeftYAxis ? leftAxisWidth : 0d);
                     AnchorPane.setRightAnchor(axis, hasRightYAxis ? rightAxisWidth : 0d);
 
