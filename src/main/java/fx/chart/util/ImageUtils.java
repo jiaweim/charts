@@ -1,5 +1,6 @@
 package fx.chart.util;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.effect.Blend;
@@ -9,6 +10,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Jiawei Mao
@@ -49,4 +54,23 @@ public final class ImageUtils {
         return new ColorInput(0, 0, sourceImage.getWidth(), sourceImage.getHeight(), color);
     }
 
+    /**
+     * Save a {@link Node} to a png file
+     *
+     * @param node     {@link Node}
+     * @param fileName file name
+     */
+    public static void saveAsPNG(final Node node, final String fileName) {
+        SnapshotParameters parameters = new SnapshotParameters();
+        parameters.setFill(Color.TRANSPARENT);
+        final WritableImage snapshot = node.snapshot(parameters, null);
+        final String name = fileName.replace("\\.[a-zA-Z]{3,4}", "");
+        final File file = new File(name + ".png");
+
+        try {
+            ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file);
+        } catch (IOException exception) {
+            // handle exception here
+        }
+    }
 }

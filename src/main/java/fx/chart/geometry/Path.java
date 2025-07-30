@@ -1,6 +1,5 @@
 package fx.chart.geometry;
 
-import fx.chart.geometry.tools.IllegalPathStateException;
 import fx.chart.geometry.transform.Affine;
 import fx.chart.geometry.transform.BaseTransform;
 import fx.chart.util.Point;

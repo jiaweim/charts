@@ -22,8 +22,14 @@ import javafx.util.Duration;
 
 import java.util.Locale;
 
-
+/**
+ * @author Jiawei Mao
+ * @author Gerrit Grunwald
+ * @version 1.0.0
+ * @since 30 Jul 2025, 9:20 AM
+ */
 public class InfoPopup extends Popup {
+
     public static long MAX_TIMEOUT = 10_000;
     public static int MAX_DECIMALS = 6;
     public static Color DEFAULT_BACKGROUND_COLOR = Color.rgb(0, 0, 0, 0.75);
@@ -54,7 +60,6 @@ public class InfoPopup extends Popup {
     private String formatString;
 
 
-    // ******************** Constructors **************************************
     public InfoPopup() {
         super();
         _backgroundColor = DEFAULT_BACKGROUND_COLOR;
@@ -68,8 +73,6 @@ public class InfoPopup extends Popup {
         registerListeners();
     }
 
-
-    // ******************** Initialization ************************************
     private void init() {
         setAutoFix(true);
 

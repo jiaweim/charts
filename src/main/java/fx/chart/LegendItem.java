@@ -1,8 +1,8 @@
 package fx.chart;
 
 import fx.chart.font.Fonts;
-import fx.chart.util.HelperFX;
 import fx.chart.util.Dimension;
+import fx.chart.util.ShapeUtils;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
@@ -26,9 +26,8 @@ import javafx.scene.text.TextAlignment;
  * Date: 05.01.18
  * Time: 20:33
  */
+
 /**
- *
- *
  * @author Jiawei Mao
  * @author Gerrit Grunwald
  * @version 1.0.0
@@ -296,8 +295,6 @@ public class LegendItem extends Region {
         return textColorProperty;
     }
 
-
-    // ******************** Resizing ******************************************
     private void resize() {
         width = getWidth() - getInsets().getLeft() - getInsets().getRight();
         height = getHeight() - getInsets().getTop() - getInsets().getBottom();
@@ -305,7 +302,7 @@ public class LegendItem extends Region {
 
         if (width > 0 && height > 0) {
             font = Fonts.latoRegular(size * 0.8);
-            textDim = HelperFX.getTextDimension(getText(), font);
+            textDim = ShapeUtils.getTextDimension(getText(), font);
             double requiredWidth = height + height * 0.22 + textDim.getWidth();
             pane.setMaxSize(requiredWidth, height);
             pane.setPrefSize(requiredWidth, height);

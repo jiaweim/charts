@@ -67,15 +67,15 @@ public class Point implements Comparable<Point>, Cloneable {
         this.y *= sy;
     }
 
-    public double euclideanDistanceTo(final Point p) {return HelperFX.euclideanDistance(p.getX(), p.getY(), this.x, this.y);}
+    public double euclideanDistanceTo(final Point p) {return ShapeUtils.euclideanDistance(p.getX(), p.getY(), this.x, this.y);}
 
-    public double euclideanDistanceTo(final double x, final double y) {return HelperFX.euclideanDistance(x, y, this.x, this.y);}
+    public double euclideanDistanceTo(final double x, final double y) {return ShapeUtils.euclideanDistance(x, y, this.x, this.y);}
 
-    public double distanceTo(final Point p) {return HelperFX.distance(p.getX(), p.getY(), x, y);}
+    public double distanceTo(final Point p) {return ShapeUtils.distance(p.getX(), p.getY(), x, y);}
 
-    public double distanceTo(final double x, final double y) {return HelperFX.distance(x, y, this.x, this.y);}
+    public double distanceTo(final double x, final double y) {return ShapeUtils.distance(x, y, this.x, this.y);}
 
-    public double distanceSquareTo(final Point p) {return HelperFX.squareDistance(p.getX(), p.getY(), x, y);}
+    public double distanceSquareTo(final Point p) {return ShapeUtils.squareDistance(p.getX(), p.getY(), x, y);}
 
     public Point fromPolar(final double length, final double angleRad) {
         return new Point(length * Math.cos(angleRad), length * Math.sin(angleRad));

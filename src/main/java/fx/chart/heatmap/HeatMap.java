@@ -1,6 +1,6 @@
 package fx.chart.heatmap;
 
-import fx.chart.util.HelperFX;
+import fx.chart.color.ColorUtils;
 import fx.chart.util.Point;
 import javafx.animation.Interpolator;
 import javafx.application.Platform;
@@ -399,7 +399,7 @@ public class HeatMap extends ImageView {
             for (int x = 0; x < width; x++) {
                 colorFromMonoChromeImage = pixelReader.getColor(x, y);
                 brightness = colorFromMonoChromeImage.getOpacity();
-                mappedColor = HelperFX.getColorAt(mappingGradient, brightness);
+                mappedColor = ColorUtils.getColorAt(mappingGradient, brightness);
                 pixelWriter.setColor(x, y, fadeColors ? Color.color(mappedColor.getRed(), mappedColor.getGreen(), mappedColor.getBlue(), brightness) : mappedColor);
             }
         }
