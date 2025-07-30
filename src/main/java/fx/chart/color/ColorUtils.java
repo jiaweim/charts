@@ -5,9 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Color utilities
@@ -316,6 +314,65 @@ public final class ColorUtils {
 
         double interpolationFraction = (fraction - lowerStop.getOffset()) / (upperStop.getOffset() - lowerStop.getOffset());
         return (Color) Interpolator.LINEAR.interpolate(lowerStop.getColor(), upperStop.getColor(), interpolationFraction);
+    }
+
+
+    public static Color getColorAt(final List<Stop> stopList, final double positionOfColor) {
+        Map<Double, Stop> stops = new TreeMap<>();
+        for (Stop stop : stopList) {
+            stops.put(stop.getOffset(), stop);
+        }
+
+        if (stops.isEmpty()) return Color.BLACK;
+
+        double minFraction = Collections.min(stops.keySet());
+        double maxFraction = Collections.max(stops.keySet());
+
+        if (Double.compare(minFraction, 0d) > 0) {
+            stops.put(0.0, new Stop(0.0, stops.get(minFraction).getColor()));
+        }
+        if (Double.compare(maxFraction, 1d) < 0) {
+            stops.put(1.0, new Stop(1.0, stops.get(maxFraction).getColor()));
+        }
+
+        final double position = Math.clamp(positionOfColor, 0d, 1d);
+        final Color color;
+        if (stops.size() == 1) {
+            final Map<Double, Color> ONE_ENTRY = (Map<Double, Color>) stops.entrySet().iterator().next();
+            color = stops.get(ONE_ENTRY.keySet().iterator().next()).getColor();
+        } else {
+            Stop lowerBound = stops.get(0.0);
+            Stop upperBound = stops.get(1.0);
+            for (Map.Entry<Double, Stop> entry : stops.entrySet()) {
+                final double fraction = entry.getKey();
+                final Stop stop = entry.getValue();
+                if (Double.compare(fraction, position) < 0) {
+                    lowerBound = stop;
+                }
+                if (Double.compare(fraction, position) > 0) {
+                    upperBound = stop;
+                    break;
+                }
+            }
+            color = interpolateColor(lowerBound, upperBound, position);
+        }
+        return color;
+    }
+
+    public static Color interpolateColor(final Stop lowerBound, final Stop upperBound, final double position) {
+        final double pos = (position - lowerBound.getOffset()) / (upperBound.getOffset() - lowerBound.getOffset());
+
+        final double deltaRed = (upperBound.getColor().getRed() - lowerBound.getColor().getRed()) * pos;
+        final double deltaGreen = (upperBound.getColor().getGreen() - lowerBound.getColor().getGreen()) * pos;
+        final double deltaBlue = (upperBound.getColor().getBlue() - lowerBound.getColor().getBlue()) * pos;
+        final double deltaOpacity = (upperBound.getColor().getOpacity() - lowerBound.getColor().getOpacity()) * pos;
+
+        double red = Math.clamp((lowerBound.getColor().getRed() + deltaRed), 0, 1);
+        double green = Math.clamp((lowerBound.getColor().getGreen() + deltaGreen), 0, 1);
+        double blue = Math.clamp((lowerBound.getColor().getBlue() + deltaBlue), 0, 1);
+        double opacity = Math.clamp((lowerBound.getColor().getOpacity() + deltaOpacity), 0, 1);
+
+        return Color.color(red, green, blue, opacity);
     }
 }
 

@@ -19,7 +19,6 @@ module fx.charts {
     opens fx.chart.heatmap to javafx.graphics;
 
     exports fx.chart.geometry;
-    exports fx.chart.geometry.tools;
     exports fx.chart.geometry.transform;
     exports fx.chart;
     exports fx.chart.sample;

@@ -1,7 +1,7 @@
 package fx.chart.geometry;
 
-import fx.chart.util.Point;
 import fx.chart.geometry.transform.BaseTransform;
+import fx.chart.util.Point;
 
 import java.util.Arrays;
 import java.util.Objects;

@@ -3,7 +3,7 @@ package fx.chart.geometry.transform;
 import fx.chart.geometry.BaseBounds;
 import fx.chart.geometry.Rectangle;
 import fx.chart.geometry.Shape;
-import fx.chart.geometry.tools.NonInvertibleTransformException;
+import fx.chart.geometry.NonInvertibleTransformException;
 import fx.chart.util.Point;
 
 

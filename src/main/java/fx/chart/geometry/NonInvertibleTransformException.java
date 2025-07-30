@@ -1,4 +1,4 @@
-package fx.chart.geometry.tools;
+package fx.chart.geometry;
 
 public class NonInvertibleTransformException extends java.lang.Exception {
 
