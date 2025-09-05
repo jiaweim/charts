@@ -52,11 +52,7 @@ public class AreaHeatMapBuilder {
     }
 
     public final AreaHeatMapBuilder quality(final Quality QUALITY) {
-        return quality(QUALITY.getFactor());
-    }
-
-    public final AreaHeatMapBuilder quality(final int QUALITY) {
-        properties.put("quality", new SimpleIntegerProperty(QUALITY));
+        properties.put("quality", new SimpleObjectProperty(QUALITY));
         return this;
     }
 
@@ -95,7 +91,7 @@ public class AreaHeatMapBuilder {
                 }
                 case "colorMapping" -> control.setColorMapping(((ObjectProperty<Mapping>) property).get());
                 case "useColorMapping" -> control.setUseColorMapping(((BooleanProperty) property).get());
-                case "quality" -> control.setQuality(((IntegerProperty) property).get());
+                case "quality" -> control.setQuality(((ObjectProperty<Quality>) property).get());
                 case "heatMapOpacity" -> control.setHeatMapOpacity(((DoubleProperty) property).get());
                 case "dataPointsVisible" -> control.setDataPointsVisible(((BooleanProperty) property).get());
                 case "smoothedHull" -> control.setSmoothedHull(((BooleanProperty) property).get());

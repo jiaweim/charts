@@ -142,6 +142,14 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     private Color crossHairColor_;
     private ObjectProperty<Color> crossHairColorProperty;
 
+    private boolean categoryTextVisible_;
+    private BooleanProperty categoryTextVisibleProperty;
+
+    private Color foregroundColor_;
+    private ObjectProperty<Color> foregroundColorProperty;
+
+    private ObservableList<String> categories_;
+
     private ObservableList<XYPaneOverlay> overlays_;
     private TooltipPopup popup_;
     private SeriesEventListener seriesListener_;
@@ -197,6 +205,9 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         _averageStrokeWidth = 1;
         crossHairVisible_ = false;
         crossHairColor_ = Color.GRAY;
+        categoryTextVisible_ = false;
+        foregroundColor_ = Color.BLACK;
+        categories_ = FXCollections.observableArrayList();
         overlays_ = FXCollections.observableArrayList();
         cursorX_ = -1;
         cursorY_ = -1;
@@ -221,6 +232,8 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             }
         };
         popup_.setOnHiding(e -> popup_.setText(""));
+
+        categories_.addAll("", "", "", "", "", "", "", "");
 
         initGraphics();
         registerListeners();
@@ -870,6 +883,86 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         return crossHairColorProperty;
     }
 
+    public boolean isCategoryTextVisible() {
+        return categoryTextVisibleProperty == null ? categoryTextVisible_ : categoryTextVisibleProperty.get();
+    }
+
+    public void setCategoryTextVisible(final boolean visible) {
+        if (categoryTextVisibleProperty == null) {
+            categoryTextVisible_ = visible;
+            drawCursor();
+        } else {
+            categoryTextVisibleProperty.set(visible);
+        }
+    }
+
+    public BooleanProperty categoryTextVisibleProperty() {
+        if (categoryTextVisibleProperty == null) {
+            categoryTextVisibleProperty = new BooleanPropertyBase(categoryTextVisible_) {
+                @Override
+                protected void invalidated() {
+                    drawChart();
+                }
+
+                @Override
+                public Object getBean() {
+                    return XYPane.this;
+                }
+
+                @Override
+                public String getName() {
+                    return "categoryTextVisible";
+                }
+            };
+        }
+        return categoryTextVisibleProperty;
+    }
+
+    public List<String> getCategories() {
+        return new ArrayList<>(categories_);
+    }
+
+    public void setCategories(final String... CATEGORIES) {setCategories(Arrays.asList(CATEGORIES));}
+
+    public void setCategories(final List<String> CATEGORIES) {
+        if (null == CATEGORIES || CATEGORIES.size() != 360 / getPolarTickStep().get()) {
+            throw new IllegalArgumentException("Number of categories must fit the polar tick steps");
+        }
+        this.categories_.setAll(CATEGORIES);
+        redraw();
+    }
+
+
+    public Color getForegroundColor() {
+        return null == foregroundColorProperty ? foregroundColor_ : foregroundColorProperty.get();
+    }
+
+    public void setForegroundColor(final Color COLOR) {
+        if (null == this.foregroundColorProperty) {
+            foregroundColor_ = COLOR;
+            redraw();
+        } else {
+            foregroundColorProperty.set(COLOR);
+        }
+    }
+
+    public ObjectProperty<Color> foregroundColorProperty() {
+        if (null == foregroundColorProperty) {
+            foregroundColorProperty = new ObjectPropertyBase<>(foregroundColor_) {
+                @Override
+                protected void invalidated() {redraw();}
+
+                @Override
+                public Object getBean() {return XYPane.this;}
+
+                @Override
+                public String getName() {return "foregroundColor";}
+            };
+            foregroundColor_ = null;
+        }
+        return foregroundColorProperty;
+    }
+
     public ObservableList<XYPaneOverlay> getOverlays() {return this.overlays_;}
 
     public void setOverlays(final List<XYPaneOverlay> overlays) {this.overlays_.setAll(overlays);}
@@ -887,8 +980,20 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         return false;
     }
 
+    public boolean containsSpiderChart() {
+        for (XYSeries<T> series : listOfSeries) {
+            if (null == series) {
+                continue;
+            }
+            ChartType type = series.getChartType();
+            if (ChartType.SPIDER == type) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-    // ******************** Draw Chart ****************************************
+
     protected void redraw() {
         drawChart();
         drawCursor();
@@ -946,6 +1051,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                     case RIDGE_LINE -> drawRidgeLine(series);
                     case SMOOTHED_HORIZON -> drawHorizon(series, true);
                     case POLAR, SMOOTH_POLAR -> drawPolar(series);
+                    case SPIDER -> drawSpider(series);
                 }
             }
         } else {
@@ -1742,6 +1848,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         // draw concentric rings
         gc_.setLineWidth(1);
         gc_.setStroke(Color.GRAY);
+
         double ringStepSize = size / 20.0;
         double pos = 0.5 * (size - CIRCLE_SIZE);
         double ringSize = CIRCLE_SIZE;
@@ -1770,7 +1877,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
         gc_.setTextAlign(TextAlignment.CENTER);
         gc_.setTextBaseline(VPos.CENTER);
-        gc_.setFill(Color.BLACK);
+        gc_.setFill(getForegroundColor());
 
         // draw min and max Text
         Font font = Fonts.latoRegular(0.025 * size);
@@ -1786,7 +1893,169 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
         gc_.save();
         gc_.setFont(Fonts.latoRegular(0.04 * size));
         for (int i = 0; i < NO_OF_SECTORS; i++) {
-            gc_.fillText(String.format(Locale.US, "%.0f", i * ANGLE_STEP), CENTER_X, size * 0.02);
+            if (isCategoryTextVisible()) {
+                gc_.fillText(categories_.get(i), CENTER_X, size * 0.02);
+            } else {
+                gc_.fillText(String.format(Locale.US, "%.0f", i * ANGLE_STEP), CENTER_X, size * 0.02);
+            }
+            Helper.rotateCtx(gc_, CENTER_X, CENTER_Y, ANGLE_STEP);
+        }
+        gc_.restore();
+    }
+
+    private void drawSpider(final XYSeries<T> SERIES) {
+        if (null == SERIES || SERIES.getItems().isEmpty() || !SERIES.isVisible()) {
+            return;
+        }
+        final double centerX = 0.5 * size;
+        final double centerY = centerX;
+        final double circleSize = 0.9 * size;
+        final double lowerBoundY = 0;
+        final double dataRangeY = 100;
+        final double range = 0.35714 * circleSize;
+        final double offset = 0.14286 * circleSize;
+        final int noOfItems = SERIES.getItems().size();
+        final boolean showPoints = SERIES.getSymbolsVisible();
+        final double angleStep = getPolarTickStep().getAngleStep();
+
+        drawSpiderOverlay(getPolarTickStep().get());
+
+        // draw the chart data
+        gc_.save();
+        if (SERIES.getFill() instanceof RadialGradient) {
+            gc_.setFill(new RadialGradient(0, 0, size * 0.5, size * 0.5, size * 0.45, false, CycleMethod.NO_CYCLE, ((RadialGradient) SERIES.getFill()).getStops()));
+        } else {
+            gc_.setFill(SERIES.getFill());
+        }
+        gc_.setLineWidth(SERIES.getStrokeWidth() > -1 ? SERIES.getStrokeWidth() : size * 0.0025);
+        gc_.setStroke(SERIES.getStroke());
+
+        double radAngle = Math.toRadians(180);
+        Point[] points = new Point[noOfItems + 1];
+
+        T item = SERIES.getItems().get(0);
+        double r1 = (centerY - (centerY - offset - ((item.getY() - lowerBoundY) / dataRangeY) * range));
+        double phi = Math.toRadians(Math.clamp(item.getX(), 0.0, 360.0));
+        double x = centerX + (-Math.sin(radAngle + phi) * r1);
+        double y = centerY + (+Math.cos(radAngle + phi) * r1);
+        points[0] = new Point(x, y);
+        double angle = 0;
+
+        for (int i = 0; i < noOfItems; i++) {
+            item = SERIES.getItems().get(i);
+            r1 = (centerY - (centerY - offset - ((item.getY() - lowerBoundY) / dataRangeY) * range));
+            //phi  = Math.toRadians(Helper.clamp(0.0, 360.0, item.getX()));
+            phi = Math.toRadians(Math.clamp(angle, 0.0, 360.0));
+            x = centerX + (-Math.sin(radAngle + phi) * r1);
+            y = centerY + (+Math.cos(radAngle + phi) * r1);
+            points[i] = new Point(x, y);
+            angle += angleStep;
+        }
+        points[points.length - 1] = points[0]; // last point == first point
+
+        gc_.beginPath();
+        gc_.moveTo(points[0].getX(), points[0].getY());
+        for (int i = 0; i < points.length - 1; i++) {
+            Point point = points[i];
+            gc_.lineTo(point.getX(), point.getY());
+        }
+        gc_.lineTo(points[points.length - 1].getX(), points[points.length - 1].getY());
+        gc_.closePath();
+
+        gc_.fill();
+        gc_.stroke();
+
+        gc_.restore();
+
+        if (showPoints) {
+            Symbol seriesSymbol = SERIES.getSymbol();
+            Paint symbolFill = SERIES.getSymbolFill();
+            Paint symbolStroke = SERIES.getSymbolStroke();
+            double size = SERIES.getSymbolSize() > -1 ? SERIES.getSymbolSize() : symbolSize;
+            for (Point point : points) {
+                Symbol itemSymbol = item.getSymbol();
+                if (Symbol.NONE == itemSymbol) {
+                    drawSymbol(point.getX(), point.getY(), symbolFill, symbolStroke, seriesSymbol, size);
+                } else {
+                    drawSymbol(point.getX(), point.getY(), item.getFill(), item.getStroke(), itemSymbol, size);
+                }
+            }
+        }
+
+    }
+
+    private void drawSpiderOverlay(final double ANGLE_STEP) {
+        final double CENTER_X = 0.5 * size;
+        final double CENTER_Y = CENTER_X;
+        final double CIRCLE_SIZE = 0.90 * size;
+        final double DATA_RANGE = getRangeY();
+        final double MIN_VALUE = getDataMinY();
+        final double RANGE = 0.35714 * CIRCLE_SIZE;
+        final double OFFSET = 0.14286 * CIRCLE_SIZE;
+        final double NO_OF_SECTORS = 360.0 / ANGLE_STEP;
+
+        // draw scale
+        gc_.setLineWidth(1);
+        gc_.setStroke(Color.GRAY);
+
+        final double radAngle = Math.toRadians(180);
+        final double rangeY = getUpperBoundY() - getLowerBoundY();
+        final double spacing = getDataRangeY() / 5;
+        double lastX = CENTER_X;
+        double lastY = CENTER_Y;
+        for (int yr = 0; yr < 6; yr++) {
+            for (int i = 0; i < NO_OF_SECTORS + 1; i++) {
+                double phi = Math.toRadians(Math.clamp(i * getPolarTickStep().get(), 0.0, 360.0));
+                double r1 = (CENTER_Y - (CENTER_Y - OFFSET - ((rangeY - yr * spacing) / DATA_RANGE) * RANGE));
+                double x = CENTER_X + (-Math.sin(radAngle + phi) * r1);
+                double y = CENTER_Y + (+Math.cos(radAngle + phi) * r1);
+                gc_.strokeLine(lastX, lastY, x, y);
+                lastX = x;
+                lastY = y;
+            }
+        }
+
+        // draw star lines
+        gc_.save();
+        for (int i = 0; i < NO_OF_SECTORS; i++) {
+            gc_.strokeLine(CENTER_X, 0.05 * size, CENTER_X, 0.5 * size);
+            Helper.rotateCtx(gc_, CENTER_X, CENTER_Y, ANGLE_STEP);
+        }
+        gc_.restore();
+
+        // draw threshold line
+        if (isThresholdYVisible()) {
+            double r = ((getThresholdY() - MIN_VALUE) / DATA_RANGE);
+            gc_.setLineWidth(Math.clamp(size * 0.005, 1d, 3d));
+            gc_.setStroke(getThresholdYColor());
+            gc_.strokeOval(0.5 * size - OFFSET - r * RANGE, 0.5 * size - OFFSET - r * RANGE,
+                    2 * (r * RANGE + OFFSET), 2 * (r * RANGE + OFFSET));
+        }
+
+        gc_.setTextAlign(TextAlignment.CENTER);
+        gc_.setTextBaseline(VPos.CENTER);
+        gc_.setFill(getForegroundColor());
+
+        /* draw min and max Text
+        Font   font         = Fonts.latoRegular(0.025 * size);
+        String minValueText = String.format(Locale.US, "%.0f", getLowerBoundY());
+        String maxValueText = String.format(Locale.US, "%.0f", getUpperBoundY());
+        ctx.save();
+        ctx.setFont(font);
+        Helper.drawTextWithBackground(ctx, minValueText, font, Color.WHITE, Color.BLACK, CENTER_X, CENTER_Y - size * 0.018);
+        Helper.drawTextWithBackground(ctx, maxValueText, font, Color.WHITE, Color.BLACK, CENTER_X, CENTER_Y - CIRCLE_SIZE * 0.48);
+        ctx.restore();
+        */
+
+        // draw axis text
+        gc_.save();
+        gc_.setFont(Fonts.latoRegular(0.04 * size));
+        for (int i = 0; i < NO_OF_SECTORS; i++) {
+            if (isCategoryTextVisible()) {
+                gc_.fillText(categories_.get(i), CENTER_X, size * 0.02);
+            } else {
+                gc_.fillText(String.format(Locale.US, "%.0f", i * ANGLE_STEP), CENTER_X, size * 0.02);
+            }
             Helper.rotateCtx(gc_, CENTER_X, CENTER_Y, ANGLE_STEP);
         }
         gc_.restore();
