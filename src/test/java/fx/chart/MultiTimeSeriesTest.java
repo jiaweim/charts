@@ -20,7 +20,6 @@ public class MultiTimeSeriesTest extends Application {
     private Axis xAxis;
     private Axis yAxis;
 
-
     @Override
     public void init() {
         // Data Series 1
@@ -162,10 +161,8 @@ public class MultiTimeSeriesTest extends Application {
             listOfSeries3.add(xySeries);
         });
 
-
         double yAxisMinValue = Math.min(Math.min(yAxisMinValue1, yAxisMinValue2), yAxisMinValue3);
         double yAxisMaxValue = Math.max(Math.max(yAxisMaxValue1, yAxisMaxValue2), yAxisMaxValue3);
-
 
         // MultiTimeSeriesChart
         double start = xAxisValues1.stream().min(Comparator.comparingDouble(Double::doubleValue)).get();

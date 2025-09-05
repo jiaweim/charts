@@ -1,21 +1,3 @@
-/*
- * SPDX-License-Identifier: Apache-2.0
- *
- * Copyright 2016-2024 Gerrit Grunwald.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package fx.chart;
 
 import javafx.animation.AnimationTimer;
@@ -26,12 +8,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -40,18 +17,19 @@ import java.util.Random;
 
 
 public class WaffleChartTest extends Application {
-    private static final Random         RND = new Random();
-    private              HBox           hBox;
-    private              VBox           vBox;
-    private              DoubleProperty value;
-    private              Label          percentageLabel;
-    private              Label          restLabel;
-    private              WaffleChart    chart;
-    private              long           lastTimerCall;
-    private              AnimationTimer timer;
+    private static final Random RND = new Random();
+    private HBox hBox;
+    private VBox vBox;
+    private DoubleProperty value;
+    private Label percentageLabel;
+    private Label restLabel;
+    private WaffleChart chart;
+    private long lastTimerCall;
+    private AnimationTimer timer;
 
 
-    @Override public void init() {
+    @Override
+    public void init() {
         value = new SimpleDoubleProperty(0);
         value.addListener((o, ov, nv) -> {
             chart.setValue(nv.doubleValue());
@@ -60,9 +38,9 @@ public class WaffleChartTest extends Application {
         });
 
         chart = WaffleChartBuilder.create()
-                                  .cellFill(Color.PURPLE)
-                                  .backgroundFill(Color.TRANSPARENT)
-                                  .build();
+                .cellFill(Color.PURPLE)
+                .backgroundFill(Color.TRANSPARENT)
+                .build();
 
         restLabel = new Label(String.format("%.0f%%", 0.0));
         restLabel.setTextFill(Color.BLACK);
@@ -90,9 +68,10 @@ public class WaffleChartTest extends Application {
         vBox = new VBox(10, hBox, chart);
         vBox.setAlignment(Pos.CENTER);
 
-        lastTimerCall   = System.nanoTime();
-        timer           = new AnimationTimer() {
-            @Override public void handle(final long now) {
+        lastTimerCall = System.nanoTime();
+        timer = new AnimationTimer() {
+            @Override
+            public void handle(final long now) {
                 if (now > lastTimerCall + 3_000_000_000l) {
                     value.set(RND.nextDouble());
                     lastTimerCall = now;
@@ -101,7 +80,8 @@ public class WaffleChartTest extends Application {
         };
     }
 
-    @Override public void start(Stage stage) {
+    @Override
+    public void start(Stage stage) {
         StackPane pane = new StackPane(vBox);
         pane.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
 
@@ -116,7 +96,8 @@ public class WaffleChartTest extends Application {
         timer.start();
     }
 
-    @Override public void stop() {
+    @Override
+    public void stop() {
         System.exit(0);
     }
 
