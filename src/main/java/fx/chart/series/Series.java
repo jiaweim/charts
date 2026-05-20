@@ -151,8 +151,6 @@ public abstract class Series<T extends Item> {
         registerListeners();
     }
 
-
-    // ******************** Initialization ************************************
     private void registerListeners() {
         items_.addListener((ListChangeListener<T>) c -> {
             while (c.next()) {
@@ -650,18 +648,22 @@ public abstract class Series<T extends Item> {
         return symbolsVisibleProperty;
     }
 
-    public int getNoOfItems() {return items_.size();}
+    /**
+     * Return the number of data elements contained in this series.
+     *
+     * @return number of elements.
+     */
+    public int size() {return items_.size();}
 
     public void dispose() {items_.remove(itemListener_);}
 
     public void refresh() {fireSeriesEvent(UPDATE_EVENT);}
 
-
-    // ******************** Event handling ************************************
     public void setOnSeriesEvent(final SeriesEventListener LISTENER) {addSeriesEventListener(LISTENER);}
 
     public void addSeriesEventListener(final SeriesEventListener LISTENER) {
-        if (!listeners_.contains(LISTENER)) listeners_.add(LISTENER);
+        if (!listeners_.contains(LISTENER))
+            listeners_.add(LISTENER);
     }
 
     public void removeSeriesEventListener(final SeriesEventListener LISTENER) {

@@ -28,7 +28,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import pdk.util.math.MathUtils;
+import pdk.util.math.StatUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -2183,8 +2183,8 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             }
             minItems.add(new XYChartItem(x, minYForX));
             maxItems.add(new XYChartItem(x, maxYForX));
-            avgItems.add(new XYChartItem(x, MathUtils.mean(valuesForX)));
-            stdDevItems.add(new XYChartItem(x, MathUtils.standardDeviation(valuesForX)));
+            avgItems.add(new XYChartItem(x, StatUtils.mean(valuesForX)));
+            stdDevItems.add(new XYChartItem(x, StatUtils.standardDeviation(valuesForX)));
         }
 
         // Visualize data
@@ -2307,8 +2307,8 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             }
             minItems.add(new XYChartItem(x, minYForX));
             maxItems.add(new XYChartItem(x, maxYForX));
-            avgItems.add(new XYChartItem(x, MathUtils.mean(valuesForX)));
-            stdDevItems.add(new XYChartItem(x, MathUtils.standardDeviation(valuesForX)));
+            avgItems.add(new XYChartItem(x, StatUtils.mean(valuesForX)));
+            stdDevItems.add(new XYChartItem(x, StatUtils.standardDeviation(valuesForX)));
         }
 
         List<Point> avgItemsPoints = new ArrayList<>(avgItems.size());

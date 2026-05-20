@@ -12,7 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import pdk.util.data.Point2D;
-import pdk.util.data.func.NormalDistributionFunc2D;
+import pdk.util.data.func.NormalDistributionFunc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +26,10 @@ public class GaussianCurveChart extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        NormalDistributionFunc2D f1 = new NormalDistributionFunc2D(0.0, 1.0);
-        NormalDistributionFunc2D f2 = new NormalDistributionFunc2D(0.0, Math.sqrt(0.2));
-        NormalDistributionFunc2D f3 = new NormalDistributionFunc2D(0.0, Math.sqrt(5.0));
-        NormalDistributionFunc2D f4 = new NormalDistributionFunc2D(-2.0, Math.sqrt(0.5));
+        NormalDistributionFunc f1 = new NormalDistributionFunc(0.0, 1.0);
+        NormalDistributionFunc f2 = new NormalDistributionFunc(0.0, Math.sqrt(0.2));
+        NormalDistributionFunc f3 = new NormalDistributionFunc(0.0, Math.sqrt(5.0));
+        NormalDistributionFunc f4 = new NormalDistributionFunc(-2.0, Math.sqrt(0.5));
 
         Color[] plotly = new Color[]{
                 Color.rgb(99, 110, 250),
@@ -74,7 +74,7 @@ public class GaussianCurveChart extends Application {
         primaryStage.show();
     }
 
-    private static XYSeries<XYChartItem> createSeries(NormalDistributionFunc2D func, Color color, String name) {
+    private static XYSeries<XYChartItem> createSeries(NormalDistributionFunc func, Color color, String name) {
 
         List<XYChartItem> items = new ArrayList<>();
         for (Point2D sample : func.sample(-5.1, 5.1, 121)) {

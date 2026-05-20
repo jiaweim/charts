@@ -25,7 +25,6 @@ public class NormalDistributionDemo1 extends Application {
 
     @Override
     public void init() {
-
         XYSeries<XYChartItem> series = XYSeries.builder()
                 .items(createData())
                 .chartType(ChartType.LINE)

@@ -36,7 +36,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static javafx.geometry.Orientation.VERTICAL;
-import static pdk.util.ArgUtils.checkNotNull;
 
 
 /**
@@ -1903,8 +1902,13 @@ public class Axis extends Region {
         return tickLabelFontProperty == null ? tickLabelFont_ : tickLabelFontProperty.get();
     }
 
+    /**
+     * Set the font for rendering axis tick label text.
+     *
+     * @param font {@link Font}
+     */
     public void setTickLabelFont(final Font font) {
-        checkNotNull(font);
+        Objects.requireNonNull(font);
         if (tickLabelFontProperty == null) {
             tickLabelFont_ = font;
             redraw();

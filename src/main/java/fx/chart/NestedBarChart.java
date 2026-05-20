@@ -348,7 +348,7 @@ public class NestedBarChart extends Region implements ChartArea {
         ChartItemSeries<ChartItem> selectedSeries = null;
         for (int i = 0; i < noOfBars; i++) {
             ChartItemSeries<ChartItem> s = series.get(i);
-            int noOfItems = s.getNoOfItems();
+            int noOfItems = s.size();
             double sumOfItems = s.getItems().stream().mapToDouble(ChartItem::getValue).sum();
             double innerBarWidth = mainBarWidth / noOfItems;
             double mainBarHeight = sumOfItems * stepY;
@@ -461,7 +461,7 @@ public class NestedBarChart extends Region implements ChartArea {
         Font font = Fonts.opensansRegular(fontSize);
         for (int i = 0; i < noOfBars; i++) {
             ChartItemSeries<ChartItem> s = series.get(i);
-            int noOfItems = s.getNoOfItems();
+            int noOfItems = s.size();
             double sumOfItems = s.getSumOfAllItems();
             double innerBarWidth = mainBarWidth / noOfItems;
             double mainBarHeight = sumOfItems * stepY;

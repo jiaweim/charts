@@ -94,7 +94,7 @@ public class TimeSeriesPredictionTest extends Application {
         Axis xAxis = AxisBuilder.create(Orientation.HORIZONTAL, Position.BOTTOM)
                 .type(AxisType.TIME)
                 .start(targetStart)
-                .end(targetStart.plus(targetSeries.getNoOfItems(), timeStep))
+                .end(targetStart.plus(targetSeries.size(), timeStep))
                 .dateTimeFormatPattern("YYYY")
                 .autoScale(false)
                 .majorTickMarksVisible(false)
