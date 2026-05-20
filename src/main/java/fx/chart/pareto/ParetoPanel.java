@@ -4,8 +4,8 @@ import fx.chart.Axis;
 import fx.chart.Position;
 import fx.chart.color.ColorUtils;
 import fx.chart.font.Fonts;
-import fx.chart.util.Point;
 import fx.chart.tools.Helper;
+import fx.chart.util.Point;
 import javafx.beans.property.*;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -102,7 +102,6 @@ public class ParetoPanel extends Region {
     private ArrayList<Observer> observerList;
 
 
-    // ******************** Constructors **************************************
     public ParetoPanel(final ParetoModel MODEL) {
         decimals = 1;
         numberFormat = new StringBuilder("%.").append(decimals).append("f").toString();
@@ -111,8 +110,6 @@ public class ParetoPanel extends Region {
         init();
     }
 
-
-    // ******************** Initialization ************************************
     private void init() {
         modelStack = new Stack<>();
         dataDots = new ArrayList<>();
@@ -604,8 +601,6 @@ public class ParetoPanel extends Region {
         ctx.setFill(Color.BLUE);
         ctx.setTextAlign(TextAlignment.CENTER);
         ctx.setFont(new Font(chartFontSize));
-
-        //****************************Draw bars and percentage line*********************************
 
         drawBarsAndLine();
 

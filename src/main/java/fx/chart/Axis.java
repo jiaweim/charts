@@ -3,6 +3,7 @@ package fx.chart;
 import fx.chart.event.ChartEvent;
 import fx.chart.event.ChartEventListener;
 import fx.chart.event.EventType;
+import fx.chart.font.FontUtils;
 import fx.chart.tools.Helper;
 import fx.chart.tools.Helper.Interval;
 import fx.chart.tools.TickLabelFormat;
@@ -1966,8 +1967,7 @@ public class Axis extends Region {
     }
 
     public void setTitleFontSize(final double size) {
-        Font oldFont = getTitleFont();
-        Font newFont = Font.font(oldFont.getFamily(), size);
+        Font newFont = FontUtils.derive(getTitleFont(), (int) size);
         setTitleFont(newFont);
     }
 

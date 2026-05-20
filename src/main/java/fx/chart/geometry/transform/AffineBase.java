@@ -4,7 +4,14 @@ import fx.chart.util.Point;
 import fx.chart.geometry.*;
 import fx.chart.geometry.NonInvertibleTransformException;
 
-
+/**
+ * Abstract class for affine
+ *
+ * @author Jiawei Mao
+ * @author Gerrit Grunwald
+ * @version 1.0.0
+ * @since 15 Sep 2025, 2:19 PM
+ */
 public abstract class AffineBase extends BaseTransform {
 
     protected static final int APPLY_IDENTITY = 0;

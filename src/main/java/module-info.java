@@ -15,6 +15,8 @@ module fx.charts {
     requires org.slf4j;
     requires pdk.util;
     requires org.jspecify;
+    requires org.apache.commons.statistics.descriptive;
+    requires it.unimi.dsi.fastutil;
 
     opens fx.chart.heatmap to javafx.graphics;
 

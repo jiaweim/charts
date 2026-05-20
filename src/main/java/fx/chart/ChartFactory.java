@@ -45,7 +45,7 @@ public final class ChartFactory {
         bottomAxis.setTickLabelFontSize(12);
         bottomAxis.setAutoTickLabelFontSize(false);
 
-        XYPane pane = new XYPane(series);
+        XYPane<XYChartItem> pane = new XYPane<>(series);
 
         XYChart<XYChartItem> chart = new XYChart<>(pane, leftAxis, bottomAxis);
         Grid grid = new Grid(leftAxis, bottomAxis);

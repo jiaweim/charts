@@ -1,15 +1,24 @@
 package fx.chart.geometry.transform;
 
 
-import fx.chart.util.Point;
 import fx.chart.geometry.BaseBounds;
 import fx.chart.geometry.Path;
 import fx.chart.geometry.Rectangle;
 import fx.chart.geometry.Shape;
+import fx.chart.util.Point;
 
 import java.util.Objects;
 
+/**
+ * Translation
+ *
+ * @author Jiawei Mao
+ * @author Gerrit Grunwald
+ * @version 1.0.0
+ * @since 15 Sep 2025, 2:20 PM
+ */
 public class Translate extends BaseTransform {
+
     private double mxt;
     private double myt;
 

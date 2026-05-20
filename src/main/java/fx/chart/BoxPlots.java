@@ -20,7 +20,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
-import pdk.util.math.MathUtils;
+import org.apache.commons.statistics.descriptive.Quantile;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -96,10 +96,6 @@ public class BoxPlots<T extends ChartItem> extends Region {
     public record BoxPlotData(String name, double median, double q1, double q3, double iqr, double minValue,
                               double maxValue, double minimum, double maximum, List<? extends ChartItem> outliers) {}
 
-    ;
-
-
-    // ******************** Constructors **************************************
     public BoxPlots() {
         this(new ArrayList<>());
     }
@@ -120,9 +116,14 @@ public class BoxPlots<T extends ChartItem> extends Region {
             seriesList.forEach(series -> {
                 final List<T> items = series.getItems();
                 final List<Double> values = items.stream().map(item -> item.getValue()).collect(Collectors.toList());
-                median = MathUtils.percentile(values, 50);
-                q1 = MathUtils.percentile(values, 25);
-                q3 = MathUtils.percentile(values, 75);
+                double[] valueArray = new double[values.size()];
+                for (int i = 0; i < values.size(); i++) {
+                    valueArray[i] = values.get(i);
+                }
+                double[] quantiles = Quantile.withDefaults().evaluate(valueArray, 0.25, 0.50, 0.75);
+                median = quantiles[1];
+                q1 = quantiles[0];
+                q3 = quantiles[2];
                 iqr = q3 - q1;
                 iqrFraction = iqr * 1.5;
                 minValue = items.stream().min(Comparator.comparing(T::getValue)).get().getValue();

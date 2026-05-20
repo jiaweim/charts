@@ -164,15 +164,15 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     /**
      * Create a XYPane containing a list of {@link XYSeries}
      *
-     * @param SERIES {@link XYSeries} array
+     * @param series {@link XYSeries} array
      */
     @SafeVarargs
-    public XYPane(final XYSeries<T>... SERIES) {
-        this(Color.TRANSPARENT, 1, SERIES);
+    public XYPane(final XYSeries<T>... series) {
+        this(Color.TRANSPARENT, 1, series);
     }
 
-    public XYPane(final int BANDS, final XYSeries<T>... SERIES) {
-        this(Color.TRANSPARENT, BANDS, SERIES);
+    public XYPane(final int bands, final XYSeries<T>... series) {
+        this(Color.TRANSPARENT, bands, series);
     }
 
     public XYPane(final Paint BACKGROUND, final int BANDS, final XYSeries<T>... SERIES) {

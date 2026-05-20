@@ -25,21 +25,21 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
     private final ChartEvent ITEM_EVENT = new ChartEvent(XYChartItem.this, ChartEvent.ITEM_UPDATE);
     private final Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
 
-    private double _x;
+    private double x_;
     private DoubleProperty xProperty;
-    private double _y;
+    private double y_;
     private DoubleProperty yProperty;
-    private String _name;
+    private String name_;
     private StringProperty nameProperty;
-    private Color _fill;
+    private Color fill_;
     private ObjectProperty<Color> fillProperty;
-    private Color _stroke;
+    private Color stroke_;
     private ObjectProperty<Color> strokeProperty;
-    private Symbol _symbol;
+    private Symbol symbol_;
     private ObjectProperty<Symbol> symbolProperty;
-    private boolean _isEmpty;
+    private boolean isEmpty_;
     private BooleanProperty isEmptyProperty;
-    private String _tooltipText;
+    private String tooltipText_;
     private StringProperty tooltipTextProperty;
 
     public XYChartItem() {
@@ -110,8 +110,8 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
         this(X, Y, NAME, FILL, STROKE, SYMBOL, false);
     }
 
-    public XYChartItem(final double X, final double Y, final String NAME, final Color FILL, final Color STROKE, final Symbol SYMBOL, final boolean IS_EMPTY) {
-        this(X, Y, NAME, FILL, STROKE, SYMBOL, "", IS_EMPTY);
+    public XYChartItem(final double x, final double y, final String name, final Color fill, final Color stroke, final Symbol symbol, final boolean isEmpty) {
+        this(x, y, name, fill, stroke, symbol, "", isEmpty);
     }
 
     /**
@@ -128,24 +128,24 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
      */
     public XYChartItem(final double x, final double y, final String name,
             final Color fill, final Color stroke, final Symbol symbol, final String tooltip, final boolean isEmpty) {
-        _x = x;
-        _y = y;
-        _name = name;
-        _fill = fill;
-        _stroke = stroke;
-        _symbol = symbol;
-        _isEmpty = isEmpty;
-        _tooltipText = tooltip;
+        x_ = x;
+        y_ = y;
+        name_ = name;
+        fill_ = fill;
+        stroke_ = stroke;
+        symbol_ = symbol;
+        isEmpty_ = isEmpty;
+        tooltipText_ = tooltip;
         observers = new ConcurrentHashMap<>();
     }
 
     @Override
-    public double getX() {return null == xProperty ? _x : xProperty.get();}
+    public double getX() {return null == xProperty ? x_ : xProperty.get();}
 
     @Override
     public void setX(final double X) {
         if (null == xProperty) {
-            _x = X;
+            x_ = X;
             fireChartEvt(ITEM_EVENT);
         } else {
             xProperty.set(X);
@@ -155,7 +155,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
     @Override
     public DoubleProperty xProperty() {
         if (null == xProperty) {
-            xProperty = new DoublePropertyBase(_x) {
+            xProperty = new DoublePropertyBase(x_) {
                 @Override
                 protected void invalidated() {
                     fireChartEvt(ITEM_EVENT);
@@ -172,12 +172,12 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
     }
 
     @Override
-    public double getY() {return null == yProperty ? _y : yProperty.get();}
+    public double getY() {return null == yProperty ? y_ : yProperty.get();}
 
     @Override
     public void setY(final double Y) {
         if (null == yProperty) {
-            _y = Y;
+            y_ = Y;
             fireChartEvt(ITEM_EVENT);
         } else {
             yProperty.set(Y);
@@ -187,7 +187,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
     @Override
     public DoubleProperty yProperty() {
         if (null == yProperty) {
-            yProperty = new DoublePropertyBase(_y) {
+            yProperty = new DoublePropertyBase(y_) {
                 @Override
                 protected void invalidated() {
                     fireChartEvt(ITEM_EVENT);
@@ -204,11 +204,11 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
     }
 
     @Override
-    public String getName() {return null == nameProperty ? _name : nameProperty.get();}
+    public String getName() {return null == nameProperty ? name_ : nameProperty.get();}
 
     public void setName(final String NAME) {
         if (null == nameProperty) {
-            _name = NAME;
+            name_ = NAME;
             fireChartEvt(ITEM_EVENT);
         } else {
             nameProperty.set(NAME);
@@ -217,7 +217,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
 
     public StringProperty nameProperty() {
         if (null == nameProperty) {
-            nameProperty = new StringPropertyBase(_name) {
+            nameProperty = new StringPropertyBase(name_) {
                 @Override
                 protected void invalidated() {fireChartEvt(ITEM_EVENT);}
 
@@ -227,17 +227,17 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
                 @Override
                 public String getName() {return "name";}
             };
-            _name = null;
+            name_ = null;
         }
         return nameProperty;
     }
 
     @Override
-    public Color getFill() {return null == fillProperty ? _fill : fillProperty.get();}
+    public Color getFill() {return null == fillProperty ? fill_ : fillProperty.get();}
 
     public void setFill(final Color FILL) {
         if (null == fillProperty) {
-            _fill = FILL;
+            fill_ = FILL;
             fireChartEvt(ITEM_EVENT);
         } else {
             fillProperty.set(FILL);
@@ -246,7 +246,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
 
     public ObjectProperty<Color> fillProperty() {
         if (null == fillProperty) {
-            fillProperty = new ObjectPropertyBase<Color>(_fill) {
+            fillProperty = new ObjectPropertyBase<Color>(fill_) {
                 @Override
                 protected void invalidated() {fireChartEvt(ITEM_EVENT);}
 
@@ -256,17 +256,17 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
                 @Override
                 public String getName() {return "fill";}
             };
-            _fill = null;
+            fill_ = null;
         }
         return fillProperty;
     }
 
     @Override
-    public Color getStroke() {return null == strokeProperty ? _stroke : strokeProperty.get();}
+    public Color getStroke() {return null == strokeProperty ? stroke_ : strokeProperty.get();}
 
     public void setStroke(final Color STROKE) {
         if (null == strokeProperty) {
-            _stroke = STROKE;
+            stroke_ = STROKE;
             fireChartEvt(ITEM_EVENT);
         } else {
             strokeProperty.set(STROKE);
@@ -275,7 +275,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
 
     public ObjectProperty<Color> strokeProperty() {
         if (null == strokeProperty) {
-            strokeProperty = new ObjectPropertyBase<Color>(_stroke) {
+            strokeProperty = new ObjectPropertyBase<Color>(stroke_) {
                 @Override
                 protected void invalidated() {fireChartEvt(ITEM_EVENT);}
 
@@ -285,17 +285,17 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
                 @Override
                 public String getName() {return "stroke";}
             };
-            _stroke = null;
+            stroke_ = null;
         }
         return strokeProperty;
     }
 
     @Override
-    public Symbol getSymbol() {return null == symbolProperty ? _symbol : symbolProperty.get();}
+    public Symbol getSymbol() {return null == symbolProperty ? symbol_ : symbolProperty.get();}
 
     public void setSymbol(final Symbol SYMBOL) {
         if (null == symbolProperty) {
-            _symbol = SYMBOL;
+            symbol_ = SYMBOL;
             fireChartEvt(ITEM_EVENT);
         } else {
             symbolProperty.set(SYMBOL);
@@ -304,7 +304,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
 
     public ObjectProperty<Symbol> symbolProperty() {
         if (null == symbolProperty) {
-            symbolProperty = new ObjectPropertyBase<Symbol>(_symbol) {
+            symbolProperty = new ObjectPropertyBase<Symbol>(symbol_) {
                 @Override
                 protected void invalidated() {fireChartEvt(ITEM_EVENT);}
 
@@ -314,18 +314,18 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
                 @Override
                 public String getName() {return "symbol";}
             };
-            _symbol = null;
+            symbol_ = null;
         }
         return symbolProperty;
     }
 
     @Override
-    public String getTooltipText() {return null == tooltipTextProperty ? _tooltipText : tooltipTextProperty.get();}
+    public String getTooltipText() {return null == tooltipTextProperty ? tooltipText_ : tooltipTextProperty.get();}
 
     @Override
     public void setTooltipText(final String TOOLTIP) {
         if (null == tooltipTextProperty) {
-            _tooltipText = TOOLTIP;
+            tooltipText_ = TOOLTIP;
             fireChartEvt(ITEM_EVENT);
         } else {
             tooltipTextProperty.set(TOOLTIP);
@@ -335,7 +335,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
     @Override
     public StringProperty tooltipTextProperty() {
         if (null == tooltipTextProperty) {
-            tooltipTextProperty = new StringPropertyBase(_tooltipText) {
+            tooltipTextProperty = new StringPropertyBase(tooltipText_) {
                 @Override
                 protected void invalidated() {fireChartEvt(ITEM_EVENT);}
 
@@ -345,17 +345,17 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
                 @Override
                 public String getName() {return "tooltip";}
             };
-            _tooltipText = null;
+            tooltipText_ = null;
         }
         return tooltipTextProperty;
     }
 
     @Override
-    public boolean isEmptyItem() {return null == isEmptyProperty ? _isEmpty : isEmptyProperty.get();}
+    public boolean isEmptyItem() {return null == isEmptyProperty ? isEmpty_ : isEmptyProperty.get();}
 
     public void setIsEmpty(final boolean isEmpty) {
         if (null == this.isEmptyProperty) {
-            _isEmpty = isEmpty;
+            isEmpty_ = isEmpty;
             fireChartEvt(ITEM_EVENT);
         } else {
             this.isEmptyProperty.set(isEmpty);
@@ -364,7 +364,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
 
     public BooleanProperty isEmptyProperty() {
         if (null == isEmptyProperty) {
-            isEmptyProperty = new BooleanPropertyBase(_isEmpty) {
+            isEmptyProperty = new BooleanPropertyBase(isEmpty_) {
                 @Override
                 protected void invalidated() {fireChartEvt(ITEM_EVENT);}
 
@@ -377,7 +377,6 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
         }
         return isEmptyProperty;
     }
-
 
     // ******************** Event handling ************************************
     public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
@@ -410,13 +409,12 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
 
     @Override
     public String toString() {
-        return new StringBuilder().append("{\n")
-                .append("  \"name\":\"").append(getName()).append("\",\n")
-                .append("  \"x\":").append(getX()).append(",\n")
-                .append("  \"y\":").append(getY()).append(",\n")
-                .append("  \"symbol\":\"").append(getSymbol().name()).append("\"\n")
-                .append("}")
-                .toString();
+        return "{\n" +
+                "  \"name\":\"" + getName() + "\",\n" +
+                "  \"x\":" + getX() + ",\n" +
+                "  \"y\":" + getY() + ",\n" +
+                "  \"symbol\":\"" + getSymbol().name() + "\"\n" +
+                "}";
     }
 
     @Override

@@ -19,7 +19,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
-import pdk.util.math.MathUtils;
+import org.apache.commons.statistics.descriptive.DoubleStatistics;
+import org.apache.commons.statistics.descriptive.Quantile;
+import org.apache.commons.statistics.descriptive.Statistic;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -93,7 +95,6 @@ public class BoxPlot<T extends ChartItem> extends Region {
     private boolean sorted;
 
 
-    // ******************** Constructors **************************************
     public BoxPlot() {
         this("", new ArrayList<>());
     }
@@ -109,6 +110,8 @@ public class BoxPlot<T extends ChartItem> extends Region {
     public BoxPlot(final String NAME, final List<T> ITEMS) {
         items = FXCollections.observableArrayList();
         itemObserver = e -> redraw();
+        Quantile quantile = Quantile.withDefaults();
+
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
@@ -117,16 +120,25 @@ public class BoxPlot<T extends ChartItem> extends Region {
                     c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
                 }
             }
-            final List<Double> values = items.stream().map(item -> item.getValue()).collect(Collectors.toList());
-            median = MathUtils.percentile(values, 50);
-            q1 = MathUtils.percentile(values, 25);
-            q3 = MathUtils.percentile(values, 75);
+            double[] values = new double[items.size()];
+            for (int i = 0; i < items.size(); i++) {
+                values[i] = items.get(i).getValue();
+            }
+
+//            final List<Double> values = items.stream().map(item -> item.getValue()).collect(Collectors.toList());
+
+            double[] quantiles = quantile.evaluate(values, 0.25, 0.50, 0.75);
+
+            median = quantiles[1];
+            q1 = quantiles[0];
+            q3 = quantiles[2];
             iqr = q3 - q1;
             iqrFraction = iqr * 1.5;
-            minValue = items.stream().min(Comparator.comparing(T::getValue)).get().getValue();
-            maxValue = items.stream().max(Comparator.comparing(T::getValue)).get().getValue();
-            minimum = values.stream().filter(v -> v > (q1 - iqrFraction)).min(Comparator.naturalOrder()).get();
-            maximum = values.stream().filter(v -> v < (q3 + iqrFraction)).max(Comparator.naturalOrder()).get();
+            DoubleStatistics statistics = DoubleStatistics.of(EnumSet.of(Statistic.MIN, Statistic.MAX), values);
+            minValue = statistics.getAsDouble(Statistic.MIN);
+            maxValue = statistics.getAsDouble(Statistic.MAX);
+            minimum = Arrays.stream(values).filter(v -> v > (q1 - iqrFraction)).min().getAsDouble();
+            maximum = Arrays.stream(values).filter(v -> v < (q3 + iqrFraction)).max().getAsDouble();
             sorted = false;
             outliers.clear();
             outliers.addAll(items.stream().filter(item -> item.getValue() < minimum).collect(Collectors.toList()));

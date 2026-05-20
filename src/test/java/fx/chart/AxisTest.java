@@ -29,6 +29,7 @@ public class AxisTest extends Application {
     @Override
     public void init() {
         xAxisBottom = Axis.bottom(-20, 20, AXIS_WIDTH);
+
         xAxisTop = Axis.top(0, 100, AXIS_HEIGHT);
         yAxisLeft = Axis.left(-20, 20, AXIS_WIDTH);
 
