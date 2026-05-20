@@ -50,22 +50,22 @@ public class XYSeries<T extends XYItem> extends Series<T> {
         /**
          * set the series data
          *
-         * @param ITEMS list of data
+         * @param items list of data
          * @return this
          */
-        public Builder<T> items(T... ITEMS) {
-            Collections.addAll(itemList_, ITEMS);
+        public Builder<T> items(T... items) {
+            Collections.addAll(itemList_, items);
             return this;
         }
 
         /**
          * set the series data
          *
-         * @param ITEMS list of data
+         * @param items list of data
          * @return this
          */
-        public Builder<T> items(List<T> ITEMS) {
-            itemList_.addAll(ITEMS);
+        public Builder<T> items(List<T> items) {
+            itemList_.addAll(items);
             return this;
         }
 
@@ -198,28 +198,28 @@ public class XYSeries<T extends XYItem> extends Series<T> {
         this(null, ChartType.SCATTER, "", Color.TRANSPARENT, Color.BLACK, Symbol.CIRCLE, true);
     }
 
-    public XYSeries(final List<T> ITEMS, final ChartType TYPE) {
-        this(ITEMS, TYPE, "", Color.TRANSPARENT, Color.BLACK, Symbol.CIRCLE, true);
+    public XYSeries(final List<T> items, final ChartType type) {
+        this(items, type, "", Color.TRANSPARENT, Color.BLACK, Symbol.CIRCLE, true);
     }
 
-    public XYSeries(final List<T> ITEMS, final ChartType TYPE, final boolean SHOW_POINTS) {
-        this(ITEMS, TYPE, "", Color.TRANSPARENT, Color.BLACK, Symbol.CIRCLE, SHOW_POINTS);
+    public XYSeries(final List<T> items, final ChartType type, final boolean showPoints) {
+        this(items, type, "", Color.TRANSPARENT, Color.BLACK, Symbol.CIRCLE, showPoints);
     }
 
-    public XYSeries(final List<T> ITEMS, final ChartType TYPE, final Paint STROKE) {
-        this(ITEMS, TYPE, "", Color.TRANSPARENT, STROKE, Symbol.CIRCLE, true);
+    public XYSeries(final List<T> items, final ChartType type, final Paint stroke) {
+        this(items, type, "", Color.TRANSPARENT, stroke, Symbol.CIRCLE, true);
     }
 
-    public XYSeries(final List<T> ITEMS, final ChartType TYPE, final Paint FILL, final Paint STROKE) {
-        this(ITEMS, TYPE, "", FILL, STROKE, Symbol.CIRCLE, true);
+    public XYSeries(final List<T> items, final ChartType type, final Paint fill, final Paint stroke) {
+        this(items, type, "", fill, stroke, Symbol.CIRCLE, true);
     }
 
-    public XYSeries(final List<T> ITEMS, final ChartType TYPE, final String NAME) {
-        this(ITEMS, TYPE, NAME, Color.TRANSPARENT, Color.BLACK, Symbol.CIRCLE, true);
+    public XYSeries(final List<T> items, final ChartType type, final String name) {
+        this(items, type, name, Color.TRANSPARENT, Color.BLACK, Symbol.CIRCLE, true);
     }
 
-    public XYSeries(final List<T> ITEMS, final ChartType TYPE, final String NAME, final Paint FILL, final Paint STROKE, final boolean SHOW_POINTS) {
-        this(ITEMS, TYPE, NAME, FILL, STROKE, Symbol.CIRCLE, SHOW_POINTS);
+    public XYSeries(final List<T> items, final ChartType type, final String name, final Paint fill, final Paint stroke, final boolean showPoints) {
+        this(items, type, name, fill, stroke, Symbol.CIRCLE, showPoints);
     }
 
     public XYSeries(final List<T> items, final ChartType type, final String name, final Paint fill, final Paint stroke, final Symbol symbol, final boolean symbolsVisible) {

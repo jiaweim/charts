@@ -121,7 +121,7 @@ public class MatrixPane<T extends MatrixItem> extends Region implements ChartAre
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
 
-        series.setOnSeriesEvent(seriesEvent -> redraw());
+        series.addSeriesEventListener(seriesEvent -> redraw());
         series.getItems().addListener(itemListener);
     }
 

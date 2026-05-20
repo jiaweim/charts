@@ -10,7 +10,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import pdk.util.ResourceUtils;
+import pdk.util.io.FileUtils;
 
+import java.net.URL;
 import java.util.*;
 
 public class MultiTimeSeriesTest extends Application {
@@ -24,7 +26,10 @@ public class MultiTimeSeriesTest extends Application {
     public void init() {
         // Data Series 1
         List<XYSeries<XYChartItem>> listOfSeries1 = new ArrayList<>();
-        String filename1 = ResourceUtils.getResourceFile(MultiTimeSeriesTest.class.getClassLoader(), "fx/chart/data1.csv").getAbsolutePath();
+
+        URL url = MultiTimeSeriesTest.class.getResource("data1.csv");
+        String filename1 = FileUtils.toPath(url).toAbsolutePath().toString();
+//        ResourceUtils.getResourceFile(MultiTimeSeriesTest.class.getClassLoader(), "fx/chart/data1.csv").getAbsolutePath();
         String data1 = Helper.readTextFile(filename1);
         String[] lines1 = data1.split(System.getProperty("line.separator"));
         String firstLine1 = lines1[0];
@@ -70,7 +75,9 @@ public class MultiTimeSeriesTest extends Application {
 
         // Data Series 2
         List<XYSeries<XYChartItem>> listOfSeries2 = new ArrayList<>();
-        String filename2 = ResourceUtils.getResourceFile(MultiTimeSeriesTest.class.getClassLoader(), "fx/chart/data2.csv").getAbsolutePath();
+        URL url1 = MultiTimeSeriesTest.class.getResource("data2.csv");
+        String filename2 = FileUtils.toPath(url1).toAbsolutePath().toString();
+                //ResourceUtils.getResourceFile(MultiTimeSeriesTest.class.getClassLoader(), "fx/chart/data2.csv").getAbsolutePath();
         String data2 = Helper.readTextFile(filename2);
         String[] lines2 = data2.split(System.getProperty("line.separator"));
         String firstLine2 = lines2[0];
@@ -117,7 +124,9 @@ public class MultiTimeSeriesTest extends Application {
 
         // Data Series 3
         List<XYSeries<XYChartItem>> listOfSeries3 = new ArrayList<>();
-        String filename3 = ResourceUtils.getResourceFile(MultiTimeSeriesTest.class.getClassLoader(), "fx/chart/data3.csv").getAbsolutePath();
+        URL url2 = MultiTimeSeriesTest.class.getResource("data3.csv");
+        String filename3 = FileUtils.toPath(url2).toAbsolutePath().toString();
+//        String filename3 = ResourceUtils.getResourceFile(MultiTimeSeriesTest.class.getClassLoader(), "fx/chart/data3.csv").getAbsolutePath();
         String data3 = Helper.readTextFile(filename3);
         String[] lines3 = data3.split(System.getProperty("line.separator"));
         String firstLine3 = lines3[0];

@@ -19,7 +19,11 @@ public final class FXUtils {
      * @param runnable {@link Runnable}
      */
     public static void startFX(Runnable runnable) {
-        Platform.startup(runnable);
+        try {
+            Platform.startup(runnable);
+        } catch (Exception e) {
+            Platform.runLater(runnable);
+        }
     }
 
 }

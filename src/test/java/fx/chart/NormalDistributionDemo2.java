@@ -7,7 +7,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import pdk.util.data.Point2D;
-import pdk.util.data.func.NormalDistributionFunc2D;
+import pdk.util.data.func.NormalDistributionFunc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
 public class NormalDistributionDemo2 extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        NormalDistributionFunc2D func2D = new NormalDistributionFunc2D(0, 1);
+        NormalDistributionFunc func2D = new NormalDistributionFunc(0, 1);
         List<Point2D> samples = func2D.sample(-5, 5, 101);
         List<XYChartItem> list = new ArrayList<>(samples.size());
         for (Point2D sample : samples) {

@@ -8,6 +8,7 @@ import fx.chart.event.ChartEvent;
 import fx.chart.event.ChartEventListener;
 import fx.chart.event.SeriesEvent;
 import fx.chart.event.SeriesEventListener;
+import fx.chart.property.*;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -24,66 +25,44 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * data series
  *
  * @author Jiawei Mao
- * @author Gerrit Grunwald
- * @version 1.0.0
+ * @version 1.1.0
  * @since 04 Jul 2025, 10:27 AM
  */
 public abstract class Series<T extends Item> {
 
-    public final SeriesEvent UPDATE_EVENT = new SeriesEvent(Series.this);
+    private static final Runnable EMPTY = () -> {};
 
-    protected String name_;
-    protected StringProperty nameProperty;
+    public final SeriesEvent UPDATE_EVENT;
 
-    protected Paint fill_;
-    protected ObjectProperty<Paint> fillProperty;
-
-    protected Paint stroke_;
-    protected ObjectProperty<Paint> strokeProperty;
-
-    protected double strokeWidth_;
-    protected DoubleProperty strokeWidthProperty;
-
-    protected double[] lineDashes_;
-    protected ObjectProperty<double[]> lineDashesProperty;
-
-    protected Color textFill_;
-    protected ObjectProperty<Color> textFillProperty;
-
-    protected Color _symbolFill;
-    protected ObjectProperty<Color> symbolFillProperty;
-
-    protected Color _symbolStroke;
-    protected ObjectProperty<Color> symbolStrokeProperty;
-
-    protected Symbol _symbol;
-    protected ObjectProperty<Symbol> symbolProperty;
-
-    protected boolean symbolsVisible_;
-    protected BooleanProperty symbolsVisibleProperty;
-
-    protected double _symbolSize;
-    protected DoubleProperty symbolSizeProperty;
-
-    protected boolean visible_;
-    protected BooleanProperty visibleProperty;
-
-    protected boolean _animated;
-    protected BooleanProperty animatedProperty;
-
-    protected long _animationDuration;
-    protected LongProperty animationDurationProperty;
-
-    //ADDED property to see if wrapping should be used or not by default false. Keeps the previous functionality the same.
-    protected boolean _withWrapping;
-    protected BooleanProperty withWrappingProperty;
+    protected StringLazyProperty name_;
+    protected ObjectLazyProperty<Paint> fill_;
+    protected ObjectLazyProperty<Paint> stroke_;
+    protected DoubleLazyProperty strokeWidth_;
+    protected ObjectLazyProperty<double[]> lineDashes_;
+    protected ObjectLazyProperty<Color> textFill_;
+    protected ObjectLazyProperty<Color> symbolFill_;
+    protected ObjectLazyProperty<Color> symbolStroke_;
+    protected ObjectLazyProperty<Symbol> symbol_;
+    protected BooleanLazyProperty symbolsVisible_;
+    protected DoubleLazyProperty symbolSize_;
+    protected BooleanLazyProperty visible_;
+    protected BooleanLazyProperty animated_;
+    protected LongLazyProperty animationDuration_;
+    protected BooleanLazyProperty withWrapping_;
 
     protected ChartType chartType_;
     protected ObservableList<T> items_;
     private final CopyOnWriteArrayList<SeriesEventListener> listeners_;
     private final ListChangeListener<T> itemListener_;
+    /**
+     * Listener for item change to trigger update.
+     */
     private final ChartEventListener<ChartEvent> itemObserver_;
+    private final ListChangeListener<T> listChangeListener_;
 
+    /**
+     * Create an empty Series.
+     */
     public Series() {
         this(null, ChartType.SCATTER, "", Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, Symbol.CIRCLE);
     }
@@ -98,79 +77,99 @@ public abstract class Series<T extends Item> {
         this(Arrays.asList(items), type, "", Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, Symbol.CIRCLE);
     }
 
-    public Series(final List<T> ITEMS, final ChartType TYPE) {
-        this(ITEMS, TYPE, "", Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, Symbol.CIRCLE);
+    public Series(final List<T> items, final ChartType type) {
+        this(items, type, "", Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, Symbol.CIRCLE);
     }
 
-    public Series(final ChartType TYPE, final String NAME, final T... ITEMS) {
-        this(Arrays.asList(ITEMS), TYPE, NAME, Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, Symbol.CIRCLE);
+    public Series(final ChartType type, final String name, final T... items) {
+        this(Arrays.asList(items), type, name, Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, Symbol.CIRCLE);
     }
 
-    public Series(final List<T> ITEMS, final ChartType TYPE, final String NAME) {
-        this(ITEMS, TYPE, NAME, Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, Symbol.CIRCLE);
+    public Series(final List<T> items, final ChartType type, final String name) {
+        this(items, type, name, Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, Symbol.CIRCLE);
     }
 
-    public Series(final List<T> ITEMS, final ChartType TYPE, final String NAME, final Symbol SYMBOL) {
-        this(ITEMS, TYPE, NAME, Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, SYMBOL);
+    public Series(final List<T> items, final ChartType type, final String name, final Symbol symbol) {
+        this(items, type, name, Color.TRANSPARENT, Color.BLACK, Color.BLACK, Color.BLACK, symbol);
     }
 
-    public Series(final ChartType TYPE, final String NAME, final Paint FILL, final Paint STROKE, final Symbol SYMBOL, final T... ITEMS) {
-        this(Arrays.asList(ITEMS), TYPE, NAME, FILL, STROKE, Color.BLACK, Color.BLACK, SYMBOL);
+    public Series(final ChartType type, final String name, final Paint fill, final Paint stroke, final Symbol symbol, final T... items) {
+        this(Arrays.asList(items), type, name, fill, stroke, Color.BLACK, Color.BLACK, symbol);
     }
 
-    public Series(final List<T> ITEMS, final ChartType TYPE, final String NAME, final Paint FILL, final Paint STROKE, final Symbol SYMBOL) {
-        this(ITEMS, TYPE, NAME, FILL, STROKE, Color.BLACK, Color.BLACK, SYMBOL);
+    public Series(final List<T> items, final ChartType type, final String name, final Paint fill, final Paint stroke, final Symbol symbol) {
+        this(items, type, name, fill, stroke, Color.BLACK, Color.BLACK, symbol);
     }
 
-    public Series(final List<T> items, final ChartType type, final String name, final Paint FILL, final Paint STROKE, final Color SYMBOL_FILL, final Color SYMBOL_STROKE, final Symbol SYMBOL) {
-        name_ = name;
-        fill_ = FILL;
-        stroke_ = STROKE;
-        textFill_ = Color.BLACK;
-        _symbolFill = SYMBOL_FILL;
-        _symbolStroke = SYMBOL_STROKE;
-        _symbol = SYMBOL;
-        symbolsVisible_ = true;
-        _symbolSize = -1;
-        strokeWidth_ = -1;
-        lineDashes_ = null;
-        visible_ = true;
-        _animated = false;
-        _animationDuration = 800;
-        _withWrapping = false;
+    /**
+     * Create a series.
+     *
+     * @param items        The data contained in this series.
+     * @param type         {@link ChartType}
+     * @param name         name of the series
+     * @param fill
+     * @param stroke
+     * @param symbolFill
+     * @param symbolStroke
+     * @param symbol
+     */
+    public Series(final List<T> items, final ChartType type, final String name,
+            final Paint fill, final Paint stroke, final Color symbolFill, final Color symbolStroke, final Symbol symbol) {
+        UPDATE_EVENT = new SeriesEvent(this);
+
+        this.name_ = new StringLazyProperty(this, "name", name, () -> fireSeriesEvent(UPDATE_EVENT));
+        this.fill_ = new ObjectLazyProperty<>(this, "fill", fill, this::refresh);
+        this.stroke_ = new ObjectLazyProperty<>(this, "stroke", stroke, this::refresh);
+        this.strokeWidth_ = new DoubleLazyProperty(this, "strokeWidth", -1,
+                () -> fireSeriesEvent(UPDATE_EVENT),
+                width -> width == -1 ? -1 : Math.clamp(width, 1, 24));
+        this.lineDashes_ = new ObjectLazyProperty<>(this, "dashes", null, this::refresh);
+        this.textFill_ = new ObjectLazyProperty<>(this, "textFill", Color.BLACK, this::refresh);
+        this.symbolFill_ = new ObjectLazyProperty<>(this, "symbolFill", symbolFill, this::refresh);
+        this.symbolStroke_ = new ObjectLazyProperty<>(this, "symbolStroke", symbolStroke, this::refresh);
+        this.symbol_ = new ObjectLazyProperty<>(this, "symbol", symbol, () -> fireSeriesEvent(UPDATE_EVENT));
+        this.symbolSize_ = new DoubleLazyProperty(this, "symbolSize", -1, () -> fireSeriesEvent(UPDATE_EVENT),
+                v -> v == -1 ? -1 : Math.clamp(v, 1, 24));
+        this.symbolsVisible_ = new BooleanLazyProperty(this, "symbolsVisible", true, () -> fireSeriesEvent(UPDATE_EVENT));
+        this.visible_ = new BooleanLazyProperty(this, "visible", true, () -> fireSeriesEvent(UPDATE_EVENT));
+        this.animated_ = new BooleanLazyProperty(this, "animated", false, EMPTY);
+        this.animationDuration_ = new LongLazyProperty(this, "animationDuration", 800L, EMPTY, time -> Math.clamp(time, 10, 10000));
+        this.withWrapping_ = new BooleanLazyProperty(this, "withWrapping", false, () -> fireSeriesEvent(UPDATE_EVENT));
+
         chartType_ = type;
         items_ = FXCollections.observableArrayList();
+
         itemListener_ = change -> fireSeriesEvent(UPDATE_EVENT);
         itemObserver_ = e -> fireSeriesEvent(UPDATE_EVENT);
         listeners_ = new CopyOnWriteArrayList<>();
 
-        if (null != items) {
+        if (items != null) {
             items_.setAll(items);
         }
+
+        listChangeListener_ = c -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    c.getAddedSubList().forEach(item -> {
+                        if (item instanceof XYChartItem xyChartItem) {
+                            xyChartItem.addChartEventObserver(ChartEvent.ANY, itemObserver_);
+                        }
+                    });
+                } else if (c.wasRemoved()) {
+                    c.getRemoved().forEach(item -> {
+                        if (item instanceof XYChartItem xyChartItem) {
+                            xyChartItem.removeChartEventObserver(ChartEvent.ANY, itemObserver_);
+                        }
+                    });
+                }
+            }
+        };
 
         registerListeners();
     }
 
     private void registerListeners() {
-        items_.addListener((ListChangeListener<T>) c -> {
-            while (c.next()) {
-                if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(item -> {
-                        if (item instanceof XYChartItem) {
-                            XYChartItem xyChartItem = (XYChartItem) item;
-                            xyChartItem.addChartEvtObserver(ChartEvent.ANY, itemObserver_);
-                        }
-                    });
-                } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(item -> {
-                        if (item instanceof XYChartItem) {
-                            XYChartItem xyChartItem = (XYChartItem) item;
-                            xyChartItem.removeChartEvtObserver(ChartEvent.ANY, itemObserver_);
-                        }
-                    });
-                }
-            }
-        });
+        items_.addListener(listChangeListener_);
         items_.addListener(itemListener_);
     }
 
@@ -181,114 +180,104 @@ public abstract class Series<T extends Item> {
      */
     public ObservableList<T> getItems() {return items_;}
 
-    public void setItems(final Collection<T> ITEMS) {items_.setAll(ITEMS);}
+    /**
+     * Set the data elements contained in this series.
+     *
+     * @param items data items.
+     */
+    public void setItems(final Collection<? extends T> items) {items_.setAll(items);}
 
-    public void setItems(final T... items) {setItems(Arrays.asList(items));}
+    /**
+     * Set the data elements contained in this series.
+     *
+     * @param items data items.
+     */
+    @SafeVarargs
+    public final void setItems(final T... items) {setItems(Arrays.asList(items));}
 
-    public void setItems(final List<T> ITEMS) {items_.setAll(ITEMS);}
+    /**
+     * Set the data elements contained in this series.
+     *
+     * @param items data items.
+     */
+    public void setItems(final List<T> items) {items_.setAll(items);}
 
     /**
      * @return name of this series
      */
-    public String getName() {return null == nameProperty ? name_ : nameProperty.get();}
-
-    public void setName(final String NAME) {
-        if (null == nameProperty) {
-            name_ = NAME;
-            fireSeriesEvent(UPDATE_EVENT);
-        } else {
-            nameProperty.set(NAME);
-        }
+    public String getName() {
+        return name_.get();
     }
 
+    /**
+     * Set the name of this series
+     *
+     * @param name new name
+     */
+    public void setName(final String name) {
+        this.name_.set(name);
+    }
+
+    /**
+     * Return the series name as Property type.
+     *
+     * @return {@link StringProperty} of series name.
+     */
     public StringProperty nameProperty() {
-        if (null == nameProperty) {
-            nameProperty = new StringPropertyBase(name_) {
-                @Override
-                protected void invalidated() {fireSeriesEvent(UPDATE_EVENT);}
-
-                @Override
-                public Object getBean() {return Series.this;}
-
-                @Override
-                public String getName() {return "name";}
-            };
-            name_ = null;
-        }
-        return nameProperty;
+        return this.name_.getProperty();
     }
 
-    public Paint getFill() {return fillProperty == null ? fill_ : fillProperty.get();}
-
-    public void setFill(final Paint PAINT) {
-        if (null == fillProperty) {
-            fill_ = PAINT;
-            refresh();
-        } else {
-            fillProperty.set(PAINT);
-        }
+    /**
+     *
+     * @return the fill {@link Paint}
+     */
+    public Paint getFill() {
+        return this.fill_.get();
     }
 
+    /**
+     * Set the fill {@link Paint}.
+     *
+     * @param paint {@link Paint}.
+     */
+    public void setFill(final Paint paint) {
+        this.fill_.set(paint);
+    }
+
+    /**
+     * Return the fill Paint as Property type.
+     *
+     * @return {@link ObjectProperty} of fill Paint.
+     */
     public ObjectProperty<Paint> fillProperty() {
-        if (null == fillProperty) {
-            fillProperty = new ObjectPropertyBase<Paint>(fill_) {
-                @Override
-                protected void invalidated() {refresh();}
-
-                @Override
-                public Object getBean() {return Series.this;}
-
-                @Override
-                public String getName() {return "fill";}
-            };
-            fill_ = null;
-        }
-        return fillProperty;
+        return fill_.getProperty();
     }
 
     /**
      * @return {@link Paint} for stroke
      */
     public Paint getStroke() {
-        return strokeProperty == null ? stroke_ : strokeProperty.get();
+        return stroke_.get();
     }
 
     /**
-     * set the storke
+     * set the stroke.
      *
-     * @param PAINT {@link Paint}
+     * @param paint {@link Paint}
      */
-    public void setStroke(final Paint PAINT) {
-        if (strokeProperty == null) {
-            stroke_ = PAINT;
-            refresh();
-        } else {
-            strokeProperty.set(PAINT);
-        }
+    public void setStroke(final Paint paint) {
+        this.stroke_.set(paint);
     }
 
     public ObjectProperty<Paint> strokeProperty() {
-        if (null == strokeProperty) {
-            strokeProperty = new ObjectPropertyBase<>(stroke_) {
-                @Override
-                protected void invalidated() {refresh();}
-
-                @Override
-                public Object getBean() {return Series.this;}
-
-                @Override
-                public String getName() {return "stroke";}
-            };
-            stroke_ = null;
-        }
-        return strokeProperty;
+        return this.stroke_.getProperty();
     }
 
     /**
      * @return dashes for stoke
      */
     public double[] getLineDashes() {
-        return lineDashesProperty == null ? lineDashes_ : lineDashesProperty.get();
+        return lineDashes_.get();
     }
 
     /**
@@ -297,211 +286,100 @@ public abstract class Series<T extends Item> {
      * @param dashes dashes value
      */
     public void setLineDashes(double... dashes) {
-        if (lineDashesProperty == null) {
-            lineDashes_ = dashes;
-            refresh();
-        } else {
-            lineDashesProperty.set(dashes);
-        }
+        this.lineDashes_.set(dashes);
     }
 
     public ObjectProperty<double[]> lineDashesProperty() {
-        if (lineDashesProperty == null) {
-            lineDashesProperty = new ObjectPropertyBase<>(lineDashes_) {
-                @Override
-                protected void invalidated() {
-                    refresh();
-                }
-
-                @Override
-                public Object getBean() {
-                    return this;
-                }
-
-                @Override
-                public String getName() {
-                    return "dashes";
-                }
-            };
-            lineDashes_ = null;
-        }
-        return lineDashesProperty;
+        return this.lineDashes_.getProperty();
     }
 
-    public Color getTextFill() {return null == textFillProperty ? textFill_ : textFillProperty.get();}
+    public Color getTextFill() {
+        return this.textFill_.get();
+    }
 
-    public void setTextFill(final Color COLOR) {
-        if (null == textFillProperty) {
-            textFill_ = COLOR;
-            refresh();
-        } else {
-            textFillProperty.set(COLOR);
-        }
+    public void setTextFill(final Color color) {
+        this.textFill_.set(color);
     }
 
     public ObjectProperty<Color> textFillProperty() {
-        if (null == textFillProperty) {
-            textFillProperty = new ObjectPropertyBase<>(textFill_) {
-                @Override
-                protected void invalidated() {refresh();}
-
-                @Override
-                public Object getBean() {return Series.this;}
-
-                @Override
-                public String getName() {return "textFill";}
-            };
-            textFill_ = null;
-        }
-        return textFillProperty;
+        return this.textFill_.getProperty();
     }
 
-    public Color getSymbolFill() {return null == symbolFillProperty ? _symbolFill : symbolFillProperty.get();}
+    public Color getSymbolFill() {
+        return this.symbolFill_.get();
+    }
 
-    public void setSymbolFill(final Color COLOR) {
-        if (null == symbolFillProperty) {
-            _symbolFill = COLOR;
-            refresh();
-        } else {
-            symbolFillProperty.set(COLOR);
-        }
+    public void setSymbolFill(final Color color) {
+        this.symbolFill_.set(color);
     }
 
     public ObjectProperty<Color> symbolFillProperty() {
-        if (null == symbolFillProperty) {
-            symbolFillProperty = new ObjectPropertyBase<>(_symbolFill) {
-                @Override
-                protected void invalidated() {refresh();}
-
-                @Override
-                public Object getBean() {return Series.this;}
-
-                @Override
-                public String getName() {return "symbolFill";}
-            };
-            _symbolFill = null;
-        }
-        return symbolFillProperty;
+        return this.symbolFill_.getProperty();
     }
 
-    public Color getSymbolStroke() {return null == symbolStrokeProperty ? _symbolStroke : symbolStrokeProperty.get();}
+    public Color getSymbolStroke() {
+        return this.symbolStroke_.get();
+    }
 
-    public void setSymbolStroke(final Color COLOR) {
-        if (null == symbolStrokeProperty) {
-            _symbolStroke = COLOR;
-            refresh();
-        } else {
-            symbolStrokeProperty.set(COLOR);
-        }
+    public void setSymbolStroke(final Color color) {
+        this.symbolStroke_.set(color);
     }
 
     public ObjectProperty<Color> symbolStrokeProperty() {
-        if (null == symbolStrokeProperty) {
-            symbolStrokeProperty = new ObjectPropertyBase<>(_symbolStroke) {
-                @Override
-                protected void invalidated() {refresh();}
-
-                @Override
-                public Object getBean() {return Series.this;}
-
-                @Override
-                public String getName() {return "symbolStroke";}
-            };
-            _symbolStroke = null;
-        }
-        return symbolStrokeProperty;
+        return this.symbolStroke_.getProperty();
     }
 
-    public Symbol getSymbol() {return null == symbolProperty ? _symbol : symbolProperty.get();}
+    public Symbol getSymbol() {
+        return this.symbol_.get();
+    }
 
-    public void setSymbol(final Symbol aSymbol) {
-        if (null == symbolProperty) {
-            _symbol = aSymbol;
-            fireSeriesEvent(UPDATE_EVENT);
-        } else {
-            symbolProperty.set(aSymbol);
-        }
+    public void setSymbol(final Symbol symbol) {
+        this.symbol_.set(symbol);
     }
 
     public ObjectProperty<Symbol> symbolProperty() {
-        if (null == symbolProperty) {
-            symbolProperty = new ObjectPropertyBase<>(_symbol) {
-                @Override
-                protected void invalidated() {fireSeriesEvent(UPDATE_EVENT);}
-
-                @Override
-                public Object getBean() {return Series.this;}
-
-                @Override
-                public String getName() {return "symbol";}
-            };
-            _symbol = null;
-        }
-        return symbolProperty;
+        return this.symbol_.getProperty();
     }
 
-    public boolean getSymbolsVisible() {return symbolsVisibleProperty == null ? symbolsVisible_ : symbolsVisibleProperty.get();}
+    public boolean getSymbolsVisible() {
+        return this.symbolsVisible_.get();
+    }
 
     public void setSymbolsVisible(final boolean visible) {
-        if (symbolsVisibleProperty == null) {
-            symbolsVisible_ = visible;
-            fireSeriesEvent(UPDATE_EVENT);
-        } else {
-            symbolsVisibleProperty.set(visible);
-        }
+        this.symbolsVisible_.set(visible);
     }
 
     public BooleanProperty symbolsVisibleProperty() {
-        if (null == symbolsVisibleProperty) {
-            symbolsVisibleProperty = new BooleanPropertyBase(symbolsVisible_) {
-                @Override
-                protected void invalidated() {fireSeriesEvent(UPDATE_EVENT);}
-
-                @Override
-                public Object getBean() {return Series.this;}
-
-                @Override
-                public String getName() {return "symbolsVisible";}
-            };
-        }
-        return symbolsVisibleProperty;
+        return symbolsVisible_.getProperty();
     }
 
     public ChartType getChartType() {return chartType_;}
 
-    public void setChartType(final ChartType TYPE) {
-        chartType_ = TYPE;
+    public void setChartType(final ChartType chartType) {
+        chartType_ = chartType;
         refresh();
     }
 
-    public double getSymbolSize() {return null == symbolSizeProperty ? _symbolSize : symbolSizeProperty.get();}
+    /**
+     * Return the symbol size.
+     *
+     * @return symbol size.
+     */
+    public double getSymbolSize() {
+        return this.symbolSize_.getAsDouble();
+    }
 
-    public void setSymbolSize(final double SIZE) {
-        if (null == symbolSizeProperty) {
-            _symbolSize = Math.clamp(SIZE, 1, 24);
-            fireSeriesEvent(UPDATE_EVENT);
-        } else {
-            symbolSizeProperty.set(SIZE);
-        }
+    /**
+     * Set the size of the symbol.
+     *
+     * @param size symbol size.
+     */
+    public void setSymbolSize(final double size) {
+        this.symbolSize_.set(size);
     }
 
     public DoubleProperty symbolSizeProperty() {
-        if (null == symbolSizeProperty) {
-            symbolSizeProperty = new DoublePropertyBase(_symbolSize) {
-                @Override
-                protected void invalidated() {
-                    set(Math.clamp(get(), 1, 24));
-                    fireSeriesEvent(UPDATE_EVENT);
-                }
-
-                @Override
-                public Object getBean() {return Series.this;}
-
-                @Override
-                public String getName() {return "symbolSize";}
-            };
-        }
-        return symbolSizeProperty;
+        return this.symbolSize_.getProperty();
     }
 
     /**
@@ -510,142 +388,68 @@ public abstract class Series<T extends Item> {
      * @return stroke width
      */
     public double getStrokeWidth() {
-        return strokeWidthProperty == null ? strokeWidth_ : strokeWidthProperty.get();
+        return this.strokeWidth_.getAsDouble();
     }
 
     /**
      * set the stroke width
      *
-     * @param WIDTH stroke width
+     * @param width stroke width
      */
-    public void setStrokeWidth(final double WIDTH) {
-        if (strokeWidthProperty == null) {
-            strokeWidth_ = Math.clamp(WIDTH, 1, 24);
-            fireSeriesEvent(UPDATE_EVENT);
-        } else {
-            strokeWidthProperty.set(WIDTH);
-        }
+    public void setStrokeWidth(final double width) {
+        this.strokeWidth_.set(width);
     }
 
     public DoubleProperty strokeWidthProperty() {
-        if (null == strokeWidthProperty) {
-            strokeWidthProperty = new DoublePropertyBase(strokeWidth_) {
-                @Override
-                protected void invalidated() {
-                    set(Math.clamp(get(), 1, 24));
-                    fireSeriesEvent(UPDATE_EVENT);
-                }
-
-                @Override
-                public Object getBean() {return Series.this;}
-
-                @Override
-                public String getName() {return "strokeWidth";}
-            };
-        }
-        return strokeWidthProperty;
+        return strokeWidth_.getProperty();
     }
 
-    public boolean isVisible() {return null == visibleProperty ? visible_ : visibleProperty.get();}
+    public boolean isVisible() {
+        return this.visible_.get();
+    }
 
     public void setVisible(final boolean visible) {
-        if (null == this.visibleProperty) {
-            visible_ = visible;
-            fireSeriesEvent(UPDATE_EVENT);
-        } else {
-            this.visibleProperty.set(visible);
-        }
+        this.visible_.set(visible);
     }
 
     public BooleanProperty visibleProperty() {
-        if (null == visibleProperty) {
-            visibleProperty = new BooleanPropertyBase(visible_) {
-                @Override
-                protected void invalidated() {fireSeriesEvent(UPDATE_EVENT);}
-
-                @Override
-                public Object getBean() {return Series.this;}
-
-                @Override
-                public String getName() {return "visible";}
-            };
-        }
-        return visibleProperty;
+        return visible_.getProperty();
     }
 
-    public boolean isAnimated() {return null == animatedProperty ? _animated : animatedProperty.get();}
+    public boolean isAnimated() {
+        return this.animated_.get();
+    }
 
-    public void setAnimated(final boolean ANIMATED) {
-        if (null == animatedProperty) {
-            _animated = ANIMATED;
-        } else {
-            animatedProperty.set(ANIMATED);
-        }
+    public void setAnimated(final boolean animated) {
+        this.animated_.set(animated);
     }
 
     public BooleanProperty animatedProperty() {
-        if (null == animatedProperty) {
-            animatedProperty = new BooleanPropertyBase(_animated) {
-                @Override
-                public Object getBean() {return Series.this;}
-
-                @Override
-                public String getName() {return "animated";}
-            };
-        }
-        return animatedProperty;
+        return this.animated_.getProperty();
     }
 
-    public long getAnimationDuration() {return null == animationDurationProperty ? _animationDuration : animationDurationProperty.get();}
+    public long getAnimationDuration() {
+        return this.animationDuration_.getAsLong();
+    }
 
-    public void setAnimationDuration(final long DURATION) {
-        if (null == animationDurationProperty) {
-            _animationDuration = Math.clamp(DURATION, 10, 10000);
-        } else {
-            animationDurationProperty.set(Math.clamp(DURATION, 10, 10000));
-        }
+    public void setAnimationDuration(final long duration) {
+        this.animationDuration_.set(duration);
     }
 
     public LongProperty animationDurationProperty() {
-        if (null == animationDurationProperty) {
-            animationDurationProperty = new LongPropertyBase(_animationDuration) {
-                @Override
-                public Object getBean() {return Series.this;}
-
-                @Override
-                public String getName() {return "animationDuration";}
-            };
-        }
-        return animationDurationProperty;
+        return this.animationDuration_.getProperty();
     }
 
-    // ADDED accessors for the withWrapping boolean value and associated property.
+    public boolean isWithWrapping() {
+        return withWrapping_.get();
+    }
 
-    public boolean isWithWrapping() {return null == withWrappingProperty ? _withWrapping : withWrappingProperty.get();}
-
-    public void setWithWrapping(final boolean WITH_WRAPPING) {
-        if (null == withWrappingProperty) {
-            _withWrapping = WITH_WRAPPING;
-            fireSeriesEvent(UPDATE_EVENT);
-        } else {
-            withWrappingProperty.set(WITH_WRAPPING);
-        }
+    public void setWithWrapping(final boolean withWrapping) {
+        this.withWrapping_.set(withWrapping);
     }
 
     public BooleanProperty withWrappingProperty() {
-        if (null == withWrappingProperty) {
-            withWrappingProperty = new BooleanPropertyBase(_withWrapping) {
-                @Override
-                protected void invalidated() {fireSeriesEvent(UPDATE_EVENT);}
-
-                @Override
-                public Object getBean() {return Series.this;}
-
-                @Override
-                public String getName() {return "withWrapping";}
-            };
-        }
-        return symbolsVisibleProperty;
+        return withWrapping_.getProperty();
     }
 
     /**
@@ -655,24 +459,50 @@ public abstract class Series<T extends Item> {
      */
     public int size() {return items_.size();}
 
-    public void dispose() {items_.remove(itemListener_);}
+    /**
+     * Removes all the elements from this series. The list will be empty after this call returns.
+     */
+    public void clear() {
+        items_.clear();
+    }
+
+    public void dispose() {
+        items_.clear();
+        items_.removeListener(listChangeListener_);
+        items_.removeListener(itemListener_);
+        listeners_.clear();
+    }
 
     public void refresh() {fireSeriesEvent(UPDATE_EVENT);}
 
-    public void setOnSeriesEvent(final SeriesEventListener LISTENER) {addSeriesEventListener(LISTENER);}
-
-    public void addSeriesEventListener(final SeriesEventListener LISTENER) {
-        if (!listeners_.contains(LISTENER))
-            listeners_.add(LISTENER);
+    /**
+     * Add a new {@link SeriesEventListener}
+     *
+     * @param listener {@link SeriesEventListener}
+     */
+    public void addSeriesEventListener(final SeriesEventListener listener) {
+        if (!listeners_.contains(listener)) {
+            listeners_.add(listener);
+        }
     }
 
-    public void removeSeriesEventListener(final SeriesEventListener LISTENER) {
-        if (listeners_.contains(LISTENER)) listeners_.remove(LISTENER);
+    /**
+     * Remove the {@link SeriesEventListener} from this series.
+     *
+     * @param listener a {@link SeriesEventListener} instance.
+     */
+    public void removeSeriesEventListener(final SeriesEventListener listener) {
+        listeners_.remove(listener);
     }
 
-    public void fireSeriesEvent(final SeriesEvent EVENT) {
+    /**
+     * Send the specified event to all listeners.
+     *
+     * @param seriesEvent {@link SeriesEvent}
+     */
+    public void fireSeriesEvent(final SeriesEvent seriesEvent) {
         for (SeriesEventListener listener : listeners_) {
-            listener.onModelEvent(EVENT);
+            listener.onModelEvent(seriesEvent);
         }
     }
 }

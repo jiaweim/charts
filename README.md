@@ -1,4 +1,4 @@
-# Charts
+# fx-chart
 
 [![GitHub license](https://badgen.net/github/license/HanSolo/charts)](https://github.com/jiaweim/charts/blob/master/LICENSE)
 

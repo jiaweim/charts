@@ -20,8 +20,17 @@ public interface XYItem extends Item {
      */
     double getX();
 
+    /**
+     * Set the x-value
+     *
+     * @param x new value
+     */
     void setX(double x);
 
+    /**
+     *
+     * @return
+     */
     DoubleProperty xProperty();
 
     double getY();

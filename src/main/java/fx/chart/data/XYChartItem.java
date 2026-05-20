@@ -378,8 +378,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
         return isEmptyProperty;
     }
 
-    // ******************** Event handling ************************************
-    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
+    public void addChartEventObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (!observers.containsKey(type)) {
             observers.put(type, new CopyOnWriteArrayList<>());
         }
@@ -389,7 +388,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
         observers.get(type).add(observer);
     }
 
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
+    public void removeChartEventObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
         if (observers.containsKey(type)) {
             if (observers.get(type).contains(observer)) {
                 observers.get(type).remove(observer);

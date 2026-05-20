@@ -106,7 +106,7 @@ public class XYZPane<T extends XYZItem> extends Region implements ChartArea {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
 
-        listOfSeries.forEach(series -> series.setOnSeriesEvent(seriesEvent -> redraw()));
+        listOfSeries.forEach(series -> series.addSeriesEventListener(seriesEvent -> redraw()));
     }
 
 

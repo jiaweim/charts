@@ -1,5 +1,12 @@
 package fx.chart;
 
+/**
+ * Chart types.
+ *
+ * @author Jiawei Mao
+ * @version 1.0.0
+ * @since 20 May 2026, 1:00 PM
+ */
 public enum ChartType {
 
     SCATTER,

@@ -15,8 +15,8 @@ public class SeriesEvent<T extends ChartItem> {
 
     private final Series<T> series;
 
-    public SeriesEvent(final Series<T> SERIES) {
-        this.series = SERIES;
+    public SeriesEvent(final Series<T> series) {
+        this.series = series;
     }
 
     /**

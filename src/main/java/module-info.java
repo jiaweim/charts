@@ -1,4 +1,4 @@
-module fx.charts {
+module fx.chart {
 
     // Java
     requires java.base;
@@ -35,5 +35,6 @@ module fx.charts {
     exports fx.chart.util;
     exports fx.chart.voronoi;
     exports fx.chart.wafermap;
+    exports fx.chart.property;
 
 }

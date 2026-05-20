@@ -12,7 +12,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-
+/**
+ *
+ *
+ * @author Jiawei Mao
+ * @version 1.0.0
+ * @since 20 May 2026, 12:51 PM
+ */
 public class BubbleGridChartItem implements BubbleGridItem {
 
     private final ChartEvent ITEM_EVENT = new ChartEvent(BubbleGridChartItem.this, ChartEvent.ITEM_UPDATE);

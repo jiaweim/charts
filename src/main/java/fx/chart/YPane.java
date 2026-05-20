@@ -3,8 +3,8 @@ package fx.chart;
 import fx.chart.data.ValueItem;
 import fx.chart.font.Fonts;
 import fx.chart.series.YSeries;
-import fx.chart.util.Point;
 import fx.chart.tools.Helper;
+import fx.chart.util.Point;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -130,7 +130,7 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
 
-        listOfSeries.forEach(series -> series.setOnSeriesEvent(seriesEvent -> redraw()));
+        listOfSeries.forEach(series -> series.addSeriesEventListener(seriesEvent -> redraw()));
         categories.addListener((ListChangeListener<Category>) c -> redraw());
     }
 
