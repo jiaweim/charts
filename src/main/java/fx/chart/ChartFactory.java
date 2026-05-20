@@ -26,7 +26,7 @@ public final class ChartFactory {
             String yAxisLabel, double minY, double maxY, int yDecimal,
             Color lineColor, List<XYChartItem> dataset) {
 
-        XYSeries<XYChartItem> series = XYSeries.builder()
+        XYSeries<XYChartItem> series = new XYSeries.Builder<XYChartItem>()
                 .items(dataset)
                 .chartType(ChartType.LINE)
                 .fill(Color.TRANSPARENT)

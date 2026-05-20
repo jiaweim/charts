@@ -1,9 +1,9 @@
 package fx.chart;
 
+import fx.chart.color.GradientLookup;
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYChartItemBuilder;
 import fx.chart.series.XYSeries;
-import fx.chart.color.GradientLookup;
 import fx.chart.tools.Helper;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -23,7 +23,6 @@ import java.util.List;
 public class PoincarePlotTest extends Application {
     private static final Double AXIS_WIDTH = 25d;
     private XYSeries<XYChartItem> xySeries;
-
     private XYChart<XYChartItem> chart;
     private Axis xAxisBottom;
     private Axis yAxisLeft;
@@ -31,10 +30,7 @@ public class PoincarePlotTest extends Application {
     private record SGVDto(String _id, int sgv, long date, String dateString, int trend, String direction, String device,
                           String type, int utcOffset, String sysTime) {}
 
-    ;
-
     private record SGV(long date, double sgv) {}
-
 
     @Override
     public void init() {
@@ -47,7 +43,7 @@ public class PoincarePlotTest extends Application {
             xyItems.add(XYChartItemBuilder.create().x(sgv.date).y(sgv.sgv).symbol(Symbol.CIRCLE).fill(color).build());
         }
 
-        xySeries = XYSeries.builder()
+        xySeries = new XYSeries.Builder<XYChartItem>()
                 .items(xyItems)
                 .chartType(ChartType.POINCARE)
                 .fill(Color.TRANSPARENT)
@@ -56,7 +52,6 @@ public class PoincarePlotTest extends Application {
                 .symbolStroke(Color.TRANSPARENT)
                 .symbolsVisible(true)
                 .build();
-
 
         // Poincare Plot
         yAxisLeft = Axis.axis(0, 400, true, AXIS_WIDTH, Orientation.VERTICAL, Position.LEFT);

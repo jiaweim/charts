@@ -4,21 +4,18 @@ import fx.chart.ChartType;
 import fx.chart.Symbol;
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYItem;
-import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import pdk.util.IBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
- * a series
+ * A series
  *
  * @author Jiawei Mao
- * @author Gerrit Grunwald
  * @version 1.0.0
  * @since 04 Jul 2025, 9:51 AM
  */
@@ -27,7 +24,7 @@ public class XYSeries<T extends XYItem> extends Series<T> {
     /**
      * class to build {@link XYSeries}
      */
-    public static class Builder<T extends XYItem> implements IBuilder<XYSeries<T>> {
+    public static class Builder<T extends XYChartItem> implements IBuilder<XYSeries<T>> {
 
         private final List<T> itemList_ = new ArrayList<>();
         private String name_;
@@ -64,7 +61,7 @@ public class XYSeries<T extends XYItem> extends Series<T> {
          * @param items list of data
          * @return this
          */
-        public Builder<T> items(List<T> items) {
+        public Builder<T> items(List<? extends T> items) {
             itemList_.addAll(items);
             return this;
         }
@@ -190,7 +187,7 @@ public class XYSeries<T extends XYItem> extends Series<T> {
         }
     }
 
-    public static <T extends XYChartItem> Builder<T> builder() {
+    public static Builder<XYChartItem> builder() {
         return new Builder<>();
     }
 
@@ -227,43 +224,43 @@ public class XYSeries<T extends XYItem> extends Series<T> {
         setSymbolsVisible(symbolsVisible);
     }
 
-    @Override
-    public ObservableList<T> getItems() {return items_;}
-
-    /**
-     * @return true if this series contains no data
-     */
-    public boolean isEmpty() {
-        return items_.isEmpty();
-    }
-
     /**
      * Return the minimum x value of the series
      *
-     * @return min x
+     * @return min x, or {@link Double#NaN} if this series is empty.
      */
-    public double getMinX() {return getItems().stream().min(Comparator.comparingDouble(T::getX)).get().getX();}
+    public double getMinX() {
+        return getItems().stream()
+                .mapToDouble(XYItem::getX).min().orElse(Double.NaN);
+    }
 
     /**
      * Return the maximum x value of this series
      *
-     * @return max x
+     * @return max x, or {@link Double#NaN} if this series is empty.
      */
-    public double getMaxX() {return getItems().stream().max(Comparator.comparingDouble(T::getX)).get().getX();}
+    public double getMaxX() {
+        return getItems().stream()
+                .mapToDouble(XYItem::getX).max().orElse(Double.NaN);
+    }
 
     /**
      * Return the minimum y value of the series
      *
      * @return min y
      */
-    public double getMinY() {return getItems().stream().min(Comparator.comparingDouble(T::getY)).get().getY();}
+    public double getMinY() {
+        return getItems().stream().mapToDouble(XYItem::getY).min().orElse(Double.NaN);
+    }
 
     /**
-     * Retuen the maximum y value of this series
+     * Return the maximum y value of this series
      *
      * @return max y
      */
-    public double getMaxY() {return getItems().stream().max(Comparator.comparingDouble(T::getY)).get().getY();}
+    public double getMaxY() {
+        return getItems().stream().mapToDouble(XYItem::getY).max().orElse(Double.NaN);
+    }
 
     public double getRangeX() {return getMaxX() - getMinX();}
 

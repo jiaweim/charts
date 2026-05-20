@@ -30,7 +30,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class Series<T extends Item> {
 
-    private static final Runnable EMPTY = () -> {};
+    private static final Runnable EMPTY = () -> {
+    };
 
     public final SeriesEvent UPDATE_EVENT;
 
@@ -458,6 +459,15 @@ public abstract class Series<T extends Item> {
      * @return number of elements.
      */
     public int size() {return items_.size();}
+
+    /**
+     * Return true if this series contains no data.
+     *
+     * @return true if this series contains no data.
+     */
+    public boolean isEmpty() {
+        return items_.isEmpty();
+    }
 
     /**
      * Removes all the elements from this series. The list will be empty after this call returns.

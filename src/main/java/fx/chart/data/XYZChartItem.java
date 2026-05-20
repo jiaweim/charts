@@ -1,9 +1,9 @@
 package fx.chart.data;
 
-import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
 import fx.chart.Symbol;
 import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 
@@ -35,7 +35,6 @@ public class XYZChartItem implements XYZItem {
     private BooleanProperty isEmpty;
 
 
-    // ******************** Constructors **********************************
     public XYZChartItem() {
         this(0, 0, 0, "", Color.RED, Color.TRANSPARENT, Symbol.NONE, false);
     }

@@ -6,7 +6,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Objects;
 
 /**
- * A lightweight property class with lazy initialization.
+ * Lightweight lazy-init property for custom JavaFX chart components.
  * <p>
  * Designed for custom JavaFX components, not thread-safe.
  *
@@ -31,13 +31,10 @@ public abstract class LazyProperty<T, P extends Property<T>> {
      * @param onChanged    Operations triggered when the property value changes.
      */
     public LazyProperty(Object bean, String propertyName, @Nullable T initialValue, Runnable onChanged) {
-        Objects.requireNonNull(propertyName);
-        Objects.requireNonNull(onChanged);
-
         this.bean_ = bean;
-        this.name_ = propertyName;
+        this.name_ = Objects.requireNonNull(propertyName);
         this.value_ = initialValue;
-        this.onChanged_ = onChanged;
+        this.onChanged_ = Objects.requireNonNull(onChanged);
     }
 
     /**
@@ -45,8 +42,22 @@ public abstract class LazyProperty<T, P extends Property<T>> {
      *
      * @return property value.
      */
-    public T get() {
+    public @Nullable T get() {
         return property_ == null ? value_ : property_.getValue();
+    }
+
+    /**
+     * Set the property value.
+     *
+     * @param newValue property value
+     */
+    public void set(@Nullable T newValue) {
+        if (property_ == null) {
+            value_ = newValue;
+            onChanged_.run();
+        } else {
+            property_.setValue(newValue);
+        }
     }
 
     /**
@@ -70,19 +81,6 @@ public abstract class LazyProperty<T, P extends Property<T>> {
         return property_;
     }
 
-    /**
-     * Set the property value.
-     *
-     * @param newValue property value
-     */
-    public void set(T newValue) {
-        if (property_ == null) {
-            value_ = newValue;
-            onChanged_.run();
-        } else {
-            property_.setValue(newValue);
-        }
-    }
 
     /**
      * Return the bean.

@@ -44,4 +44,8 @@ public class BooleanLazyProperty extends LazyProperty<Boolean, BooleanProperty> 
             }
         };
     }
+
+    public boolean getAsBoolean() {
+        return get().booleanValue();
+    }
 }

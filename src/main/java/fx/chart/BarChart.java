@@ -39,6 +39,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @DefaultProperty("children")
 public class BarChart<T extends ChartItem> extends Region {
+
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
     private static final double MINIMUM_WIDTH = 50;
@@ -107,7 +108,6 @@ public class BarChart<T extends ChartItem> extends Region {
     private InfoPopup popup;
 
 
-    // ******************** Constructors **************************************
     public BarChart() {
         this(new ArrayList<>());
     }

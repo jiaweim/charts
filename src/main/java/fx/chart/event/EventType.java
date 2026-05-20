@@ -6,11 +6,9 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
-
 /**
  * Event type
  *
- * @author Gerrit Grunwald
  * @author Jiawei Mao
  * @version 1.0.0
  * @since 25 Jun 2025, 10:46 AM

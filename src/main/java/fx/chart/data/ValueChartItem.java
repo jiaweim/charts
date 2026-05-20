@@ -1,9 +1,9 @@
 package fx.chart.data;
 
-import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
 import fx.chart.Symbol;
 import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 

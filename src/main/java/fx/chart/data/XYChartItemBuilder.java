@@ -1,77 +1,74 @@
 package fx.chart.data;
 
 import fx.chart.Symbol;
-import javafx.beans.property.*;
 import javafx.scene.paint.Color;
+import pdk.util.IBuilder;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+/**
+ * Builder class for {@link XYChartItem}.
+ *
+ * @author Jiawei Mao
+ * @version 1.0.0
+ * @since 20 May 2026, 5:04 PM
+ */
+public class XYChartItemBuilder implements IBuilder<XYChartItem> {
 
-
-public class XYChartItemBuilder<B extends XYChartItemBuilder<B>> {
-    private HashMap<String, Property> properties = new LinkedHashMap<>();
-
-    protected XYChartItemBuilder() {}
-
-    public static final XYChartItemBuilder create() {
+    public static XYChartItemBuilder create() {
         return new XYChartItemBuilder();
     }
 
-    public final B x(final double x) {
-        properties.put("x", new SimpleDoubleProperty(x));
-        return (B) this;
+    private double x = 0;
+    private double y = 0;
+    private String name = "";
+    private Color fill = Color.RED;
+    private Color stroke = Color.TRANSPARENT;
+    private Symbol symbol = Symbol.NONE;
+    private boolean isEmpty = false;
+    private String tooltipText = "";
+
+    protected XYChartItemBuilder() {}
+
+    public final XYChartItemBuilder x(final double x) {
+        this.x = x;
+        return this;
     }
 
-    public final B y(final double y) {
-        properties.put("y", new SimpleDoubleProperty(y));
-        return (B) this;
+    public final XYChartItemBuilder y(final double y) {
+        this.y = y;
+        return this;
     }
 
-    public final B name(final String name) {
-        properties.put("name", new SimpleStringProperty(name));
-        return (B) this;
+    public final XYChartItemBuilder name(final String name) {
+        this.name = name;
+        return this;
     }
 
-    public final B fill(final Color fill) {
-        properties.put("fill", new SimpleObjectProperty<>(fill));
-        return (B) this;
+    public final XYChartItemBuilder fill(final Color fill) {
+        this.fill = fill;
+        return this;
     }
 
-    public final B stroke(final Color fill) {
-        properties.put("stroke", new SimpleObjectProperty<>(fill));
-        return (B) this;
+    public final XYChartItemBuilder stroke(final Color color) {
+        this.stroke = color;
+        return this;
     }
 
-    public final B symbol(final Symbol symbol) {
-        properties.put("symbol", new SimpleObjectProperty<>(symbol));
-        return (B) this;
+    public final XYChartItemBuilder symbol(final Symbol symbol) {
+        this.symbol = symbol;
+        return this;
     }
 
-    public final B isEmpty(final boolean isEmpty) {
-        properties.put("isEmpty", new SimpleBooleanProperty(isEmpty));
-        return (B) this;
+    public final XYChartItemBuilder isEmpty(final boolean isEmpty) {
+        this.isEmpty = isEmpty;
+        return this;
     }
 
-    public final B tooltipText(final String tooltipText) {
-        properties.put("tooltipText", new SimpleStringProperty(tooltipText));
-        return (B) this;
+    public final XYChartItemBuilder tooltipText(final String tooltipText) {
+        this.tooltipText = tooltipText;
+        return this;
     }
-
 
     public final XYChartItem build() {
-        final XYChartItem control = new XYChartItem();
-        properties.forEach((key, property) -> {
-            switch (key) {
-                case "x" -> control.setX(((DoubleProperty) property).get());
-                case "y" -> control.setY(((DoubleProperty) property).get());
-                case "name" -> control.setName(((StringProperty) property).get());
-                case "symbol" -> control.setSymbol(((ObjectProperty<Symbol>) property).get());
-                case "fill" -> control.setFill(((ObjectProperty<Color>) property).get());
-                case "stroke" -> control.setStroke(((ObjectProperty<Color>) property).get());
-                case "isEmpty" -> control.setIsEmpty(((BooleanProperty) property).get());
-                case "tooltipText" -> control.setTooltipText(((StringProperty) property).get());
-            }
-        });
-        return control;
+        return new XYChartItem(x, y, name, fill, stroke, symbol, tooltipText, isEmpty);
     }
 }

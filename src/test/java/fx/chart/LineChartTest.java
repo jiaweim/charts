@@ -19,11 +19,6 @@ import java.time.Month;
 import java.util.Locale;
 import java.util.Random;
 
-/**
- * User: hansolo
- * Date: 06.01.18
- * Time: 11:23
- */
 public class LineChartTest extends Application {
 
     private static final Random RND = new Random();
@@ -50,7 +45,6 @@ public class LineChartTest extends Application {
     private XYChart<XYChartItem> lineChart;
     private long lastTimerCalled;
     private AnimationTimer timer;
-
 
     @Override
     public void init() {

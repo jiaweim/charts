@@ -19,7 +19,7 @@ public interface Item {
     String getName();
 
     /**
-     * @return item color
+     * @return item fill color
      */
     Color getFill();
 

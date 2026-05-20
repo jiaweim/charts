@@ -81,7 +81,8 @@ public class GaussianCurveChart extends Application {
             items.add(new XYChartItem(sample.getX(), sample.getY()));
         }
 
-        return XYSeries.builder().name(name)
+        return new XYSeries.Builder<XYChartItem>()
+                .name(name)
                 .items(items)
                 .chartType(ChartType.LINE)
                 .stroke(color)
