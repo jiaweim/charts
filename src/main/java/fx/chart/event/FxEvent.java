@@ -9,7 +9,6 @@ import java.util.Objects;
  * All Events are constructed with a reference to the object, the "source",
  * that is logically deemed to be the object upon which the Event in question initially occurred upon.
  *
- * @author Gerrit Grunwald
  * @author Jiawei Mao
  * @version 1.0.0
  * @since 25 Jun 2025, 10:51 AM

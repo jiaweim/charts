@@ -2,21 +2,15 @@ package fx.chart.data;
 
 import fx.chart.Symbol;
 import fx.chart.event.ChartEvent;
-import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
+import fx.chart.event.DefaultEventSource;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-
-public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
+public class ValueChartItem extends DefaultEventSource implements ValueItem, Comparable<ValueChartItem> {
 
     private final ChartEvent ITEM_EVENT = new ChartEvent(ValueChartItem.this, ChartEvent.ITEM_UPDATE);
-    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
+
     private double _value;
     private DoubleProperty value;
     private String _name;
@@ -30,8 +24,6 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
     private boolean _isEmpty;
     private BooleanProperty isEmpty;
 
-
-    // ******************** Constructors **********************************
     public ValueChartItem() {
         this(0, "", Color.RED, Color.TRANSPARENT, Symbol.NONE, false);
     }
@@ -67,7 +59,6 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
         _stroke = STROKE;
         _symbol = SYMBOL;
         _isEmpty = IS_EMPTY;
-        observers = new ConcurrentHashMap<>();
     }
 
 
@@ -79,7 +70,7 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
     public void setValue(final double VALUE) {
         if (null == value) {
             _value = VALUE;
-            fireChartEvt(ITEM_EVENT);
+            fireChartEvent(ITEM_EVENT);
         } else {
             value.set(VALUE);
         }
@@ -90,7 +81,7 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
         if (null == value) {
             value = new DoublePropertyBase(_value) {
                 @Override
-                protected void invalidated() {fireChartEvt(ITEM_EVENT);}
+                protected void invalidated() {fireChartEvent(ITEM_EVENT);}
 
                 @Override
                 public Object getBean() {return ValueChartItem.this;}
@@ -108,7 +99,7 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
     public void setName(final String NAME) {
         if (null == name) {
             _name = NAME;
-            fireChartEvt(ITEM_EVENT);
+            fireChartEvent(ITEM_EVENT);
         } else {
             name.set(NAME);
         }
@@ -118,7 +109,7 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
         if (null == name) {
             name = new StringPropertyBase(_name) {
                 @Override
-                protected void invalidated() {fireChartEvt(ITEM_EVENT);}
+                protected void invalidated() {fireChartEvent(ITEM_EVENT);}
 
                 @Override
                 public Object getBean() {return ValueChartItem.this;}
@@ -132,12 +123,12 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
     }
 
     @Override
-    public Color getFill() {return null == fill ? _fill : fill.get();}
+    public Color getFillColor() {return null == fill ? _fill : fill.get();}
 
     public void setFill(final Color FILL) {
         if (null == fill) {
             _fill = FILL;
-            fireChartEvt(ITEM_EVENT);
+            fireChartEvent(ITEM_EVENT);
         } else {
             fill.set(FILL);
         }
@@ -147,7 +138,7 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
         if (null == fill) {
             fill = new ObjectPropertyBase<Color>(_fill) {
                 @Override
-                protected void invalidated() {fireChartEvt(ITEM_EVENT);}
+                protected void invalidated() {fireChartEvent(ITEM_EVENT);}
 
                 @Override
                 public Object getBean() {return ValueChartItem.this;}
@@ -161,12 +152,12 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
     }
 
     @Override
-    public Color getStroke() {return null == stroke ? _stroke : stroke.get();}
+    public Color getStrokeColor() {return null == stroke ? _stroke : stroke.get();}
 
     public void setStroke(final Color STROKE) {
         if (null == stroke) {
             _stroke = STROKE;
-            fireChartEvt(ITEM_EVENT);
+            fireChartEvent(ITEM_EVENT);
         } else {
             stroke.set(STROKE);
         }
@@ -176,7 +167,7 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
         if (null == stroke) {
             stroke = new ObjectPropertyBase<Color>(_stroke) {
                 @Override
-                protected void invalidated() {fireChartEvt(ITEM_EVENT);}
+                protected void invalidated() {fireChartEvent(ITEM_EVENT);}
 
                 @Override
                 public Object getBean() {return ValueChartItem.this;}
@@ -195,7 +186,7 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
     public void setSymbol(final Symbol SYMBOL) {
         if (null == symbol) {
             _symbol = SYMBOL;
-            fireChartEvt(ITEM_EVENT);
+            fireChartEvent(ITEM_EVENT);
         } else {
             symbol.set(SYMBOL);
         }
@@ -205,7 +196,7 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
         if (null == symbol) {
             symbol = new ObjectPropertyBase<Symbol>(_symbol) {
                 @Override
-                protected void invalidated() {fireChartEvt(ITEM_EVENT);}
+                protected void invalidated() {fireChartEvent(ITEM_EVENT);}
 
                 @Override
                 public Object getBean() {return ValueChartItem.this;}
@@ -224,7 +215,7 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
     public void setIsEmpty(final boolean isEmpty) {
         if (null == this.isEmpty) {
             _isEmpty = isEmpty;
-            fireChartEvt(ITEM_EVENT);
+            fireChartEvent(ITEM_EVENT);
         } else {
             this.isEmpty.set(isEmpty);
         }
@@ -234,7 +225,7 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
         if (null == isEmpty) {
             isEmpty = new BooleanPropertyBase(_isEmpty) {
                 @Override
-                protected void invalidated() {fireChartEvt(ITEM_EVENT);}
+                protected void invalidated() {fireChartEvent(ITEM_EVENT);}
 
                 @Override
                 public Object getBean() {return ValueChartItem.this;}
@@ -245,37 +236,6 @@ public class ValueChartItem implements ValueItem, Comparable<ValueChartItem> {
         }
         return isEmpty;
     }
-
-
-    // ******************** Event handling ************************************
-    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers.get(type).contains(observer)) {
-            return;
-        }
-        observers.get(type).add(observer);
-    }
-
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (observers.containsKey(type)) {
-            if (observers.get(type).contains(observer)) {
-                observers.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllChartEvtObservers() {observers.clear();}
-
-    public void fireChartEvt(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
-        }
-    }
-
 
     @Override
     public String toString() {

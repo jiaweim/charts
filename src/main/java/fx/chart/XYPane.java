@@ -3,7 +3,10 @@ package fx.chart;
 import fx.chart.color.ColorUtils;
 import fx.chart.data.XYChartItem;
 import fx.chart.data.XYItem;
-import fx.chart.event.*;
+import fx.chart.event.ChartEvent;
+import fx.chart.event.CursorEvent;
+import fx.chart.event.CursorEventListener;
+import fx.chart.event.SeriesEventListener;
 import fx.chart.font.Fonts;
 import fx.chart.series.Series;
 import fx.chart.series.XYSeries;
@@ -17,11 +20,9 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.Paint;
@@ -31,7 +32,6 @@ import javafx.scene.text.TextAlignment;
 import pdk.util.math.StatUtils;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -41,19 +41,17 @@ import static fx.chart.ChartType.SMOOTH_POLAR;
  * A pane to hold xy-chart
  *
  * @author Jiawei Mao
- * @author Gerrit Grunwald
  * @version 1.0.0
  * @since 03 Jul 2025, 2:39 PM
  */
-public class XYPane<T extends XYItem> extends Region implements ChartArea {
+public class XYPane<T extends XYItem> extends ChartElement implements ChartArea {
 
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
 
     private static final double MINIMUM_WIDTH = 0;
     private static final double MINIMUM_HEIGHT = 0;
-    private static final double MAXIMUM_WIDTH = 4096;
-    private static final double MAXIMUM_HEIGHT = 4096;
+
     private static final double MIN_SYMBOL_SIZE = 2;
     private static final double MAX_SYMBOL_SIZE = 6;
     private static final int SUB_DIVISIONS = 24;
@@ -155,7 +153,6 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     private SeriesEventListener seriesListener_;
     private final EventHandler<MouseEvent> mouseHandler_;
     private final List<CursorEventListener> cursorEventListeners_;
-    private final Map<EventType, List<ChartEventListener<ChartEvent>>> observers_ = new ConcurrentHashMap<>();
 
     public XYPane(final List<XYSeries<T>> SERIES) {
         this(Color.TRANSPARENT, 1, SERIES.toArray(new XYSeries[0]));
@@ -292,21 +289,6 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
     @Override
     protected double computeMinHeight(final double width) {return MINIMUM_HEIGHT;}
-
-    @Override
-    protected double computePrefWidth(final double height) {return super.computePrefWidth(height);}
-
-    @Override
-    protected double computePrefHeight(final double width) {return super.computePrefHeight(width);}
-
-    @Override
-    protected double computeMaxWidth(final double height) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double width) {return MAXIMUM_HEIGHT;}
-
-    @Override
-    public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public void dispose() {
         canvas_.removeEventHandler(MouseEvent.MOUSE_MOVED, mouseHandler_);
@@ -997,7 +979,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
     protected void redraw() {
         drawChart();
         drawCursor();
-        fireChartEvt(new ChartEvent(XYPane.this, ChartEvent.UPDATE));
+        fireChartEvent(new ChartEvent(XYPane.this, ChartEvent.UPDATE));
     }
 
     private void drawChart() {
@@ -1212,7 +1194,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             if (itemSymbol == Symbol.NONE) {
                 drawSymbol(x, y, symbolFill, symbolStroke, seriesSymbol, size);
             } else {
-                drawSymbol(x, y, item.getFill(), item.getStroke(), itemSymbol, size);
+                drawSymbol(x, y, item.getFillColor(), item.getStrokeColor(), itemSymbol, size);
             }
         }
     }
@@ -1240,7 +1222,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             if (Symbol.NONE == itemSymbol) {
                 drawSymbol(x, y, symbolFill, symbolStroke, seriesSymbol, size);
             } else {
-                drawSymbol(x, y, item.getFill(), item.getStroke(), itemSymbol, size);
+                drawSymbol(x, y, item.getFillColor(), item.getStrokeColor(), itemSymbol, size);
             }
         }
     }
@@ -1828,7 +1810,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 if (Symbol.NONE == itemSymbol) {
                     drawSymbol(point.getX(), point.getY(), symbolFill, symbolStroke, seriesSymbol, size);
                 } else {
-                    drawSymbol(point.getX(), point.getY(), item.getFill(), item.getStroke(), itemSymbol, size);
+                    drawSymbol(point.getX(), point.getY(), item.getFillColor(), item.getStrokeColor(), itemSymbol, size);
                 }
             }
         }
@@ -1977,7 +1959,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
                 if (Symbol.NONE == itemSymbol) {
                     drawSymbol(point.getX(), point.getY(), symbolFill, symbolStroke, seriesSymbol, size);
                 } else {
-                    drawSymbol(point.getX(), point.getY(), item.getFill(), item.getStroke(), itemSymbol, size);
+                    drawSymbol(point.getX(), point.getY(), item.getFillColor(), item.getStrokeColor(), itemSymbol, size);
                 }
             }
         }
@@ -2529,7 +2511,7 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
             if (itemSymbol == Symbol.NONE) {
                 drawSymbol(x, y, symbolFill, symbolStroke, seriesSymbol, size);
             } else {
-                drawSymbol(x, y, item.getFill(), item.getStroke(), itemSymbol, size);
+                drawSymbol(x, y, item.getFillColor(), item.getStrokeColor(), itemSymbol, size);
             }
         }
     }
@@ -2613,35 +2595,6 @@ public class XYPane<T extends XYItem> extends Region implements ChartArea {
 
     public void fireCursorEvent(final CursorEvent EVT) {
         cursorEventListeners_.forEach(listener -> listener.handleCursorEvent(EVT));
-    }
-
-
-    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (!observers_.containsKey(type)) {
-            observers_.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers_.get(type).contains(observer)) {
-            return;
-        }
-        observers_.get(type).add(observer);
-    }
-
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (observers_.containsKey(type)) {
-            if (observers_.get(type).contains(observer)) {
-                observers_.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllChartEvtObservers() {observers_.clear();}
-
-    public void fireChartEvt(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        observers_.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers_.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            observers_.get(type).forEach(observer -> observer.handle(evt));
-        }
     }
 
     private void resize() {

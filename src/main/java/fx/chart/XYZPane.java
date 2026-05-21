@@ -7,26 +7,22 @@ import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 import java.util.List;
 
 
-public class XYZPane<T extends XYZItem> extends Region implements ChartArea {
+public class XYZPane<T extends XYZItem> extends ChartElement implements ChartArea {
 
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
     private static final double MINIMUM_WIDTH = 0;
     private static final double MINIMUM_HEIGHT = 0;
-    private static final double MAXIMUM_WIDTH = 4096;
-    private static final double MAXIMUM_HEIGHT = 4096;
+
     private static double aspectRatio;
     private boolean keepAspect;
     private double size;
@@ -54,8 +50,6 @@ public class XYZPane<T extends XYZItem> extends Region implements ChartArea {
     private double _upperBoundZ;
     private DoubleProperty upperBoundZ;
 
-
-    // ******************** Constructors **************************************
     public XYZPane(final XYZSeries<T>... SERIES) {
         this(Color.TRANSPARENT, SERIES);
     }
@@ -109,28 +103,12 @@ public class XYZPane<T extends XYZItem> extends Region implements ChartArea {
         listOfSeries.forEach(series -> series.addSeriesEventListener(seriesEvent -> redraw()));
     }
 
-
-    // ******************** Methods *******************************************
     @Override
     protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
 
     @Override
     protected double computeMinHeight(final double WIDTH) {return MINIMUM_HEIGHT;}
 
-    @Override
-    protected double computePrefWidth(final double HEIGHT) {return super.computePrefWidth(HEIGHT);}
-
-    @Override
-    protected double computePrefHeight(final double WIDTH) {return super.computePrefHeight(WIDTH);}
-
-    @Override
-    protected double computeMaxWidth(final double HEIGHT) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double WIDTH) {return MAXIMUM_HEIGHT;}
-
-    @Override
-    public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public Paint getChartBackground() {return null == chartBackground ? _chartBackground : chartBackground.get();}
 
@@ -385,8 +363,8 @@ public class XYZPane<T extends XYZItem> extends Region implements ChartArea {
                 ctx.setFill(seriesFill);
                 ctx.setStroke(seriesStroke);
             } else {
-                ctx.setFill(item.getFill());
-                ctx.setStroke(item.getStroke());
+                ctx.setFill(item.getFillColor());
+                ctx.setStroke(item.getStrokeColor());
             }
             ctx.fillOval(x - radius, height - y - radius, diameter, diameter);
         }
@@ -422,7 +400,7 @@ public class XYZPane<T extends XYZItem> extends Region implements ChartArea {
         }
     }
 
-    private void redraw() {
+    protected void redraw() {
         drawChart();
     }
 }

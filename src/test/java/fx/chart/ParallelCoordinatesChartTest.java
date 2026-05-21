@@ -49,7 +49,7 @@ public class ParallelCoordinatesChartTest extends Application {
                 .selectionRectColor(Color.CRIMSON)
                 .build();
 
-        chart.addChartEvtObserver(ChartEvent.SELECTED, e -> chart.getSelectedObjects().forEach(item -> System.out.println(item.getName())));
+        chart.addEventListener(ChartEvent.SELECTED, e -> chart.getSelectedObjects().forEach(item -> System.out.println(item.getName())));
     }
 
     @Override

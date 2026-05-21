@@ -16,17 +16,14 @@ import javafx.beans.property.BooleanPropertyBase;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.*;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
@@ -35,24 +32,21 @@ import javafx.scene.text.TextAlignment;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-
 /**
- * User: hansolo
- * Date: 10.12.21
- * Time: 09:10
+ *
+ *
+ * @author Jiawei Mao
+ * @version 1.0.0
+ * @since 21 May 2026, 12:51 PM
  */
 @DefaultProperty("children")
-public class ComparisonBarChart extends Region {
+public class ComparisonBarChart extends ChartElement {
+
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
-    private static final double MINIMUM_WIDTH = 50;
-    private static final double MINIMUM_HEIGHT = 50;
-    private static final double MAXIMUM_WIDTH = 4096;
-    private static final double MAXIMUM_HEIGHT = 4096;
+
     private double size;
     private double width;
     private double height;
@@ -104,11 +98,9 @@ public class ComparisonBarChart extends Region {
     private ListChangeListener<ChartItem> chartItemListener;
     private ChartEventListener<ChartEvent> observer;
     private EventHandler<MouseEvent> mouseHandler;
-    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private InfoPopup popup;
 
 
-    // ******************** Constructors **************************************
     public ComparisonBarChart(final ChartItemSeries series1, final ChartItemSeries series2) {
         if (null == series1 || series1.getItems().isEmpty()) {
             throw new IllegalArgumentException("Series 1 cannot be null or empty");
@@ -140,7 +132,6 @@ public class ComparisonBarChart extends Region {
         _shortenNumbers = false;
         _sorted = false;
         _order = Order.DESCENDING;
-        observers = new ConcurrentHashMap<>();
         popup = new InfoPopup();
         categoryValueMap = new HashMap<>();
         rectangleItemMap = new HashMap<>();
@@ -153,9 +144,9 @@ public class ComparisonBarChart extends Region {
         chartItemListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ANY, observer));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addEventListener(ChartEvent.ANY, observer));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ANY, observer));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeEventListener(ChartEvent.ANY, observer));
                 }
             }
             drawChart();
@@ -193,46 +184,18 @@ public class ComparisonBarChart extends Region {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
 
-        series1.getItems().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, observer));
-        series2.getItems().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, observer));
+        series1.getItems().forEach(item -> item.addEventListener(ChartEvent.ANY, observer));
+        series2.getItems().forEach(item -> item.addEventListener(ChartEvent.ANY, observer));
 
         series1.getItems().addListener(chartItemListener);
         series2.getItems().addListener(chartItemListener);
 
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseHandler);
-        addChartEvtObserver(SelectionEvent.ANY, e -> {
+        addEventListener(SelectionEvent.ANY, e -> {
             popup.update((SelectionEvent) e);
             popup.animatedShow(getScene().getWindow());
         });
     }
-
-
-    // ******************** Methods *******************************************
-    @Override
-    public void layoutChildren() {
-        super.layoutChildren();
-    }
-
-    @Override
-    protected double computeMinWidth(final double height) {return MINIMUM_WIDTH;}
-
-    @Override
-    protected double computeMinHeight(final double width) {return MINIMUM_HEIGHT;}
-
-    @Override
-    protected double computePrefWidth(final double height) {return super.computePrefWidth(height);}
-
-    @Override
-    protected double computePrefHeight(final double width) {return super.computePrefHeight(width);}
-
-    @Override
-    protected double computeMaxWidth(final double height) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double width) {return MAXIMUM_HEIGHT;}
-
-    @Override
-    public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public Paint getBackgroundFill() {return null == backgroundFill ? _backgroundFill : backgroundFill.get();}
 
@@ -822,9 +785,9 @@ public class ComparisonBarChart extends Region {
             popup.setY(evt.getScreenY() - popup.getHeight());
             ChartItem selectedItem = opt.get().getValue();
             if (series1.getItems().contains(selectedItem)) {
-                fireChartEvt(new SelectionEvent(series1, opt.get().getValue()));
+                fireChartEvent(new SelectionEvent(series1, opt.get().getValue()));
             } else {
-                fireChartEvt(new SelectionEvent(series2, opt.get().getValue()));
+                fireChartEvent(new SelectionEvent(series2, opt.get().getValue()));
             }
         }
     }
@@ -874,37 +837,6 @@ public class ComparisonBarChart extends Region {
     public BufferedImage renderToImage(final int width, final int height) {
         return Helper.renderToImage(ComparisonBarChart.this, width, height);
     }
-
-
-    // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers.get(type).contains(observer)) {
-            return;
-        }
-        observers.get(type).add(observer);
-    }
-
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (observers.containsKey(type)) {
-            if (observers.get(type).contains(observer)) {
-                observers.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllChartEvtObservers() {observers.clear();}
-
-    public void fireChartEvt(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
-        }
-    }
-
 
     // ******************** Drawing *******************************************
     private void prepareSeries(final Series<ChartItem> SERIES) {
@@ -1150,7 +1082,8 @@ public class ComparisonBarChart extends Region {
         }
     }
 
-    private void redraw() {
+    protected void redraw() {
         drawChart();
     }
+
 }

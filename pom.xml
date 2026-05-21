@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.jiaweim</groupId>
     <artifactId>fx-chart</artifactId>
-    <version>25.1.0</version>
+    <version>25.2.0</version>
     <name>JavaFX Chart Library</name>
     <url>https://github.com/jiaweim/fx-chart</url>
     <description>

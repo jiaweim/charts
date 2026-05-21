@@ -12,12 +12,12 @@ import java.util.function.DoubleUnaryOperator;
  * @version 1.0.0
  * @since 20 May 2026, 2:04 PM
  */
-public class DoubleLazyProperty extends LazyProperty<Number, DoubleProperty> {
+public class DoubleLProperty extends LProperty<Number, DoubleProperty> {
 
     private final DoubleUnaryOperator clampFunc_;
 
     /**
-     * Create a {@link DoubleLazyProperty}.
+     * Create a {@link DoubleLProperty}.
      *
      * @param bean         The bean to which this property belongs.
      * @param name         property name。
@@ -25,22 +25,27 @@ public class DoubleLazyProperty extends LazyProperty<Number, DoubleProperty> {
      * @param onChanged    Operations triggered when the property value changes.
      * @param clampFunc    {@link DoubleUnaryOperator} used to limit the range of property values.
      */
-    public DoubleLazyProperty(Object bean, String name, Number initialValue, Runnable onChanged,
+    public DoubleLProperty(Object bean, String name, Number initialValue, Runnable onChanged,
             DoubleUnaryOperator clampFunc) {
         super(bean, name, initialValue, onChanged);
         this.clampFunc_ = clampFunc;
     }
 
     /**
-     * Create a {@link DoubleLazyProperty} without {@code clampFunc}.
+     * Create a {@link DoubleLProperty} without {@code clampFunc}.
      *
      * @param bean         The bean to which this property belongs.
      * @param name         property name
      * @param initialValue Initial value of the property.
      * @param onChanged    Operations triggered when the property value changes.
      */
-    public DoubleLazyProperty(Object bean, String name, Number initialValue, Runnable onChanged) {
+    public DoubleLProperty(Object bean, String name, Number initialValue, Runnable onChanged) {
         super(bean, name, initialValue, onChanged);
+        this.clampFunc_ = null;
+    }
+
+    public DoubleLProperty(Object bean, String name, Number initialValue) {
+        super(bean, name, initialValue);
         this.clampFunc_ = null;
     }
 

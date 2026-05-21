@@ -24,7 +24,6 @@ import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.*;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
@@ -33,19 +32,14 @@ import javafx.scene.text.TextAlignment;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 
 @DefaultProperty("children")
-public class BarChart<T extends ChartItem> extends Region {
+public class BarChart<T extends ChartItem> extends ChartElement {
 
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
-    private static final double MINIMUM_WIDTH = 50;
-    private static final double MINIMUM_HEIGHT = 50;
-    private static final double MAXIMUM_WIDTH = 4096;
-    private static final double MAXIMUM_HEIGHT = 4096;
+
     private double size;
     private double width;
     private double height;
@@ -104,9 +98,7 @@ public class BarChart<T extends ChartItem> extends Region {
     private ListChangeListener<ChartItem> chartItemListener;
     private ChartEventListener<ChartEvent> observer;
     private EventHandler<MouseEvent> mouseHandler;
-    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private InfoPopup popup;
-
 
     public BarChart() {
         this(new ArrayList<>());
@@ -140,7 +132,6 @@ public class BarChart<T extends ChartItem> extends Region {
         _barCornerRadius = 2;
         _boldValueFont = false;
         colors = new ArrayList<>(List.of(Color.rgb(253, 231, 37), Color.rgb(170, 220, 49), Color.rgb(94, 200, 99), Color.rgb(40, 173, 129), Color.rgb(33, 144, 140), Color.rgb(44, 114, 142), Color.rgb(59, 82, 139), Color.rgb(71, 45, 123), Color.rgb(68, 4, 84)));
-        observers = new ConcurrentHashMap<>();
         popup = new InfoPopup();
         rectangleItemMap = new HashMap<>();
         observer = evt -> {
@@ -161,14 +152,14 @@ public class BarChart<T extends ChartItem> extends Region {
             while (c.next()) {
                 if (c.wasAdded()) {
                     c.getAddedSubList().forEach(addedItem -> {
-                        addedItem.addChartEvtObserver(ChartEvent.ANY, observer);
+                        addedItem.addEventListener(ChartEvent.ANY, observer);
                         if (animated) {
                             addedItem.setAnimated(animated);
                         }
                         addedItem.setAnimationDuration(animationDuration);
                     });
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ANY, observer));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeEventListener(ChartEvent.ANY, observer));
                 }
             }
             switch (getOrientation()) {
@@ -218,40 +209,28 @@ public class BarChart<T extends ChartItem> extends Region {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
 
-        series.getItems().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, observer));
+        series.getItems().forEach(item -> item.addEventListener(ChartEvent.ANY, observer));
         series.getItems().addListener(chartItemListener);
 
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseHandler);
-        addChartEvtObserver(SelectionEvent.ANY, e -> {
+        addEventListener(SelectionEvent.ANY, e -> {
             popup.update((SelectionEvent) e);
             popup.animatedShow(getScene().getWindow());
         });
     }
 
 
-    // ******************** Methods *******************************************
     @Override
     public void layoutChildren() {
         super.layoutChildren();
     }
 
-    @Override
-    protected double computeMinWidth(final double height) {return MINIMUM_WIDTH;}
-
-    @Override
-    protected double computeMinHeight(final double width) {return MINIMUM_HEIGHT;}
 
     @Override
     protected double computePrefWidth(final double height) {return super.computePrefWidth(height);}
 
     @Override
     protected double computePrefHeight(final double width) {return super.computePrefHeight(width);}
-
-    @Override
-    protected double computeMaxWidth(final double height) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double width) {return MAXIMUM_HEIGHT;}
 
     @Override
     public ObservableList<Node> getChildren() {return super.getChildren();}
@@ -263,14 +242,14 @@ public class BarChart<T extends ChartItem> extends Region {
     }
 
     public void setItems(final List<T> items) {
-        this.series.getItems().forEach(item -> item.removeChartEvtObserver(ChartEvent.ANY, observer));
+        this.series.getItems().forEach(item -> item.removeEventListener(ChartEvent.ANY, observer));
         this.series.getItems().removeListener(chartItemListener);
 
         this.series.getItems().clear();
         this.series.setItems(items);
         prepareSeries();
 
-        this.series.getItems().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, observer));
+        this.series.getItems().forEach(item -> item.addEventListener(ChartEvent.ANY, observer));
         this.series.getItems().addListener(chartItemListener);
 
         if (getSorted()) {
@@ -976,7 +955,7 @@ public class BarChart<T extends ChartItem> extends Region {
             popup.setX(evt.getScreenX());
             popup.setY(evt.getScreenY() - popup.getHeight());
             ChartItem selectedItem = opt.get().getValue();
-            fireChartEvt(new SelectionEvent(series, opt.get().getValue()));
+            fireChartEvent(new SelectionEvent(series, opt.get().getValue()));
         }
     }
 
@@ -1002,37 +981,6 @@ public class BarChart<T extends ChartItem> extends Region {
                 break;
         }
     }
-
-
-    // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers.get(type).contains(observer)) {
-            return;
-        }
-        observers.get(type).add(observer);
-    }
-
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (observers.containsKey(type)) {
-            if (observers.get(type).contains(observer)) {
-                observers.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllChartEvtObservers() {observers.clear();}
-
-    public void fireChartEvt(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
-        }
-    }
-
 
     // ******************** Drawing *******************************************
     private void prepareSeries() {
@@ -1119,7 +1067,7 @@ public class BarChart<T extends ChartItem> extends Region {
                     givenColorCounter = 0;
                 }
             } else {
-                ctx.setFill(useItemFill ? item.getFill() : barFill);
+                ctx.setFill(useItemFill ? item.getFillColor() : barFill);
             }
 
             ctx.beginPath();
@@ -1264,7 +1212,7 @@ public class BarChart<T extends ChartItem> extends Region {
                     givenColorCounter = 0;
                 }
             } else {
-                ctx.setFill(useItemFill ? item.getFill() : barFill);
+                ctx.setFill(useItemFill ? item.getFillColor() : barFill);
             }
 
             ctx.beginPath();
@@ -1351,7 +1299,7 @@ public class BarChart<T extends ChartItem> extends Region {
         }
     }
 
-    private void redraw() {
+    protected void redraw() {
         if (getSorted()) {
             series.sort(getOrder());
         }

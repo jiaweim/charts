@@ -156,10 +156,11 @@ public class SankeyPlotTest extends Application {
                 .useItemTextColor(true)
                 .autoAdjustVerticalTextPosition(true)
                 .build();
-        sankeyPlot.getItems().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, e -> {
+        sankeyPlot.getItems().forEach(item -> item.addEventListener(ChartEvent.ANY, e -> {
             if (ChartEvent.ITEM_SELECTED.equals(e.getEventType())) {
-                PlotItem sourceItem = (PlotItem) e.getSource();
-                PlotItem targetItem = (PlotItem) e.getTarget();
+                ChartEvent itemEvent = (ChartEvent) e;
+                PlotItem sourceItem = (PlotItem) itemEvent.getSource();
+                PlotItem targetItem = (PlotItem) itemEvent.getTarget();
                 if (null != sourceItem && null != targetItem) {
                     double value = sourceItem.getOutgoing().get(targetItem);
                     System.out.println(sourceItem.getName() + " -> " + targetItem.getName() + " => connection value: " + value);

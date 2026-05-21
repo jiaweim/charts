@@ -4,7 +4,6 @@ import fx.chart.color.ColorUtils;
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvent;
 import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
 import fx.chart.event.SelectionEvent;
 import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
@@ -17,14 +16,12 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.StrokeLineCap;
@@ -33,23 +30,21 @@ import javafx.scene.text.TextAlignment;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 
 /**
- * User: hansolo
- * Date: 26.12.17
- * Time: 12:11
+ *
+ * @author Jiawei Mao
+ * @version 1.0.0
+ * @since 21 May 2026, 1:04 PM
  */
 @DefaultProperty("children")
-public class CoxcombChart extends Region {
+public class CoxcombChart extends ChartElement {
+
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
-    private static final double MINIMUM_WIDTH = 50;
-    private static final double MINIMUM_HEIGHT = 50;
-    private static final double MAXIMUM_WIDTH = 1024;
-    private static final double MAXIMUM_HEIGHT = 1024;
+
     private static final String DEFAULT_FORMAT_STRING = "%.0f%%";
+
     private double size;
     private double width;
     private double height;
@@ -79,7 +74,6 @@ public class CoxcombChart extends Region {
     private ListChangeListener<ChartItem> itemListListener;
     private EventHandler<MouseEvent> mouseHandler;
     private Map<javafx.event.EventType, EventHandler<MouseEvent>> mouseHandlers;
-    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private InfoPopup popup;
 
 
@@ -110,10 +104,10 @@ public class CoxcombChart extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ANY, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addEventListener(ChartEvent.ANY, itemObserver));
                     reorder(getOrder());
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeEventListener(ChartEvent.ANY, itemObserver));
                     reorder(getOrder());
                 }
             }
@@ -121,7 +115,6 @@ public class CoxcombChart extends Region {
         };
         mouseHandler = e -> handleMouseEvent(e);
         mouseHandlers = new ConcurrentHashMap<>();
-        observers = new ConcurrentHashMap<>();
         initGraphics();
         registerListeners();
     }
@@ -157,10 +150,10 @@ public class CoxcombChart extends Region {
     private void registerListeners() {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
-        items.forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, itemObserver));
+        items.forEach(item -> item.addEventListener(ChartEvent.ANY, itemObserver));
         items.addListener(itemListListener);
         //canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseHandler);
-        addChartEvtObserver(SelectionEvent.ANY, e -> {
+        addEventListener(SelectionEvent.ANY, e -> {
             if (getShowPopup()) {
                 popup.update((SelectionEvent) e);
                 popup.animatedShow(getScene().getWindow());
@@ -168,36 +161,8 @@ public class CoxcombChart extends Region {
         });
     }
 
-
-    // ******************** Methods *******************************************
-    @Override
-    public void layoutChildren() {
-        super.layoutChildren();
-    }
-
-    @Override
-    protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
-
-    @Override
-    protected double computeMinHeight(final double WIDTH) {return MINIMUM_HEIGHT;}
-
-    @Override
-    protected double computePrefWidth(final double HEIGHT) {return super.computePrefWidth(HEIGHT);}
-
-    @Override
-    protected double computePrefHeight(final double WIDTH) {return super.computePrefHeight(WIDTH);}
-
-    @Override
-    protected double computeMaxWidth(final double HEIGHT) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double WIDTH) {return MAXIMUM_HEIGHT;}
-
-    @Override
-    public ObservableList<Node> getChildren() {return super.getChildren();}
-
     public void dispose() {
-        items.forEach(item -> item.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
+        items.forEach(item -> item.removeEventListener(ChartEvent.ANY, itemObserver));
         items.removeListener(itemListListener);
         canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, mouseHandler);
     }
@@ -557,7 +522,7 @@ public class CoxcombChart extends Region {
 
             // Check if x,y are in segment
             if (Helper.isInRingSegment(X, Y, xy, xy, wh, wh, Math.abs(360 - startAngle), angle, barWidth)) {
-                fireChartEvt(new SelectionEvent(item));
+                fireChartEvent(new SelectionEvent(item));
                 return Optional.of(item);
             }
         }
@@ -608,7 +573,7 @@ public class CoxcombChart extends Region {
 
             // Check if x,y are in segment
             if (Helper.isInRingSegment(X, Y, xy, xy, wh, wh, Math.abs(360 - startAngle), angle, barWidth)) {
-                fireChartEvt(new SelectionEvent(item));
+                fireChartEvent(new SelectionEvent(item));
                 break;
             }
         }
@@ -692,37 +657,6 @@ public class CoxcombChart extends Region {
         }
     }
 
-
-    // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers.get(type).contains(observer)) {
-            return;
-        }
-        observers.get(type).add(observer);
-    }
-
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (observers.containsKey(type)) {
-            if (observers.get(type).contains(observer)) {
-                observers.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllChartEvtObservers() {observers.clear();}
-
-    public void fireChartEvt(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
-        }
-    }
-
-
     // ******************** Drawing *******************************************
     private void drawChart() {
         Order order = getOrder();
@@ -784,7 +718,7 @@ public class CoxcombChart extends Region {
             ctx.save();
             // Draw segment
             ctx.setLineWidth(barWidth);
-            ctx.setStroke(item.isSelected() ? getSelectedItemFill() : item.getFill());
+            ctx.setStroke(item.isSelected() ? getSelectedItemFill() : item.getFillColor());
             ctx.strokeArc(xy, xy, wh, wh, startAngle, angle, ArcType.OPEN);
 
             // Set Segment Clipping
@@ -855,7 +789,7 @@ public class CoxcombChart extends Region {
                 if (getUseChartItemTextFill()) {
                     ctx.setFill(item.getTextFill());
                 } else if (isAutoColor) {
-                    ctx.setFill(ColorUtils.isDark(item.getFill()) ? Color.WHITE : Color.BLACK);
+                    ctx.setFill(ColorUtils.isDark(item.getFillColor()) ? Color.WHITE : Color.BLACK);
                 } else {
                     ctx.setFill(textColor);
                 }
@@ -886,7 +820,7 @@ public class CoxcombChart extends Region {
         }
     }
 
-    private void redraw() {
+    protected void redraw() {
         drawChart();
     }
 }

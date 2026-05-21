@@ -1,15 +1,9 @@
 package fx.chart.util;
 
-import fx.chart.event.FxEvent;
-import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
+import fx.chart.event.DefaultEventSource;
 import fx.chart.event.type.BoundsEvent;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * This class define bounds
@@ -18,13 +12,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @version 1.0.0
  * @since 20 Jul 2025, 5:56 PM
  */
-public class Bounds {
+public class Bounds extends DefaultEventSource {
 
     private double x;
     private double y;
     private double width;
     private double height;
-    private Map<EventType, List<ChartEventListener<BoundsEvent>>> observers;
 
     public Bounds() {
         this(0, 0, 0, 0);
@@ -35,7 +28,6 @@ public class Bounds {
     }
 
     public Bounds(final double x, final double y, final double width, final double height) {
-        observers = new ConcurrentHashMap<>();
         set(x, y, width, height);
     }
 
@@ -44,14 +36,14 @@ public class Bounds {
 
     public void setX(final double x) {
         this.x = x;
-        fireBoundsEvt(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
+        fireChartEvent(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
     }
 
     public double getY() {return y;}
 
     public void setY(final double y) {
         this.y = y;
-        fireBoundsEvt(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
+        fireChartEvent(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
     }
 
     public double getMinX() {return x;}
@@ -66,14 +58,14 @@ public class Bounds {
 
     public void setWidth(final double width) {
         this.width = Math.clamp(width, 0, Double.MAX_VALUE);
-        fireBoundsEvt(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
+        fireChartEvent(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
     }
 
     public double getHeight() {return height;}
 
     public void setHeight(final double height) {
         this.height = Math.clamp(height, 0, Double.MAX_VALUE);
-        fireBoundsEvt(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
+        fireChartEvent(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
     }
 
     public double getCenterX() {return x + width * 0.5;}
@@ -89,7 +81,7 @@ public class Bounds {
         this.y = y;
         this.width = width;
         this.height = height;
-        fireBoundsEvt(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
+        fireChartEvent(new BoundsEvent(Bounds.this, BoundsEvent.BOUNDS, Bounds.this));
     }
 
     public boolean contains(final double x, final double y) {
@@ -108,34 +100,6 @@ public class Bounds {
     }
 
     public Bounds copy() {return new Bounds(x, y, width, height);}
-
-
-    // ******************** Event handling ************************************
-    public void addBoundsObserver(final EventType<? extends FxEvent> type, final ChartEventListener<BoundsEvent> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers.get(type).contains(observer)) {
-            return;
-        }
-        observers.get(type).add(observer);
-    }
-
-    public void removeBoundsObserver(final EventType<? extends FxEvent> type, final ChartEventListener<BoundsEvent> observer) {
-        if (observers.containsKey(type) && observers.get(type).contains(observer)) {
-            observers.get(type).remove(observer);
-        }
-    }
-
-    public void removeAllBoundsObservers() {observers.clear();}
-
-    public void fireBoundsEvt(final BoundsEvent evt) {
-        final EventType type = evt.getEventType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(BoundsEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
-        }
-    }
 
     @Override
     public boolean equals(final Object obj) {

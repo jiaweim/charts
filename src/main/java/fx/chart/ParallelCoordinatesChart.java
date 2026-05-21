@@ -5,11 +5,10 @@ import fx.chart.data.ChartItem;
 import fx.chart.data.DataObject;
 import fx.chart.event.ChartEvent;
 import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
 import fx.chart.font.Fonts;
-import fx.chart.util.Bounds;
 import fx.chart.tools.Helper;
 import fx.chart.tools.Order;
+import fx.chart.util.Bounds;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -17,11 +16,9 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -32,23 +29,26 @@ import java.awt.image.BufferedImage;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-
+/**
+ *
+ *
+ * @author Jiawei Mao
+ * @version 1.0.0
+ * @since 21 May 2026, 1:42 PM
+ */
 @DefaultProperty("children")
-public class ParallelCoordinatesChart extends Region {
+public class ParallelCoordinatesChart extends ChartElement {
+
     private static final double PREFERRED_WIDTH = 600;
     private static final double PREFERRED_HEIGHT = 400;
-    private static final double MINIMUM_WIDTH = 50;
-    private static final double MINIMUM_HEIGHT = 50;
-    private static final double MAXIMUM_WIDTH = 2048;
-    private static final double MAXIMUM_HEIGHT = 2048;
+
     private static final double HEADER_HEIGHT = 30;
     private static final double AXIS_WIDTH = 10;
     private static final double MAJOR_TICK_LENGTH = 6;
     private static final double MEDIUM_TICK_LENGTH = 4;
     private final ChartEvent SELECTION_EVENT = new ChartEvent(ParallelCoordinatesChart.this, ChartEvent.SELECTED);
+
     private double size;
     private double width;
     private double height;
@@ -97,8 +97,6 @@ public class ParallelCoordinatesChart extends Region {
     private Rectangle rect;
     private Text dragText;
     private boolean wasDragged;
-    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
-
 
     public ParallelCoordinatesChart() {
         _axisColor = Color.BLACK;
@@ -122,9 +120,9 @@ public class ParallelCoordinatesChart extends Region {
         objectListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedObject -> addedObject.getProperties().values().forEach(item -> item.addChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver)));
+                    c.getAddedSubList().forEach(addedObject -> addedObject.getProperties().values().forEach(item -> item.addEventListener(ChartEvent.ITEM_UPDATE, itemObserver)));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedObject -> removedObject.getProperties().values().forEach(item -> item.removeChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver)));
+                    c.getRemoved().forEach(removedObject -> removedObject.getProperties().values().forEach(item -> item.removeEventListener(ChartEvent.ITEM_UPDATE, itemObserver)));
                 }
             }
             prepareData();
@@ -135,7 +133,6 @@ public class ParallelCoordinatesChart extends Region {
         categoryObjectItemMap = new HashMap<>();
         wasDragged = false;
         mouseHandler = e -> handleMouseEvent(e);
-        observers = new ConcurrentHashMap<>();
 
         initGraphics();
         registerListeners();
@@ -186,36 +183,8 @@ public class ParallelCoordinatesChart extends Region {
         axisCanvas.addEventHandler(MouseEvent.MOUSE_RELEASED, mouseHandler);
     }
 
-
-    // ******************** Methods *******************************************
-    @Override
-    public void layoutChildren() {
-        super.layoutChildren();
-    }
-
-    @Override
-    protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
-
-    @Override
-    protected double computeMinHeight(final double WIDTH) {return MINIMUM_HEIGHT;}
-
-    @Override
-    protected double computePrefWidth(final double HEIGHT) {return super.computePrefWidth(HEIGHT);}
-
-    @Override
-    protected double computePrefHeight(final double WIDTH) {return super.computePrefHeight(WIDTH);}
-
-    @Override
-    protected double computeMaxWidth(final double HEIGHT) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double WIDTH) {return MAXIMUM_HEIGHT;}
-
-    @Override
-    public ObservableList<Node> getChildren() {return super.getChildren();}
-
     public void dispose() {
-        items.forEach(object -> object.getProperties().values().forEach(item -> item.removeChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver)));
+        items.forEach(object -> object.getProperties().values().forEach(item -> item.removeEventListener(ChartEvent.ITEM_UPDATE, itemObserver)));
         axisCanvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, mouseHandler);
         axisCanvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, mouseHandler);
         axisCanvas.removeEventHandler(MouseEvent.MOUSE_RELEASED, mouseHandler);
@@ -646,7 +615,7 @@ public class ParallelCoordinatesChart extends Region {
             }
         }));
         if (!selectedObjects.isEmpty()) {
-            fireChartEvt(SELECTION_EVENT);
+            fireChartEvent(SELECTION_EVENT);
         }
 
         if (getSmoothConnections()) {
@@ -778,39 +747,8 @@ public class ParallelCoordinatesChart extends Region {
         }
     }
 
-
-    // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers.get(type).contains(observer)) {
-            return;
-        }
-        observers.get(type).add(observer);
-    }
-
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (observers.containsKey(type)) {
-            if (observers.get(type).contains(observer)) {
-                observers.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllChartEvtObservers() {observers.clear();}
-
-    public void fireChartEvt(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
-        }
-    }
-
-
     // ******************** Drawing *******************************************
-    private void redraw() {
+    protected void redraw() {
         drawAxis();
         if (getSmoothConnections()) {
             drawSmoothConnections();

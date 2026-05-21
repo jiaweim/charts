@@ -14,7 +14,10 @@ import java.util.Objects;
  * @version 1.0.0
  * @since 20 May 2026, 1:17 PM
  */
-public abstract class LazyProperty<T, P extends Property<T>> {
+public abstract class LProperty<T, P extends Property<T>> {
+
+    private static final Runnable EMPTY = () -> {
+    };
 
     protected final Object bean_;
     protected final String name_;
@@ -23,14 +26,25 @@ public abstract class LazyProperty<T, P extends Property<T>> {
     private P property_;
 
     /**
-     * Create a {@link LazyProperty}
+     * Create a {@link LProperty}
+     *
+     * @param bean         The bean to which this property belongs.
+     * @param propertyName property name.
+     * @param initialValue Initial value of the property.
+     */
+    public LProperty(Object bean, String propertyName, @Nullable T initialValue) {
+        this(bean, propertyName, initialValue, EMPTY);
+    }
+
+    /**
+     * Create a {@link LProperty}
      *
      * @param bean         The bean to which this property belongs.
      * @param propertyName property name.
      * @param initialValue Initial value of the property.
      * @param onChanged    Operations triggered when the property value changes.
      */
-    public LazyProperty(Object bean, String propertyName, @Nullable T initialValue, Runnable onChanged) {
+    public LProperty(Object bean, String propertyName, @Nullable T initialValue, Runnable onChanged) {
         this.bean_ = bean;
         this.name_ = Objects.requireNonNull(propertyName);
         this.value_ = initialValue;
@@ -96,7 +110,19 @@ public abstract class LazyProperty<T, P extends Property<T>> {
      *
      * @return property name.
      */
-    public String getName() {
+    public String getPropertyName() {
         return name_;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof LProperty<?, ?> lProperty)) return false;
+        return Objects.equals(value_, lProperty.value_)
+                && Objects.equals(property_, lProperty.property_);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value_, property_);
     }
 }

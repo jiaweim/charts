@@ -71,7 +71,7 @@ public class SunburstChartTest extends Application {
 
         TreeNode<ChartItem> week19 = new TreeNode<>(new ChartItem("Week 19", 0.3, PINK_2), may);
 
-        tree.addTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, evt -> {
+        tree.addEventListener(TreeNodeEvent.NODE_SELECTED, evt -> {
             TreeNode<ChartItem> segment = (TreeNode<ChartItem>) evt.getSource();
             System.out.println(segment.getItem().getName() + ": " + segment.getItem().getValue());
         });

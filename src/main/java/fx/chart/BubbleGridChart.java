@@ -5,8 +5,8 @@ import fx.chart.data.BubbleGridChartItem;
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvent;
 import fx.chart.event.ChartEventListener;
-import fx.chart.font.Fonts;
 import fx.chart.font.FontMetrix;
+import fx.chart.font.Fonts;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import fx.chart.tools.Order;
@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 
 @DefaultProperty("children")
 public class BubbleGridChart extends Region {
+
     private static final double PREFERRED_WIDTH = 600;
     private static final double PREFERRED_HEIGHT = 400;
     private static final double MINIMUM_WIDTH = 50;
@@ -132,9 +133,9 @@ public class BubbleGridChart extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ANY, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addEventListener(ChartEvent.ANY, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeEventListener(ChartEvent.ANY, itemObserver));
                 }
             }
 
@@ -186,7 +187,7 @@ public class BubbleGridChart extends Region {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
         items.addListener(itemListListener);
-        items.forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, itemObserver));
+        items.forEach(item -> item.addEventListener(ChartEvent.ANY, itemObserver));
         canvas.setOnMouseClicked(e -> bubbles.forEach(bubble -> {
             if (Helper.isInCircle(e.getX(), e.getY(), bubble.x, bubble.y, bubble.r)) {
                 popup.setX(e.getScreenX());
@@ -226,7 +227,7 @@ public class BubbleGridChart extends Region {
     public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public void dispose() {
-        items.forEach(item -> item.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
+        items.forEach(item -> item.removeEventListener(ChartEvent.ANY, itemObserver));
         items.removeListener(itemListListener);
     }
 
@@ -856,7 +857,7 @@ public class BubbleGridChart extends Region {
                     final double bubbleArea = bgci.getValue() * factor;
                     final double radius = Math.sqrt(bubbleArea / Math.PI);
                     final double diameter = radius * 2.0;
-                    Color fill = useXCategoryFill ? xItem.getFill() : yItem.getFill();
+                    Color fill = useXCategoryFill ? xItem.getFillColor() : yItem.getFillColor();
                     if (getUseGradientFill()) {
                         fill = ColorUtils.getColorAt(gradient, bgci.getValue() / (maxValue - minValue));
                     }

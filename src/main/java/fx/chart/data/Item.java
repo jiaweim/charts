@@ -21,12 +21,12 @@ public interface Item {
     /**
      * @return item fill color
      */
-    Color getFill();
+    Color getFillColor();
 
     /**
      * @return stroke color
      */
-    Color getStroke();
+    Color getStrokeColor();
 
     /**
      * @return symbol

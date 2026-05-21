@@ -89,7 +89,7 @@ public class StreamChartTest extends Application {
         };
 
         for (ChartItem item : itemsStacked) {
-            item.addChartEvtObserver(ChartEvent.ANY, e -> {
+            item.addEventListener(ChartEvent.ANY, e -> {
                 ChartItem chartItem = (ChartItem) e.getSource();
                 System.out.println(chartItem.getName() + ": " + chartItem.getValue());
             });

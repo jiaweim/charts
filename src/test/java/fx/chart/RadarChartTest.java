@@ -20,11 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
 /**
- * User: hansolo
- * Date: 07.08.17
- * Time: 09:29
+ *
+ *
+ * @author Jiawei Mao
+ * @version 1.0.0
+ * @since 21 May 2026, 1:28 PM
  */
 public class RadarChartTest extends Application {
 

@@ -889,11 +889,11 @@ public class GraphPanel extends Region {
 
         for (GraphNode node : nodeEdgeModel.getNodes()) {
             node.setFill(nodeEdgeModel.getOrCreateGroupColorScheme().get(node.getStringAttribute(nodeEdgeModel.getCurrentGroupKey())));
-            ctx.setFill(node.getFill());
+            ctx.setFill(node.getFillColor());
 
             ctx.setLineWidth(2);
 
-            ctx.setStroke(node.getStroke());
+            ctx.setStroke(node.getStrokeColor());
 
 
             if (node.isSelected()) {

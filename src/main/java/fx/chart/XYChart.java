@@ -134,7 +134,7 @@ public class XYChart<T extends XYItem> extends Region {
         markers_ = new ArrayList<>();
         title_ = "";
         subTitle_ = "";
-        xyPanes.forEach(xyPane -> xyPane.addChartEvtObserver(ChartEvent.UPDATE, updateListener_));
+        xyPanes.forEach(xyPane -> xyPane.addEventListener(ChartEvent.UPDATE, updateListener_));
         checkReferenceZero();
 
         initGraphics();
@@ -182,9 +182,9 @@ public class XYChart<T extends XYItem> extends Region {
         heightProperty().addListener(o -> resize());
         xyPanes_.addListener((ListChangeListener<XYPane<T>>) c -> {
             if (c.wasAdded()) {
-                c.getAddedSubList().forEach(xyPane -> xyPane.addChartEvtObserver(ChartEvent.UPDATE, updateListener_));
+                c.getAddedSubList().forEach(xyPane -> xyPane.addEventListener(ChartEvent.UPDATE, updateListener_));
             } else if (c.wasRemoved()) {
-                c.getRemoved().forEach(xyPane -> xyPane.removeChartEvtObserver(ChartEvent.UPDATE, updateListener_));
+                c.getRemoved().forEach(xyPane -> xyPane.removeEventListener(ChartEvent.UPDATE, updateListener_));
             }
             if (xyPanes_.size() > 1) {
                 xyPanes_.forEach(xyPane -> xyPane.setChartBackground(Color.TRANSPARENT));
@@ -215,13 +215,13 @@ public class XYChart<T extends XYItem> extends Region {
         axes_.addListener((ListChangeListener<Axis>) c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(axis -> axis.addChartEventListener(ChartEvent.AXIS_RANGE_CHANGED, axisListener_));
+                    c.getAddedSubList().forEach(axis -> axis.addEventListener(ChartEvent.AXIS_RANGE_CHANGED, axisListener_));
                 } else if (c.wasRemoved()) {
-                    c.getAddedSubList().forEach(axis -> axis.removeChartEvtObserver(ChartEvent.AXIS_RANGE_CHANGED, axisListener_));
+                    c.getAddedSubList().forEach(axis -> axis.removeEventListener(ChartEvent.AXIS_RANGE_CHANGED, axisListener_));
                 }
             }
         });
-        axes_.forEach(axis -> axis.addChartEventListener(ChartEvent.AXIS_RANGE_CHANGED, axisListener_));
+        axes_.forEach(axis -> axis.addEventListener(ChartEvent.AXIS_RANGE_CHANGED, axisListener_));
     }
 
     @Override
@@ -246,7 +246,7 @@ public class XYChart<T extends XYItem> extends Region {
     public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public void dispose() {
-        axes_.forEach(axis -> axis.removeChartEvtObserver(ChartEvent.AXIS_RANGE_CHANGED, axisListener_));
+        axes_.forEach(axis -> axis.removeEventListener(ChartEvent.AXIS_RANGE_CHANGED, axisListener_));
         xyPanes_.forEach(xyPane -> xyPane.dispose());
     }
 

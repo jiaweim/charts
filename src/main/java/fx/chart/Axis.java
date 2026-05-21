@@ -2,7 +2,6 @@ package fx.chart;
 
 import fx.chart.event.ChartEvent;
 import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
 import fx.chart.font.FontUtils;
 import fx.chart.tools.Helper;
 import fx.chart.tools.Helper.Interval;
@@ -11,15 +10,12 @@ import fx.chart.util.Bounds;
 import fx.chart.util.TimeUtils;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
-import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -32,8 +28,6 @@ import java.math.RoundingMode;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import static javafx.geometry.Orientation.VERTICAL;
 
@@ -42,12 +36,11 @@ import static javafx.geometry.Orientation.VERTICAL;
  * Axis
  *
  * @author Jiawei Mao
- * @author Gerrit Grunwald
  * @version 1.0.0
  * @since 24 Jun 2025, 9:33 AM
  */
 @DefaultProperty("children")
-public class Axis extends Region {
+public class Axis extends ChartElement {
 
     /**
      * Create a linear axis in range [0,100]
@@ -308,8 +301,7 @@ public class Axis extends Region {
 
     private static final double MINIMUM_WIDTH = 0;
     private static final double MINIMUM_HEIGHT = 0;
-    private static final double MAXIMUM_WIDTH = 4096;
-    private static final double MAXIMUM_HEIGHT = 4096;
+
 
     private static final double MIN_MAJOR_LINE_WIDTH = 1;
     private static final double MIN_MEDIUM_LINE_WIDTH = 0.75;
@@ -319,8 +311,6 @@ public class Axis extends Region {
      * Axis range change event
      */
     private final ChartEvent AXIS_RANGE_CHANGED_EVT = new ChartEvent(Axis.this, ChartEvent.AXIS_RANGE_CHANGED);
-
-    private final Map<EventType<ChartEvent>, List<ChartEventListener<ChartEvent>>> listeners = new ConcurrentHashMap<>();
 
     private double size;
     /**
@@ -688,7 +678,7 @@ public class Axis extends Region {
     private void registerListeners() {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
-        addChartEventListener(ChartEvent.AXIS_RANGE_CHANGED, eventListener_);
+        addEventListener(ChartEvent.AXIS_RANGE_CHANGED, eventListener_);
     }
 
     @Override
@@ -697,20 +687,6 @@ public class Axis extends Region {
     @Override
     protected double computeMinHeight(final double WIDTH) {return MINIMUM_HEIGHT;}
 
-    @Override
-    protected double computePrefWidth(final double HEIGHT) {return super.computePrefWidth(HEIGHT);}
-
-    @Override
-    protected double computePrefHeight(final double WIDTH) {return super.computePrefHeight(WIDTH);}
-
-    @Override
-    protected double computeMaxWidth(final double HEIGHT) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double WIDTH) {return MAXIMUM_HEIGHT;}
-
-    @Override
-    public ObservableList<Node> getChildren() {return super.getChildren();}
 
     /**
      * @return min value of this axis
@@ -2122,7 +2098,7 @@ public class Axis extends Region {
     public Bounds getAxisBounds() {return axisBounds_;}
 
     public void dispose() {
-        removeChartEvtObserver(ChartEvent.AXIS_RANGE_CHANGED, eventListener_);
+        removeEventListener(ChartEvent.AXIS_RANGE_CHANGED, eventListener_);
     }
 
     /**
@@ -2321,52 +2297,6 @@ public class Axis extends Region {
             return String.format(locale, tickLabelFormatString, number);
         } else {
             return numberFormatter.toString(number);
-        }
-    }
-
-    /**
-     * add a {@link ChartEventListener} of given {@link EventType}
-     *
-     * @param type     {@link EventType}
-     * @param listener {@link ChartEventListener}
-     */
-    public void addChartEventListener(final EventType<ChartEvent> type, final ChartEventListener<ChartEvent> listener) {
-        if (!listeners.containsKey(type)) {
-            listeners.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (listeners.get(type).contains(listener)) {
-            return;
-        }
-        listeners.get(type).add(listener);
-    }
-
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (listeners.containsKey(type)) {
-            if (listeners.get(type).contains(observer)) {
-                listeners.get(type).remove(observer);
-            }
-        }
-    }
-
-    /**
-     * remove all {@link ChartEventListener}
-     */
-    public void removeAllChartEventListeners() {
-        listeners.clear();
-    }
-
-    /**
-     * fire a given {@link ChartEvent}
-     *
-     * @param evt {@link ChartEvent}
-     */
-    public void fireChartEvent(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        listeners.entrySet().stream()
-                .filter(entry -> entry.getKey().equals(ChartEvent.ANY))
-                .forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (listeners.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            listeners.get(type).forEach(observer -> observer.handle(evt));
         }
     }
 

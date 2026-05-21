@@ -4,23 +4,23 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.property.StringPropertyBase;
 
 /**
- * {@link LazyProperty} for string.
+ * {@link LProperty} for string.
  *
  * @author Jiawei Mao
  * @version 1.0.0
  * @since 20 May 2026, 2:13 PM
  */
-public class StringLazyProperty extends LazyProperty<String, StringProperty> {
+public class StringLProperty extends LProperty<String, StringProperty> {
 
     /**
-     * Create a {@link LazyProperty}
+     * Create a {@link LProperty}
      *
      * @param bean         The bean to which this property belongs.
      * @param propertyName property name
      * @param initialValue Initial value of the property.
      * @param onChanged    Operations triggered when the property value changes.
      */
-    public StringLazyProperty(Object bean, String propertyName, String initialValue, Runnable onChanged) {
+    public StringLProperty(Object bean, String propertyName, String initialValue, Runnable onChanged) {
         super(bean, propertyName, initialValue, onChanged);
     }
 

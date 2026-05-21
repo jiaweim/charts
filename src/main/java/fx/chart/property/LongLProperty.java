@@ -7,30 +7,30 @@ import org.jspecify.annotations.Nullable;
 import java.util.function.LongUnaryOperator;
 
 /**
- * {@link LazyProperty} for long value.
+ * {@link LProperty} for long value.
  *
  * @author Jiawei Mao
  * @version 1.0.0
  * @since 20 May 2026, 3:30 PM
  */
-public class LongLazyProperty extends LazyProperty<Number, LongProperty> {
+public class LongLProperty extends LProperty<Number, LongProperty> {
 
     private final LongUnaryOperator clampFunc_;
 
     /**
-     * Create a {@link LazyProperty}
+     * Create a {@link LProperty}
      *
      * @param bean         The bean to which this property belongs.
      * @param propertyName property name.
      * @param initialValue Initial value of the property.
      * @param onChanged    Operations triggered when the property value changes.
      */
-    public LongLazyProperty(Object bean, String propertyName, @Nullable Long initialValue, Runnable onChanged) {
+    public LongLProperty(Object bean, String propertyName, @Nullable Long initialValue, Runnable onChanged) {
         super(bean, propertyName, initialValue, onChanged);
         this.clampFunc_ = null;
     }
 
-    public LongLazyProperty(Object bean, String propertyName, @Nullable Number initialValue, Runnable onChanged, LongUnaryOperator clampFunc_) {
+    public LongLProperty(Object bean, String propertyName, @Nullable Number initialValue, Runnable onChanged, LongUnaryOperator clampFunc_) {
         super(bean, propertyName, initialValue, onChanged);
         this.clampFunc_ = clampFunc_;
     }

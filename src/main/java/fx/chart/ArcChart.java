@@ -8,8 +8,8 @@ import fx.chart.event.ChartEventListener;
 import fx.chart.font.Fonts;
 import fx.chart.geometry.Circle;
 import fx.chart.geometry.Path;
-import fx.chart.util.Point;
 import fx.chart.tools.Helper;
+import fx.chart.util.Point;
 import javafx.application.Platform;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
@@ -17,11 +17,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.TextAlignment;
@@ -32,14 +30,11 @@ import java.util.stream.Collectors;
 
 
 @DefaultProperty("children")
-public class ArcChart extends Region {
+public class ArcChart extends ChartElement {
 
     private static final double PREFERRED_WIDTH = 500;
     private static final double PREFERRED_HEIGHT = 500;
-    private static final double MINIMUM_WIDTH = 50;
-    private static final double MINIMUM_HEIGHT = 50;
-    private static final double MAXIMUM_WIDTH = 4096;
-    private static final double MAXIMUM_HEIGHT = 4096;
+
     private static final double DEFAULT_SEGMENT_GAP = 4;
     private static final double DEFAULT_CONNECTION_OPACITY = 0.65;
     private static final Color DEFAULT_SELECTION_COLOR = Color.rgb(128, 0, 0, 0.25);
@@ -106,9 +101,9 @@ public class ArcChart extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ANY, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addEventListener(ChartEvent.ANY, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeEventListener(ChartEvent.ANY, itemObserver));
                 }
             }
             validateData();
@@ -178,7 +173,7 @@ public class ArcChart extends Region {
                 double eventY = e.getY();
                 if (itemPath.contains(eventX, eventY)) {
                     Platform.runLater(() -> {
-                        plotItem.fireChartEvt(new ChartEvent(plotItem, ChartEvent.ITEM_SELECTED, e));
+                        plotItem.fireChartEvent(new ChartEvent(plotItem, ChartEvent.ITEM_SELECTED, e));
                         selectedItem = plotItem;
                         redraw();
                     });
@@ -191,36 +186,8 @@ public class ArcChart extends Region {
         });
     }
 
-
-    // ******************** Methods *******************************************
-    @Override
-    public void layoutChildren() {
-        super.layoutChildren();
-    }
-
-    @Override
-    protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
-
-    @Override
-    protected double computeMinHeight(final double WIDTH) {return MINIMUM_HEIGHT;}
-
-    @Override
-    protected double computePrefWidth(final double HEIGHT) {return super.computePrefWidth(HEIGHT);}
-
-    @Override
-    protected double computePrefHeight(final double WIDTH) {return super.computePrefHeight(WIDTH);}
-
-    @Override
-    protected double computeMaxWidth(final double HEIGHT) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double WIDTH) {return MAXIMUM_HEIGHT;}
-
-    @Override
-    public ObservableList<Node> getChildren() {return super.getChildren();}
-
     public void dispose() {
-        items.forEach(item -> item.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
+        items.forEach(item -> item.removeEventListener(ChartEvent.ANY, itemObserver));
         items.removeListener(itemListListener);
     }
 
@@ -715,7 +682,7 @@ public class ArcChart extends Region {
             ctx.setLineCap(StrokeLineCap.BUTT);
             item.getOutgoing().forEach((outgoingItem, value) -> {
                 Point outgoingItemPoint = itemPoints.get(outgoingItem);
-                double connectionWidth = getWeightConnections() ? Math.clamp(value * connectionWidthFactor, 2, maxConnectionWidth) : 2;
+                double connectionWidth = getWeightConnections() ? Math.clamp(value * connectionWidthFactor, 2, Math.max(maxConnectionWidth, 2)) : 2;
                 double arcWidth = outgoingItemPoint.getX() - itemPoint.getX();
 
                 Color connectionStroke;
@@ -726,7 +693,7 @@ public class ArcChart extends Region {
                     } else if (null != connection && !connection.getFill().equals(Color.TRANSPARENT)) {
                         connectionStroke = ColorUtils.getColorWithOpacity(connection.getFill(), getConnectionOpacity());
                     } else {
-                        connectionStroke = ColorUtils.getColorWithOpacity(item.getFill(), getConnectionOpacity());
+                        connectionStroke = ColorUtils.getColorWithOpacity(item.getFillColor(), getConnectionOpacity());
                     }
                 } else {
                     connectionStroke = getConnectionColor();
@@ -769,7 +736,7 @@ public class ArcChart extends Region {
             selectedItem.getOutgoing().forEach((outgoingItem, value) -> {
                 Point itemPoint = itemPoints.get(selectedItem);
                 Point outgoingItemPoint = itemPoints.get(outgoingItem);
-                double connectionWidth = getWeightConnections() ? Math.clamp(value * connectionWidthFactor, 2, maxConnectionWidth) : 2;
+                double connectionWidth = getWeightConnections() ? Math.clamp(value * connectionWidthFactor, 2, Math.max(2, maxConnectionWidth)) : 2;
                 double arcWidth = outgoingItemPoint.getX() - itemPoint.getX();
                 Color connectionStroke = getConnectionColor();
                 Connection connection = getConnection(selectedItem, outgoingItem);
@@ -780,7 +747,7 @@ public class ArcChart extends Region {
                         if (getSortByCluster() && null != selectedItem.getCluster()) {
                             connectionStroke = ColorUtils.getColorWithOpacity(selectedItem.getCluster().getFill(), getConnectionOpacity());
                         } else {
-                            connectionStroke = ColorUtils.getColorWithOpacity(selectedItem.getFill(), getConnectionOpacity());
+                            connectionStroke = ColorUtils.getColorWithOpacity(selectedItem.getFillColor(), getConnectionOpacity());
                         }
                     }
                 }
@@ -814,12 +781,12 @@ public class ArcChart extends Region {
             double itemY = itemPoint.getY();
             if (getSortByCluster()) {
                 if (null == item.getCluster()) {
-                    ctx.setFill(item.getFill());
+                    ctx.setFill(item.getFillColor());
                 } else {
                     ctx.setFill(item.getCluster().getFill());
                 }
             } else {
-                ctx.setFill(item.getFill());
+                ctx.setFill(item.getFillColor());
             }
             ctx.fillOval(itemX - itemSize * 0.5, itemY - itemSize * 0.5, itemSize, itemSize);
 
@@ -887,7 +854,7 @@ public class ArcChart extends Region {
         }
     }
 
-    private void redraw() {
+    protected void redraw() {
         drawChart();
     }
 }

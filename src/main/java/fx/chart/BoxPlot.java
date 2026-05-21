@@ -13,10 +13,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.statistics.descriptive.DoubleStatistics;
@@ -29,7 +27,8 @@ import java.util.stream.Collectors;
 
 
 @DefaultProperty("children")
-public class BoxPlot<T extends ChartItem> extends Region {
+public class BoxPlot<T extends ChartItem> extends ChartElement {
+
     public static final Color DEFAULT_BACKGROUND_COLOR = Color.TRANSPARENT;
     public static final Color DEFAULT_WHISKER_STROKE_COLOR = Color.BLACK;
     public static final Color DEFAULT_IQR_FILL_COLOR = Color.TRANSPARENT;
@@ -40,10 +39,7 @@ public class BoxPlot<T extends ChartItem> extends Region {
     public static final Color DEFAULT_TEXT_FILL_COLOR = Color.BLACK;
     private static final double PREFERRED_WIDTH = 50;
     private static final double PREFERRED_HEIGHT = 400;
-    private static final double MINIMUM_WIDTH = 50;
-    private static final double MINIMUM_HEIGHT = 50;
-    private static final double MAXIMUM_WIDTH = 2048;
-    private static final double MAXIMUM_HEIGHT = 2048;
+
     private String userAgentStyleSheet;
     private double width;
     private double height;
@@ -115,9 +111,9 @@ public class BoxPlot<T extends ChartItem> extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addEventListener(ChartEvent.ITEM_UPDATE, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeEventListener(ChartEvent.ITEM_UPDATE, itemObserver));
                 }
             }
             double[] values = new double[items.size()];
@@ -228,34 +224,6 @@ public class BoxPlot<T extends ChartItem> extends Region {
             }
         });
     }
-
-
-    // ******************** Methods *******************************************
-    @Override
-    public void layoutChildren() {
-        super.layoutChildren();
-    }
-
-    @Override
-    protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
-
-    @Override
-    protected double computeMinHeight(final double WIDTH) {return MINIMUM_HEIGHT;}
-
-    @Override
-    protected double computePrefWidth(final double HEIGHT) {return super.computePrefWidth(HEIGHT);}
-
-    @Override
-    protected double computePrefHeight(final double WIDTH) {return super.computePrefHeight(WIDTH);}
-
-    @Override
-    protected double computeMaxWidth(final double HEIGHT) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double WIDTH) {return MAXIMUM_HEIGHT;}
-
-    @Override
-    public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public void dispose() {items.removeListener(itemListListener);}
 
@@ -649,7 +617,7 @@ public class BoxPlot<T extends ChartItem> extends Region {
             _yAxis = yAxis;
             _yAxis.setMinValue(min);
             _yAxis.setMaxValue(max);
-            _yAxis.addChartEventListener(ChartEvent.AXIS_RANGE_CHANGED, e -> redraw());
+            _yAxis.addEventListener(ChartEvent.AXIS_RANGE_CHANGED, e -> redraw());
             redraw();
         } else {
             this.yAxis.set(yAxis);
@@ -663,7 +631,7 @@ public class BoxPlot<T extends ChartItem> extends Region {
                 protected void invalidated() {
                     _yAxis.setMinValue(min);
                     _yAxis.setMaxValue(max);
-                    _yAxis.addChartEventListener(ChartEvent.AXIS_RANGE_CHANGED, e -> redraw());
+                    _yAxis.addEventListener(ChartEvent.AXIS_RANGE_CHANGED, e -> redraw());
                     redraw();
                 }
 
@@ -678,7 +646,7 @@ public class BoxPlot<T extends ChartItem> extends Region {
     }
 
     public void resetYAxis() {
-        getYAxis().removeAllChartEventListeners();
+        getYAxis().removeAllEventListeners();
         _yAxis = null;
         yAxis = null;
         min = Math.min(minValue, minimum);
@@ -733,7 +701,7 @@ public class BoxPlot<T extends ChartItem> extends Region {
         redraw();
     }
 
-    private void redraw() {
+    protected void redraw() {
         if (!sorted) {
             Collections.sort(items, Comparator.comparing(T::getValue));
             sorted = true;

@@ -4,14 +4,14 @@ import fx.chart.color.ColorUtils;
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvent;
 import fx.chart.event.ChartEventListener;
+import fx.chart.font.FontMetrix;
 import fx.chart.font.Fonts;
 import fx.chart.geometry.Path;
-import fx.chart.font.FontMetrix;
-import fx.chart.util.Bounds;
-import fx.chart.util.Point;
 import fx.chart.tools.Helper;
 import fx.chart.tools.Order;
 import fx.chart.tools.TooltipPopup;
+import fx.chart.util.Bounds;
+import fx.chart.util.Point;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -166,9 +166,9 @@ public class StreamChart extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addEventListener(ChartEvent.ITEM_UPDATE, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeEventListener(ChartEvent.ITEM_UPDATE, itemObserver));
                 }
             }
             groupBy(getCategory());
@@ -251,7 +251,7 @@ public class StreamChart extends Region {
                 double eventX = e.getX();
                 double eventY = e.getY();
                 if (path.contains(eventX, eventY)) {
-                    chartItem.fireChartEvt(new ChartEvent(chartItem, ChartEvent.ITEM_SELECTED, e));
+                    chartItem.fireChartEvent(new ChartEvent(chartItem, ChartEvent.ITEM_SELECTED, e));
                     selectedPaths.addAll(bezierPaths.entrySet()
                             .parallelStream()
                             .filter(entry -> entry.getValue().getName().equals(chartItem.getName()))
@@ -1012,8 +1012,8 @@ public class StreamChart extends Region {
                     if (!nextItemDataOptional.isPresent()) {
                         if (!previousItemDataOptional.isPresent()) {
                             Path rectPath = new Path();
-                            rectPath.setFill(item.getFill());
-                            rectPath.setStroke(item.getFill());
+                            rectPath.setFill(item.getFillColor());
+                            rectPath.setStroke(item.getFillColor());
                             rectPath.moveTo(bounds.getCenterX() - singleItemWith, bounds.getMinY() + 1);
                             rectPath.lineTo(bounds.getCenterX() + singleItemWith, bounds.getMinY() + 1);
                             rectPath.lineTo(bounds.getCenterX() + singleItemWith, bounds.getMaxY() - 1);
@@ -1035,8 +1035,8 @@ public class StreamChart extends Region {
                     Path path = new Path();
 
                     // Set path fill to item fill
-                    path.setFill(item.getFill());
-                    path.setStroke(item.getFill());
+                    path.setFill(item.getFillColor());
+                    path.setStroke(item.getFillColor());
 
                     // Draw the bezier curve
                     if (Type.STACKED == type) {
@@ -1108,7 +1108,7 @@ public class StreamChart extends Region {
 
                 // Draw item text
                 if (isItemTextVisible() && item.getValue() > getItemTextThreshold()) {
-                    ctx.setFill(autoTextColor ? ColorUtils.isDark(item.getFill()) ? Color.WHITE : Color.BLACK : textColor);
+                    ctx.setFill(autoTextColor ? ColorUtils.isDark(item.getFillColor()) ? Color.WHITE : Color.BLACK : textColor);
                     itemFontMetrix.computeStringWidth(item.getName());
                     if (itemFontMetrix.computeStringWidth(item.getName()) < MAX_ITEM_WIDTH &&
                             itemFontMetrix.getLineHeight() < bounds.getHeight()) {

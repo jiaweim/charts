@@ -5,22 +5,16 @@ import fx.chart.series.YSeries;
 import fx.chart.tools.Helper;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.StringPropertyBase;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Region;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-public class YChart<T extends ValueItem> extends Region {
+public class YChart<T extends ValueItem> extends ChartElement {
 
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
-    private static final double MINIMUM_WIDTH = 50;
-    private static final double MINIMUM_HEIGHT = 50;
-    private static final double MAXIMUM_WIDTH = 4096;
-    private static final double MAXIMUM_HEIGHT = 4096;
+
     private static final Double AXIS_WIDTH = 25d;
     private double width;
     private double height;
@@ -31,8 +25,6 @@ public class YChart<T extends ValueItem> extends Region {
     private StringProperty subTitle;
     private AnchorPane pane;
 
-
-    // ******************** Constructors **************************************
     public YChart(final YPane<T> Y_PANE) {
         if (null == Y_PANE) {
             throw new IllegalArgumentException("YPane has not to be null");
@@ -42,8 +34,6 @@ public class YChart<T extends ValueItem> extends Region {
         registerListeners();
     }
 
-
-    // ******************** Initialization ************************************
     private void initGraphics() {
         if (Double.compare(getPrefWidth(), 0.0) <= 0 || Double.compare(getPrefHeight(), 0.0) <= 0 || Double.compare(getWidth(), 0.0) <= 0 ||
                 Double.compare(getHeight(), 0.0) <= 0) {
@@ -66,28 +56,6 @@ public class YChart<T extends ValueItem> extends Region {
         heightProperty().addListener(o -> resize());
     }
 
-
-    // ******************** Methods *******************************************
-    @Override
-    protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
-
-    @Override
-    protected double computeMinHeight(final double WIDTH) {return MINIMUM_HEIGHT;}
-
-    @Override
-    protected double computePrefWidth(final double HEIGHT) {return super.computePrefWidth(HEIGHT);}
-
-    @Override
-    protected double computePrefHeight(final double WIDTH) {return super.computePrefHeight(WIDTH);}
-
-    @Override
-    protected double computeMaxWidth(final double HEIGHT) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double WIDTH) {return MAXIMUM_HEIGHT;}
-
-    @Override
-    public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public String getTitle() {return null == title ? _title : title.get();}
 
@@ -177,7 +145,6 @@ public class YChart<T extends ValueItem> extends Region {
         final double MIN_VALUE = listOfSeries.stream().mapToDouble(YSeries::getMinY).min().getAsDouble();
         final ChartType TYPE = listOfSeries.get(0).getChartType();
     }
-
 
     // ******************** Resizing ******************************************
     private void resize() {

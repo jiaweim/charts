@@ -2,22 +2,16 @@ package fx.chart.data;
 
 import fx.chart.Symbol;
 import fx.chart.event.ChartEvent;
-import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
-import fx.chart.property.BooleanLazyProperty;
-import fx.chart.property.DoubleLazyProperty;
-import fx.chart.property.ObjectLazyProperty;
-import fx.chart.property.StringLazyProperty;
+import fx.chart.event.DefaultEventSource;
+import fx.chart.property.BooleanLProperty;
+import fx.chart.property.DoubleLProperty;
+import fx.chart.property.ObjectLProperty;
+import fx.chart.property.StringLProperty;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A 2D chart data point
@@ -26,19 +20,18 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @version 1.0.0
  * @since 03 Jul 2025, 2:16 PM
  */
-public class XYChartItem implements XYItem, Comparable<XYChartItem> {
+public class XYChartItem extends DefaultEventSource implements XYItem, Comparable<XYChartItem> {
 
     private final ChartEvent ITEM_EVENT = new ChartEvent(XYChartItem.this, ChartEvent.ITEM_UPDATE);
-    private final Map<EventType, List<ChartEventListener<ChartEvent>>> observers_;
 
-    private final DoubleLazyProperty x_;
-    private final DoubleLazyProperty y_;
-    private final StringLazyProperty name_;
-    private final ObjectLazyProperty<Color> fill_;
-    private final ObjectLazyProperty<Color> stroke_;
-    private final ObjectLazyProperty<Symbol> symbol_;
-    private final BooleanLazyProperty isEmpty;
-    private final StringLazyProperty tooltipText_;
+    private final DoubleLProperty x_;
+    private final DoubleLProperty y_;
+    private final StringLProperty name_;
+    private final ObjectLProperty<Color> fill_;
+    private final ObjectLProperty<Color> stroke_;
+    private final ObjectLProperty<Symbol> symbol_;
+    private final BooleanLProperty isEmpty;
+    private final StringLProperty tooltipText_;
 
     public XYChartItem(final double x, final double y) {
         this(x, y, "", Color.RED, Color.TRANSPARENT, Symbol.NONE, "", false);
@@ -83,16 +76,14 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
      */
     public XYChartItem(final double x, final double y, final String name,
             final Color fill, final Color stroke, final Symbol symbol, final String tooltip, final boolean isEmpty) {
-        this.x_ = new DoubleLazyProperty(this, "x", x, () -> fireChartEvent(ITEM_EVENT));
-        this.y_ = new DoubleLazyProperty(this, "y", y, () -> fireChartEvent(ITEM_EVENT));
-        this.name_ = new StringLazyProperty(this, "name", name, () -> fireChartEvent(ITEM_EVENT));
-        this.fill_ = new ObjectLazyProperty<>(this, "fill", fill, () -> fireChartEvent(ITEM_EVENT));
-        this.stroke_ = new ObjectLazyProperty<>(this, "stroke", stroke, () -> fireChartEvent(ITEM_EVENT));
-        this.symbol_ = new ObjectLazyProperty<>(this, "symbol", symbol, () -> fireChartEvent(ITEM_EVENT));
-        this.isEmpty = new BooleanLazyProperty(this, "isEmpty", isEmpty, () -> fireChartEvent(ITEM_EVENT));
-        this.tooltipText_ = new StringLazyProperty(this, "tooltip", tooltip, () -> fireChartEvent(ITEM_EVENT));
-
-        observers_ = new ConcurrentHashMap<>();
+        this.x_ = new DoubleLProperty(this, "x", x, () -> fireChartEvent(ITEM_EVENT));
+        this.y_ = new DoubleLProperty(this, "y", y, () -> fireChartEvent(ITEM_EVENT));
+        this.name_ = new StringLProperty(this, "name", name, () -> fireChartEvent(ITEM_EVENT));
+        this.fill_ = new ObjectLProperty<>(this, "fill", fill, () -> fireChartEvent(ITEM_EVENT));
+        this.stroke_ = new ObjectLProperty<>(this, "stroke", stroke, () -> fireChartEvent(ITEM_EVENT));
+        this.symbol_ = new ObjectLProperty<>(this, "symbol", symbol, () -> fireChartEvent(ITEM_EVENT));
+        this.isEmpty = new BooleanLProperty(this, "isEmpty", isEmpty, () -> fireChartEvent(ITEM_EVENT));
+        this.tooltipText_ = new StringLProperty(this, "tooltip", tooltip, () -> fireChartEvent(ITEM_EVENT));
     }
 
     @Override
@@ -139,7 +130,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
     }
 
     @Override
-    public Color getFill() {
+    public Color getFillColor() {
         return this.fill_.get();
     }
 
@@ -152,7 +143,7 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
     }
 
     @Override
-    public Color getStroke() {
+    public Color getStrokeColor() {
         return this.stroke_.get();
     }
 
@@ -204,34 +195,6 @@ public class XYChartItem implements XYItem, Comparable<XYChartItem> {
 
     public BooleanProperty isEmptyProperty() {
         return this.isEmpty.getProperty();
-    }
-
-    public void addChartEventObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (!observers_.containsKey(type)) {
-            observers_.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers_.get(type).contains(observer)) {
-            return;
-        }
-        observers_.get(type).add(observer);
-    }
-
-    public void removeChartEventObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (observers_.containsKey(type)) {
-            if (observers_.get(type).contains(observer)) {
-                observers_.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllChartEvtObservers() {observers_.clear();}
-
-    public void fireChartEvent(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        observers_.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers_.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            observers_.get(type).forEach(observer -> observer.handle(evt));
-        }
     }
 
     @Override

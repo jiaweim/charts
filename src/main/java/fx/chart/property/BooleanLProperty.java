@@ -2,26 +2,31 @@ package fx.chart.property;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
+import org.jspecify.annotations.Nullable;
 
 /**
- * {@link LazyProperty} for boolean.
+ * {@link LProperty} for boolean.
  *
  * @author Jiawei Mao
  * @version 1.0.0
  * @since 20 May 2026, 2:47 PM
  */
-public class BooleanLazyProperty extends LazyProperty<Boolean, BooleanProperty> {
+public class BooleanLProperty extends LProperty<Boolean, BooleanProperty> {
 
     /**
-     * Create a {@link BooleanLazyProperty}
+     * Create a {@link BooleanLProperty}
      *
      * @param bean         The bean to which this property belongs.
      * @param name         property name
      * @param initialValue Initial value of the property.
      * @param onChanged    Operations triggered when the property value changes.
      */
-    public BooleanLazyProperty(Object bean, String name, Boolean initialValue, Runnable onChanged) {
+    public BooleanLProperty(Object bean, String name, Boolean initialValue, Runnable onChanged) {
         super(bean, name, initialValue, onChanged);
+    }
+
+    public BooleanLProperty(Object bean, String propertyName, @Nullable Boolean initialValue) {
+        super(bean, propertyName, initialValue);
     }
 
     @Override

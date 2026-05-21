@@ -19,12 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
-/**
- * User: hansolo
- * Date: 14.11.17
- * Time: 04:19
- */
 public class MatrixHeatmapTest extends Application {
 
     private static final Random RND = new Random();

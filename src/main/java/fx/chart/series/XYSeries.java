@@ -6,6 +6,7 @@ import fx.chart.data.XYChartItem;
 import fx.chart.data.XYItem;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import pdk.util.ArgUtils;
 import pdk.util.IBuilder;
 
 import java.util.ArrayList;
@@ -55,13 +56,21 @@ public class XYSeries<T extends XYItem> extends Series<T> {
             return this;
         }
 
+        public Builder<T> addItems(double[] x, double[] y) {
+            ArgUtils.checkArgument(x.length == y.length);
+            for (int i = 0; i < x.length; i++) {
+                itemList_.add((T) new XYChartItem(x[i], y[i]));
+            }
+            return this;
+        }
+
         /**
          * set the series data
          *
          * @param items list of data
          * @return this
          */
-        public Builder<T> items(List<? extends T> items) {
+        public Builder<T> items(List<T> items) {
             itemList_.addAll(items);
             return this;
         }
@@ -187,7 +196,7 @@ public class XYSeries<T extends XYItem> extends Series<T> {
         }
     }
 
-    public static Builder<XYChartItem> builder() {
+    public static <T extends XYChartItem> Builder<T> builder() {
         return new Builder<>();
     }
 

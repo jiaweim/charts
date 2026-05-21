@@ -45,7 +45,7 @@ public class NestedBarChartTest extends Application {
 
         chart = new NestedBarChart(q1, q2, q3, q4);
 
-        chart.addChartEvtObserver(ChartEvent.ANY, e -> System.out.println(e));
+        chart.addEventListener(ChartEvent.ANY, e -> System.out.println(e));
     }
 
     @Override

@@ -1,11 +1,11 @@
 package fx.chart;
 
-import fx.chart.event.FxEvent;
-import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
 import fx.chart.data.Connection;
 import fx.chart.data.PlotItem;
 import fx.chart.event.ChartEvent;
+import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventType;
+import fx.chart.event.FxEvent;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -96,7 +96,7 @@ public class ArcChartTest extends Application {
 
         // Register listeners to click on connections and items
         items.forEach(item -> {
-            item.addChartEvtObserver(ChartEvent.ITEM_SELECTED, e -> {
+            item.addEventListener(ChartEvent.ITEM_SELECTED, e -> {
                 PlotItem i = (PlotItem) e.getSource();
                 System.out.println("Selected: " + i.getName());
             });
@@ -124,7 +124,7 @@ public class ArcChartTest extends Application {
                 }
             }
         };
-        arcChart.getConnections().forEach(connection -> connection.addChartEvtObserver(ChartEvent.ANY, connectionObserver));
+        arcChart.getConnections().forEach(connection -> connection.addEventListener(ChartEvent.ANY, connectionObserver));
 
         /* Custom connection colors
         if (null != arcChart.getConnection(australia, japan)) {

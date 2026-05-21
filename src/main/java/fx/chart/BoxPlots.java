@@ -107,9 +107,9 @@ public class BoxPlots<T extends ChartItem> extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addEventListener(ChartEvent.ITEM_UPDATE, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeEventListener(ChartEvent.ITEM_UPDATE, itemObserver));
                 }
             }
             data.clear();
@@ -649,7 +649,7 @@ public class BoxPlots<T extends ChartItem> extends Region {
             _yAxis = yAxis;
             _yAxis.setMinValue(min);
             _yAxis.setMaxValue(max);
-            _yAxis.addChartEventListener(ChartEvent.AXIS_RANGE_CHANGED, e -> redraw());
+            _yAxis.addEventListener(ChartEvent.AXIS_RANGE_CHANGED, e -> redraw());
             redraw();
         } else {
             this.yAxis.set(yAxis);
@@ -663,7 +663,7 @@ public class BoxPlots<T extends ChartItem> extends Region {
                 protected void invalidated() {
                     _yAxis.setMinValue(min);
                     _yAxis.setMaxValue(max);
-                    _yAxis.addChartEventListener(ChartEvent.AXIS_RANGE_CHANGED, e -> redraw());
+                    _yAxis.addEventListener(ChartEvent.AXIS_RANGE_CHANGED, e -> redraw());
                     redraw();
                 }
 
@@ -678,7 +678,7 @@ public class BoxPlots<T extends ChartItem> extends Region {
     }
 
     public void resetYAxis() {
-        getYAxis().removeAllChartEventListeners();
+        getYAxis().removeAllEventListeners();
         _yAxis = null;
         yAxis = null;
         for (Entry<ChartItemSeries<T>, BoxPlotData> d : data.entrySet()) {

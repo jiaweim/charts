@@ -1,20 +1,18 @@
 package fx.chart.data;
 
-import fx.chart.event.ChartEvent;
-import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
+import fx.chart.event.DefaultEventSource;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+/**
+ *
+ *
+ * @author Jiawei Mao
+ * @version 1.0.0
+ * @since 21 May 2026, 12:52 PM
+ */
+public class Connection extends DefaultEventSource {
 
-
-public class Connection {
-
-    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private PlotItem _incomingItem;
     private ObjectProperty<PlotItem> incomingItem;
     private PlotItem _outgoingItem;
@@ -32,7 +30,6 @@ public class Connection {
     }
 
     public Connection(final PlotItem INCOMING_ITEM, final PlotItem OUTGOING_ITEM, final double VALUE, final Color FILL, final String TOOLTIP_TEXT) {
-        observers = new ConcurrentHashMap<>();
         _incomingItem = INCOMING_ITEM;
         _outgoingItem = OUTGOING_ITEM;
         _value = VALUE;
@@ -150,35 +147,5 @@ public class Connection {
             };
         }
         return tooltipText;
-    }
-
-
-    // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers.get(type).contains(observer)) {
-            return;
-        }
-        observers.get(type).add(observer);
-    }
-
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (observers.containsKey(type)) {
-            if (observers.get(type).contains(observer)) {
-                observers.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllChartEvtObservers() {observers.clear();}
-
-    public void fireChartEvt(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
-        }
     }
 }

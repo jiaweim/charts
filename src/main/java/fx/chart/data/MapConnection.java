@@ -1,23 +1,16 @@
 package fx.chart.data;
 
 import fx.chart.event.ChartEvent;
-import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
+import fx.chart.event.DefaultEventSource;
 import fx.chart.tools.MapPoint;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-
-public class MapConnection {
+public class MapConnection extends DefaultEventSource {
 
     private final ChartEvent SELECTED_EVENT = new ChartEvent(MapConnection.this, ChartEvent.CONNECTION_SELECTED);
     private final ChartEvent UPDATED_EVENT = new ChartEvent(MapConnection.this, ChartEvent.CONNECTION_UPDATE);
-    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private MapPoint _incomingItem;
     private ObjectProperty<MapPoint> incomingItem;
     private MapPoint _outgoingItem;
@@ -63,7 +56,6 @@ public class MapConnection {
     }
 
     public MapConnection(final MapPoint OUTGOING_ITEM, final MapPoint INCOMING_ITEM, final double VALUE, final Color STROKE, final Color START_COLOR, final Color END_COLOR, final boolean GRADIENT_FILL, final double LINE_WIDTH, final String TOOLTIP_TEXT) {
-        observers = new ConcurrentHashMap<>();
         _outgoingItem = OUTGOING_ITEM;
         _incomingItem = INCOMING_ITEM;
         _value = VALUE;
@@ -81,7 +73,7 @@ public class MapConnection {
     public void setIncomingItem(final MapPoint ITEM1) {
         if (null == incomingItem) {
             _incomingItem = ITEM1;
-            fireChartEvt(UPDATED_EVENT);
+            fireChartEvent(UPDATED_EVENT);
         } else {
             incomingItem.set(ITEM1);
         }
@@ -91,7 +83,7 @@ public class MapConnection {
         if (null == incomingItem) {
             incomingItem = new ObjectPropertyBase<MapPoint>(_incomingItem) {
                 @Override
-                protected void invalidated() {fireChartEvt(UPDATED_EVENT);}
+                protected void invalidated() {fireChartEvent(UPDATED_EVENT);}
 
                 @Override
                 public Object getBean() {return MapConnection.this;}
@@ -109,7 +101,7 @@ public class MapConnection {
     public void setOutgoingItem(final MapPoint ITEM2) {
         if (null == outgoingItem) {
             _outgoingItem = ITEM2;
-            fireChartEvt(UPDATED_EVENT);
+            fireChartEvent(UPDATED_EVENT);
         } else {
             outgoingItem.set(ITEM2);
         }
@@ -120,7 +112,7 @@ public class MapConnection {
         if (null == outgoingItem) {
             outgoingItem = new ObjectPropertyBase<MapPoint>(_outgoingItem) {
                 @Override
-                protected void invalidated() {fireChartEvt(UPDATED_EVENT);}
+                protected void invalidated() {fireChartEvent(UPDATED_EVENT);}
 
                 @Override
                 public Object getBean() {return MapConnection.this;}
@@ -153,7 +145,7 @@ public class MapConnection {
     public void setStroke(final Color FILL) {
         if (null == stroke) {
             _stroke = FILL;
-            fireChartEvt(UPDATED_EVENT);
+            fireChartEvent(UPDATED_EVENT);
         } else {
             stroke.set(FILL);
         }
@@ -163,7 +155,7 @@ public class MapConnection {
         if (null == stroke) {
             stroke = new ObjectPropertyBase<>(_stroke) {
                 @Override
-                protected void invalidated() {fireChartEvt(UPDATED_EVENT);}
+                protected void invalidated() {fireChartEvent(UPDATED_EVENT);}
 
                 @Override
                 public Object getBean() {return MapConnection.this;}
@@ -181,7 +173,7 @@ public class MapConnection {
     public void setStartColor(final Color START_COLOR) {
         if (null == startColor) {
             _startColor = START_COLOR;
-            fireChartEvt(UPDATED_EVENT);
+            fireChartEvent(UPDATED_EVENT);
         } else {
             startColor.set(START_COLOR);
         }
@@ -191,7 +183,7 @@ public class MapConnection {
         if (null == startColor) {
             startColor = new ObjectPropertyBase<>(_startColor) {
                 @Override
-                protected void invalidated() {fireChartEvt(UPDATED_EVENT);}
+                protected void invalidated() {fireChartEvent(UPDATED_EVENT);}
 
                 @Override
                 public Object getBean() {return MapConnection.this;}
@@ -209,7 +201,7 @@ public class MapConnection {
     public void setEndColor(final Color END_COLOR) {
         if (null == endColor) {
             _endColor = END_COLOR;
-            fireChartEvt(UPDATED_EVENT);
+            fireChartEvent(UPDATED_EVENT);
         } else {
             endColor.set(END_COLOR);
         }
@@ -219,7 +211,7 @@ public class MapConnection {
         if (null == endColor) {
             endColor = new ObjectPropertyBase<>(_endColor) {
                 @Override
-                protected void invalidated() {fireChartEvt(UPDATED_EVENT);}
+                protected void invalidated() {fireChartEvent(UPDATED_EVENT);}
 
                 @Override
                 public Object getBean() {return MapConnection.this;}
@@ -237,7 +229,7 @@ public class MapConnection {
     public void setGradientFill(final boolean GRADIENT_FILL) {
         if (null == gradientFill) {
             _gradientFill = GRADIENT_FILL;
-            fireChartEvt(UPDATED_EVENT);
+            fireChartEvent(UPDATED_EVENT);
         } else {
             gradientFill.set(GRADIENT_FILL);
         }
@@ -247,7 +239,7 @@ public class MapConnection {
         if (null == gradientFill) {
             gradientFill = new BooleanPropertyBase(_gradientFill) {
                 @Override
-                protected void invalidated() {fireChartEvt(UPDATED_EVENT);}
+                protected void invalidated() {fireChartEvent(UPDATED_EVENT);}
 
                 @Override
                 public Object getBean() {return MapConnection.this;}
@@ -264,7 +256,7 @@ public class MapConnection {
     public void setLineWidth(final double LINE_WIDTH) {
         if (null == lineWidth) {
             _lineWidth = Math.clamp(LINE_WIDTH, 0.5, 10);
-            fireChartEvt(UPDATED_EVENT);
+            fireChartEvent(UPDATED_EVENT);
         } else {
             lineWidth.set(LINE_WIDTH);
         }
@@ -276,7 +268,7 @@ public class MapConnection {
                 @Override
                 protected void invalidated() {
                     set(Math.clamp(get(), 0.5, 10));
-                    fireChartEvt(UPDATED_EVENT);
+                    fireChartEvent(UPDATED_EVENT);
                 }
 
                 @Override
@@ -310,35 +302,5 @@ public class MapConnection {
             };
         }
         return tooltipText;
-    }
-
-
-    // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers.get(type).contains(observer)) {
-            return;
-        }
-        observers.get(type).add(observer);
-    }
-
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (observers.containsKey(type)) {
-            if (observers.get(type).contains(observer)) {
-                observers.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllChartEvtObservers() {observers.clear();}
-
-    public void fireChartEvt(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
-        }
     }
 }

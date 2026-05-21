@@ -3,7 +3,6 @@ package fx.chart;
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvent;
 import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
 import fx.chart.font.Fonts;
 import fx.chart.series.ChartItemSeries;
 import fx.chart.tools.Helper;
@@ -20,26 +19,32 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ *
+ *
+ * @author Jiawei Mao
+ * @version 1.0.0
+ * @since 21 May 2026, 1:39 PM
+ */
+public class SectorChart extends ChartElement {
 
-public class SectorChart extends Region {
     private static final int MIN_NO_OF_SECTORS = 4;
     private static final int MAX_NO_OF_SECTORS = 128;
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
+
     private static final double MINIMUM_WIDTH = 10;
     private static final double MINIMUM_HEIGHT = 10;
     private static final double MAXIMUM_WIDTH = 1024;
     private static final double MAXIMUM_HEIGHT = 1024;
+
     private double size;
     private double centerX;
     private double centerY;
@@ -71,7 +76,6 @@ public class SectorChart extends Region {
     private BooleanProperty radialBarChartMode;
     private Color _gridColor;
     private ObjectProperty<Color> gridColor;
-    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private InfoPopup popup;
     private InvalidationListener resizeListener;
     private ListChangeListener<ChartItemSeries<ChartItem>> seriesListener;
@@ -102,18 +106,17 @@ public class SectorChart extends Region {
         sectorMap = new HashMap<>();
         _gridColor = Color.WHITE;
         _thresholdColor = Color.RED;
-        observers = new ConcurrentHashMap<>();
         resizeListener = o -> resize();
         seriesListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
                     c.getAddedSubList().forEach(series -> {
-                        series.getItems().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, itemObserver));
+                        series.getItems().forEach(item -> item.addEventListener(ChartEvent.ANY, itemObserver));
                         series.getItems().addListener(itemListListener);
                     });
                 } else if (c.wasRemoved()) {
                     c.getRemoved().forEach(series -> {
-                        series.getItems().forEach(item -> item.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
+                        series.getItems().forEach(item -> item.removeEventListener(ChartEvent.ANY, itemObserver));
                         series.getItems().removeListener(itemListListener);
                     });
                 }
@@ -124,9 +127,9 @@ public class SectorChart extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, itemObserver));
+                    c.getAddedSubList().forEach(item -> item.addEventListener(ChartEvent.ANY, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(item -> item.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
+                    c.getRemoved().forEach(item -> item.removeEventListener(ChartEvent.ANY, itemObserver));
                 }
             }
         };
@@ -136,7 +139,7 @@ public class SectorChart extends Region {
                     sectorMap.entrySet().parallelStream().filter(entry -> Helper.isInSector(e.getX(), e.getY(), centerX, centerY, entry.getKey().radius, entry.getKey().startAngle, entry.getKey().segmentAngle)).findFirst();
             if (e.isSecondaryButtonDown()) {
                 if (optionalSector.isPresent()) {
-                    fireChartEvt(new ChartEvent(optionalSector.get().getValue(), ChartEvent.ITEM_SELECTED));
+                    fireChartEvent(new ChartEvent(optionalSector.get().getValue(), ChartEvent.ITEM_SELECTED));
                 }
             } else {
                 if (optionalSector.isPresent()) {
@@ -159,7 +162,7 @@ public class SectorChart extends Region {
             }
         } else {
             allSeries.forEach(series -> {
-                series.getItems().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, itemObserver));
+                series.getItems().forEach(item -> item.addEventListener(ChartEvent.ANY, itemObserver));
                 series.getItems().addListener(itemListListener);
             });
         }
@@ -230,7 +233,7 @@ public class SectorChart extends Region {
         heightProperty().removeListener(resizeListener);
         allSeries.removeListener(seriesListener);
         allSeries.forEach(series -> {
-            series.getItems().forEach(item -> item.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
+            series.getItems().forEach(item -> item.removeEventListener(ChartEvent.ANY, itemObserver));
             series.getItems().removeListener(itemListListener);
         });
         canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, mouseHandler);
@@ -595,37 +598,6 @@ public class SectorChart extends Region {
         return SectorChart.class.getResource("chart.css").toExternalForm();
     }
 
-
-    // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers.get(type).contains(observer)) {
-            return;
-        }
-        observers.get(type).add(observer);
-    }
-
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (observers.containsKey(type)) {
-            if (observers.get(type).contains(observer)) {
-                observers.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllChartEvtObservers() {observers.clear();}
-
-    public void fireChartEvt(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
-        }
-    }
-
-
     // ******************** Drawing *******************************************
     private void resize() {
         double width = getWidth() - getInsets().getLeft() - getInsets().getRight();
@@ -736,7 +708,7 @@ public class SectorChart extends Region {
                     ctx.arc(centerX, centerY, radius, radius, 0, -angleStep);
                     ctx.closePath();
                 }
-                ctx.setFill(item.getFill());
+                ctx.setFill(item.getFillColor());
                 ctx.fill();
                 ctx.translate(centerX, centerY);
                 ctx.rotate(angleStep);

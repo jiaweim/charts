@@ -15,15 +15,12 @@ import javafx.beans.property.BooleanPropertyBase;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcType;
@@ -34,20 +31,15 @@ import java.awt.image.BufferedImage;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 
 @DefaultProperty("children")
-public class ComparisonRingChart extends Region {
+public class ComparisonRingChart extends ChartElement {
+
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
-    private static final double MINIMUM_WIDTH = 50;
-    private static final double MINIMUM_HEIGHT = 50;
-    private static final double MAXIMUM_WIDTH = 1024;
-    private static final double MAXIMUM_HEIGHT = 1024;
+
     private double size;
     private double width;
     private double height;
@@ -67,11 +59,8 @@ public class ComparisonRingChart extends Region {
     private ListChangeListener<ChartItem> chartItemListener;
     private ChartEventListener<ChartEvent> itemObserver;
     private EventHandler<MouseEvent> mouseHandler;
-    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private InfoPopup popup;
 
-
-    // ******************** Constructors **************************************
     public ComparisonRingChart(final ChartItemSeries SERIES_1, final ChartItemSeries SERIES_2) {
         series1 = SERIES_1;
         series2 = SERIES_2;
@@ -79,7 +68,6 @@ public class ComparisonRingChart extends Region {
         _sorted = true;
         _order = Order.DESCENDING;
         _numberFormat = NumberFormat.NUMBER;
-        observers = new ConcurrentHashMap<>();
         popup = new InfoPopup();
         itemObserver = e -> {
             final EventType<? extends FxEvent> type = e.getEventType();
@@ -90,9 +78,9 @@ public class ComparisonRingChart extends Region {
         chartItemListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ANY, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addEventListener(ChartEvent.ANY, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeEventListener(ChartEvent.ANY, itemObserver));
                 }
             }
             drawChart();
@@ -130,46 +118,18 @@ public class ComparisonRingChart extends Region {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
 
-        series1.getItems().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, itemObserver));
-        series2.getItems().forEach(item -> item.addChartEvtObserver(ChartEvent.ANY, itemObserver));
+        series1.getItems().forEach(item -> item.addEventListener(ChartEvent.ANY, itemObserver));
+        series2.getItems().forEach(item -> item.addEventListener(ChartEvent.ANY, itemObserver));
 
         series1.getItems().addListener(chartItemListener);
         series2.getItems().addListener(chartItemListener);
 
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseHandler);
-        addChartEvtObserver(SelectionEvent.ANY, e -> {
+        addEventListener(SelectionEvent.ANY, e -> {
             popup.update((SelectionEvent) e);
             popup.animatedShow(getScene().getWindow());
         });
     }
-
-
-    // ******************** Methods *******************************************
-    @Override
-    public void layoutChildren() {
-        super.layoutChildren();
-    }
-
-    @Override
-    protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
-
-    @Override
-    protected double computeMinHeight(final double WIDTH) {return MINIMUM_HEIGHT;}
-
-    @Override
-    protected double computePrefWidth(final double HEIGHT) {return super.computePrefWidth(HEIGHT);}
-
-    @Override
-    protected double computePrefHeight(final double WIDTH) {return super.computePrefHeight(WIDTH);}
-
-    @Override
-    protected double computeMaxWidth(final double HEIGHT) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double WIDTH) {return MAXIMUM_HEIGHT;}
-
-    @Override
-    public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public Color getBarBackgroundFill() {return null == barBackgroundFill ? _barBackgroundFill : barBackgroundFill.get();}
 
@@ -327,7 +287,7 @@ public class ComparisonRingChart extends Region {
             if (hitLeft || hitRight) {
                 popup.setX(EVT.getScreenX());
                 popup.setY(EVT.getScreenY() - popup.getHeight());
-                fireChartEvt(new SelectionEvent(series1, item));
+                fireChartEvent(new SelectionEvent(series1, item));
                 break;
             }
         }
@@ -343,7 +303,7 @@ public class ComparisonRingChart extends Region {
             if (hit) {
                 popup.setX(EVT.getScreenX());
                 popup.setY(EVT.getScreenY() - popup.getHeight());
-                fireChartEvt(new SelectionEvent(series2, item));
+                fireChartEvent(new SelectionEvent(series2, item));
                 break;
             }
         }
@@ -394,37 +354,6 @@ public class ComparisonRingChart extends Region {
     public BufferedImage renderToImage(final int width, final int height) {
         return Helper.renderToImage(ComparisonRingChart.this, width, height);
     }
-
-
-    // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers.get(type).contains(observer)) {
-            return;
-        }
-        observers.get(type).add(observer);
-    }
-
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (observers.containsKey(type)) {
-            if (observers.get(type).contains(observer)) {
-                observers.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllChartEvtObservers() {observers.clear();}
-
-    public void fireChartEvt(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
-        }
-    }
-
 
     // ******************** Drawing *******************************************
     private void prepareSeries(final Series<ChartItem> SERIES) {
@@ -495,7 +424,7 @@ public class ComparisonRingChart extends Region {
             ctx.strokeArc(barXY, barXY, barWH, barWH, 180, -180, ArcType.OPEN);
 
             // Bar 1
-            ctx.setStroke(item.getFill());
+            ctx.setStroke(item.getFillColor());
             ctx.strokeArc(barXY, barXY, barWH, barWH, 180, -angle, ArcType.OPEN);
 
             // Value 1
@@ -522,7 +451,7 @@ public class ComparisonRingChart extends Region {
             ctx.strokeArc(barXY, barXY, barWH, barWH, 0, -180, ArcType.OPEN);
 
             // Bar 2
-            ctx.setStroke(item.getFill());
+            ctx.setStroke(item.getFillColor());
             ctx.strokeArc(barXY, barXY, barWH, barWH, 0, -angle, ArcType.OPEN);
 
             // Value 2
@@ -558,7 +487,6 @@ public class ComparisonRingChart extends Region {
     }
 
 
-    // ******************** Resizing ******************************************
     private void resize() {
         width = getWidth() - getInsets().getLeft() - getInsets().getRight();
         height = getHeight() - getInsets().getTop() - getInsets().getBottom();
@@ -576,7 +504,7 @@ public class ComparisonRingChart extends Region {
         }
     }
 
-    private void redraw() {
+    protected void redraw() {
         drawChart();
     }
 }

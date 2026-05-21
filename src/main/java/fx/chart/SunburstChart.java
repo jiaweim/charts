@@ -147,7 +147,7 @@ public class SunburstChart<T extends ChartItem> extends Region {
     private void registerListeners() {
         widthProperty().addListener(sizeListener);
         heightProperty().addListener(sizeListener);
-        tree.addTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
+        tree.addEventListener(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
     }
 
 
@@ -181,7 +181,7 @@ public class SunburstChart<T extends ChartItem> extends Region {
     public void dispose() {
         widthProperty().removeListener(sizeListener);
         heightProperty().removeListener(sizeListener);
-        tree.removeTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
+        tree.removeEventListener(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
     }
 
     /**
@@ -634,10 +634,10 @@ public class SunburstChart<T extends ChartItem> extends Region {
      */
     public void setTree(final TreeNode<T> TREE) {
         if (null != tree) {
-            tree.removeTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
+            tree.removeEventListener(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
         }
         tree = TREE;
-        tree.addTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
+        tree.addEventListener(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
         prepareData();
         if (isAutoTextColor()) {
             adjustTextColors();
@@ -673,7 +673,7 @@ public class SunburstChart<T extends ChartItem> extends Region {
         Color darkColor = getDarkTextColor();
         root.stream().forEach(node -> {
             T item = node.getItem();
-            boolean darkFillColor = ColorUtils.isDark(item.getFill());
+            boolean darkFillColor = ColorUtils.isDark(item.getFillColor());
             boolean darkTextColor = ColorUtils.isDark(item.getTextFill());
             if (darkFillColor && darkTextColor) {
                 item.setTextFill(brightColor);
@@ -746,7 +746,7 @@ public class SunburstChart<T extends ChartItem> extends Region {
                 ChartItem segmentData = node.getItem();
                 double segmentPercentage;
                 double segmentAngle;
-                Paint segmentColor = getUseColorFromParent() ? node.getMyRoot().getItem().getFill() : segmentData.getFill();
+                Paint segmentColor = getUseColorFromParent() ? node.getMyRoot().getItem().getFillColor() : segmentData.getFillColor();
 
                 // Assuming level 0 is a pseudo-root with no data and level one is the first level with relevant data
                 if (level == 1) {
@@ -776,7 +776,7 @@ public class SunburstChart<T extends ChartItem> extends Region {
                 angles.put(node, segmentAngle);
 
                 // Only draw if segment fill color is not TRANSPARENT
-                if (!Color.TRANSPARENT.equals(segmentData.getFill())) {
+                if (!Color.TRANSPARENT.equals(segmentData.getFillColor())) {
                     double value = segmentData.getValue();
 
                     if (isInteractive) {
@@ -875,7 +875,7 @@ public class SunburstChart<T extends ChartItem> extends Region {
         String tooltipText = new StringBuilder(NODE.getItem().getName()).append("\n").append(String.format(Locale.US, formatString, ((ChartItem) NODE.getItem()).getValue())).toString();
         Tooltip.install(path, new Tooltip(tooltipText));
 
-        path.setOnMousePressed(e -> NODE.getTreeRoot().fireTreeNodeEvt(new TreeNodeEvent(NODE, TreeNodeEvent.NODE_SELECTED, NODE.getItem())));
+        path.setOnMousePressed(e -> NODE.getTreeRoot().fireChartEvent(new TreeNodeEvent(NODE, TreeNodeEvent.NODE_SELECTED, NODE.getItem())));
 
         return path;
     }

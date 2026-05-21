@@ -18,12 +18,10 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcType;
@@ -32,19 +30,15 @@ import javafx.scene.text.TextAlignment;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 
 @DefaultProperty("children")
-public class ConcentricRingChart extends Region {
+public class ConcentricRingChart extends ChartElement {
+
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
-    private static final double MINIMUM_WIDTH = 50;
-    private static final double MINIMUM_HEIGHT = 50;
-    private static final double MAXIMUM_WIDTH = 1024;
-    private static final double MAXIMUM_HEIGHT = 1024;
+
     private double size;
     private double width;
     private double height;
@@ -69,7 +63,6 @@ public class ConcentricRingChart extends Region {
     private ListChangeListener<ChartItem> chartItemListener;
     private ChartEventListener<ChartEvent> itemObserver;
     private EventHandler<MouseEvent> mouseHandler;
-    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private InfoPopup popup;
 
 
@@ -92,7 +85,6 @@ public class ConcentricRingChart extends Region {
         _itemLabelFill = Color.BLACK;
         _shortenNumbers = false;
         _valueVisible = true;
-        observers = new ConcurrentHashMap<>();
         popup = new InfoPopup();
         itemObserver = e -> {
             final EventType<? extends FxEvent> type = e.getEventType();
@@ -103,9 +95,9 @@ public class ConcentricRingChart extends Region {
         chartItemListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ANY, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addEventListener(ChartEvent.ANY, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeEventListener(ChartEvent.ANY, itemObserver));
                 }
             }
             drawChart();
@@ -141,43 +133,15 @@ public class ConcentricRingChart extends Region {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
 
-        items.forEach(chartitem -> chartitem.addChartEvtObserver(ChartEvent.ANY, itemObserver));
+        items.forEach(chartitem -> chartitem.addEventListener(ChartEvent.ANY, itemObserver));
         items.addListener(chartItemListener);
 
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, mouseHandler);
-        addChartEvtObserver(SelectionEvent.ANY, e -> {
+        addEventListener(SelectionEvent.ANY, e -> {
             popup.update((SelectionEvent) e);
             popup.animatedShow(getScene().getWindow());
         });
     }
-
-
-    // ******************** Methods *******************************************
-    @Override
-    public void layoutChildren() {
-        super.layoutChildren();
-    }
-
-    @Override
-    protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
-
-    @Override
-    protected double computeMinHeight(final double WIDTH) {return MINIMUM_HEIGHT;}
-
-    @Override
-    protected double computePrefWidth(final double HEIGHT) {return super.computePrefWidth(HEIGHT);}
-
-    @Override
-    protected double computePrefHeight(final double WIDTH) {return super.computePrefHeight(WIDTH);}
-
-    @Override
-    protected double computeMaxWidth(final double HEIGHT) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double WIDTH) {return MAXIMUM_HEIGHT;}
-
-    @Override
-    public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public List<ChartItem> getItems() {return items;}
 
@@ -463,7 +427,7 @@ public class ConcentricRingChart extends Region {
             if (hit) {
                 popup.setX(EVT.getScreenX());
                 popup.setY(EVT.getScreenY() - popup.getHeight());
-                fireChartEvt(new SelectionEvent(item));
+                fireChartEvent(new SelectionEvent(item));
                 break;
             }
         }
@@ -515,37 +479,6 @@ public class ConcentricRingChart extends Region {
         return Helper.renderToImage(ConcentricRingChart.this, width, height);
     }
 
-
-    // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers.get(type).contains(observer)) {
-            return;
-        }
-        observers.get(type).add(observer);
-    }
-
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (observers.containsKey(type)) {
-            if (observers.get(type).contains(observer)) {
-                observers.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllChartEvtObservers() {observers.clear();}
-
-    public void fireChartEvt(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
-        }
-    }
-
-
     // ******************** Drawing *******************************************
     private void drawChart() {
         double centerX = size * 0.5;
@@ -593,7 +526,7 @@ public class ConcentricRingChart extends Region {
             ctx.strokeArc(barXY, barXY, barWH, barWH, 90, -270, ArcType.OPEN);
 
             // Bar
-            ctx.setStroke(item.getFill());
+            ctx.setStroke(item.getFillColor());
             ctx.strokeArc(barXY, barXY, barWH, barWH, 90, -angle, ArcType.OPEN);
 
             // Name
@@ -655,7 +588,8 @@ public class ConcentricRingChart extends Region {
         }
     }
 
-    private void redraw() {
+    protected void redraw() {
         drawChart();
     }
+
 }

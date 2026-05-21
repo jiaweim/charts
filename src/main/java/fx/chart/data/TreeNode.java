@@ -1,21 +1,19 @@
 package fx.chart.data;
 
 
+import fx.chart.event.DefaultEventSource;
 import fx.chart.event.TreeNodeEvent;
-import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
+import fx.chart.event.type.ChangeEvent;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public class TreeNode<T extends Item> {
+public class TreeNode<T extends Item> extends DefaultEventSource {
 
     private T item;
     private TreeNode<T> parent;
@@ -26,10 +24,7 @@ public class TreeNode<T extends Item> {
     private double x;
     private double y;
     private final ObservableList<TreeNode<T>> children;
-    private Map<EventType, List<ChartEventListener<TreeNodeEvent<T>>>> observers;
 
-
-    // ******************** Constructors **************************************
     public TreeNode(final T item) {
         this(item, null);
     }
@@ -42,12 +37,9 @@ public class TreeNode<T extends Item> {
         this.x = 0;
         this.y = 0;
         this.children = FXCollections.observableArrayList();
-        this.observers = new ConcurrentHashMap<>();
         init();
     }
 
-
-    // ******************** Methods *******************************************
     private void init() {
         // Add this node to parents children
         if (null != parent) {
@@ -57,11 +49,10 @@ public class TreeNode<T extends Item> {
         children.addListener((ListChangeListener<TreeNode<T>>) c -> {
             while (c.next()) {
                 if (c.wasRemoved()) {
-                    c.getRemoved().forEach(
-                            TreeNode::removeAllTreeNodeEvtObservers);
+                    c.getRemoved().forEach(TreeNode::removeAllEventListeners);
                 }
             }
-            getTreeRoot().fireTreeNodeEvt(new TreeNodeEvent<>(TreeNode.this, TreeNodeEvent.CHILDREN_CHANGED, item));
+            getTreeRoot().fireChartEvent(new TreeNodeEvent<>(TreeNode.this, TreeNodeEvent.CHILDREN_CHANGED, item));
         });
     }
 
@@ -76,7 +67,7 @@ public class TreeNode<T extends Item> {
         myRoot = null;
         treeRoot = null;
         depth = -1;
-        getTreeRoot().fireTreeNodeEvt(new TreeNodeEvent<>(TreeNode.this, TreeNodeEvent.PARENT_REMOVED, item));
+        getTreeRoot().fireChartEvent(new TreeNodeEvent<>(TreeNode.this, TreeNodeEvent.PARENT_REMOVED, item));
     }
 
     public boolean isParent() {return !children.isEmpty();}
@@ -91,7 +82,7 @@ public class TreeNode<T extends Item> {
         myRoot = null;
         treeRoot = null;
         depth = -1;
-        getTreeRoot().fireTreeNodeEvt(new TreeNodeEvent<>(TreeNode.this, TreeNodeEvent.PARENT_SET, item));
+        getTreeRoot().fireChartEvent(new TreeNodeEvent<>(TreeNode.this, TreeNodeEvent.PARENT_SET, item));
     }
 
     public T getItem() {return item;}
@@ -240,33 +231,8 @@ public class TreeNode<T extends Item> {
         return getTreeRoot().stream().filter(node -> node.getDepth() == LEVEL).collect(Collectors.toList());
     }
 
-
-    // ******************** Event handling ************************************
-    public void addTreeNodeEvtObserver(final EventType type, final ChartEventListener<TreeNodeEvent<T>> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers.get(type).contains(observer)) {
-            return;
-        }
-        observers.get(type).add(observer);
-    }
-
-    public void removeTreeNodeEvtObserver(final EventType type, final ChartEventListener<TreeNodeEvent<T>> observer) {
-        if (observers.containsKey(type)) {
-            if (observers.get(type).contains(observer)) {
-                observers.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllTreeNodeEvtObservers() {observers.clear();}
-
-    public void fireTreeNodeEvt(final TreeNodeEvent<T> evt) {
-        final EventType type = evt.getEventType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(TreeNodeEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(TreeNodeEvent.ANY)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
-        }
+    @Override
+    public void fireChartEvent(ChangeEvent event) {
+        fireChartEvent(event, TreeNodeEvent.ANY);
     }
 }

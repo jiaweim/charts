@@ -36,5 +36,6 @@ module fx.chart {
     exports fx.chart.voronoi;
     exports fx.chart.wafermap;
     exports fx.chart.property;
+    exports fx.chart.event.type;
 
 }

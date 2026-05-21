@@ -95,7 +95,7 @@ public class SectorChartTest extends Application {
     }
 
     private void registerListener() {
-        chart.addChartEvtObserver(ChartEvent.ITEM_SELECTED, e -> {
+        chart.addEventListener(ChartEvent.ITEM_SELECTED, e -> {
             if (e.getSource() instanceof ChartItem chartItem) {
                 System.out.println(chartItem.getName() + ": " + chartItem.getValue());
             }

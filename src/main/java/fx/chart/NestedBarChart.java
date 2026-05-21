@@ -1,12 +1,9 @@
 package fx.chart;
 
 import fx.chart.data.ChartItem;
-import fx.chart.event.ChartEvent;
 import fx.chart.event.SelectionEvent;
-import fx.chart.series.ChartItemSeries;
-import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
 import fx.chart.font.Fonts;
+import fx.chart.series.ChartItemSeries;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import fx.chart.tools.Order;
@@ -19,12 +16,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -32,8 +27,6 @@ import javafx.scene.text.TextAlignment;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -42,13 +35,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Time: 13:35
  */
 @DefaultProperty("children")
-public class NestedBarChart extends Region implements ChartArea {
+public class NestedBarChart extends ChartElement implements ChartArea {
+
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 150;
-    private static final double MINIMUM_WIDTH = 50;
-    private static final double MINIMUM_HEIGHT = 50;
-    private static final double MAXIMUM_WIDTH = 2048;
-    private static final double MAXIMUM_HEIGHT = 2048;
+
     private double size;
     private double width;
     private double height;
@@ -61,7 +52,6 @@ public class NestedBarChart extends Region implements ChartArea {
     private Order _order;
     private ObjectProperty<Order> order;
     private EventHandler<MouseEvent> clickHandler;
-    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
     private InfoPopup popup;
     private double spacer;
     private boolean _seriesTitleVisible;
@@ -69,8 +59,6 @@ public class NestedBarChart extends Region implements ChartArea {
     private Color _seriesTitleColor;
     private ObjectProperty<Color> seriesTitleColor;
 
-
-    // ******************** Constructors **************************************
     public NestedBarChart() {
         this(new ArrayList<>(), Color.TRANSPARENT);
     }
@@ -94,7 +82,6 @@ public class NestedBarChart extends Region implements ChartArea {
         _seriesTitleVisible = false;
         _seriesTitleColor = null;
         clickHandler = e -> checkForClick(e);
-        observers = new ConcurrentHashMap<>();
         initGraphics();
         registerListeners();
     }
@@ -127,39 +114,11 @@ public class NestedBarChart extends Region implements ChartArea {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, clickHandler);
-        addChartEvtObserver(SelectionEvent.ANY, e -> {
+        addEventListener(SelectionEvent.ANY, e -> {
             popup.update((SelectionEvent) e);
             popup.animatedShow(getScene().getWindow());
         });
     }
-
-
-    // ******************** Methods *******************************************
-    @Override
-    public void layoutChildren() {
-        super.layoutChildren();
-    }
-
-    @Override
-    protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
-
-    @Override
-    protected double computeMinHeight(final double WIDTH) {return MINIMUM_HEIGHT;}
-
-    @Override
-    protected double computePrefWidth(final double HEIGHT) {return super.computePrefWidth(HEIGHT);}
-
-    @Override
-    protected double computePrefHeight(final double WIDTH) {return super.computePrefHeight(WIDTH);}
-
-    @Override
-    protected double computeMaxWidth(final double HEIGHT) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double WIDTH) {return MAXIMUM_HEIGHT;}
-
-    @Override
-    public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public void dispose() {canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, clickHandler);}
 
@@ -359,14 +318,14 @@ public class NestedBarChart extends Region implements ChartArea {
             for (ChartItem item : s.getItems()) {
                 double innerBarHeight = item.getValue() * stepY;
                 if (Helper.isInRectangle(X, Y, minX, height - innerBarHeight, minX + innerBarWidth, height)) {
-                    fireChartEvt(new SelectionEvent(selectedSeries, item));
+                    fireChartEvent(new SelectionEvent(selectedSeries, item));
                     return;
                 }
                 minX += innerBarWidth;
             }
         }
         if (null != selectedSeries) {
-            fireChartEvt(new SelectionEvent(selectedSeries));
+            fireChartEvent(new SelectionEvent(selectedSeries));
         }
     }
 
@@ -401,39 +360,8 @@ public class NestedBarChart extends Region implements ChartArea {
         }
     }
 
-
-    // ******************** Event Handling ************************************
-    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers.get(type).contains(observer)) {
-            return;
-        }
-        observers.get(type).add(observer);
-    }
-
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (observers.containsKey(type)) {
-            if (observers.get(type).contains(observer)) {
-                observers.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllChartEvtObservers() {observers.clear();}
-
-    public void fireChartEvt(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
-        }
-    }
-
-
     // ******************** Drawing *******************************************
-    private void redraw() {
+    protected void redraw() {
         drawChart();
     }
 
@@ -478,7 +406,7 @@ public class NestedBarChart extends Region implements ChartArea {
             // Draw sub bars within main bar
             for (ChartItem item : s.getItems()) {
                 double innerBarHeight = item.getValue() * stepY;
-                ctx.setFill(s.getItems().size() == 1 ? s.getFill() : item.getFill());
+                ctx.setFill(s.getItems().size() == 1 ? s.getFill() : item.getFillColor());
                 ctx.fillRect(minX, height - innerBarHeight, innerBarWidth, innerBarHeight);
                 minX += innerBarWidth;
             }
@@ -501,8 +429,6 @@ public class NestedBarChart extends Region implements ChartArea {
         }
     }
 
-
-    // ******************** Resizing ******************************************
     private void resize() {
         width = getWidth() - getInsets().getLeft() - getInsets().getRight();
         height = getHeight() - getInsets().getTop() - getInsets().getBottom();

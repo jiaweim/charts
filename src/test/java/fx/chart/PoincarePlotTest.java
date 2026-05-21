@@ -43,7 +43,7 @@ public class PoincarePlotTest extends Application {
             xyItems.add(XYChartItemBuilder.create().x(sgv.date).y(sgv.sgv).symbol(Symbol.CIRCLE).fill(color).build());
         }
 
-        xySeries = new XYSeries.Builder<XYChartItem>()
+        xySeries = new XYSeries.Builder()
                 .items(xyItems)
                 .chartType(ChartType.POINCARE)
                 .fill(Color.TRANSPARENT)

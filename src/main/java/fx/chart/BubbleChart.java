@@ -2,8 +2,8 @@ package fx.chart;
 
 import fx.chart.data.ChartItem;
 import fx.chart.event.ChartEvent;
-import fx.chart.geometry.Circle;
 import fx.chart.event.ChartEventListener;
+import fx.chart.geometry.Circle;
 import fx.chart.tools.Helper;
 import fx.chart.tools.TooltipPopup;
 import javafx.animation.AnimationTimer;
@@ -13,10 +13,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 
 import java.awt.image.BufferedImage;
@@ -25,16 +23,19 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-
-public class BubbleChart<T extends ChartItem> extends Region {
+/**
+ * Bubble chart.
+ *
+ * @author Jiawei Mao
+ * @version 1.0.0
+ * @since 21 May 2026, 2:24 PM
+ */
+public class BubbleChart<T extends ChartItem> extends ChartElement {
 
     public static final Color DEFAULT_BACKGROUND_COLOR = Color.TRANSPARENT;
     private static final double PREFERRED_WIDTH = 400;
     private static final double PREFERRED_HEIGHT = 400;
-    private static final double MINIMUM_WIDTH = 50;
-    private static final double MINIMUM_HEIGHT = 50;
-    private static final double MAXIMUM_WIDTH = 2048;
-    private static final double MAXIMUM_HEIGHT = 2048;
+
     private double width;
     private double height;
     private double chartCenterX;
@@ -53,7 +54,6 @@ public class BubbleChart<T extends ChartItem> extends Region {
     private AnimationTimer timer;
 
 
-    // ******************** Constructors **************************************
     public BubbleChart() {
         this(new ArrayList<>());
     }
@@ -64,9 +64,9 @@ public class BubbleChart<T extends ChartItem> extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addEventListener(ChartEvent.ITEM_UPDATE, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ITEM_UPDATE, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeEventListener(ChartEvent.ITEM_UPDATE, itemObserver));
                 }
             }
             max = items.stream().max(Comparator.comparingDouble(ChartItem::getValue)).get().getValue();
@@ -125,34 +125,6 @@ public class BubbleChart<T extends ChartItem> extends Region {
             }
         });
     }
-
-
-    // ******************** Methods *******************************************
-    @Override
-    public void layoutChildren() {
-        super.layoutChildren();
-    }
-
-    @Override
-    protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
-
-    @Override
-    protected double computeMinHeight(final double WIDTH) {return MINIMUM_HEIGHT;}
-
-    @Override
-    protected double computePrefWidth(final double HEIGHT) {return super.computePrefWidth(HEIGHT);}
-
-    @Override
-    protected double computePrefHeight(final double WIDTH) {return super.computePrefHeight(WIDTH);}
-
-    @Override
-    protected double computeMaxWidth(final double HEIGHT) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double WIDTH) {return MAXIMUM_HEIGHT;}
-
-    @Override
-    public ObservableList<Node> getChildren() {return super.getChildren();}
 
     public void dispose() {items.removeListener(itemListListener);}
 
@@ -262,7 +234,7 @@ public class BubbleChart<T extends ChartItem> extends Region {
         redraw();
     }
 
-    private void redraw() {
+    protected void redraw() {
         ctx.clearRect(0, 0, width, height);
         ctx.setFill(getBackgroundColor());
         ctx.fillRect(0, 0, width, height);
@@ -326,7 +298,7 @@ public class BubbleChart<T extends ChartItem> extends Region {
 
         public void setCenterY(final double centerY) {circle.setCenterY(centerY);}
 
-        public Color getFill() {return item.getFill();}
+        public Color getFill() {return item.getFillColor();}
 
         public void setFill(final Color fill) {item.setFill(fill);}
 

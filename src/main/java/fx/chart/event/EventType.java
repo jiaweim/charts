@@ -14,6 +14,7 @@ import static java.util.Objects.requireNonNull;
  * @since 25 Jun 2025, 10:46 AM
  */
 public final class EventType<T extends FxEvent> {
+
     /**
      * The root event type
      */
@@ -42,9 +43,7 @@ public final class EventType<T extends FxEvent> {
      * @param name      event name
      */
     public EventType(@NonNull final EventType<? super T> superType, final String name) {
-        requireNonNull(superType, "Event super type must not be null (EvtType.name: " + name + ")");
-
-        this.superType = superType;
+        this.superType = requireNonNull(superType, "Event super type must not be null (EvtType.name: " + name + ")");
         this.name = name;
     }
 

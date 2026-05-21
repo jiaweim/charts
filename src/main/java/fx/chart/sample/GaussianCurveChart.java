@@ -81,7 +81,7 @@ public class GaussianCurveChart extends Application {
             items.add(new XYChartItem(sample.getX(), sample.getY()));
         }
 
-        return new XYSeries.Builder<XYChartItem>()
+        return new XYSeries.Builder()
                 .name(name)
                 .items(items)
                 .chartType(ChartType.LINE)
@@ -91,7 +91,7 @@ public class GaussianCurveChart extends Application {
                 .build();
     }
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         launch(args);
     }
 }

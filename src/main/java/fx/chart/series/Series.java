@@ -35,21 +35,21 @@ public abstract class Series<T extends Item> {
 
     public final SeriesEvent UPDATE_EVENT;
 
-    protected StringLazyProperty name_;
-    protected ObjectLazyProperty<Paint> fill_;
-    protected ObjectLazyProperty<Paint> stroke_;
-    protected DoubleLazyProperty strokeWidth_;
-    protected ObjectLazyProperty<double[]> lineDashes_;
-    protected ObjectLazyProperty<Color> textFill_;
-    protected ObjectLazyProperty<Color> symbolFill_;
-    protected ObjectLazyProperty<Color> symbolStroke_;
-    protected ObjectLazyProperty<Symbol> symbol_;
-    protected BooleanLazyProperty symbolsVisible_;
-    protected DoubleLazyProperty symbolSize_;
-    protected BooleanLazyProperty visible_;
-    protected BooleanLazyProperty animated_;
-    protected LongLazyProperty animationDuration_;
-    protected BooleanLazyProperty withWrapping_;
+    protected StringLProperty name_;
+    protected ObjectLProperty<Paint> fill_;
+    protected ObjectLProperty<Paint> stroke_;
+    protected DoubleLProperty strokeWidth_;
+    protected ObjectLProperty<double[]> lineDashes_;
+    protected ObjectLProperty<Color> textFill_;
+    protected ObjectLProperty<Color> symbolFill_;
+    protected ObjectLProperty<Color> symbolStroke_;
+    protected ObjectLProperty<Symbol> symbol_;
+    protected BooleanLProperty symbolsVisible_;
+    protected DoubleLProperty symbolSize_;
+    protected BooleanLProperty visible_;
+    protected BooleanLProperty animated_;
+    protected LongLProperty animationDuration_;
+    protected BooleanLProperty withWrapping_;
 
     protected ChartType chartType_;
     protected ObservableList<T> items_;
@@ -118,24 +118,24 @@ public abstract class Series<T extends Item> {
             final Paint fill, final Paint stroke, final Color symbolFill, final Color symbolStroke, final Symbol symbol) {
         UPDATE_EVENT = new SeriesEvent(this);
 
-        this.name_ = new StringLazyProperty(this, "name", name, () -> fireSeriesEvent(UPDATE_EVENT));
-        this.fill_ = new ObjectLazyProperty<>(this, "fill", fill, this::refresh);
-        this.stroke_ = new ObjectLazyProperty<>(this, "stroke", stroke, this::refresh);
-        this.strokeWidth_ = new DoubleLazyProperty(this, "strokeWidth", -1,
+        this.name_ = new StringLProperty(this, "name", name, () -> fireSeriesEvent(UPDATE_EVENT));
+        this.fill_ = new ObjectLProperty<>(this, "fill", fill, this::refresh);
+        this.stroke_ = new ObjectLProperty<>(this, "stroke", stroke, this::refresh);
+        this.strokeWidth_ = new DoubleLProperty(this, "strokeWidth", -1,
                 () -> fireSeriesEvent(UPDATE_EVENT),
                 width -> width == -1 ? -1 : Math.clamp(width, 1, 24));
-        this.lineDashes_ = new ObjectLazyProperty<>(this, "dashes", null, this::refresh);
-        this.textFill_ = new ObjectLazyProperty<>(this, "textFill", Color.BLACK, this::refresh);
-        this.symbolFill_ = new ObjectLazyProperty<>(this, "symbolFill", symbolFill, this::refresh);
-        this.symbolStroke_ = new ObjectLazyProperty<>(this, "symbolStroke", symbolStroke, this::refresh);
-        this.symbol_ = new ObjectLazyProperty<>(this, "symbol", symbol, () -> fireSeriesEvent(UPDATE_EVENT));
-        this.symbolSize_ = new DoubleLazyProperty(this, "symbolSize", -1, () -> fireSeriesEvent(UPDATE_EVENT),
+        this.lineDashes_ = new ObjectLProperty<>(this, "dashes", null, this::refresh);
+        this.textFill_ = new ObjectLProperty<>(this, "textFill", Color.BLACK, this::refresh);
+        this.symbolFill_ = new ObjectLProperty<>(this, "symbolFill", symbolFill, this::refresh);
+        this.symbolStroke_ = new ObjectLProperty<>(this, "symbolStroke", symbolStroke, this::refresh);
+        this.symbol_ = new ObjectLProperty<>(this, "symbol", symbol, () -> fireSeriesEvent(UPDATE_EVENT));
+        this.symbolSize_ = new DoubleLProperty(this, "symbolSize", -1, () -> fireSeriesEvent(UPDATE_EVENT),
                 v -> v == -1 ? -1 : Math.clamp(v, 1, 24));
-        this.symbolsVisible_ = new BooleanLazyProperty(this, "symbolsVisible", true, () -> fireSeriesEvent(UPDATE_EVENT));
-        this.visible_ = new BooleanLazyProperty(this, "visible", true, () -> fireSeriesEvent(UPDATE_EVENT));
-        this.animated_ = new BooleanLazyProperty(this, "animated", false, EMPTY);
-        this.animationDuration_ = new LongLazyProperty(this, "animationDuration", 800L, EMPTY, time -> Math.clamp(time, 10, 10000));
-        this.withWrapping_ = new BooleanLazyProperty(this, "withWrapping", false, () -> fireSeriesEvent(UPDATE_EVENT));
+        this.symbolsVisible_ = new BooleanLProperty(this, "symbolsVisible", true, () -> fireSeriesEvent(UPDATE_EVENT));
+        this.visible_ = new BooleanLProperty(this, "visible", true, () -> fireSeriesEvent(UPDATE_EVENT));
+        this.animated_ = new BooleanLProperty(this, "animated", false, EMPTY);
+        this.animationDuration_ = new LongLProperty(this, "animationDuration", 800L, EMPTY, time -> Math.clamp(time, 10, 10000));
+        this.withWrapping_ = new BooleanLProperty(this, "withWrapping", false, () -> fireSeriesEvent(UPDATE_EVENT));
 
         chartType_ = type;
         items_ = FXCollections.observableArrayList();
@@ -153,13 +153,13 @@ public abstract class Series<T extends Item> {
                 if (c.wasAdded()) {
                     c.getAddedSubList().forEach(item -> {
                         if (item instanceof XYChartItem xyChartItem) {
-                            xyChartItem.addChartEventObserver(ChartEvent.ANY, itemObserver_);
+                            xyChartItem.addEventListener(ChartEvent.ANY, itemObserver_);
                         }
                     });
                 } else if (c.wasRemoved()) {
                     c.getRemoved().forEach(item -> {
                         if (item instanceof XYChartItem xyChartItem) {
-                            xyChartItem.removeChartEventObserver(ChartEvent.ANY, itemObserver_);
+                            xyChartItem.removeEventListener(ChartEvent.ANY, itemObserver_);
                         }
                     });
                 }

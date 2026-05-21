@@ -17,7 +17,7 @@ public class ChangeEvent extends FxEvent {
     /**
      * root type of the {@link ChangeEvent}
      */
-    public static final EventType<ChangeEvent> ANY = new EventType<>(FxEvent.ANY, "CHANGE_EVT");
+    public static final EventType<ChangeEvent> ANY = new EventType<>(FxEvent.ANY, "CHANGE_EVENT");
 
     public ChangeEvent(final Object src, final EventType<? extends ChangeEvent> evtType) {
         super(src, evtType);

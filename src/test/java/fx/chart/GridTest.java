@@ -7,11 +7,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-
 /**
- * User: hansolo
- * Date: 02.08.17
- * Time: 17:33
+ *
+ *
+ * @author Jiawei Mao
+ * @version 1.0.0
+ * @since 21 May 2026, 3:01 PM
  */
 public class GridTest extends Application {
     private static final Double AXIS_WIDTH = 25d;

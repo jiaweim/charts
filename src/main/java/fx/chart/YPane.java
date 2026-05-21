@@ -2,6 +2,7 @@ package fx.chart;
 
 import fx.chart.data.ValueItem;
 import fx.chart.font.Fonts;
+import fx.chart.property.ObjectLProperty;
 import fx.chart.series.YSeries;
 import fx.chart.tools.Helper;
 import fx.chart.util.Point;
@@ -10,10 +11,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.Paint;
@@ -27,20 +26,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class YPane<T extends ValueItem> extends Region implements ChartArea {
+public class YPane<T extends ValueItem> extends ChartElement implements ChartArea {
+
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
     private static final double MINIMUM_WIDTH = 0;
     private static final double MINIMUM_HEIGHT = 0;
-    private static final double MAXIMUM_WIDTH = 4096;
-    private static final double MAXIMUM_HEIGHT = 4096;
+
     private static double aspectRatio;
     private boolean keepAspect;
     private double size;
     private double width;
     private double height;
-    private Paint _chartBackground;
-    private ObjectProperty<Paint> chartBackground;
+
+    private final ObjectLProperty<Paint> chartBackground_;
+
     private List<YSeries<T>> listOfSeries;
     private Canvas canvas;
     private GraphicsContext ctx;
@@ -61,8 +61,6 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
     private BooleanProperty zeroRadarOffset;
     private ObservableList<Category> categories;
 
-
-    // ******************** Constructors **************************************
     public YPane(final YSeries<T>... SERIES) {
         this(Color.TRANSPARENT, false, new ArrayList<>(), SERIES);
     }
@@ -91,7 +89,8 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
         getStylesheets().add(YPane.class.getResource("chart.css").toExternalForm());
         aspectRatio = PREFERRED_HEIGHT / PREFERRED_WIDTH;
         keepAspect = false;
-        _chartBackground = BACKGROUND;
+        chartBackground_ = new ObjectLProperty<>(this, "chartBackground", BACKGROUND, this::redraw);
+
         listOfSeries = FXCollections.observableArrayList(SERIES);
         _thresholdY = 100;
         _thresholdYVisible = false;
@@ -135,54 +134,22 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
     }
 
 
-    // ******************** Methods *******************************************
     @Override
     protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
 
     @Override
     protected double computeMinHeight(final double WIDTH) {return MINIMUM_HEIGHT;}
 
-    @Override
-    protected double computePrefWidth(final double HEIGHT) {return super.computePrefWidth(HEIGHT);}
-
-    @Override
-    protected double computePrefHeight(final double WIDTH) {return super.computePrefHeight(WIDTH);}
-
-    @Override
-    protected double computeMaxWidth(final double HEIGHT) {return MAXIMUM_WIDTH;}
-
-    @Override
-    protected double computeMaxHeight(final double WIDTH) {return MAXIMUM_HEIGHT;}
-
-    @Override
-    public ObservableList<Node> getChildren() {return super.getChildren();}
-
-    public Paint getChartBackground() {return null == chartBackground ? _chartBackground : chartBackground.get();}
+    public Paint getChartBackground() {
+        return chartBackground_.get();
+    }
 
     public void setChartBackground(final Paint PAINT) {
-        if (null == chartBackground) {
-            _chartBackground = PAINT;
-            redraw();
-        } else {
-            chartBackground.set(PAINT);
-        }
+        chartBackground_.set(PAINT);
     }
 
     public ObjectProperty<Paint> chartBackgroundProperty() {
-        if (null == chartBackground) {
-            chartBackground = new ObjectPropertyBase<Paint>(_chartBackground) {
-                @Override
-                protected void invalidated() {redraw();}
-
-                @Override
-                public Object getBean() {return YPane.this;}
-
-                @Override
-                public String getName() {return "chartBackground";}
-            };
-            _chartBackground = null;
-        }
-        return chartBackground;
+        return chartBackground_.getProperty();
     }
 
     public double getThresholdY() {return null == thresholdY ? _thresholdY : thresholdY.get();}
@@ -457,7 +424,7 @@ public class YPane<T extends ValueItem> extends Region implements ChartArea {
 
             // Segment
             ctx.setLineWidth(barWidth);
-            ctx.setStroke(item.getFill());
+            ctx.setStroke(item.getFillColor());
             ctx.strokeArc(xy, xy, wh, wh, startAngle, -angle, ArcType.OPEN);
 
             // Percentage

@@ -5,13 +5,13 @@ import fx.chart.data.Connection;
 import fx.chart.data.PlotItem;
 import fx.chart.event.ChartEvent;
 import fx.chart.event.ChartEventListener;
+import fx.chart.font.FontMetrix;
 import fx.chart.font.Fonts;
 import fx.chart.geometry.Path;
 import fx.chart.geometry.Rectangle;
-import fx.chart.font.FontMetrix;
+import fx.chart.tools.Helper;
 import fx.chart.util.Bounds;
 import fx.chart.util.Point;
-import fx.chart.tools.Helper;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -124,9 +124,9 @@ public class SankeyPlot extends Region {
         itemListListener = c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
-                    c.getAddedSubList().forEach(addedItem -> addedItem.addChartEvtObserver(ChartEvent.ANY, itemObserver));
+                    c.getAddedSubList().forEach(addedItem -> addedItem.addEventListener(ChartEvent.ANY, itemObserver));
                 } else if (c.wasRemoved()) {
-                    c.getRemoved().forEach(removedItem -> removedItem.removeChartEvtObserver(ChartEvent.ANY, itemObserver));
+                    c.getRemoved().forEach(removedItem -> removedItem.removeEventListener(ChartEvent.ANY, itemObserver));
                 }
             }
             prepareData();
@@ -194,7 +194,7 @@ public class SankeyPlot extends Region {
             paths.forEach((path, tooltipText) -> {
                 if (path.contains(eventX, eventY)) {
                     PlotItem[] items = connectionMap.get(path);
-                    items[0].fireChartEvt(new ChartEvent(items[0], items[1], ChartEvent.ITEM_SELECTED, e));
+                    items[0].fireChartEvent(new ChartEvent(items[0], items[1], ChartEvent.ITEM_SELECTED, e));
                     selectedConnection = new SankeyPlotConnection(items[0], items[1], items[0].getOutgoingValueTo(items[1]), getSelectionColor(), path);
                     selectedItems.add(items[1]);
                     Integer startLevel = items[1].getLevel() + 1;
@@ -214,7 +214,7 @@ public class SankeyPlot extends Region {
                 items.forEach(plotItemData -> {
                     if (plotItemData.getBounds().contains(eventX, eventY)) {
                         selectedPlotItemData = plotItemData;
-                        selectedPlotItemData.getPlotItem().fireChartEvt(new ChartEvent(selectedPlotItemData.getPlotItem(), ChartEvent.ITEM_SELECTED, e));
+                        selectedPlotItemData.getPlotItem().fireChartEvent(new ChartEvent(selectedPlotItemData.getPlotItem(), ChartEvent.ITEM_SELECTED, e));
                     }
                 });
             });
@@ -228,8 +228,6 @@ public class SankeyPlot extends Region {
         });
     }
 
-
-    // ******************** Methods *******************************************
     @Override
     protected double computeMinWidth(final double HEIGHT) {return MINIMUM_WIDTH;}
 
@@ -1064,8 +1062,8 @@ public class SankeyPlot extends Region {
                         } else {
                             connection.setFill(new LinearGradient(0, 0, 1, 0,
                                     true, CycleMethod.NO_CYCLE,
-                                    new Stop(0, ColorUtils.getColorWithOpacity(item.getFill(), connectionOpacity)),
-                                    new Stop(1, ColorUtils.getColorWithOpacity(outgoingItem.getFill(), connectionOpacity))));
+                                    new Stop(0, ColorUtils.getColorWithOpacity(item.getFillColor(), connectionOpacity)),
+                                    new Stop(1, ColorUtils.getColorWithOpacity(outgoingItem.getFillColor(), connectionOpacity))));
                         }
 
                         // Draw the bezier curve
@@ -1138,7 +1136,7 @@ public class SankeyPlot extends Region {
 
                 // Draw item boxes
                 if (null == selectedConnection) {
-                    ctx.setFill(useItemColor ? item.getFill() : itemColor);
+                    ctx.setFill(useItemColor ? item.getFillColor() : itemColor);
                 } else {
                     ctx.setFill(itemColor);
                 }

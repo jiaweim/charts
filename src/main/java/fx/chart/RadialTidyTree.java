@@ -5,10 +5,11 @@ import fx.chart.data.ChartItem;
 import fx.chart.data.TreeNode;
 import fx.chart.event.ChartEvent;
 import fx.chart.event.ChartEventListener;
+import fx.chart.event.EventSource;
 import fx.chart.event.TreeNodeEvent;
+import fx.chart.font.FontMetrix;
 import fx.chart.font.Fonts;
 import fx.chart.geometry.Circle;
-import fx.chart.font.FontMetrix;
 import fx.chart.tools.Helper;
 import fx.chart.tools.InfoPopup;
 import fx.chart.tools.TextOrientation;
@@ -35,6 +36,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 public class RadialTidyTree<T extends ChartItem> extends Region {
+
     private static final double PREFERRED_WIDTH = 250;
     private static final double PREFERRED_HEIGHT = 250;
     private static final double MINIMUM_WIDTH = 50;
@@ -146,7 +148,7 @@ public class RadialTidyTree<T extends ChartItem> extends Region {
     private void registerListeners() {
         widthProperty().addListener(sizeListener);
         heightProperty().addListener(sizeListener);
-        tree.addTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
+        tree.addEventListener(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
 
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
             Optional<Entry<Circle, T>> optionalEntry = circleMap.entrySet().stream().filter(entry -> entry.getKey().contains(e.getX(), e.getY())).findFirst();
@@ -156,7 +158,7 @@ public class RadialTidyTree<T extends ChartItem> extends Region {
                 popup.setY(e.getScreenY() - popup.getHeight());
                 popup.update(item);
                 popup.animatedShow(getScene().getWindow());
-                item.fireChartEvt(new ChartEvent(item, ChartEvent.ITEM_SELECTED));
+                item.fireChartEvent(new ChartEvent(item, ChartEvent.ITEM_SELECTED));
             }
         });
     }
@@ -192,8 +194,8 @@ public class RadialTidyTree<T extends ChartItem> extends Region {
     public void dispose() {
         widthProperty().removeListener(sizeListener);
         heightProperty().removeListener(sizeListener);
-        tree.getChildren().forEach(child -> child.removeAllTreeNodeEvtObservers());
-        tree.removeAllTreeNodeEvtObservers();
+        tree.getChildren().forEach(EventSource::removeAllEventListeners);
+        tree.removeAllEventListeners();
     }
 
     /**
@@ -570,10 +572,10 @@ public class RadialTidyTree<T extends ChartItem> extends Region {
      */
     public void setTree(final TreeNode<T> TREE) {
         if (null != tree) {
-            tree.removeTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
+            tree.removeEventListener(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
         }
         tree = TREE;
-        tree.addTreeNodeEvtObserver(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
+        tree.addEventListener(TreeNodeEvent.NODE_SELECTED, treeNodeEvtObserver);
         if (isAutoTextColor()) {
             adjustTextColors();
         }
@@ -609,7 +611,7 @@ public class RadialTidyTree<T extends ChartItem> extends Region {
         Color darkColor = getDarkTextColor();
         root.stream().forEach(node -> {
             T item = node.getItem();
-            boolean darkFillColor = ColorUtils.isDark(item.getFill());
+            boolean darkFillColor = ColorUtils.isDark(item.getFillColor());
             boolean darkTextColor = ColorUtils.isDark(item.getTextFill());
             if (darkFillColor && darkTextColor) {
                 item.setTextFill(brightColor);
@@ -714,7 +716,7 @@ public class RadialTidyTree<T extends ChartItem> extends Region {
 
         // Center Dot
         ctx.setLineWidth(1.0);
-        ctx.setFill(root.getItem().getFill());
+        ctx.setFill(root.getItem().getFillColor());
         ctx.fillOval(center - nodeDotRadius, center - nodeDotRadius, nodeDotDiameter, nodeDotDiameter);
 
         root.setX(center);
@@ -728,7 +730,7 @@ public class RadialTidyTree<T extends ChartItem> extends Region {
                 TreeNode<T> currentNode = nodesInCurrentLevel.get(i);
                 TreeNode<T> parentNode = currentNode.getParent();
                 T item = currentNode.getItem();
-                Paint paint = getUseColorFromParent() ? parentNode.getItem().getFill() : item.getFill();
+                Paint paint = getUseColorFromParent() ? parentNode.getItem().getFillColor() : item.getFillColor();
                 double angleStep = currentNode.isLeaf() ? angleStepMap.get(level) : angleStepMap.get(parentNode.getDepth());
                 double angleRange = Math.clamp(angleStep * (parentNode.getNoOfChildren() - 1), 0, MAX_ANGLE_RANGE);
                 if (null == previousParent || !previousParent.equals(parentNode)) {

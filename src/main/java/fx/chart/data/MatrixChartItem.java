@@ -1,38 +1,31 @@
 package fx.chart.data;
 
-import fx.chart.event.ChartEventListener;
-import fx.chart.event.EventType;
 import fx.chart.Symbol;
 import fx.chart.event.ChartEvent;
+import fx.chart.event.DefaultEventSource;
+import fx.chart.property.*;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-
-public class MatrixChartItem implements MatrixItem {
+/**
+ * This class represents a cell block in the heat map.
+ *
+ * @author Jiawei Mao
+ * @version 1.0.0
+ * @since 21 May 2026, 11:21 AM
+ */
+public class MatrixChartItem extends DefaultEventSource implements MatrixItem {
 
     private final ChartEvent ITEM_EVENT = new ChartEvent(MatrixChartItem.this, ChartEvent.ITEM_UPDATE);
-    private Map<EventType, List<ChartEventListener<ChartEvent>>> observers;
-    private int _x;
-    private IntegerProperty x;
-    private int _y;
-    private IntegerProperty y;
-    private double _z;
-    private DoubleProperty z;
-    private String _name;
-    private StringProperty name;
-    private Color _fill;
-    private ObjectProperty<Color> fill;
-    private Color _stroke;
-    private ObjectProperty<Color> stroke;
-    private Symbol _symbol;
-    private ObjectProperty<Symbol> symbol;
-    private boolean _isEmpty;
-    private BooleanProperty isEmpty;
+
+    private final IntegerLProperty x_;
+    private final IntegerLProperty y_;
+    private final DoubleLProperty z_;
+    private final StringLProperty name_;
+    private final ObjectLProperty<Color> fill_;
+    private final ObjectLProperty<Color> stroke_;
+    private final ObjectLProperty<Symbol> symbol_;
+    private final BooleanLProperty isEmpty_;
 
     public MatrixChartItem() {
         this(0, 0, 0, "", Color.RED, false);
@@ -62,276 +55,125 @@ public class MatrixChartItem implements MatrixItem {
         this(X, Y, Z, NAME, FILL, false);
     }
 
-    public MatrixChartItem(final int X, final int Y, final double Z, final String NAME, final Color FILL, final boolean IS_EMPTY) {
-        _x = X;
-        _y = Y;
-        _z = Z;
-        _name = NAME;
-        _fill = FILL;
-        _stroke = Color.TRANSPARENT;
-        _symbol = Symbol.NONE;
-        _isEmpty = IS_EMPTY;
-        observers = new ConcurrentHashMap<>();
+    public MatrixChartItem(final int x, final int y, final double z, final String name, final Color fill, final boolean isEmpty) {
+        x_ = new IntegerLProperty(this, "x", x, () -> fireChartEvent(ITEM_EVENT));
+        y_ = new IntegerLProperty(this, "y", y, () -> fireChartEvent(ITEM_EVENT));
+        z_ = new DoubleLProperty(this, "z", z, () -> fireChartEvent(ITEM_EVENT));
+        name_ = new StringLProperty(this, "name", name, () -> fireChartEvent(ITEM_EVENT));
+        fill_ = new ObjectLProperty<>(this, "fill", fill, () -> fireChartEvent(ITEM_EVENT));
+        stroke_ = new ObjectLProperty<>(this, "stroke", Color.TRANSPARENT, () -> fireChartEvent(ITEM_EVENT));
+        symbol_ = new ObjectLProperty<>(this, "symbol", Symbol.NONE, () -> fireChartEvent(ITEM_EVENT));
+        isEmpty_ = new BooleanLProperty(this, "isEmpty", isEmpty, () -> fireChartEvent(ITEM_EVENT));
     }
 
-
-    // ******************** Methods ***************************************
     @Override
-    public int getX() {return null == x ? _x : x.get();}
+    public int getX() {
+        return x_.getAsInt();
+    }
 
     @Override
     public void setX(final int X) {
-        if (null == x) {
-            _x = X;
-            fireChartEvt(ITEM_EVENT);
-        } else {
-            x.set(X);
-        }
+        x_.set(X);
     }
 
     public IntegerProperty xProperty() {
-        if (null == x) {
-            x = new IntegerPropertyBase(_x) {
-                @Override
-                protected void invalidated() {fireChartEvt(ITEM_EVENT);}
-
-                @Override
-                public Object getBean() {return MatrixChartItem.this;}
-
-                @Override
-                public String getName() {return "x";}
-            };
-        }
-        return x;
+        return x_.getProperty();
     }
 
     @Override
-    public int getY() {return null == y ? _y : y.get();}
+    public int getY() {
+        return y_.getAsInt();
+    }
 
     @Override
     public void setY(final int Y) {
-        if (null == y) {
-            _y = Y;
-            fireChartEvt(ITEM_EVENT);
-        } else {
-            y.set(Y);
-        }
+        y_.set(Y);
     }
 
     @Override
     public IntegerProperty yProperty() {
-        if (null == y) {
-            y = new IntegerPropertyBase(_y) {
-                @Override
-                protected void invalidated() {fireChartEvt(ITEM_EVENT);}
-
-                @Override
-                public Object getBean() {return MatrixChartItem.this;}
-
-                @Override
-                public String getName() {return "y";}
-            };
-        }
-        return y;
+        return y_.getProperty();
     }
 
     @Override
-    public double getZ() {return null == z ? _z : z.get();}
+    public double getZ() {
+        return z_.getAsDouble();
+    }
 
     @Override
     public void setZ(final double Z) {
-        if (null == z) {
-            _z = Z;
-            fireChartEvt(ITEM_EVENT);
-        } else {
-            z.set(Z);
-        }
+        z_.set(Z);
     }
 
     @Override
     public DoubleProperty zProperty() {
-        if (null == z) {
-            z = new DoublePropertyBase(_z) {
-                @Override
-                protected void invalidated() {fireChartEvt(ITEM_EVENT);}
-
-                @Override
-                public Object getBean() {return MatrixChartItem.this;}
-
-                @Override
-                public String getName() {return "z";}
-            };
-        }
-        return z;
+        return z_.getProperty();
     }
 
     @Override
-    public String getName() {return null == name ? _name : name.get();}
+    public String getName() {
+        return name_.get();
+    }
 
     public void setName(final String NAME) {
-        if (null == name) {
-            _name = NAME;
-            fireChartEvt(ITEM_EVENT);
-        } else {
-            name.set(NAME);
-        }
+        name_.set(NAME);
     }
 
     public StringProperty nameProperty() {
-        if (null == name) {
-            name = new StringPropertyBase(_name) {
-                @Override
-                protected void invalidated() {fireChartEvt(ITEM_EVENT);}
-
-                @Override
-                public Object getBean() {return MatrixChartItem.this;}
-
-                @Override
-                public String getName() {return "name";}
-            };
-            _name = null;
-        }
-        return name;
+        return name_.getProperty();
     }
 
     @Override
-    public Color getFill() {return null == fill ? _fill : fill.get();}
+    public Color getFillColor() {
+        return fill_.get();
+    }
 
-    public void setFill(final Color FILL) {
-        if (null == fill) {
-            _fill = FILL;
-            fireChartEvt(ITEM_EVENT);
-        } else {
-            fill.set(FILL);
-        }
+    public void setFill(final Color fill) {
+        fill_.set(fill);
     }
 
     public ObjectProperty<Color> fillProperty() {
-        if (null == fill) {
-            fill = new ObjectPropertyBase<Color>(_fill) {
-                @Override
-                protected void invalidated() {fireChartEvt(ITEM_EVENT);}
-
-                @Override
-                public Object getBean() {return MatrixChartItem.this;}
-
-                @Override
-                public String getName() {return "fill";}
-            };
-            _fill = null;
-        }
-        return fill;
+        return fill_.getProperty();
     }
 
     @Override
-    public Color getStroke() {return null == stroke ? _stroke : stroke.get();}
+    public Color getStrokeColor() {
+        return stroke_.get();
+    }
 
-    public void setStroke(final Color STROKE) {
-        if (null == stroke) {
-            _stroke = STROKE;
-            fireChartEvt(ITEM_EVENT);
-        } else {
-            stroke.set(STROKE);
-        }
+    public void setStroke(final Color stroke) {
+        stroke_.set(stroke);
     }
 
     public ObjectProperty<Color> strokeProperty() {
-        if (null == stroke) {
-            stroke = new ObjectPropertyBase<Color>(_stroke) {
-                @Override
-                protected void invalidated() {fireChartEvt(ITEM_EVENT);}
-
-                @Override
-                public Object getBean() {return MatrixChartItem.this;}
-
-                @Override
-                public String getName() {return "stroke";}
-            };
-            _stroke = null;
-        }
-        return stroke;
+        return stroke_.getProperty();
     }
 
     @Override
-    public Symbol getSymbol() {return Symbol.NONE;}
+    public Symbol getSymbol() {
+        return symbol_.get();
+    }
 
-    public void setSymbol(final Symbol SYMBOL) {}
+    public void setSymbol(final Symbol symbol) {
+        symbol_.set(symbol);
+    }
 
     public ObjectProperty<Symbol> symbolProperty() {
-        if (null == symbol) {
-            symbol = new ObjectPropertyBase<Symbol>(_symbol) {
-                @Override
-                protected void invalidated() {fireChartEvt(ITEM_EVENT);}
-
-                @Override
-                public Object getBean() {return MatrixChartItem.this;}
-
-                @Override
-                public String getName() {return "symbol";}
-            };
-            _symbol = null;
-        }
-        return symbol;
+        return symbol_.getProperty();
     }
 
     @Override
-    public boolean isEmptyItem() {return null == isEmpty ? _isEmpty : isEmpty.get();}
+    public boolean isEmptyItem() {
+        return isEmpty_.getAsBoolean();
+    }
 
     public void setIsEmpty(final boolean isEmpty) {
-        if (null == this.isEmpty) {
-            _isEmpty = isEmpty;
-            fireChartEvt(ITEM_EVENT);
-        } else {
-            this.isEmpty.set(isEmpty);
-        }
+        isEmpty_.set(isEmpty);
     }
 
     public BooleanProperty isEmptyProperty() {
-        if (null == isEmpty) {
-            isEmpty = new BooleanPropertyBase(_isEmpty) {
-                @Override
-                protected void invalidated() {fireChartEvt(ITEM_EVENT);}
-
-                @Override
-                public Object getBean() {return MatrixChartItem.this;}
-
-                @Override
-                public String getName() {return "isEmpty";}
-            };
-        }
-        return isEmpty;
+        return isEmpty_.getProperty();
     }
-
-
-    // ******************** Event handling ************************************
-    public void addChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (!observers.containsKey(type)) {
-            observers.put(type, new CopyOnWriteArrayList<>());
-        }
-        if (observers.get(type).contains(observer)) {
-            return;
-        }
-        observers.get(type).add(observer);
-    }
-
-    public void removeChartEvtObserver(final EventType type, final ChartEventListener<ChartEvent> observer) {
-        if (observers.containsKey(type)) {
-            if (observers.get(type).contains(observer)) {
-                observers.get(type).remove(observer);
-            }
-        }
-    }
-
-    public void removeAllChartEvtObservers() {observers.clear();}
-
-    public void fireChartEvt(final ChartEvent evt) {
-        final EventType type = evt.getEventType();
-        observers.entrySet().stream().filter(entry -> entry.getKey().equals(ChartEvent.ANY)).forEach(entry -> entry.getValue().forEach(observer -> observer.handle(evt)));
-        if (observers.containsKey(type) && !type.equals(ChartEvent.ANY)) {
-            observers.get(type).forEach(observer -> observer.handle(evt));
-        }
-    }
-
 
     @Override
     public String toString() {
